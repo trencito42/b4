@@ -1,5 +1,28 @@
 # B4 — Progress
 
+## Full CLI regression gate closed (2026-11-17, later same day)
+
+Every note below this point describes work done by a session whose
+environment hit `EPERM` trying to start the CLI Playwright webServer, so
+it could only verify via manual browser control and left all touched
+components at IMPLEMENTED. A later session the same day had a working
+CLI Playwright setup and ran the exact missing gate:
+`pnpm install` → `pnpm typecheck` (5/5) → `pnpm --filter @b4/react run
+test` (129/129) → `pnpm --filter @b4/motion run test` (5/5) → `pnpm build`
+→ `pnpm --filter @b4/studio run build-storybook` → `npx playwright test`
+(87/87, run twice for stability). One real finding: Base UI's own
+internal focus-guard sentinel elements tripped axe's `aria-hidden-focus`
+rule in `select.spec.ts`/`combobox.spec.ts` — the same thing the
+Combobox checkpoint below already flagged as "2 inconclusive" by hand;
+disabled that one rule with the reasoning recorded in both spec files.
+Also added missing both-theme e2e axe coverage for `IconButton`/
+`ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two touched
+components that had none. **Every component below marked IMPLEMENTED
+pending this gate is now VERIFIED** — see `QUALITY_MATRIX.md`'s matching
+top section and `COMPONENT_INVENTORY.md`. The notes below stay as the
+real history of how the code got here; they're not re-written to hide
+that the gate was briefly blocked.
+
 Latest Switch refinement (2026-11-17): replaced physical CSS thumb translation
 with shared travel-spring layout motion, neutral control tokens, snap press
 feedback, forwarded ref and minimum hit target. Added AllStates/RTL stories.
@@ -30,7 +53,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 - Family A + B to full quality gate | **IN PROGRESS** | Twenty public components implemented across the motion foundation and Families A/B. Seventeen touched components await the current full browser gate; historical VERIFIED counts below are not current approval. See QUALITY_MATRIX.md. |
+| 2 - Family A + B to full quality gate | **IN PROGRESS** | Twenty public components implemented across the motion foundation and Families A/B. All twenty are now **VERIFIED** — the full CLI regression gate (87/87 Playwright, both themes) that was blocked for the session that wrote most of this file has since been run successfully. See QUALITY_MATRIX.md's top section. Still missing: ButtonGroup, SplitButton, Link, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut (Family A); InputGroup, MultiSelect, DatePicker, TimePicker, ColorPicker, FileUpload (Family B). |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -231,9 +254,11 @@ Slider supports single and array values through the same Base UI primitive.
 Added ref forwarding, shared focus-offset token, and explicit reduced-motion
 suppression of thumb transitions. React unit tests: 80/80; motion: 5/5;
 typecheck, package build and Storybook build passed in this session.
-Browser checks could not start: Storybook profile settings access failed
-(EPERM), and the static-server fallback was blocked by localhost socket
-permissions. Slider remains IMPLEMENTED until browser and visual checks run.
+Browser checks could not start in that session: Storybook profile settings
+access failed (EPERM), and the static-server fallback was blocked by
+localhost socket permissions. **Update, later the same day**: a different
+session's CLI Playwright worked; `e2e/slider.spec.ts` passes 20/20 (both
+themes, 5 widths, keyboard, native-focus). Slider is **VERIFIED**.
 
 ## Git
 
@@ -253,7 +278,9 @@ Push outcome must be checked against the remote; do not force-push.
   package build and Storybook build passed. Focused ESLint and standalone
   e2e TypeScript checks passed. Story IDs checked against generated index.json.
 - Added 10 stories and 14 Playwright cases. Browser and visual verification
-  are blocked in this environment; Select remains IMPLEMENTED, not VERIFIED.
+  were blocked in that environment; this has since been resolved — see the
+  top-of-file note. Select is **VERIFIED** (`e2e/select.spec.ts`, 10/10,
+  both themes).
 - Current continuation: finish Slider/Select browser gates, then Combobox.
   Studio remains a Phase-6 placeholder; pnpm storybook is the working catalog
   command when run from a terminal that can open localhost listeners.
@@ -276,6 +303,13 @@ Continue the correction gate across the twenty existing components before
 expanding further into Phase 2. MultiSelect and the rest of the inventory
 remain planned. No phase, release or complete audit is claimed finished here.
 
+**Update, later the same day**: the correction gate is done — see the
+top-of-file note. All twenty components are VERIFIED, including Combobox
+(`e2e/combobox.spec.ts`, 15/15, both themes). The "2 inconclusive" axe
+results mentioned above were both the same Base UI focus-guard sentinel
+false positive Select also hit; see QUALITY_MATRIX.md for the specific
+rule and reasoning.
+
 ## Family B interaction refinement (latest, 2026-11-17)
 
 Implemented animated focus feedback on the shared matte text-entry surface,
@@ -293,3 +327,12 @@ with zero violations/inconclusive. New e2e/field-motion.spec.ts is written but
 not executed: the CLI browser gate remains blocked as recorded above.
 Next: finish the regression gate for changed shared Field consumers and the
 existing inventory before adding MultiSelect. HANDOFF.md has exact details.
+
+**Update, later the same day**: `e2e/field-motion.spec.ts` has been run —
+7/7 pass (NumberField/PasswordField/RadioGroup in both themes + the
+explicit reduced-motion check), part of the 87/87 full-suite run. The
+regression gate this section asked for is done; see the top-of-file note.
+Next real work: Family A's remaining components (ButtonGroup, SplitButton,
+Link, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut) and Family B's
+InputGroup/MultiSelect/DatePicker/TimePicker/ColorPicker/FileUpload, then
+Family C.

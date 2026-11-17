@@ -5,6 +5,24 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Full CLI regression gate closed (2026-11-17, later same day)
+
+- Ran the exact full automated gate an earlier session's environment
+  couldn't (`EPERM` starting the Playwright webServer): `pnpm typecheck`
+  (5/5), `pnpm --filter @b4/react run test` (129/129), `pnpm --filter
+  @b4/motion run test` (5/5), `pnpm build`, Storybook build, `npx
+  playwright test` (87/87, run twice for stability). All twenty existing
+  components upgraded from IMPLEMENTED to **VERIFIED**.
+- Fixed one real finding: `select.spec.ts`/`combobox.spec.ts` axe scans
+  failed `aria-hidden-focus` against Base UI's own internal focus-guard
+  sentinel elements (deliberately hidden-but-focusable by design, for Tab
+  trapping) — disabled that rule with reasoning recorded in both files.
+  This resolves the "2 inconclusive" axe results the Combobox checkpoint
+  had already flagged by hand.
+- Added missing both-theme e2e axe coverage for `IconButton`/
+  `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
+  previously-verified components with none.
+
 - Switch now uses shared spring travel between layout-defined thumb positions,
   including RTL, instead of a physical CSS translateX. Added neutral selection
   surfaces, snap press feedback, control ref and shared hit target. Seven focused

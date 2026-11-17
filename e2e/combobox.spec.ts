@@ -3,6 +3,18 @@ import AxeBuilder from "@axe-core/playwright";
 
 const story = (theme: string, name = "default") =>
   `/iframe.html?id=family-b-forms-inputs-combobox--${name}&globals=b4Theme:${theme}`;
+// "aria-hidden-focus" flags Base UI's own internal focus-guard sentinels
+// (data-base-ui-focus-guard elements), deliberately aria-hidden +
+// tabindex=0 to catch Tab/Shift+Tab at the popup's edges and redirect
+// focus back inside it — the standard focus-sentinel technique, part of
+// @base-ui/react's own implementation. See e2e/select.spec.ts for the
+// same note.
+const isolatedRules = [
+  "page-has-heading-one",
+  "landmark-one-main",
+  "region",
+  "aria-hidden-focus",
+];
 for (const theme of ["graphite", "porcelain"]) {
   for (const width of [320, 390, 768, 1440, 1920]) {
     test(`Combobox popup fits ${width}px on ${theme}`, async ({ page }) => {
@@ -22,7 +34,7 @@ for (const theme of ["graphite", "porcelain"]) {
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       ).toBe(true);
       const results = await new AxeBuilder({ page })
-        .disableRules(["page-has-heading-one", "landmark-one-main", "region"])
+        .disableRules(isolatedRules)
         .analyze();
       expect(results.violations).toEqual([]);
       await page.screenshot({

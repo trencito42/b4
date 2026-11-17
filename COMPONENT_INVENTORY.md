@@ -1,4 +1,4 @@
-# B4 — Component Inventory
+﻿# B4 — Component Inventory
 
 Status values match `QUALITY_MATRIX.md`: PLANNED / IMPLEMENTING / IMPLEMENTED
 / TESTING / VERIFIED / BLOCKED. This file is the scope contract — components
@@ -8,14 +8,14 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 | Component | Status |
 |---|---|
-| Button | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| IconButton | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Button | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| IconButton | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | ButtonGroup | PLANNED |
 | SplitButton | PLANNED |
 | ToggleButton | **VERIFIED** |
-| SegmentedControl | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| SegmentedControl | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | Link | PLANNED |
-| Badge | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Badge | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | StatusBadge | PLANNED |
 | Avatar | PLANNED |
 | AvatarGroup | PLANNED |
@@ -25,25 +25,25 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 | Component | Status |
 |---|---|
-| Checkbox | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| Switch | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| RadioGroup | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| TextField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| Textarea | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| PasswordField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| SearchField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| NumberField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Checkbox | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| Switch | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| RadioGroup | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| TextField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| Textarea | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| PasswordField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| SearchField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| NumberField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | InputGroup | PLANNED |
-| Select | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| Combobox | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Select | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| Combobox | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | MultiSelect | PLANNED |
-| Slider | IMPLEMENTED - corrective changes; full browser suite recheck pending |
-| RangeSlider | Covered by Slider array values - IMPLEMENTED; browser/visual checks pending |
+| Slider | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| RangeSlider | Covered by Slider array values - **VERIFIED** alongside Slider |
 | DatePicker | PLANNED |
 | TimePicker | PLANNED |
 | ColorPicker | PLANNED |
 | FileUpload | PLANNED |
-| Field | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Field | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 
 ## Family C — Navigation & Overlays
 
@@ -65,7 +65,7 @@ brief's "specialized components" note.
 |---|---|
 | TextTransition | **VERIFIED** |
 | NumberTransition | **VERIFIED** |
-| AnimatedIndicator | **IMPLEMENTED** |
+| AnimatedIndicator | **VERIFIED** (incl. span-as-root support added for RadioGroup) |
 | Toast | PLANNED |
 | InlineAlert | PLANNED |
 | NotificationPanel | PLANNED |
