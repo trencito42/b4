@@ -21,7 +21,9 @@ is only set when the checks below actually ran and passed — not on
 | **Switch** | **VERIFIED** | ✅ off/on/disabled, both themes e2e'd | ✅ Base UI `Switch.Root`/`Thumb`; label-click + Space key toggle | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
 | **RadioGroup** | **VERIFIED** | ✅ default + disabled-item stories, both themes e2e'd | ✅ Base UI `RadioGroup`/`Radio` gives real roving-tabindex arrow-key nav + ARIA radiogroup semantics for free; verified with a real-browser keyboard test, not just unit | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated keyboard-nav e2e |
 
-**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (48/48), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (16/16, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup stories — Badge/Checkbox/Switch/RadioGroup checked in both themes).
+| **TextField** | **VERIFIED** | ✅ default/hint/error/required/disabled/3-sizes stories, both themes e2e'd | ✅ Base UI `Field`+`Input` gives real label/description/error ARIA wiring; error replaces hint rather than both showing; typed-input e2e in a real browser | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
+
+**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (54/54), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (19/19, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField stories — Badge/Checkbox/Switch/RadioGroup/TextField checked in both themes).
 
 ## Three more real accessibility bugs, caught by actually testing Porcelain
 

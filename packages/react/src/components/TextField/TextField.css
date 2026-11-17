@@ -1,0 +1,94 @@
+.b4-text-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-text-field__label {
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-medium);
+  color: var(--b4-text-secondary);
+}
+
+.b4-text-field__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.b4-text-field__required {
+  color: var(--b4-danger-text);
+}
+
+.b4-text-field__control {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-4);
+  height: var(--b4-control-height);
+  padding: 0 var(--b4-control-padding-x);
+  border: 1.5px solid var(--b4-border-default);
+  border-radius: var(--b4-radius-md);
+  background-color: var(--b4-surface-1);
+  transition: border-color var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-text-field__control--sm {
+  height: var(--b4-control-height-sm);
+}
+
+.b4-text-field__control--lg {
+  height: var(--b4-control-height-lg);
+}
+
+.b4-text-field__control:has(.b4-text-field__input:focus-visible) {
+  border-color: var(--b4-accent);
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: 1px;
+}
+
+.b4-text-field__control--error {
+  border-color: var(--b4-danger);
+}
+
+.b4-text-field__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--b4-text-primary);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-base);
+  outline: none;
+}
+
+.b4-text-field__input::placeholder {
+  color: var(--b4-text-disabled);
+}
+
+.b4-text-field__input:disabled {
+  cursor: not-allowed;
+}
+
+.b4-text-field[data-disabled] .b4-text-field__control {
+  opacity: 0.5;
+}
+
+.b4-text-field__icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--b4-text-tertiary);
+}
+
+.b4-text-field__message {
+  font-size: var(--b4-text-xs);
+  color: var(--b4-text-tertiary);
+}
+
+.b4-text-field__message--error {
+  color: var(--b4-danger-text);
+}

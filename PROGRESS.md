@@ -9,7 +9,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup VERIFIED (3/20). |
+| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField VERIFIED (4/20). |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -131,6 +131,16 @@ was found and fixed by capping `workers: 4` in `playwright.config.ts`.
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (48/48), `pnpm build`, Storybook build, `npx playwright test` (16/16,
 both themes for every new component).
+
+## TextField added — the base every other text-entry field will extend
+
+Built on Base UI's `Field` (label/description/error wiring, with `Field.
+Error match` letting this component's own `error` prop drive visibility
+rather than native HTML5 validity) + `Input`. `label` is a required prop,
+not optional. Verified in both themes from the start.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(54/54), `pnpm build`, Storybook build, `npx playwright test` (19/19).
 
 ## Git
 

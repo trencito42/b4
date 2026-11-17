@@ -37,6 +37,8 @@ a per-npm-release history.
 - `@b4/react`: `Checkbox`, `Switch`, `RadioGroup` (Family B), built on
   Base UI primitives for real tri-state/keyboard/ARIA behavior. All
   e2e-tested in both themes from the start.
+- `@b4/react`: `TextField` (Family B), built on Base UI's `Field` + `Input`
+  — the base text-entry pattern for the rest of Family B's text fields.
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,

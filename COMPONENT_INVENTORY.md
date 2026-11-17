@@ -28,7 +28,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Checkbox | **VERIFIED** |
 | Switch | **VERIFIED** |
 | RadioGroup | **VERIFIED** |
-| TextField | PLANNED |
+| TextField | **VERIFIED** |
 | Textarea | PLANNED |
 | PasswordField | PLANNED |
 | SearchField | PLANNED |
