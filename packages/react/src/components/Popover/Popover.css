@@ -1,0 +1,29 @@
+.b4-popover__positioner {
+  z-index: var(--b4-z-popover);
+  outline: none;
+}
+
+.b4-popover__popup {
+  box-sizing: border-box;
+  max-inline-size: 320px;
+  padding: var(--b4-space-7);
+  border-radius: var(--b4-surface-radius);
+  background: var(--b4-surface-overlay);
+  color: var(--b4-text-primary);
+  box-shadow: var(--b4-shadow-overlay);
+  font-family: var(--b4-font-sans);
+  transform-origin: var(--transform-origin);
+  outline: none;
+}
+
+.b4-popover__title {
+  margin: 0 0 var(--b4-space-4);
+  font-size: var(--b4-text-base);
+  font-weight: var(--b4-weight-semibold);
+}
+
+.b4-popover__content {
+  font-size: var(--b4-text-sm);
+  color: var(--b4-text-secondary);
+  line-height: var(--b4-leading-normal);
+}

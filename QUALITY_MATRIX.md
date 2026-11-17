@@ -252,6 +252,24 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (168/168), `pnpm build`, Storybook build, `npx playwright test`
 (120/120, run twice).
 
+## Popover — Family C's third component (2026-11-17, still later)
+
+**VERIFIED.** Real Base UI `Popover` (click-triggered, holds genuinely
+interactive content — see the `WithInteractiveContent` story/test, a
+real confirm button inside the popup, not static text). Closes on
+Escape and outside click, returns focus to the trigger.
+
+Only one jsdom-specific test adjustment needed, same known category as
+`TextTransition`/`DropdownMenu`: jsdom runs no real animation frame, so
+the exit spring (and the focus-return Base UI defers until it
+completes) never finishes in a unit test — the Escape-closes unit test
+checks the synchronous `aria-expanded="false"` intent instead of full
+focus return, which is verified for real in `e2e/popover.spec.ts`.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(173/173), `pnpm build`, Storybook build, `npx playwright test`
+(125/125, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

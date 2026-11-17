@@ -67,6 +67,13 @@ interactive — addon with an input in one visual box; distinct from
 stylesheets. 164/164 unit, 115/115 e2e (twice), all clean on the first
 try — no new bugs this batch.
 
+## Update (2026-11-17, latest): Popover — Family C at 3/17
+
+Added `Popover` (click-triggered, real interactive content, closes on
+Escape/outside-click). No new bugs — only the already-known jsdom "no
+real animation frame" limitation needed a test adjustment, same as
+`TextTransition`/`DropdownMenu`/`Select`.
+
 ## Next action: Family B's last 4, then continue Family C
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,

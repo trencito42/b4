@@ -54,7 +54,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
-| 3 — Family C | **STARTED (2/17)** | `DropdownMenu`, `Tooltip` VERIFIED. 15 more components planned. |
+| 3 — Family C | **STARTED (3/17)** | `DropdownMenu`, `Tooltip`, `Popover` VERIFIED. 14 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
@@ -316,6 +316,18 @@ manually-triggered one fired too soon — both documented in
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (168/168), `pnpm build`, Storybook build, `npx playwright test`
 (120/120, run twice).
+
+## Popover — Family C's third component
+
+Real Base UI `Popover`, click-triggered, holds genuinely interactive
+content (not a static mockup — see the `WithInteractiveContent` story).
+Closes on Escape/outside-click, returns focus to the trigger. Only
+jsdom's known "no real animation frame" limitation needed a test
+adjustment (same category already seen on TextTransition/DropdownMenu).
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(173/173), `pnpm build`, Storybook build, `npx playwright test`
+(125/125, run twice).
 
 ## Git
 

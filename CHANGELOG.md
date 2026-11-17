@@ -23,6 +23,12 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Popover — Family C's third component (2026-11-17)
+
+- `@b4/react`: `Popover`, click-triggered, holds real interactive
+  content (confirm buttons etc., not static text). Closes on Escape/
+  outside click, returns focus to the trigger.
+
 ### Tooltip — Family C's second component (2026-11-17)
 
 - `@b4/react`: `Tooltip`, a real Base UI `Tooltip` composition.

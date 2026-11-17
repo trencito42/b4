@@ -58,7 +58,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | NavigationMenu | PLANNED |
 | ContextMenu | PLANNED |
 | Tooltip | **VERIFIED** |
-| Popover | PLANNED |
+| Popover | **VERIFIED** |
 | HoverCard | PLANNED |
 | Dialog | PLANNED |
 | AlertDialog | PLANNED |
