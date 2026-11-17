@@ -44,11 +44,19 @@ brief's "specialized components" note.
 
 ## Family E — Feedback & Motion
 
-Toast, InlineAlert, NotificationPanel, Spinner, TextTransition,
-NumberTransition, AnimatedIndicator, MorphingSurface, ExpandingAction,
-TransitionGroup, LoadingOverlay — all **PLANNED**. TextTransition,
-NumberTransition and AnimatedIndicator are Phase 1 (motion foundation), not
-deferred to Phase 5 like the rest of this family.
+| Component | Status |
+|---|---|
+| TextTransition | **VERIFIED** |
+| NumberTransition | **VERIFIED** |
+| AnimatedIndicator | **VERIFIED** |
+| Toast | PLANNED |
+| InlineAlert | PLANNED |
+| NotificationPanel | PLANNED |
+| Spinner | PLANNED (Button already has an inline spinner for its own `loading` state; a standalone `Spinner` component for use outside Button doesn't exist yet) |
+| MorphingSurface | PLANNED |
+| ExpandingAction | PLANNED |
+| TransitionGroup | PLANNED |
+| LoadingOverlay | PLANNED |
 
 ## Family F — Application Patterns
 

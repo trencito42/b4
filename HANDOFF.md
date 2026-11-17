@@ -1,24 +1,30 @@
 # HANDOFF — read this first on any resume
 
-**Last session stopped partway into Phase 1** (full details: `PROGRESS.md`).
-This is a deliberate checkpoint, not a context-exhaustion cutoff — but it's
-still far from the full mission (8 phases total, ~160 components in
-`COMPONENT_INVENTORY.md`, only 2 VERIFIED).
+**Last session finished Phase 1** (full details: `PROGRESS.md`). This is a
+deliberate checkpoint, not a context-exhaustion cutoff — but it's still far
+from the full mission (8 phases total, ~160 components in
+`COMPONENT_INVENTORY.md`, 5 VERIFIED).
 
 ## Immediate next action
 
-Finish **Phase 1**: build `TextTransition`, `NumberTransition`, and
-`AnimatedIndicator` as standalone, reusable primitives in
-`packages/react/src/components/` (or consider a `packages/react/src/
-primitives/` location if they're meant to be composed into other
-components rather than used directly — decide and document the choice).
-`SegmentedControl` is already done (built on Base UI's `ToggleGroup`/
-`Toggle` + Motion's `layoutId`) but its indicator duplicates the
-"traveling capsule" pattern inline rather than consuming a shared
-`AnimatedIndicator` — once that primitive exists, consider refactoring
-SegmentedControl to use it instead, so the pattern has one implementation.
+Start **Phase 2**: Family A + B components to full quality gate. Family A
+still needs IconButton, ButtonGroup, SplitButton, ToggleButton, Link,
+Badge, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. All of Family B
+(TextField, Textarea, PasswordField, SearchField, NumberField, InputGroup,
+Checkbox, RadioGroup, Switch, Select, Combobox, MultiSelect, Slider,
+RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload, Field,
+FormField) is still PLANNED. Suggested order: the simple Family A
+leftovers first (IconButton, ToggleButton, Badge — they reuse Button's
+vocabulary almost directly), then Checkbox/RadioGroup/Switch (Base UI has
+primitives for all three — check `@base-ui/react`'s export list the way
+this session did for `toggle-group`/`toggle` before building from scratch),
+then TextField and the rest.
+
 Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
-structural template (see `AGENTS.md`'s checklist).
+structural template (see `AGENTS.md`'s checklist). Consider wiring
+`useAsyncStatus` (in `@b4/motion`) into Button's `loading` prop and into
+whatever form-submit pattern Family B's Field/FormField end up needing,
+rather than each component re-inventing pending/success/error state.
 
 ## Things the next session needs to know that aren't obvious from the code
 
@@ -46,11 +52,19 @@ structural template (see `AGENTS.md`'s checklist).
    ways). If a Playwright test can't find a story by a guessed ID, build
    Storybook (`pnpm --filter @b4/studio run build-storybook`) and read
    `apps/studio/storybook-static/index.json` for the real ID.
-5. **jsdom has no `window.matchMedia`.** It's polyfilled in
+5. **Never `import "./Component.css"` inside a component's `.tsx` file in
+   `packages/react`.** This package has no CSS-import loader configured for
+   its `tsc`/`tsup` build (unlike `apps/studio`, which has `vite/client`
+   types and Vite's CSS handling) — it broke `tsc --noEmit` immediately
+   when tried while building `TextTransition`. Every component's CSS is
+   registered exactly once, via `@import` in `packages/react/src/
+   styles.css` — follow that pattern for any new component, don't import
+   CSS from the component file itself.
+6. **jsdom has no `window.matchMedia`.** It's polyfilled in
    `packages/react/src/test/setup.ts`. Any new test-setup file (a new
    package with its own Vitest config) needs the same polyfill or any
    component calling `useReducedMotion()` will throw in tests.
-6. **Color tokens that work as "white text on this fill" and "this color as
+7. **Color tokens that work as "white text on this fill" and "this color as
    text on the dark canvas" are not automatically the same safe value** on
    the Graphite (dark) theme, because the two reference backgrounds (white
    button-fill text vs. dark canvas) are different colors — the ratio that
@@ -60,7 +74,7 @@ structural template (see `AGENTS.md`'s checklist).
    component that puts a status/accent color behind white text as a solid
    fill, actually compute or axe-check it — don't assume an existing token
    is safe for a new use. See `TESTING.md`.
-7. **Git**: a local repo exists with Phase 0 committed. **Do not add the
+8. **Git**: a local repo exists with Phase 0 committed. **Do not add the
    GitHub remote or push yet.** A sibling session
    (`local_7e987ca8-a1a8-4f5b-ae73-edd712e66288`) first asked for a push
    after the first commit, then explicitly corrected that to: wait until

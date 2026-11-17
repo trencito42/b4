@@ -1,0 +1,18 @@
+/*
+  Stable baseline alignment: both the entering and exiting text nodes are
+  placed in the same CSS grid cell, so swapping them never shifts the
+  surrounding layout's baseline mid-transition, even while one is
+  translating in/out.
+*/
+.b4-text-transition {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+  vertical-align: bottom;
+  overflow: hidden;
+}
+
+.b4-text-transition__item {
+  grid-area: 1 / 1;
+  display: inline-block;
+  white-space: nowrap;
+}

@@ -1,8 +1,7 @@
 import { useId, useState, type ReactNode } from "react";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import { Toggle } from "@base-ui/react/toggle";
-import { motion } from "motion/react";
-import { springs, useReducedMotion } from "@b4/motion";
+import { AnimatedIndicator } from "../AnimatedIndicator/AnimatedIndicator.js";
 
 export interface SegmentedControlItem<Value extends string> {
   value: Value;
@@ -34,12 +33,10 @@ export interface SegmentedControlProps<Value extends string> {
  * Selection state is lifted into this component (not read back from Base
  * UI's internal Toggle state) specifically so the indicator's "which item
  * is it in right now" decision happens at the same render as everything
- * else — the indicator is conditionally rendered inside whichever Toggle
+ * else. The indicator itself is `AnimatedIndicator` — the shared traveling-
+ * surface primitive — conditionally rendered inside whichever Toggle
  * currently matches `selected` (never more than one at a time, by
- * construction), and Motion's `layoutId` shared-layout animation handles
- * the cross-element travel automatically, including under rapid repeated
- * clicks: each new selection simply redirects the in-flight animation
- * rather than restarting or duplicating it.
+ * construction).
  */
 export function SegmentedControl<Value extends string>({
   items,
@@ -52,7 +49,6 @@ export function SegmentedControl<Value extends string>({
   ...rest
 }: SegmentedControlProps<Value>) {
   const indicatorId = useId();
-  const reducedMotion = useReducedMotion();
   const [internalValue, setInternalValue] = useState<Value | undefined>(
     defaultValue ?? items[0]?.value,
   );
@@ -85,10 +81,9 @@ export function SegmentedControl<Value extends string>({
             className="b4-segmented-control__item"
           >
             {isSelected && (
-              <motion.div
+              <AnimatedIndicator
                 layoutId={`b4-segmented-indicator-${indicatorId}`}
                 className="b4-segmented-control__indicator"
-                transition={reducedMotion ? { duration: 0 } : springs.travel}
               />
             )}
             <span className="b4-segmented-control__label">{item.label}</span>

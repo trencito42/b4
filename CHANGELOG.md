@@ -25,6 +25,12 @@ a per-npm-release history.
   capsule indicator. Controlled + uncontrolled. Full quality gate passed,
   including a rapid-alternating-click check proving the indicator never
   duplicates.
+- `@b4/react`: `AnimatedIndicator` (the shared traveling-surface primitive,
+  extracted from SegmentedControl and now consumed by it), `TextTransition`
+  (crossfade/vertical/horizontal replacement modes), `NumberTransition`
+  (built on TextTransition, direction auto-derived from increase/decrease).
+- `@b4/motion`: `useAsyncStatus` — a race-safe idle/pending/success/error
+  async-state hook for the label→spinner→success(/error) pattern.
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,

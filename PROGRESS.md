@@ -8,7 +8,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | Phase | Status | Notes |
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
-| 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **IN PROGRESS** | SegmentedControl is built and VERIFIED (see `QUALITY_MATRIX.md`). TextTransition, NumberTransition, and AnimatedIndicator as standalone reusable primitives do not exist yet — SegmentedControl's indicator uses Motion's `layoutId` directly rather than a shared primitive. |
+| 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 — Family A + B to full quality gate | **BARELY STARTED** | Only `Button` (Family A) exists and is VERIFIED. |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
@@ -85,14 +85,20 @@ npx playwright test                              # 2/2 pass (incl. axe-core)
 - **`SegmentedControl`** (Family A): the explicit Changelog/Login reference
   component named in the mission brief. Built on Base UI's `ToggleGroup`/
   `Toggle` (real arrow-key roving focus and ARIA for free, not hand-rolled),
-  with a Motion `layoutId`-based traveling capsule indicator using
-  `springs.travel`. Controlled + uncontrolled value support. Taken through
-  the same full quality gate as Button — see `QUALITY_MATRIX.md`.
-  - Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test` (12/12
-    total across Button + SegmentedControl), `pnpm build`,
+  with a traveling capsule indicator. Controlled + uncontrolled value
+  support. Taken through the same full quality gate as Button.
+- **Phase 1 completed**: `AnimatedIndicator` (the shared traveling-surface
+  primitive, extracted from SegmentedControl's original inline
+  implementation and now consumed by it), `TextTransition`
+  (crossfade/vertical/horizontal modes), `NumberTransition` (built on
+  TextTransition, auto-derives slide direction from increase/decrease),
+  and `useAsyncStatus` in `@b4/motion` (idle/pending/success/error with
+  race-safe auto-idle timeouts — has a dedicated test for the "second call
+  resolves before a stale first-call timeout fires" race).
+  - Verified: `pnpm typecheck` (5/5 packages), `pnpm --filter @b4/react run
+    test` (23/23), `pnpm --filter @b4/motion run test` (5/5), `pnpm build`,
     `pnpm --filter @b4/studio run build-storybook`, `npx playwright test`
-    (4/4 total, incl. a rapid-alternating-click check proving the indicator
-    never duplicates and axe-core across the Changelog/Login story).
+    (7/7, incl. axe-core and rapid-click/rapid-selection stress tests).
 
 ## Git
 
