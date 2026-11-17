@@ -53,7 +53,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 - Family A + B to full quality gate | **Family A DONE, Family B in progress** | Family A is now complete: all 12 components VERIFIED (Button, IconButton, ToggleButton, SegmentedControl, Badge, Link, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut, ButtonGroup, SplitButton). Family B: 9/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox — that's actually 12; still missing InputGroup, MultiSelect, DatePicker, TimePicker, ColorPicker, FileUpload). See QUALITY_MATRIX.md. |
+| 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
 | 3 — Family C | **STARTED** | `DropdownMenu` VERIFIED — the first Family C component, pulled forward to give `SplitButton` a real menu instead of a decorative chevron. 16 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -285,6 +285,23 @@ a rapid-cycle stress test raced the settle spring under full motion).
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (156/156), `pnpm build`, Storybook build, `npx playwright test` (109/109,
 run twice for stability).
+
+## Family B's remaining core inputs: MultiSelect, InputGroup
+
+`MultiSelect` shares `Select`'s Base UI `Root` with `multiple` turned on
+(same "share one implementation" pattern as Slider/RangeSlider) — its
+trigger shows a comma-joined summary up to two picks, then a count.
+`InputGroup` joins a (possibly interactive) addon with an input inside
+one visual control box, distinct from `TextField`'s decorative-only
+icon slots. Both reuse existing CSS (`Select.css`/`TextField.css`), no
+new stylesheet needed.
+
+Family B now stands at 15/19 VERIFIED; only DatePicker, TimePicker,
+ColorPicker, and FileUpload remain PLANNED.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(164/164), `pnpm build`, Storybook build, `npx playwright test`
+(115/115, run twice).
 
 ## Git
 

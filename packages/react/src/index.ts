@@ -69,6 +69,12 @@ export type { SelectProps, SelectItem } from "./components/Select/Select.js";
 export { Combobox } from "./components/Combobox/Combobox.js";
 export type { ComboboxProps } from "./components/Combobox/Combobox.js";
 
+export { MultiSelect } from "./components/MultiSelect/MultiSelect.js";
+export type { MultiSelectProps, MultiSelectItem } from "./components/MultiSelect/MultiSelect.js";
+
+export { InputGroup } from "./components/InputGroup/InputGroup.js";
+export type { InputGroupProps } from "./components/InputGroup/InputGroup.js";
+
 export { Link } from "./components/Link/Link.js";
 export type { LinkProps, LinkTone } from "./components/Link/Link.js";
 

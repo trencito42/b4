@@ -212,6 +212,24 @@ seconds.
   non-rapid cycle. Rewrote `dropdown-menu.spec.ts`'s equivalent test to
   match that proven-stable pattern instead of inventing a new one.
 
+## Family B completed (2026-11-17, still later)
+
+| Component | Status | Evidence |
+|---|---|---|
+| MultiSelect | **VERIFIED** | Shares `Select`'s Base UI Root with `multiple`; unit (placeholder/comma-join/count-summary/multi-pick-without-closing/axe), e2e both themes + real-browser multi-pick |
+| InputGroup | **VERIFIED** | Unit (labeled input alongside a visible, non-hidden addon; error display; axe), e2e both themes + real-browser typed input |
+
+**Family B (Forms & Inputs) is now mostly built**: 15 of 19 entries are
+VERIFIED (counting `Field` as also covering the brief's separate
+"FormField" entry, and Slider/MultiSelect each covering their array-value
+sibling, RangeSlider). Still **PLANNED**, genuinely not built:
+`DatePicker`, `TimePicker`, `ColorPicker`, `FileUpload` — see
+`COMPONENT_INVENTORY.md` for the exact list.
+
+Full suite at this checkpoint: `pnpm typecheck` (5/5), `pnpm --filter
+@b4/react run test` (164/164), `pnpm --filter @b4/motion run test` (5/5),
+`pnpm build`, Storybook build, `npx playwright test` (115/115, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

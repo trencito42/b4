@@ -147,6 +147,15 @@
   text-align: center;
 }
 
+.b4-input-group__addon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--b4-text-tertiary);
+  font-size: var(--b4-text-sm);
+  white-space: nowrap;
+}
+
 .b4-field-control {
   position: relative;
 }

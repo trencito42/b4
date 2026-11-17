@@ -33,10 +33,10 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | PasswordField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | SearchField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | NumberField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
-| InputGroup | PLANNED |
+| InputGroup | **VERIFIED** |
 | Select | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | Combobox | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
-| MultiSelect | PLANNED |
+| MultiSelect | **VERIFIED** |
 | Slider | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | RangeSlider | Covered by Slider array values - **VERIFIED** alongside Slider |
 | DatePicker | PLANNED |
@@ -112,6 +112,13 @@ navigation / actual syntax-aware editing), not static mockups.
 - **Slider / RangeSlider share one implementation.** Base UI Slider accepts
   a number or array; use Slider with array values for ranges. No separate
   duplicate component is introduced. Both inventory use cases are retained.
+
+- **MultiSelect shares `Select`'s implementation**, same reasoning as
+  Slider/RangeSlider: Base UI's `Select.Root` natively supports
+  `multiple` with an array value, so a second popup implementation would
+  just duplicate it. `MultiSelect`'s trigger shows a comma-joined summary
+  of up to two selected labels or a "{n} selected" count beyond that —
+  chip-per-item display is a real possible follow-up, not shipped.
 
 - **SplitButton pulled `DropdownMenu` forward from Family C** rather than
   shipping with a decorative, non-functional chevron. A split button's

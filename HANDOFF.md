@@ -58,24 +58,37 @@ timing fixes (axe sampling mid-fade; a rapid-cycle test racing the
 settle spring under full motion — both now follow the pattern already
 proven stable in `select.spec.ts`).
 
-## Next action: rest of Family B, then continue Family C
+## Update (2026-11-17, even later): MultiSelect, InputGroup — Family B at 15/19
 
-Family B still needs `InputGroup`, `MultiSelect`, `DatePicker`,
-`TimePicker`, `ColorPicker`, `FileUpload`. Family C has 16 more
-components beyond `DropdownMenu` (Tabs, Accordion, Dialog, Popover,
-Tooltip, ContextMenu, etc.) — check `@base-ui/react`'s export list for
-each one, the way this session did for `select`/`combobox`/`slider`/
-`number-field`/`menu`, before building from scratch; Base UI covers most
-of Family C. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
-`TextTransition`/`NumberTransition`, `DropdownMenu`, and the internal
-helpers (`FieldControl`, `SteppingInput`, `motionCompatibleProps`,
-`OptionPopupSurface`, `createItems` — check `packages/react/src/
-internal/` before building something that duplicates one of these).
-Full gate (typecheck → unit tests → build → Storybook build →
-Playwright, both themes) before marking anything VERIFIED, same as every
-component above. **When a Storybook-driven e2e interaction mysteriously
-no-ops, check for an uncaught exception from a missing required story
-prop before suspecting the component** — see the SplitButton bug above.
+Added `MultiSelect` (shares `Select`'s Base UI Root with `multiple`,
+same pattern as Slider/RangeSlider) and `InputGroup` (joins a — possibly
+interactive — addon with an input in one visual box; distinct from
+`TextField`'s `aria-hidden` icon-only slots). Both reuse existing
+stylesheets. 164/164 unit, 115/115 e2e (twice), all clean on the first
+try — no new bugs this batch.
+
+## Next action: Family B's last 4, then continue Family C
+
+Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
+`FileUpload` — these are the most complex remaining Family B items
+(calendar grid logic, color space math, drag-and-drop) and deserve real
+scrutiny against "don't fake complex functionality," not a quick stub.
+Family C has 16 more components beyond `DropdownMenu` (Tabs, Accordion,
+Dialog, Popover, Tooltip, ContextMenu, etc.) — check `@base-ui/react`'s
+export list for each one, the way this session did for `select`/
+`combobox`/`slider`/`number-field`/`menu`, before building from scratch;
+Base UI covers most of Family C, likely including `tabs`, `accordion`,
+`dialog`, `popover`, `tooltip` directly. Keep using the shared `Field`
+wrapper, `AnimatedIndicator`, `TextTransition`/`NumberTransition`,
+`DropdownMenu`, and the internal helpers (`FieldControl`,
+`SteppingInput`, `motionCompatibleProps`, `OptionPopupSurface`,
+`createItems` — check `packages/react/src/internal/` before building
+something that duplicates one of these). Full gate (typecheck → unit
+tests → build → Storybook build → Playwright, both themes) before
+marking anything VERIFIED, same as every component above. **When a
+Storybook-driven e2e interaction mysteriously no-ops, check for an
+uncaught exception from a missing required story prop before suspecting
+the component** — see the SplitButton bug above.
 
 ## Historical context below (superseded where it says "pending"/"blocked" — see above)
 

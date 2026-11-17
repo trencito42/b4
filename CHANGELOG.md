@@ -23,6 +23,14 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Family B's last core inputs: MultiSelect, InputGroup (2026-11-17)
+
+- `@b4/react`: `MultiSelect` (shares `Select`'s Base UI Root with
+  `multiple`, same pattern as Slider/RangeSlider) and `InputGroup`
+  (joins a possibly-interactive addon with an input in one visual box).
+  Family B now stands at 15/19 VERIFIED; only DatePicker, TimePicker,
+  ColorPicker, FileUpload remain.
+
 ### Family A completed; DropdownMenu opens Family C (2026-11-17)
 
 - `@b4/react`: `Link`, `StatusBadge`, `Avatar`, `AvatarGroup`,
