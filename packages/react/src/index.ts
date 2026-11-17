@@ -59,3 +59,6 @@ export type { SearchFieldProps } from "./components/SearchField/SearchField.js";
 
 export { NumberField } from "./components/NumberField/NumberField.js";
 export type { NumberFieldProps } from "./components/NumberField/NumberField.js";
+
+export { Slider } from "./components/Slider/Slider.js";
+export type { SliderProps } from "./components/Slider/Slider.js";

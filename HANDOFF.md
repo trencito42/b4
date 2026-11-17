@@ -5,11 +5,20 @@
 cutoff — but it's still far from the full mission (8 phases total, ~160
 components in `COMPONENT_INVENTORY.md`, 17 VERIFIED).
 
+## Slider checkpoint requiring follow-up
+
+Slider is IMPLEMENTED, including range values, stories and six unit tests.
+Current checks: typecheck, React 80/80, motion 5/5, package and Storybook builds passed.
+Playwright could not start: Storybook settings EPERM, then localhost socket
+permissions blocked a static-build fallback. Run browser tests and inspect both
+themes plus density/radius/contrast/motion before marking Slider VERIFIED.
+No manual visual sweep or release audit was performed in this checkpoint.
+
 ## Immediate next action
 
 Continue **Phase 2**. Family A still needs ButtonGroup, SplitButton, Link,
 StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. Family B still needs
-InputGroup, Select, Combobox, MultiSelect, Slider, RangeSlider,
+InputGroup, Select, Combobox, MultiSelect,
 DatePicker, TimePicker, ColorPicker, FileUpload. `Field` (the shared
 label/hint/error wrapper — also covers the brief's separate "FormField"
 entry) and all of TextField/Textarea/PasswordField/SearchField/
@@ -89,19 +98,8 @@ rather than each component re-inventing pending/success/error state.
    TextTransition/NumberTransition were only ever checked in Graphite —
    revisiting them with the same both-themes e2e pattern is good, cheap
    follow-up work.
-8. **Git**: a local repo exists with Phase 0 committed. **Do not add the
-   GitHub remote or push yet.** A sibling session
-   (`local_7e987ca8-a1a8-4f5b-ae73-edd712e66288`) first asked for a push
-   after the first commit, then explicitly corrected that to: wait until
-   the *entire* mission is done (all 8 phases, or a genuine stopping
-   blocker), then run:
-   ```
-   git branch -M main
-   git remote add origin https://github.com/trencito42/b4.git
-   git push -u origin main
-   ```
-   If that push is ever rejected or the remote already has history, stop
-   and report back — don't force-push.
+8. **Git**: the user authorized pushing the current checkpoint on 2026-11-17.
+   This supersedes the earlier wait-until-complete instruction. Never force-push.
 
 9. **Playwright's worker count can flake against the shared Storybook dev
    server** ("Execution context was destroyed..." or an action silently
@@ -121,3 +119,13 @@ rather than each component re-inventing pending/success/error state.
 - `apps/studio`'s Vite app shell is a one-screen placeholder, not the real
   B4 Studio (nav, category browser, configurator, 3 integration
   showcases) — that's explicitly Phase 6, not a Phase 0 shortfall.
+
+
+## Push outcome for this checkpoint
+
+No new commit or push succeeded. The execution environment made `.git`
+read-only: remote setup, branch rename and index.lock creation were denied.
+The branch remains master; no origin was added. All checkpoint changes remain
+in the working tree. In an environment with writable Git metadata, review
+`git diff`, commit the checkpoint, then configure origin and push without force.
+User authorization to push is already present; no further approval is needed.

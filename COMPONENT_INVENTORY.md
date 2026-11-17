@@ -37,8 +37,8 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Select | PLANNED |
 | Combobox | PLANNED |
 | MultiSelect | PLANNED |
-| Slider | PLANNED |
-| RangeSlider | PLANNED |
+| Slider | IMPLEMENTED - unit/build checks passed; browser/visual checks pending |
+| RangeSlider | Covered by Slider array values - IMPLEMENTED; browser/visual checks pending |
 | DatePicker | PLANNED |
 | TimePicker | PLANNED |
 | ColorPicker | PLANNED |
@@ -92,3 +92,7 @@ navigation / actual syntax-aware editing), not static mockups.
   input (`TextField`, `Textarea`, `PasswordField`, `SearchField`) needs
   exactly this one wrapper, not two different ones. Kept the name `Field`
   since that's what the underlying Base UI primitive is also called.
+
+- **Slider / RangeSlider share one implementation.** Base UI Slider accepts
+  a number or array; use Slider with array values for ranges. No separate
+  duplicate component is introduced. Both inventory use cases are retained.

@@ -148,3 +148,14 @@ actions.
   it rather than duplicate the pattern.
 - IconButton/ButtonGroup/SplitButton/ToggleButton (used standalone, not
   inside a SegmentedControl) still don't exist.
+
+## Slider checkpoint (2026-11-17)
+
+| Component | Status | Evidence | Remaining gate |
+|---|---|---|---|
+| Slider (including range values) | IMPLEMENTED | React 80/80 (six Slider tests), motion 5/5; typecheck, package build and Storybook build passed | Browser axe/keyboard tests written but not run successfully; both-theme visual and modifier sweep pending |
+
+Playwright startup was blocked by Storybook settings EPERM. A static Storybook
+fallback started, but access to localhost sockets was denied by the execution
+environment. These are not passing e2e results. The earlier 30/30 suite totals
+above describe the previous checkpoint, not a fresh browser run in this session.

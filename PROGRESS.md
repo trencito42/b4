@@ -204,10 +204,18 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (74/74), `pnpm build`, Storybook build, `npx playwright test` (30/30,
 twice in a row at the new worker count).
 
+## Slider checkpoint (2026-11-17)
+
+Slider supports single and array values through the same Base UI primitive.
+Added ref forwarding, shared focus-offset token, and explicit reduced-motion
+suppression of thumb transitions. React unit tests: 80/80; motion: 5/5;
+typecheck, package build and Storybook build passed in this session.
+Browser checks could not start: Storybook profile settings access failed
+(EPERM), and the static-server fallback was blocked by localhost socket
+permissions. Slider remains IMPLEMENTED until browser and visual checks run.
+
 ## Git
 
-Local git repo initialized in Phase 0. **Not pushed anywhere yet** — a
-sibling session asked for a GitHub remote
-(`github.com/trencito42/b4.git`) to be added and pushed, but later corrected
-that to: hold off until the *entire* mission is complete (all phases, or a
-genuine stopping blocker), then push once. See `HANDOFF.md`.
+The user's latest request authorizes pushing this checkpoint now, superseding
+the earlier instruction to wait for all phases. The project remains in Phase 2.
+Push outcome must be checked against the remote; do not force-push.
