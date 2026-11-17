@@ -39,6 +39,8 @@ a per-npm-release history.
   e2e-tested in both themes from the start.
 - `@b4/react`: `TextField` (Family B), built on Base UI's `Field` + `Input`
   — the base text-entry pattern for the rest of Family B's text fields.
+- `@b4/react`: `Textarea`, `PasswordField`, `SearchField` (Family B),
+  extending TextField's pattern.
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,
@@ -63,3 +65,7 @@ a per-npm-release history.
   darkening `--b4-danger` and tuning both tint percentages. All three
   found by testing Badge in both themes with real axe-core, not by eye or
   hand-calculated contrast math.
+- `SearchField`'s clear button updated its own tracking state but never
+  actually reset the underlying (uncontrolled) input's value — caught by
+  its own unit test, fixed by always passing one fully-computed value to
+  the underlying `Input` instead of mixing `value`/`defaultValue`.

@@ -9,7 +9,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField VERIFIED (4/20). |
+| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField, Textarea, PasswordField, SearchField VERIFIED (7/20). |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -141,6 +141,29 @@ not optional. Verified in both themes from the start.
 
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (54/54), `pnpm build`, Storybook build, `npx playwright test` (19/19).
+
+## Textarea, PasswordField, SearchField — and a real controlled-value bug
+
+All three extend TextField's pattern (shared `.b4-text-field__*` CSS
+classes, Base UI `Field`). PasswordField and SearchField both needed an
+*interactive* trailing control (visibility toggle / clear button), which
+TextField's `endIcon` slot intentionally can't provide (it's
+`aria-hidden`), so they compose the Field parts directly rather than
+wrapping TextField — see each component's doc comment.
+
+SearchField's first version had a real bug: the clear button updated
+internal state but never actually reset the underlying (uncontrolled)
+input's value, because it mixed `value`/`defaultValue` pass-through
+inconsistently. Caught by the unit test, not a type error or a visual
+check — see `QUALITY_MATRIX.md`'s "A real bug caught by the unit test"
+section. Fixed by always computing one current value and passing only
+that to the underlying primitive, same pattern SegmentedControl already
+used.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(66/66), `pnpm build`, Storybook build, `npx playwright test` (27/27,
+both themes for every form control, plus dedicated real-browser e2e for
+the password toggle and search-clear interactions).
 
 ## Git
 

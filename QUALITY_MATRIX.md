@@ -23,7 +23,30 @@ is only set when the checks below actually ran and passed — not on
 
 | **TextField** | **VERIFIED** | ✅ default/hint/error/required/disabled/3-sizes stories, both themes e2e'd | ✅ Base UI `Field`+`Input` gives real label/description/error ARIA wiring; error replaces hint rather than both showing; typed-input e2e in a real browser | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
 
-**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (54/54), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (19/19, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField stories — Badge/Checkbox/Switch/RadioGroup/TextField checked in both themes).
+| **Textarea** | **VERIFIED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ Base UI `Field.Control render={<textarea/>}` pattern; multi-line typed input verified | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
+| **PasswordField** | **VERIFIED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ real-browser e2e for the show/hide toggle actually changing input `type`; toggle is keyboard-reachable (verified by unit test tabbing to it) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated toggle e2e |
+| **SearchField** | **VERIFIED — after catching and fixing a real uncontrolled-clear bug** | ✅ empty/with-value/disabled, both themes e2e'd | ✅ clear button appears only with a value and actually empties it (real-browser e2e, not just unit) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated clear e2e |
+
+**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (66/66), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (27/27, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField/Textarea/PasswordField/SearchField stories — form controls checked in both themes).
+
+## A real bug caught by the unit test, not by eye: SearchField's "clear" didn't clear
+
+`SearchField`'s initial implementation passed both `value` (the external
+controlled prop, `undefined` in uncontrolled use) and `defaultValue` to
+the underlying `<Input>`, and tracked "current value" in a separate
+`useState` for deciding whether to show the clear button. Clicking clear
+updated that separate state but never told the actual (uncontrolled) DOM
+input to reset, because `defaultValue` only applies once, at mount. The
+clear button visually disappeared's condition changed, but the input's
+real value didn't. The unit test
+(`SearchField.test.tsx`'s "shows a clear button... and clears it on
+click") caught this immediately. Fix: always pass the *computed* current
+value (`value ?? internalValue`) to the underlying primitive — the same
+"fully controlled internally, computed once for the uncontrolled case"
+pattern already used by `SegmentedControl`. **Lesson for new
+controllable components**: never pass both `value` and `defaultValue`
+through to the underlying primitive at once — pick one computed value and
+always pass that.
 
 ## Three more real accessibility bugs, caught by actually testing Porcelain
 

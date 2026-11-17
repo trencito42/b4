@@ -63,6 +63,70 @@ test("TextField accepts typed input in a real browser", async ({ page }) => {
   await expect(input).toHaveValue("hi@example.com");
 });
 
+for (const theme of themes) {
+  test(`Textarea is axe-clean on ${theme}`, async ({ page }) => {
+    await page.goto(
+      `/iframe.html?id=family-b-forms-inputs-textarea--default&globals=b4Theme:${theme}`,
+    );
+    await expect(page.getByRole("textbox", { name: "Description" })).toBeVisible();
+
+    const results = await new AxeBuilder({ page })
+      .disableRules(["page-has-heading-one", "landmark-one-main", "region"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test(`PasswordField is axe-clean on ${theme}`, async ({ page }) => {
+    await page.goto(
+      `/iframe.html?id=family-b-forms-inputs-passwordfield--default&globals=b4Theme:${theme}`,
+    );
+    await expect(page.getByRole("button", { name: "Show password" })).toBeVisible();
+
+    const results = await new AxeBuilder({ page })
+      .disableRules(["page-has-heading-one", "landmark-one-main", "region"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test(`SearchField is axe-clean on ${theme}`, async ({ page }) => {
+    await page.goto(
+      `/iframe.html?id=family-b-forms-inputs-searchfield--with-value&globals=b4Theme:${theme}`,
+    );
+    await expect(page.getByRole("button", { name: "Clear search" })).toBeVisible();
+
+    const results = await new AxeBuilder({ page })
+      .disableRules(["page-has-heading-one", "landmark-one-main", "region"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}
+
+test("PasswordField toggle reveals and re-masks the value in a real browser", async ({
+  page,
+}) => {
+  await page.goto(
+    "/iframe.html?id=family-b-forms-inputs-passwordfield--default&globals=b4Theme:graphite",
+  );
+
+  const input = page.locator(".b4-text-field__input");
+  await input.fill("secret123");
+  await expect(input).toHaveAttribute("type", "password");
+
+  await page.getByRole("button", { name: "Show password" }).click();
+  await expect(input).toHaveAttribute("type", "text");
+});
+
+test("SearchField clear button removes the value in a real browser", async ({ page }) => {
+  await page.goto("/iframe.html?id=family-b-forms-inputs-searchfield--with-value");
+
+  const input = page.getByRole("searchbox");
+  await expect(input).toHaveValue("button");
+
+  await page.getByRole("button", { name: "Clear search" }).click();
+  await expect(input).toHaveValue("");
+  await expect(page.getByRole("button", { name: "Clear search" })).toHaveCount(0);
+});
+
 test("RadioGroup supports arrow-key navigation in a real browser", async ({ page }) => {
   await page.goto("/iframe.html?id=family-b-forms-inputs-radiogroup--default");
 

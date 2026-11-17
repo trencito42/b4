@@ -29,9 +29,9 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Switch | **VERIFIED** |
 | RadioGroup | **VERIFIED** |
 | TextField | **VERIFIED** |
-| Textarea | PLANNED |
-| PasswordField | PLANNED |
-| SearchField | PLANNED |
+| Textarea | **VERIFIED** |
+| PasswordField | **VERIFIED** |
+| SearchField | **VERIFIED** |
 | NumberField | PLANNED |
 | InputGroup | PLANNED |
 | Select | PLANNED |

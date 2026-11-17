@@ -3,26 +3,29 @@
 **Last session made solid progress into Phase 2** (full details:
 `PROGRESS.md`). This is a deliberate checkpoint, not a context-exhaustion
 cutoff — but it's still far from the full mission (8 phases total, ~160
-components in `COMPONENT_INVENTORY.md`, 12 VERIFIED).
+components in `COMPONENT_INVENTORY.md`, 15 VERIFIED).
 
 ## Immediate next action
 
 Continue **Phase 2**. Family A still needs ButtonGroup, SplitButton, Link,
 StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. Family B still needs
-Textarea, PasswordField, SearchField, NumberField, InputGroup, Select,
-Combobox, MultiSelect, Slider, RangeSlider, DatePicker, TimePicker,
-ColorPicker, FileUpload, Field, FormField. `TextField` is done and is the
-pattern to copy for Textarea/PasswordField/SearchField/NumberField (same
-`Field`+label/hint/error wiring, different control). Note there's no
-standalone `Field`/`FormField` wrapper component extracted yet — TextField
-composes Base UI's `Field` parts directly inline; if/when 3+ input
-components share near-identical label/hint/error markup, extract that
-into a real `Field` component rather than copy-pasting it, per
-`DESIGN_PRINCIPLES.md`'s "no component ships styled independently." Next
-after that: Select/Combobox (check `@base-ui/react`'s `select`/`combobox`
-exports the way this session did for `toggle-group`/`checkbox`/`switch`/
-`radio-group`/`field`/`input` before building from scratch — Base UI has
-primitives for both).
+NumberField, InputGroup, Select, Combobox, MultiSelect, Slider,
+RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload, Field,
+FormField. `TextField`/`Textarea`/`PasswordField`/`SearchField` are done
+and share the `.b4-text-field__*` CSS classes + Base UI `Field` — copy
+that pattern for `NumberField` next (it's the closest remaining fit: a
+TextField variant with increment/decrement, similar to how
+PasswordField/SearchField add a trailing interactive control). Note
+there's still no standalone `Field`/`FormField` wrapper component
+extracted — four components now inline the same Base UI `Field.Root`/
+`Label`/`Description`/`Error` composition. This has crossed the "3+
+components, extract it" threshold this session's own notes set — doing
+that extraction (a real exported `Field` component, with `TextField` etc.
+refactored to use it) is good next work, before adding a fifth copy via
+NumberField. After that: Select/Combobox (check `@base-ui/react`'s
+`select`/`combobox` exports the way this session did for `toggle-group`/
+`checkbox`/`switch`/`radio-group`/`field`/`input` before building from
+scratch — Base UI has primitives for both).
 
 Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
 structural template (see `AGENTS.md`'s checklist). Consider wiring

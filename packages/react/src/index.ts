@@ -44,3 +44,12 @@ export type { RadioGroupProps, RadioGroupItem } from "./components/RadioGroup/Ra
 
 export { TextField } from "./components/TextField/TextField.js";
 export type { TextFieldProps, TextFieldSize } from "./components/TextField/TextField.js";
+
+export { Textarea } from "./components/Textarea/Textarea.js";
+export type { TextareaProps } from "./components/Textarea/Textarea.js";
+
+export { PasswordField } from "./components/PasswordField/PasswordField.js";
+export type { PasswordFieldProps } from "./components/PasswordField/PasswordField.js";
+
+export { SearchField } from "./components/SearchField/SearchField.js";
+export type { SearchFieldProps } from "./components/SearchField/SearchField.js";

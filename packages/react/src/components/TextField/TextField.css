@@ -53,6 +53,20 @@
   border-color: var(--b4-danger);
 }
 
+/* Textarea reuses every .b4-text-field__* class except height, which must
+   come from content (rows) rather than the fixed control-height tokens. */
+.b4-text-field__control--textarea {
+  height: auto;
+  padding: var(--b4-space-5) var(--b4-control-padding-x);
+  align-items: flex-start;
+}
+
+.b4-text-field__control--textarea .b4-text-field__input {
+  resize: vertical;
+  font-family: inherit;
+  line-height: var(--b4-leading-normal);
+}
+
 .b4-text-field__input {
   flex: 1;
   min-width: 0;
@@ -91,4 +105,27 @@
 
 .b4-text-field__message--error {
   color: var(--b4-danger-text);
+}
+
+.b4-text-field__action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--b4-text-tertiary);
+  cursor: pointer;
+}
+
+.b4-text-field__action-button:hover {
+  color: var(--b4-text-secondary);
+}
+
+.b4-text-field__action-button:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: 2px;
+  border-radius: var(--b4-radius-xs);
 }
