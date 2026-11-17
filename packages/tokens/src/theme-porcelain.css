@@ -1,0 +1,93 @@
+/*
+  B4 Porcelain — light, near-white/warm-neutral surfaces, refined layering.
+  Applied via [data-b4-theme="porcelain"] on a root element. Same semantic
+  token names as Graphite — every component behaves identically across themes.
+*/
+
+[data-b4-theme="porcelain"] {
+  color-scheme: light;
+
+  /* ---- raw palette steps (warm neutral, never stark white) ---- */
+  --b4-gray-50: #fbfaf8;
+  --b4-gray-100: #f5f3f0;
+  --b4-gray-150: #efece8;
+  --b4-gray-200: #e7e3dd;
+  --b4-gray-250: #dcd7cf;
+  --b4-gray-300: #cbc5ba;
+  --b4-gray-400: #ada59a;
+  --b4-gray-500: #8a8174;
+  --b4-gray-600: #6b6356;
+  --b4-gray-700: #4c463c;
+  --b4-gray-800: #332f28;
+  --b4-gray-900: #1e1b16;
+  --b4-gray-950: #121009;
+
+  --b4-accent-h: 221;
+  --b4-accent-s: 78%;
+  --b4-accent-400: hsl(var(--b4-accent-h) var(--b4-accent-s) 56%);
+  --b4-accent-500: hsl(var(--b4-accent-h) var(--b4-accent-s) 48%);
+  --b4-accent-600: hsl(var(--b4-accent-h) var(--b4-accent-s) 40%);
+
+  /* ---- surfaces (elevation by lightness, not borders/shadows) ---- */
+  --b4-surface-canvas: var(--b4-gray-50);
+  --b4-surface-1: #ffffff;
+  --b4-surface-2: var(--b4-gray-100);
+  --b4-surface-3: var(--b4-gray-150);
+  --b4-surface-overlay: #ffffff;
+
+  /* ---- text ---- */
+  --b4-text-primary: var(--b4-gray-950);
+  --b4-text-secondary: var(--b4-gray-700);
+  --b4-text-tertiary: var(--b4-gray-600);
+  --b4-text-disabled: var(--b4-gray-400);
+  --b4-text-inverse: var(--b4-gray-50);
+  --b4-text-on-accent: #ffffff;
+
+  /* ---- borders ---- */
+  --b4-border-subtle: var(--b4-gray-200);
+  --b4-border-default: var(--b4-gray-250);
+  --b4-border-strong: var(--b4-gray-400);
+
+  /* ---- accent ---- */
+  --b4-accent: var(--b4-accent-500);
+  --b4-accent-hover: var(--b4-accent-600);
+  --b4-accent-active: var(--b4-accent-600);
+  --b4-accent-subtle-bg: color-mix(in srgb, var(--b4-accent-500) 10%, var(--b4-surface-1));
+
+  /* ---- controls ---- */
+  --b4-control-bg: var(--b4-gray-150);
+  --b4-control-bg-hover: var(--b4-gray-200);
+  --b4-control-bg-active: var(--b4-gray-250);
+  --b4-control-bg-selected: var(--b4-gray-800);
+  --b4-control-fg: var(--b4-text-secondary);
+  --b4-control-fg-selected: var(--b4-gray-50);
+  --b4-control-indicator-bg: var(--b4-gray-800);
+
+  /* ---- status ---- */
+  /* darker than you'd pick by eye — #0f9d6a reads fine as text-on-tint but
+     fails 4.5:1 as a white-on-fill background (e.g. a future filled
+     StatusBadge/Toast success variant); #0c7a52 clears it with margin. */
+  --b4-success: #0c7a52;
+  --b4-success-bg: color-mix(in srgb, #0c7a52 10%, var(--b4-surface-1));
+  --b4-warning: #b4740a;
+  --b4-warning-bg: color-mix(in srgb, #b4740a 10%, var(--b4-surface-1));
+  --b4-danger: #d6392f;
+  --b4-danger-bg: color-mix(in srgb, #d6392f 10%, var(--b4-surface-1));
+  --b4-info: #1c6fd1;
+  --b4-info-bg: color-mix(in srgb, #1c6fd1 10%, var(--b4-surface-1));
+
+  /* ---- focus ---- */
+  --b4-focus-ring-color: var(--b4-accent-500);
+
+  /* ---- shadow ---- */
+  --b4-shadow-raised: 0 1px 2px rgba(30, 27, 22, 0.06), 0 4px 12px rgba(30, 27, 22, 0.08);
+  --b4-shadow-overlay: 0 8px 24px rgba(30, 27, 22, 0.14), 0 2px 6px rgba(30, 27, 22, 0.1);
+}
+
+[data-b4-theme="porcelain"][data-b4-contrast="high"] {
+  --b4-text-secondary: var(--b4-gray-800);
+  --b4-text-tertiary: var(--b4-gray-700);
+  --b4-border-default: var(--b4-gray-400);
+  --b4-border-strong: var(--b4-gray-500);
+  --b4-control-bg-selected: var(--b4-gray-900);
+}

@@ -1,0 +1,8 @@
+/*
+  @b4/react — compiled component styles. Consumers import this once
+  (`import "@b4/react/styles.css"`) alongside `@b4/tokens/css` for the
+  design tokens. No Tailwind or other build-step CSS tooling is required —
+  this file is plain, portable CSS.
+*/
+
+@import "./components/Button/Button.css";

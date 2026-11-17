@@ -1,0 +1,37 @@
+{
+  "name": "@b4/motion",
+  "version": "0.0.1",
+  "description": "B4 motion system — duration/easing/spring tokens, reduced-motion utilities, and shared Motion-for-React primitives (TextTransition, layout/morph helpers).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --external react --external react-dom --external motion",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "motion": "14.14.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tsup": "9.0.0",
+    "typescript": "6.0.3"
+  }
+}

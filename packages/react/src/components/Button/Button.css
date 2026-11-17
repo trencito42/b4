@@ -1,0 +1,134 @@
+.b4-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--b4-control-gap);
+  height: var(--b4-control-height);
+  padding: 0 var(--b4-control-padding-x);
+  border: none;
+  border-radius: var(--b4-control-radius);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-base);
+  font-weight: var(--b4-weight-medium);
+  line-height: 1;
+  letter-spacing: var(--b4-tracking-normal);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--b4-duration-fast) var(--b4-ease-standard),
+    color var(--b4-duration-fast) var(--b4-ease-standard),
+    opacity var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-button:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
+}
+
+.b4-button:disabled,
+.b4-button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ---- sizes ---- */
+.b4-button--sm {
+  height: var(--b4-control-height-sm);
+  padding: 0 calc(var(--b4-control-padding-x) * 0.75);
+  font-size: var(--b4-text-sm);
+}
+
+.b4-button--lg {
+  height: var(--b4-control-height-lg);
+  padding: 0 calc(var(--b4-control-padding-x) * 1.25);
+  font-size: var(--b4-text-md);
+}
+
+/* ---- variant: primary ---- */
+.b4-button--primary {
+  background-color: var(--b4-accent);
+  color: var(--b4-text-on-accent);
+}
+.b4-button--primary:hover:not(:disabled) {
+  background-color: var(--b4-accent-hover);
+}
+.b4-button--primary:active:not(:disabled) {
+  background-color: var(--b4-accent-active);
+}
+
+/* ---- variant: secondary ---- */
+.b4-button--secondary {
+  background-color: var(--b4-control-bg);
+  color: var(--b4-text-primary);
+}
+.b4-button--secondary:hover:not(:disabled) {
+  background-color: var(--b4-control-bg-hover);
+}
+.b4-button--secondary:active:not(:disabled) {
+  background-color: var(--b4-control-bg-active);
+}
+
+/* ---- variant: ghost ---- */
+.b4-button--ghost {
+  background-color: transparent;
+  color: var(--b4-text-secondary);
+}
+.b4-button--ghost:hover:not(:disabled) {
+  background-color: var(--b4-control-bg);
+  color: var(--b4-text-primary);
+}
+.b4-button--ghost:active:not(:disabled) {
+  background-color: var(--b4-control-bg-hover);
+}
+
+/* ---- variant: destructive ---- */
+.b4-button--destructive {
+  background-color: var(--b4-danger);
+  color: var(--b4-text-on-accent);
+}
+.b4-button--destructive:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.b4-button--destructive:active:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+/* ---- icons & label ---- */
+.b4-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+.b4-button__label {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ---- loading spinner ---- */
+.b4-button__spinner {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  opacity: 0.85;
+  animation: b4-button-spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b4-button__spinner {
+    animation-duration: 1.4s;
+  }
+}
+
+@keyframes b4-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

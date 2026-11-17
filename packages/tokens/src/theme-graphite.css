@@ -1,0 +1,97 @@
+/*
+  B4 Graphite — dark, tactile, sculptural controls on graphite/charcoal surfaces.
+  Applied via [data-b4-theme="graphite"] on a root element (e.g. <html>).
+  Semantic names only — components must never read a raw palette step.
+*/
+
+[data-b4-theme="graphite"] {
+  color-scheme: dark;
+
+  /* ---- raw palette steps (graphite is blue-tinted neutral, never pure black) ---- */
+  --b4-gray-50: #0a0b0d;
+  --b4-gray-100: #121318;
+  --b4-gray-150: #171922;
+  --b4-gray-200: #1d1f29;
+  --b4-gray-250: #242632;
+  --b4-gray-300: #2c2f3d;
+  --b4-gray-400: #3a3d4e;
+  --b4-gray-500: #4c4f62;
+  --b4-gray-600: #6b6e82;
+  --b4-gray-700: #9496a6;
+  --b4-gray-800: #c3c5d1;
+  --b4-gray-900: #e8e9ee;
+  --b4-gray-950: #f7f7fa;
+
+  /* accent-500 (the default, used as white-on-accent button fill) is tuned
+     to >= 4.5:1 contrast against white text, not just "looks right" — see
+     the e2e/button.spec.ts axe check. */
+  --b4-accent-h: 221;
+  --b4-accent-s: 83%;
+  --b4-accent-400: hsl(var(--b4-accent-h) var(--b4-accent-s) 68%);
+  --b4-accent-500: hsl(var(--b4-accent-h) var(--b4-accent-s) 50%);
+  --b4-accent-600: hsl(var(--b4-accent-h) var(--b4-accent-s) 42%);
+
+  /* ---- surfaces (elevation by lightness, not borders/shadows) ---- */
+  --b4-surface-canvas: var(--b4-gray-50);
+  --b4-surface-1: var(--b4-gray-100);
+  --b4-surface-2: var(--b4-gray-150);
+  --b4-surface-3: var(--b4-gray-200);
+  --b4-surface-overlay: var(--b4-gray-250);
+
+  /* ---- text ---- */
+  --b4-text-primary: var(--b4-gray-950);
+  --b4-text-secondary: var(--b4-gray-800);
+  --b4-text-tertiary: var(--b4-gray-700);
+  --b4-text-disabled: var(--b4-gray-500);
+  --b4-text-inverse: var(--b4-gray-100);
+  --b4-text-on-accent: #ffffff;
+
+  /* ---- borders ---- */
+  --b4-border-subtle: var(--b4-gray-250);
+  --b4-border-default: var(--b4-gray-300);
+  --b4-border-strong: var(--b4-gray-400);
+
+  /* ---- accent (interactive brand color) ---- */
+  --b4-accent: var(--b4-accent-500);
+  --b4-accent-hover: var(--b4-accent-400);
+  --b4-accent-active: var(--b4-accent-600);
+  --b4-accent-subtle-bg: color-mix(in srgb, var(--b4-accent-500) 16%, var(--b4-surface-2));
+
+  /* ---- controls: the "soft substantial selected surface" ---- */
+  --b4-control-bg: var(--b4-gray-200);
+  --b4-control-bg-hover: var(--b4-gray-250);
+  --b4-control-bg-active: var(--b4-gray-300);
+  --b4-control-bg-selected: var(--b4-gray-400);
+  --b4-control-fg: var(--b4-text-secondary);
+  --b4-control-fg-selected: var(--b4-text-primary);
+  --b4-control-indicator-bg: var(--b4-gray-500);
+
+  /* ---- status ---- */
+  --b4-success: #34d399;
+  --b4-success-bg: color-mix(in srgb, #34d399 14%, var(--b4-surface-2));
+  --b4-warning: #fbbf24;
+  --b4-warning-bg: color-mix(in srgb, #fbbf24 14%, var(--b4-surface-2));
+  /* #dc2626, not the lighter #f87171: white-on-danger needs >= 4.5:1 contrast
+     (WCAG AA) for the destructive Button variant — caught by the Playwright
+     + axe-core check in e2e/button.spec.ts. */
+  --b4-danger: #dc2626;
+  --b4-danger-bg: color-mix(in srgb, #dc2626 16%, var(--b4-surface-2));
+  --b4-info: #60a5fa;
+  --b4-info-bg: color-mix(in srgb, #60a5fa 14%, var(--b4-surface-2));
+
+  /* ---- focus ---- */
+  --b4-focus-ring-color: var(--b4-accent-400);
+
+  /* ---- shadow (used sparingly — only where a surface truly lifts) ---- */
+  --b4-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.32);
+  --b4-shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.48), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* contrast="high" — same structure, wider separation, for accessibility */
+[data-b4-theme="graphite"][data-b4-contrast="high"] {
+  --b4-text-secondary: var(--b4-gray-900);
+  --b4-text-tertiary: var(--b4-gray-800);
+  --b4-border-default: var(--b4-gray-500);
+  --b4-border-strong: var(--b4-gray-600);
+  --b4-control-bg-selected: var(--b4-gray-500);
+}

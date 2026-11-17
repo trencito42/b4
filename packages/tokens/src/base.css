@@ -1,0 +1,166 @@
+/*
+  B4 primitive tokens — theme-independent scales.
+  Semantic tokens (color, surfaces) live in theme-graphite.css / theme-porcelain.css.
+  Density/radius/contrast/motion are independent modifier axes applied via
+  data attributes on a theme root element, so they never fragment per-component
+  behavior — every component reads the same variable names.
+*/
+
+:root {
+  /* ---- spacing (4px grid) ---- */
+  --b4-space-0: 0px;
+  --b4-space-1: 2px;
+  --b4-space-2: 4px;
+  --b4-space-3: 6px;
+  --b4-space-4: 8px;
+  --b4-space-5: 10px;
+  --b4-space-6: 12px;
+  --b4-space-7: 16px;
+  --b4-space-8: 20px;
+  --b4-space-9: 24px;
+  --b4-space-10: 32px;
+  --b4-space-11: 40px;
+  --b4-space-12: 48px;
+  --b4-space-13: 64px;
+  --b4-space-14: 80px;
+  --b4-space-15: 96px;
+  --b4-space-16: 128px;
+
+  /* ---- radius (controls favor capsule/full; cards favor md) ---- */
+  --b4-radius-xs: 4px;
+  --b4-radius-sm: 6px;
+  --b4-radius-md: 10px;
+  --b4-radius-lg: 14px;
+  --b4-radius-xl: 20px;
+  --b4-radius-full: 999px;
+
+  /* ---- typography ---- */
+  --b4-font-sans:
+    "B4 Sans", "Inter Variable", Inter, -apple-system, "Segoe UI", system-ui,
+    sans-serif;
+  --b4-font-mono:
+    "B4 Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --b4-text-2xs: 11px;
+  --b4-text-xs: 12px;
+  --b4-text-sm: 13px;
+  --b4-text-base: 14px;
+  --b4-text-md: 15px;
+  --b4-text-lg: 17px;
+  --b4-text-xl: 20px;
+  --b4-text-2xl: 24px;
+  --b4-text-3xl: 30px;
+  --b4-text-4xl: 38px;
+  --b4-text-5xl: 48px;
+
+  --b4-leading-tight: 1.1;
+  --b4-leading-snug: 1.25;
+  --b4-leading-normal: 1.5;
+  --b4-leading-relaxed: 1.65;
+
+  --b4-weight-regular: 400;
+  --b4-weight-medium: 500;
+  --b4-weight-semibold: 600;
+  --b4-weight-bold: 700;
+
+  --b4-tracking-tight: -0.015em;
+  --b4-tracking-normal: 0em;
+  --b4-tracking-wide: 0.02em;
+
+  /* ---- elevation (z-index) ---- */
+  --b4-z-base: 0;
+  --b4-z-raised: 10;
+  --b4-z-sticky: 100;
+  --b4-z-overlay: 1000;
+  --b4-z-popover: 1100;
+  --b4-z-modal: 1200;
+  --b4-z-toast: 1300;
+  --b4-z-tooltip: 1400;
+
+  /* ---- focus ring geometry (color comes from theme) ---- */
+  --b4-focus-ring-width: 2px;
+  --b4-focus-ring-offset: 2px;
+
+  /* ---- motion: durations ---- */
+  --b4-duration-instant: 80ms;
+  --b4-duration-fast: 140ms;
+  --b4-duration-base: 220ms;
+  --b4-duration-slow: 360ms;
+  --b4-duration-slower: 520ms;
+
+  /* ---- motion: CSS easing curves (JS spring presets live in @b4/motion) ---- */
+  --b4-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --b4-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --b4-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --b4-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- density axis (default: comfortable) ---- */
+  --b4-control-height: 40px;
+  --b4-control-height-sm: 32px;
+  --b4-control-height-lg: 48px;
+  --b4-control-padding-x: var(--b4-space-7);
+  --b4-control-gap: var(--b4-space-4);
+
+  /* ---- radius axis (default) ---- */
+  --b4-control-radius: var(--b4-radius-full);
+  --b4-surface-radius: var(--b4-radius-lg);
+
+  /* ---- motion axis (default: full motion; see prefers-reduced-motion below) ---- */
+  --b4-motion-scale: 1;
+}
+
+/* density="compact" */
+:root[data-b4-density="compact"] {
+  --b4-control-height: 32px;
+  --b4-control-height-sm: 28px;
+  --b4-control-height-lg: 40px;
+  --b4-control-padding-x: var(--b4-space-6);
+  --b4-control-gap: var(--b4-space-3);
+}
+
+/* density="spacious" */
+:root[data-b4-density="spacious"] {
+  --b4-control-height: 48px;
+  --b4-control-height-sm: 40px;
+  --b4-control-height-lg: 56px;
+  --b4-control-padding-x: var(--b4-space-8);
+  --b4-control-gap: var(--b4-space-5);
+}
+
+/* radius="tight" — still never a sharp rectangle on primary controls */
+:root[data-b4-radius="tight"] {
+  --b4-control-radius: var(--b4-radius-md);
+  --b4-surface-radius: var(--b4-radius-md);
+}
+
+/* radius="round" — maximum roundness, capsule everywhere it fits */
+:root[data-b4-radius="round"] {
+  --b4-control-radius: var(--b4-radius-full);
+  --b4-surface-radius: var(--b4-radius-xl);
+}
+
+/* motion="reduced" — explicit opt-in, independent of OS setting */
+:root[data-b4-motion="reduced"] {
+  --b4-motion-scale: 0;
+}
+
+/* motion="full" forces motion on even if OS requests reduced (rare; explicit) */
+:root[data-b4-motion="full"] {
+  --b4-motion-scale: 1;
+}
+
+/* OS-level reduced motion is the default unless the user explicitly overrides
+   it with data-b4-motion="full" above (CSS source order handles the override
+   because the attribute selector is more specific in practice — components
+   must also read --b4-motion-scale in JS via useReducedMotion(), this is the
+   CSS-only half of the contract). */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-b4-motion="full"]) {
+    --b4-motion-scale: 0;
+    --b4-duration-instant: 0ms;
+    --b4-duration-fast: 0ms;
+    --b4-duration-base: 0ms;
+    --b4-duration-slow: 0ms;
+    --b4-duration-slower: 0ms;
+  }
+}

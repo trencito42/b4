@@ -1,0 +1,53 @@
+{
+  "name": "@b4/react",
+  "version": "0.0.1",
+  "description": "B4 — commercial-grade React component library and design system.",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --external react --external react-dom --external motion --external @base-ui/react && node ../../scripts/copy-css.mjs react",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@b4/motion": "workspace:*",
+    "@b4/tokens": "workspace:*",
+    "@base-ui/react": "1.9.0",
+    "motion": "14.14.0"
+  },
+  "devDependencies": {
+    "@storybook/react-vite": "10.6.7",
+    "@testing-library/jest-dom": "7.0.1",
+    "@types/jest-axe": "3.5.9",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.12",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "jest-axe": "11.0.0",
+    "jsdom": "31.0.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tsup": "9.0.0",
+    "typescript": "6.0.3",
+    "vitest": "5.1.0"
+  }
+}

@@ -1,0 +1,81 @@
+# HANDOFF — read this first on any resume
+
+**Last session stopped after Phase 0** (full details: `PROGRESS.md`). This
+is a deliberate checkpoint, not a context-exhaustion cutoff — but it's still
+far from the full mission (8 phases total, ~160 components in
+`COMPONENT_INVENTORY.md`, all but one PLANNED).
+
+## Immediate next action
+
+Start **Phase 1**: build the motion foundation components —
+`TextTransition`, `NumberTransition`, `AnimatedIndicator`, and the
+`SegmentedControl` reference component (the Changelog/Login sliding-capsule
+control the mission brief names explicitly as the Phase 1 quality bar).
+Use `packages/react/src/components/Button/` as the structural template
+(see `AGENTS.md`'s checklist) and `@b4/motion`'s `springs.travel` for the
+indicator's physical movement.
+
+## Things the next session needs to know that aren't obvious from the code
+
+1. **TypeScript is pinned to 6.0.3, not latest (7.0.2).** Don't "helpfully"
+   bump it — `typescript-eslint` doesn't support TS 7 yet (peer dep caps at
+   `<6.1.0`). Check `npm view typescript-eslint peerDependencies` before
+   ever changing this; revisit once that cap lifts.
+2. **CSS and JS motion tokens are two separate files that must be changed
+   together**: `packages/tokens/src/base.css` (durations/easings as CSS
+   vars) and `packages/motion/src/tokens.ts` (durations/easings/springs as
+   JS values for Motion-for-React). There is no build step that keeps them
+   in sync automatically — this is a real gap. If you have spare capacity,
+   consider generating one from the other, but don't let that block
+   component work.
+3. **Workspace packages must be built (`pnpm build`, not just
+   `typecheck`) before a dependent package's `typecheck`/dev server can
+   resolve their types** — `tsc --noEmit` alone doesn't produce `dist/`.
+   If `apps/studio` or `packages/react` suddenly can't find `@b4/tokens` or
+   `@b4/motion` types, this is almost certainly why. Storybook/Vite dev
+   mode is the exception — it imports CSS and would import TS source
+   directly if asked, so it doesn't need the dist build, but production
+   builds and `tsc` do.
+4. **Storybook story IDs don't slugify the way you'd guess** from the
+   `title` string (punctuation like "—" and "&" collapses in non-obvious
+   ways). If a Playwright test can't find a story by a guessed ID, build
+   Storybook (`pnpm --filter @b4/studio run build-storybook`) and read
+   `apps/studio/storybook-static/index.json` for the real ID.
+5. **jsdom has no `window.matchMedia`.** It's polyfilled in
+   `packages/react/src/test/setup.ts`. Any new test-setup file (a new
+   package with its own Vitest config) needs the same polyfill or any
+   component calling `useReducedMotion()` will throw in tests.
+6. **Color tokens that work as "white text on this fill" and "this color as
+   text on the dark canvas" are not automatically the same safe value** on
+   the Graphite (dark) theme, because the two reference backgrounds (white
+   button-fill text vs. dark canvas) are different colors — the ratio that
+   clears 4.5:1 against one can fail against the other. (On Porcelain this
+   problem doesn't arise today because the light surface and the white
+   button text happen to be the same reference color.) When adding a new
+   component that puts a status/accent color behind white text as a solid
+   fill, actually compute or axe-check it — don't assume an existing token
+   is safe for a new use. See `TESTING.md`.
+7. **Git**: a local repo exists with Phase 0 committed. **Do not add the
+   GitHub remote or push yet.** A sibling session
+   (`local_7e987ca8-a1a8-4f5b-ae73-edd712e66288`) first asked for a push
+   after the first commit, then explicitly corrected that to: wait until
+   the *entire* mission is done (all 8 phases, or a genuine stopping
+   blocker), then run:
+   ```
+   git branch -M main
+   git remote add origin https://github.com/trencito42/b4.git
+   git push -u origin main
+   ```
+   If that push is ever rejected or the remote already has history, stop
+   and report back — don't force-push.
+
+## Known gaps to eventually close (not blockers, just don't forget)
+
+- No CI workflow yet (`RELEASE_CHECKLIST.md`).
+- No visual regression testing yet.
+- The Porcelain-theme axe check for Button only exists as a manual WCAG
+  calculation, not a Playwright run with the theme toolbar switched —
+  see `QUALITY_MATRIX.md`'s "known gaps."
+- `apps/studio`'s Vite app shell is a one-screen placeholder, not the real
+  B4 Studio (nav, category browser, configurator, 3 integration
+  showcases) — that's explicitly Phase 6, not a Phase 0 shortfall.
