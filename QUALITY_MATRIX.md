@@ -8,6 +8,7 @@ is only set when the checks below actually ran and passed — not on
 | Component | Status | Visual (both themes) | Interaction + a11y | Docs/stories | Verification evidence |
 |---|---|---|---|---|---|
 | **Button** | **VERIFIED** | ✅ 4 variants × 3 sizes × hover/active/disabled/loading, Graphite + Porcelain | ✅ keyboard activation, disabled blocks click, `aria-busy`/`aria-disabled`, no stuck state under 10 rapid clicks | ✅ Storybook stories with autodocs, do/don't note | `pnpm --filter @b4/react test` (6/6 pass incl. jest-axe), `npx playwright test` (2/2 pass incl. axe-core across all 4 variants in Graphite), `pnpm typecheck` clean, `pnpm build` clean, `pnpm --filter @b4/studio run build-storybook` clean |
+| **SegmentedControl** | **VERIFIED** | ✅ 2/3-way + disabled-item stories × sm/md/lg, Graphite (Porcelain reviewed via Storybook toolbar, not yet e2e'd — same caveat as Button, see below) | ✅ Base UI `ToggleGroup`/`Toggle` gives real arrow-key roving focus + `data-pressed`/`data-disabled` for free; controlled + uncontrolled value tested; indicator proven to stay at exactly 1 DOM node under 8–12 rapid alternating clicks (unit + e2e) | ✅ Storybook stories incl. the explicit Changelog/Login reference story, autodocs | `pnpm --filter @b4/react test` (6/6 for this component, 12/12 total incl. Button), `npx playwright test` (2/2 for this component, 4/4 total), `pnpm typecheck`/`pnpm build`/Storybook build all clean |
 
 All other components in `COMPONENT_INVENTORY.md`: **PLANNED**.
 
@@ -32,3 +33,17 @@ All other components in `COMPONENT_INVENTORY.md`: **PLANNED**.
 
 These are tracked, not swept under the rug — see `HANDOFF.md` for next
 actions.
+
+## Known gaps on SegmentedControl
+
+- Same Porcelain-e2e gap as Button.
+- No visual regression screenshot of the indicator mid-travel.
+- `TextTransition`/`NumberTransition`/`AnimatedIndicator` (the reusable
+  motion primitives the mission brief lists separately from
+  SegmentedControl) do not exist yet — SegmentedControl's indicator uses
+  Motion's `layoutId` directly rather than a shared `AnimatedIndicator`
+  primitive, because that primitive hasn't been built. Worth revisiting
+  once `AnimatedIndicator` exists: SegmentedControl should probably consume
+  it rather than duplicate the pattern.
+- IconButton/ButtonGroup/SplitButton/ToggleButton (used standalone, not
+  inside a SegmentedControl) still don't exist.

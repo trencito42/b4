@@ -19,6 +19,12 @@ a per-npm-release history.
   loading/disabled states) — the first component through the full quality
   gate (types, unit tests incl. axe, Storybook stories, Playwright + axe
   e2e).
+- `@b4/react`: `SegmentedControl` (the Changelog/Login reference component
+  named in the mission brief) — built on Base UI's `ToggleGroup`/`Toggle`
+  for real keyboard/ARIA behavior, with a Motion `layoutId` traveling
+  capsule indicator. Controlled + uncontrolled. Full quality gate passed,
+  including a rapid-alternating-click check proving the indicator never
+  duplicates.
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,

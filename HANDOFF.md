@@ -1,19 +1,24 @@
 # HANDOFF — read this first on any resume
 
-**Last session stopped after Phase 0** (full details: `PROGRESS.md`). This
-is a deliberate checkpoint, not a context-exhaustion cutoff — but it's still
-far from the full mission (8 phases total, ~160 components in
-`COMPONENT_INVENTORY.md`, all but one PLANNED).
+**Last session stopped partway into Phase 1** (full details: `PROGRESS.md`).
+This is a deliberate checkpoint, not a context-exhaustion cutoff — but it's
+still far from the full mission (8 phases total, ~160 components in
+`COMPONENT_INVENTORY.md`, only 2 VERIFIED).
 
 ## Immediate next action
 
-Start **Phase 1**: build the motion foundation components —
-`TextTransition`, `NumberTransition`, `AnimatedIndicator`, and the
-`SegmentedControl` reference component (the Changelog/Login sliding-capsule
-control the mission brief names explicitly as the Phase 1 quality bar).
-Use `packages/react/src/components/Button/` as the structural template
-(see `AGENTS.md`'s checklist) and `@b4/motion`'s `springs.travel` for the
-indicator's physical movement.
+Finish **Phase 1**: build `TextTransition`, `NumberTransition`, and
+`AnimatedIndicator` as standalone, reusable primitives in
+`packages/react/src/components/` (or consider a `packages/react/src/
+primitives/` location if they're meant to be composed into other
+components rather than used directly — decide and document the choice).
+`SegmentedControl` is already done (built on Base UI's `ToggleGroup`/
+`Toggle` + Motion's `layoutId`) but its indicator duplicates the
+"traveling capsule" pattern inline rather than consuming a shared
+`AnimatedIndicator` — once that primitive exists, consider refactoring
+SegmentedControl to use it instead, so the pattern has one implementation.
+Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
+structural template (see `AGENTS.md`'s checklist).
 
 ## Things the next session needs to know that aren't obvious from the code
 

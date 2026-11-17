@@ -8,7 +8,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | Phase | Status | Notes |
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
-| 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **NOT STARTED** | `@b4/motion`'s tokens/useReducedMotion exist; the actual components don't. |
+| 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **IN PROGRESS** | SegmentedControl is built and VERIFIED (see `QUALITY_MATRIX.md`). TextTransition, NumberTransition, and AnimatedIndicator as standalone reusable primitives do not exist yet — SegmentedControl's indicator uses Motion's `layoutId` directly rather than a shared primitive. |
 | 2 — Family A + B to full quality gate | **BARELY STARTED** | Only `Button` (Family A) exists and is VERIFIED. |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
@@ -79,6 +79,20 @@ pnpm --filter @b4/studio run build-storybook    # clean, Button stories present
 npx playwright install chromium
 npx playwright test                              # 2/2 pass (incl. axe-core)
 ```
+
+## What's new since Phase 0 (same session, same checkpoint cycle)
+
+- **`SegmentedControl`** (Family A): the explicit Changelog/Login reference
+  component named in the mission brief. Built on Base UI's `ToggleGroup`/
+  `Toggle` (real arrow-key roving focus and ARIA for free, not hand-rolled),
+  with a Motion `layoutId`-based traveling capsule indicator using
+  `springs.travel`. Controlled + uncontrolled value support. Taken through
+  the same full quality gate as Button — see `QUALITY_MATRIX.md`.
+  - Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test` (12/12
+    total across Button + SegmentedControl), `pnpm build`,
+    `pnpm --filter @b4/studio run build-storybook`, `npx playwright test`
+    (4/4 total, incl. a rapid-alternating-click check proving the indicator
+    never duplicates and axe-core across the Changelog/Login story).
 
 ## Git
 

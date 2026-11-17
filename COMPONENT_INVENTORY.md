@@ -13,7 +13,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | ButtonGroup | PLANNED |
 | SplitButton | PLANNED |
 | ToggleButton | PLANNED |
-| SegmentedControl | PLANNED — **Phase 1 quality reference component** (the Changelog/Login sliding-capsule control named in the mission brief) |
+| SegmentedControl | **VERIFIED** — the Phase 1 quality reference component (Changelog/Login sliding-capsule control named in the mission brief) |
 | Link | PLANNED |
 | Badge | PLANNED |
 | StatusBadge | PLANNED |
