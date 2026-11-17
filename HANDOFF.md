@@ -1,24 +1,23 @@
 # HANDOFF — read this first on any resume
 
-**Last session finished Phase 1** (full details: `PROGRESS.md`). This is a
-deliberate checkpoint, not a context-exhaustion cutoff — but it's still far
-from the full mission (8 phases total, ~160 components in
-`COMPONENT_INVENTORY.md`, 5 VERIFIED).
+**Last session made solid progress into Phase 2** (full details:
+`PROGRESS.md`). This is a deliberate checkpoint, not a context-exhaustion
+cutoff — but it's still far from the full mission (8 phases total, ~160
+components in `COMPONENT_INVENTORY.md`, 11 VERIFIED).
 
 ## Immediate next action
 
-Start **Phase 2**: Family A + B components to full quality gate. Family A
-still needs IconButton, ButtonGroup, SplitButton, ToggleButton, Link,
-Badge, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. All of Family B
-(TextField, Textarea, PasswordField, SearchField, NumberField, InputGroup,
-Checkbox, RadioGroup, Switch, Select, Combobox, MultiSelect, Slider,
-RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload, Field,
-FormField) is still PLANNED. Suggested order: the simple Family A
-leftovers first (IconButton, ToggleButton, Badge — they reuse Button's
-vocabulary almost directly), then Checkbox/RadioGroup/Switch (Base UI has
-primitives for all three — check `@base-ui/react`'s export list the way
-this session did for `toggle-group`/`toggle` before building from scratch),
-then TextField and the rest.
+Continue **Phase 2**. Family A still needs ButtonGroup, SplitButton, Link,
+StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. Family B still needs
+TextField, Textarea, PasswordField, SearchField, NumberField, InputGroup,
+Select, Combobox, MultiSelect, Slider, RangeSlider, DatePicker, TimePicker,
+ColorPicker, FileUpload, Field, FormField. Suggested next: `TextField`
+first (it's the base every other text-entry field — Textarea, PasswordField,
+SearchField, NumberField — will extend or compose), then `Field`/`FormField`
+(the label/hint/error wrapper every Family B input needs), then Select/
+Combobox (check `@base-ui/react`'s `select`/`combobox` exports the way this
+session did for `toggle-group`/`checkbox`/`switch`/`radio-group` before
+building from scratch — Base UI has primitives for both).
 
 Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
 structural template (see `AGENTS.md`'s checklist). Consider wiring
@@ -95,6 +94,13 @@ rather than each component re-inventing pending/success/error state.
    ```
    If that push is ever rejected or the remote already has history, stop
    and report back — don't force-push.
+
+9. **Playwright's default worker count can flake against the shared
+   Storybook dev server** ("Execution context was destroyed, most likely
+   because of a navigation" from `AxeBuilder.analyze()`), purely from
+   resource contention, not a real bug. `playwright.config.ts` caps
+   `workers: 4` for this reason — don't remove that cap without reason,
+   and if tests flake anyway, rerun once before assuming a regression.
 
 ## Known gaps to eventually close (not blockers, just don't forget)
 

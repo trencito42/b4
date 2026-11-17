@@ -11,3 +11,6 @@
 @import "./components/IconButton/IconButton.css";
 @import "./components/ToggleButton/ToggleButton.css";
 @import "./components/Badge/Badge.css";
+@import "./components/Checkbox/Checkbox.css";
+@import "./components/Switch/Switch.css";
+@import "./components/RadioGroup/RadioGroup.css";

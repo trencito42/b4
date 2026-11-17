@@ -1,0 +1,50 @@
+.b4-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-6);
+}
+
+.b4-radio-group__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-5);
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-base);
+  color: var(--b4-text-primary);
+}
+
+.b4-radio-group__item[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.b4-radio-group__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--b4-radius-full);
+  border: 1.5px solid var(--b4-border-strong);
+  background-color: var(--b4-surface-1);
+  transition: border-color var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-radio-group__control:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
+}
+
+.b4-radio-group__control[data-checked] {
+  border-color: var(--b4-accent);
+}
+
+.b4-radio-group__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--b4-radius-full);
+  background-color: var(--b4-accent);
+}

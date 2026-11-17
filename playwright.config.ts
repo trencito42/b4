@@ -3,6 +3,11 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  // A single Storybook dev server under heavy parallel axe-core load can
+  // flake with "Execution context was destroyed" errors that are a test-
+  // infra timing issue, not a product bug — keeping worker count modest
+  // avoids it. See TESTING.md.
+  workers: 4,
   reporter: "list",
   use: {
     baseURL: "http://localhost:6106",

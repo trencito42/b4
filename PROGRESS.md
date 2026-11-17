@@ -9,7 +9,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: nothing started yet. |
+| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup VERIFIED (3/20). |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -117,6 +117,20 @@ npx playwright test                              # 2/2 pass (incl. axe-core)
   (33/33), `pnpm --filter @b4/motion run test` (5/5), `pnpm build`,
   Storybook build, `npx playwright test` (9/9, incl. Badge in both
   themes).
+
+## Phase 2, Family B started: Checkbox, Switch, RadioGroup
+
+All three built on Base UI primitives (`Checkbox.Root`/`Indicator`,
+`Switch.Root`/`Thumb`, `RadioGroup`/`Radio.Root`/`Indicator`) for real
+tri-state/keyboard/ARIA behavior rather than hand-rolled. All three are
+now e2e-tested in **both** themes from the start (the lesson from Badge),
+and a Playwright worker-concurrency flakiness issue (unrelated to any
+component — a shared Storybook dev server under heavy parallel axe load)
+was found and fixed by capping `workers: 4` in `playwright.config.ts`.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(48/48), `pnpm build`, Storybook build, `npx playwright test` (16/16,
+both themes for every new component).
 
 ## Git
 

@@ -34,6 +34,9 @@ a per-npm-release history.
 - `@b4/react`: `IconButton`, `ToggleButton`, `Badge` (Family A). Badge is
   the first component e2e-tested in both Graphite and Porcelain, which
   found 3 more real contrast bugs (see Fixed, below).
+- `@b4/react`: `Checkbox`, `Switch`, `RadioGroup` (Family B), built on
+  Base UI primitives for real tri-state/keyboard/ARIA behavior. All
+  e2e-tested in both themes from the start.
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,

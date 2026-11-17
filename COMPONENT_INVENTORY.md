@@ -23,10 +23,28 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 ## Family B — Forms & Inputs
 
-TextField, Textarea, PasswordField, SearchField, NumberField, InputGroup,
-Checkbox, RadioGroup, Switch, Select, Combobox, MultiSelect, Slider,
-RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload, Field,
-FormField — all **PLANNED**.
+| Component | Status |
+|---|---|
+| Checkbox | **VERIFIED** |
+| Switch | **VERIFIED** |
+| RadioGroup | **VERIFIED** |
+| TextField | PLANNED |
+| Textarea | PLANNED |
+| PasswordField | PLANNED |
+| SearchField | PLANNED |
+| NumberField | PLANNED |
+| InputGroup | PLANNED |
+| Select | PLANNED |
+| Combobox | PLANNED |
+| MultiSelect | PLANNED |
+| Slider | PLANNED |
+| RangeSlider | PLANNED |
+| DatePicker | PLANNED |
+| TimePicker | PLANNED |
+| ColorPicker | PLANNED |
+| FileUpload | PLANNED |
+| Field | PLANNED |
+| FormField | PLANNED |
 
 ## Family C — Navigation & Overlays
 

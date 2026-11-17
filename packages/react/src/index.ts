@@ -32,3 +32,12 @@ export type { ToggleButtonProps, ToggleButtonSize } from "./components/ToggleBut
 
 export { Badge } from "./components/Badge/Badge.js";
 export type { BadgeProps, BadgeTone } from "./components/Badge/Badge.js";
+
+export { Checkbox } from "./components/Checkbox/Checkbox.js";
+export type { CheckboxProps } from "./components/Checkbox/Checkbox.js";
+
+export { Switch } from "./components/Switch/Switch.js";
+export type { SwitchProps } from "./components/Switch/Switch.js";
+
+export { RadioGroup } from "./components/RadioGroup/RadioGroup.js";
+export type { RadioGroupProps, RadioGroupItem } from "./components/RadioGroup/RadioGroup.js";

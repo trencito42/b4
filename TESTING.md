@@ -32,6 +32,13 @@
    wrong, as happened and was fixed while building Button's e2e test).
    - Playwright browsers must be installed once per machine:
      `npx playwright install chromium`.
+   - At high worker concurrency (the Playwright default scales with CPU
+     cores), the single shared Storybook dev server can occasionally throw
+     "Execution context was destroyed, most likely because of a
+     navigation" from `AxeBuilder.analyze()` — this is test-infra
+     contention under load, not a product bug. `playwright.config.ts` caps
+     `workers: 4` for this reason; if it still flakes, rerun before
+     assuming a regression.
    - Axe's "best-practice" page-structure rules (`page-has-heading-one`,
      `landmark-one-main`, `region`) are **disabled** for isolated-component
      iframe checks (`e2e/button.spec.ts`) — they're false positives against
