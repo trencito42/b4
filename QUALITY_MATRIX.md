@@ -230,6 +230,28 @@ Full suite at this checkpoint: `pnpm typecheck` (5/5), `pnpm --filter
 @b4/react run test` (164/164), `pnpm --filter @b4/motion run test` (5/5),
 `pnpm build`, Storybook build, `npx playwright test` (115/115, run twice).
 
+## Tooltip — Family C's second component (2026-11-17, still later)
+
+**VERIFIED.** Real Base UI `Tooltip` (hover/focus delay, positioning,
+portal, the same `preventUnmountOnClose` pattern as `DropdownMenu`/
+`Select`). `children` becomes the trigger via `Tooltip.Trigger`'s
+`render` prop, so an existing `Button`/`IconButton` works unmodified.
+
+Two test-infra issues found and fixed, neither a component defect:
+- A disabled-button story can't be used to test the *focus*-triggered
+  path, because a native `disabled` button is unfocusable — moved that
+  assertion to a non-disabled trigger story instead of weakening it.
+- Storybook's own `addon-a11y` runs a background axe scan on story
+  load; firing a second, manually-triggered scan too soon after
+  navigation collided with it ("Axe is already running"). A short wait
+  before the manual `analyze()` call avoids the race — noted in
+  `TESTING.md` as a pattern other Family C components with popups
+  should expect too.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(168/168), `pnpm build`, Storybook build, `npx playwright test`
+(120/120, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

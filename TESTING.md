@@ -32,6 +32,12 @@
    wrong, as happened and was fixed while building Button's e2e test).
    - Playwright browsers must be installed once per machine:
      `npx playwright install chromium`.
+   - Storybook's own `addon-a11y` runs a background axe scan whenever a
+     story loads. A manually-triggered `AxeBuilder.analyze()` fired too
+     soon after navigating to or interacting with a popup-bearing story
+     (Tooltip, DropdownMenu, Select, Combobox) can collide with it
+     ("Axe is already running"). A short `page.waitForTimeout(300)`
+     before the manual scan avoids the race — see `e2e/tooltip.spec.ts`.
    - At high worker concurrency (the Playwright default scales with CPU
      cores), the single shared Storybook dev server can occasionally throw
      "Execution context was destroyed, most likely because of a

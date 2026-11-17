@@ -1,0 +1,19 @@
+.b4-tooltip__positioner {
+  z-index: var(--b4-z-tooltip);
+  outline: none;
+}
+
+.b4-tooltip__popup {
+  box-sizing: border-box;
+  max-inline-size: 240px;
+  padding: var(--b4-space-3) var(--b4-space-5);
+  border-radius: var(--b4-radius-sm);
+  background: var(--b4-text-primary);
+  color: var(--b4-text-inverse);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-xs);
+  line-height: var(--b4-leading-normal);
+  box-shadow: var(--b4-shadow-raised);
+  transform-origin: var(--transform-origin);
+  outline: none;
+}

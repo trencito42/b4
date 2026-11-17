@@ -75,6 +75,9 @@ export type { MultiSelectProps, MultiSelectItem } from "./components/MultiSelect
 export { InputGroup } from "./components/InputGroup/InputGroup.js";
 export type { InputGroupProps } from "./components/InputGroup/InputGroup.js";
 
+export { Tooltip } from "./components/Tooltip/Tooltip.js";
+export type { TooltipProps } from "./components/Tooltip/Tooltip.js";
+
 export { Link } from "./components/Link/Link.js";
 export type { LinkProps, LinkTone } from "./components/Link/Link.js";
 

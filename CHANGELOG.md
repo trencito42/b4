@@ -23,6 +23,13 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Tooltip — Family C's second component (2026-11-17)
+
+- `@b4/react`: `Tooltip`, a real Base UI `Tooltip` composition.
+  Documented two test-infra gotchas for future popup components:
+  disabled buttons can't test focus-triggered behavior, and
+  Storybook's `addon-a11y` background scan can race a manual one.
+
 ### Family B's last core inputs: MultiSelect, InputGroup (2026-11-17)
 
 - `@b4/react`: `MultiSelect` (shares `Select`'s Base UI Root with

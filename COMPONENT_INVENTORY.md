@@ -57,7 +57,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Stepper | PLANNED |
 | NavigationMenu | PLANNED |
 | ContextMenu | PLANNED |
-| Tooltip | PLANNED |
+| Tooltip | **VERIFIED** |
 | Popover | PLANNED |
 | HoverCard | PLANNED |
 | Dialog | PLANNED |
