@@ -1,6 +1,6 @@
 import { forwardRef, useState, type ReactNode } from "react";
-import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { Field } from "../Field/Field.js";
 
 export interface SearchFieldProps {
   label: ReactNode;
@@ -29,13 +29,18 @@ const ClearIcon = (
 );
 
 /**
- * `TextField` specialized for search: a leading magnifier (decorative) and
- * a trailing clear button that only appears once there's a value to clear
- * — same "interactive trailing control needs its own non-aria-hidden slot"
- * reasoning as `PasswordField`, see that component's doc comment.
+ * `TextField` specialized for search: a leading magnifier (decorative)
+ * and a trailing clear button that only appears once there's a value to
+ * clear — same "interactive trailing control needs its own non-aria-hidden
+ * slot" reasoning as `PasswordField`.
+ *
+ * The underlying `Input` is always passed one fully-computed current
+ * value (`value ?? internalValue`), never a `value`/`defaultValue` mix —
+ * an earlier version did the latter and the clear button silently stopped
+ * clearing the real (uncontrolled) input value. See QUALITY_MATRIX.md.
  */
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
-  { label, hideLabel = false, hint, error, disabled = false, placeholder, value, defaultValue, onValueChange, className },
+  { label, hideLabel, hint, error, disabled = false, placeholder, value, defaultValue, onValueChange, className },
   ref,
 ) {
   const [internalValue, setInternalValue] = useState(defaultValue ?? "");
@@ -48,17 +53,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   }
 
   return (
-    <Field.Root
-      disabled={disabled}
-      className={["b4-text-field", className ?? ""].filter(Boolean).join(" ")}
-    >
-      <Field.Label
-        className={["b4-text-field__label", hideLabel ? "b4-text-field__label--hidden" : ""]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        {label}
-      </Field.Label>
+    <Field label={label} hideLabel={hideLabel} hint={hint} error={error} disabled={disabled} className={className}>
       <div
         className={["b4-text-field__control", hasError ? "b4-text-field__control--error" : ""]
           .filter(Boolean)
@@ -87,13 +82,6 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
           </button>
         )}
       </div>
-      {hasError ? (
-        <Field.Error match className="b4-text-field__message b4-text-field__message--error">
-          {error}
-        </Field.Error>
-      ) : (
-        hint && <Field.Description className="b4-text-field__message">{hint}</Field.Description>
-      )}
-    </Field.Root>
+    </Field>
   );
 });

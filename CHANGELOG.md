@@ -41,6 +41,9 @@ a per-npm-release history.
   — the base text-entry pattern for the rest of Family B's text fields.
 - `@b4/react`: `Textarea`, `PasswordField`, `SearchField` (Family B),
   extending TextField's pattern.
+- `@b4/react`: `Field` (Family B) — the shared label/hint/error wrapper,
+  extracted from `TextField`/`Textarea`/`PasswordField`/`SearchField`.
+  Also absorbs the brief's separate "FormField" entry (same component).
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,

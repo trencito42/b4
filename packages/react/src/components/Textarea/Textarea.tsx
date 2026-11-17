@@ -1,5 +1,6 @@
 import { forwardRef, type ReactNode, type TextareaHTMLAttributes } from "react";
-import { Field } from "@base-ui/react/field";
+import { Field as BaseField } from "@base-ui/react/field";
+import { Field } from "../Field/Field.js";
 
 export interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "defaultValue"> {
@@ -12,37 +13,27 @@ export interface TextareaProps
 }
 
 /**
- * Multi-line counterpart to `TextField`, sharing its label/hint/error
- * composition on top of Base UI's `Field`. Built with `Field.Control`'s
- * `render` prop pointed at a native `<textarea>` — Base UI's documented
- * pattern for using Field with a control other than its default `<input>`
- * (see Base UI's Field docs: "you can omit [Field.Control] and use any
- * [...] component instead").
+ * Multi-line counterpart to `TextField`, sharing its `Field` wrapper.
+ * Built with `BaseField.Control`'s `render` prop pointed at a native
+ * `<textarea>` — Base UI's documented pattern for using Field with a
+ * control other than its default `<input>`.
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
-  { label, hideLabel = false, hint, error, disabled = false, required = false, className, rows = 4, ...rest },
+  { label, hideLabel, hint, error, disabled = false, required = false, className, rows = 4, ...rest },
   ref,
 ) {
   const hasError = Boolean(error);
 
   return (
-    <Field.Root
+    <Field
+      label={label}
+      hideLabel={hideLabel}
+      hint={hint}
+      error={error}
+      required={required}
       disabled={disabled}
-      className={["b4-text-field", className ?? ""].filter(Boolean).join(" ")}
+      className={className}
     >
-      <Field.Label
-        className={["b4-text-field__label", hideLabel ? "b4-text-field__label--hidden" : ""]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        {label}
-        {required && (
-          <span className="b4-text-field__required" aria-hidden="true">
-            {" "}
-            *
-          </span>
-        )}
-      </Field.Label>
       <div
         className={[
           "b4-text-field__control",
@@ -52,19 +43,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
           .filter(Boolean)
           .join(" ")}
       >
-        <Field.Control
+        <BaseField.Control
           render={<textarea ref={ref} rows={rows} className="b4-text-field__input" {...rest} />}
           disabled={disabled}
           required={required}
         />
       </div>
-      {hasError ? (
-        <Field.Error match className="b4-text-field__message b4-text-field__message--error">
-          {error}
-        </Field.Error>
-      ) : (
-        hint && <Field.Description className="b4-text-field__message">{hint}</Field.Description>
-      )}
-    </Field.Root>
+    </Field>
   );
 });

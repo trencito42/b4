@@ -1,6 +1,6 @@
 import { forwardRef, useState, type ReactNode } from "react";
-import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { Field } from "../Field/Field.js";
 
 export interface PasswordFieldProps {
   label: ReactNode;
@@ -41,20 +41,17 @@ const EyeOffIcon = (
 );
 
 /**
- * `TextField` with a masked value and a visibility toggle. Not built by
- * composing `TextField` directly — the toggle must be a real, keyboard-
- * reachable button, and `TextField`'s `endIcon` slot is intentionally
- * `aria-hidden` (decorative-only), so this duplicates `TextField`'s
- * structure with an interactive button in that slot instead. If a third
- * field needs an interactive trailing control, that's the point to
- * extract a shared "field with trailing action" structure rather than
- * duplicate it a third time — see HANDOFF.md.
+ * `TextField` with a masked value and a visibility toggle. Shares the
+ * `Field` wrapper but not `TextField` itself — the toggle must be a real,
+ * keyboard-reachable button, and `TextField`'s `endIcon` slot is
+ * intentionally `aria-hidden` (decorative-only), so this renders the
+ * field control directly inside `Field` instead.
  */
 export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
   function PasswordField(
     {
       label,
-      hideLabel = false,
+      hideLabel,
       hint,
       error,
       required = false,
@@ -74,23 +71,15 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
     const hasError = Boolean(error);
 
     return (
-      <Field.Root
+      <Field
+        label={label}
+        hideLabel={hideLabel}
+        hint={hint}
+        error={error}
+        required={required}
         disabled={disabled}
-        className={["b4-text-field", className ?? ""].filter(Boolean).join(" ")}
+        className={className}
       >
-        <Field.Label
-          className={["b4-text-field__label", hideLabel ? "b4-text-field__label--hidden" : ""]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {label}
-          {required && (
-            <span className="b4-text-field__required" aria-hidden="true">
-              {" "}
-              *
-            </span>
-          )}
-        </Field.Label>
         <div
           className={["b4-text-field__control", hasError ? "b4-text-field__control--error" : ""]
             .filter(Boolean)
@@ -120,14 +109,7 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             {visible ? EyeOffIcon : EyeIcon}
           </button>
         </div>
-        {hasError ? (
-          <Field.Error match className="b4-text-field__message b4-text-field__message--error">
-            {error}
-          </Field.Error>
-        ) : (
-          hint && <Field.Description className="b4-text-field__message">{hint}</Field.Description>
-        )}
-      </Field.Root>
+      </Field>
     );
   },
 );

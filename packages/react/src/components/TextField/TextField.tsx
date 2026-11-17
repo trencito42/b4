@@ -1,17 +1,14 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
-import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
+import { Field } from "../Field/Field.js";
 
 export type TextFieldSize = "sm" | "md" | "lg";
 
 export interface TextFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "value" | "defaultValue"> {
-  /** The visible field label. Always required — see DESIGN_PRINCIPLES.md; use `hideLabel` for a visually-hidden-but-present one. */
   label: ReactNode;
-  /** Visually hides `label` while keeping it in the accessibility tree. */
   hideLabel?: boolean;
   hint?: ReactNode;
-  /** When set, renders as an error and shows this message instead of `hint`. */
   error?: ReactNode;
   size?: TextFieldSize;
   startIcon?: ReactNode;
@@ -24,15 +21,13 @@ export interface TextFieldProps
 /**
  * The base text-entry field every other Family B text input (Textarea,
  * PasswordField, SearchField, NumberField) extends or composes. Built on
- * Base UI's `Field` (label/description/error wiring) + `Input` (the
- * actual `<input>`, which stays in sync with `Field`'s validity state
- * automatically). `label` is required, not optional — an input with no
- * programmatic label is an accessibility defect, not a style choice.
+ * the shared `Field` wrapper + Base UI's `Input` (which stays in sync
+ * with `Field`'s validity state automatically).
  */
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   {
     label,
-    hideLabel = false,
+    hideLabel,
     hint,
     error,
     size = "md",
@@ -49,19 +44,15 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
   const hasError = Boolean(error);
 
   return (
-    <Field.Root
+    <Field
+      label={label}
+      hideLabel={hideLabel}
+      hint={hint}
+      error={error}
+      required={required}
       disabled={disabled}
-      className={["b4-text-field", className ?? ""].filter(Boolean).join(" ")}
+      className={className}
     >
-      <Field.Label className={["b4-text-field__label", hideLabel ? "b4-text-field__label--hidden" : ""].filter(Boolean).join(" ")}>
-        {label}
-        {required && (
-          <span className="b4-text-field__required" aria-hidden="true">
-            {" "}
-            *
-          </span>
-        )}
-      </Field.Label>
       <div
         className={[
           "b4-text-field__control",
@@ -82,13 +73,6 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
         />
         {endIcon && <span className="b4-text-field__icon" aria-hidden="true">{endIcon}</span>}
       </div>
-      {hasError ? (
-        <Field.Error match className="b4-text-field__message b4-text-field__message--error">
-          {error}
-        </Field.Error>
-      ) : (
-        hint && <Field.Description className="b4-text-field__message">{hint}</Field.Description>
-      )}
-    </Field.Root>
+    </Field>
   );
 });

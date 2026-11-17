@@ -27,7 +27,28 @@ is only set when the checks below actually ran and passed — not on
 | **PasswordField** | **VERIFIED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ real-browser e2e for the show/hide toggle actually changing input `type`; toggle is keyboard-reachable (verified by unit test tabbing to it) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated toggle e2e |
 | **SearchField** | **VERIFIED — after catching and fixing a real uncontrolled-clear bug** | ✅ empty/with-value/disabled, both themes e2e'd | ✅ clear button appears only with a value and actually empties it (real-browser e2e, not just unit) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated clear e2e |
 
-**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (66/66), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (27/27, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField/Textarea/PasswordField/SearchField stories — form controls checked in both themes).
+| **Field** | **VERIFIED** | ✅ with-custom-control/with-error stories | ✅ confirmed the label only auto-associates with a Base-UI-aware control (`Input`/`Checkbox`/`Switch`/`Field.Control`'s `render` prop) — a bare native element as `children` does **not** get the wiring for free; this was found by the component's own test failing, fixed by correcting the test/story/doc, not the component (the component was already correct; the first draft of its *docs* overclaimed) | ✅ Storybook stories, autodocs | unit tests; see "A docs-accuracy catch" below |
+
+**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (69/69), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (27/27, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField/Textarea/PasswordField/SearchField stories — form controls checked in both themes).
+
+## A docs-accuracy catch: Field's label doesn't auto-associate with just anything
+
+`Field` was extracted from `TextField`/`Textarea`/`PasswordField`/
+`SearchField` (see `HANDOFF.md`'s prior note calling for this once 4
+components inlined the same composition). Its first doc comment and demo
+story claimed you could pass *any* custom control as `children` and get
+label association for free. Writing the straightforward test for that —
+a bare `<select>` — failed immediately with a real jsdom/axe error
+("Select element must have an accessible name"), because Base UI's
+`Field.Label` only wires its `htmlFor`/id onto a Base-UI-aware control
+(`Input`, `Checkbox`, `Switch`, or anything rendered via `Field.Control`),
+not onto an arbitrary child element. The fix was to correct the docs and
+the example (route the `<select>` through `Field.Control`'s `render`
+prop, the same pattern `Textarea` already uses for its native
+`<textarea>`), not to change `Field` itself — the component was right,
+the first draft of its documentation wasn't. Recorded here so nobody
+"fixes" `Field` later by trying to make bare children work, which isn't
+how Base UI's Field system is designed to behave.
 
 ## A real bug caught by the unit test, not by eye: SearchField's "clear" didn't clear
 

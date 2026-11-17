@@ -42,6 +42,9 @@ export type { SwitchProps } from "./components/Switch/Switch.js";
 export { RadioGroup } from "./components/RadioGroup/RadioGroup.js";
 export type { RadioGroupProps, RadioGroupItem } from "./components/RadioGroup/RadioGroup.js";
 
+export { Field } from "./components/Field/Field.js";
+export type { FieldProps } from "./components/Field/Field.js";
+
 export { TextField } from "./components/TextField/TextField.js";
 export type { TextFieldProps, TextFieldSize } from "./components/TextField/TextField.js";
 

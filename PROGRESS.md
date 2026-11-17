@@ -9,7 +9,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField, Textarea, PasswordField, SearchField VERIFIED (7/20). |
+| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField, Textarea, PasswordField, SearchField, Field VERIFIED (8/19 — Field+FormField merged into one, see COMPONENT_INVENTORY.md). |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -164,6 +164,25 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (66/66), `pnpm build`, Storybook build, `npx playwright test` (27/27,
 both themes for every form control, plus dedicated real-browser e2e for
 the password toggle and search-clear interactions).
+
+## Field extracted (as promised in the last HANDOFF note) — and merged with FormField
+
+`TextField`/`Textarea`/`PasswordField`/`SearchField` refactored onto a
+new shared `Field` component instead of each inlining Base UI's
+`Field.Root`/`Label`/`Description`/`Error`. All 27 e2e tests and all
+unit tests still pass unchanged after the refactor, confirming it's
+behavior-preserving. Also folded the brief's separate "FormField"
+inventory entry into `Field` — they turned out to be the same component
+(see `COMPONENT_INVENTORY.md`'s scope-changes log).
+
+Building `Field`'s own test honestly found that its first doc comment
+overclaimed: a bare custom `<select>` does **not** get automatic label
+association, only a Base-UI-aware control does. Fixed the docs/example,
+not the component — see `QUALITY_MATRIX.md`.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(69/69), `pnpm build`, Storybook build, `npx playwright test` (27/27,
+unchanged from before the refactor).
 
 ## Git
 

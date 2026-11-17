@@ -3,29 +3,30 @@
 **Last session made solid progress into Phase 2** (full details:
 `PROGRESS.md`). This is a deliberate checkpoint, not a context-exhaustion
 cutoff — but it's still far from the full mission (8 phases total, ~160
-components in `COMPONENT_INVENTORY.md`, 15 VERIFIED).
+components in `COMPONENT_INVENTORY.md`, 16 VERIFIED).
 
 ## Immediate next action
 
 Continue **Phase 2**. Family A still needs ButtonGroup, SplitButton, Link,
 StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. Family B still needs
 NumberField, InputGroup, Select, Combobox, MultiSelect, Slider,
-RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload, Field,
-FormField. `TextField`/`Textarea`/`PasswordField`/`SearchField` are done
-and share the `.b4-text-field__*` CSS classes + Base UI `Field` — copy
-that pattern for `NumberField` next (it's the closest remaining fit: a
-TextField variant with increment/decrement, similar to how
-PasswordField/SearchField add a trailing interactive control). Note
-there's still no standalone `Field`/`FormField` wrapper component
-extracted — four components now inline the same Base UI `Field.Root`/
-`Label`/`Description`/`Error` composition. This has crossed the "3+
-components, extract it" threshold this session's own notes set — doing
-that extraction (a real exported `Field` component, with `TextField` etc.
-refactored to use it) is good next work, before adding a fifth copy via
-NumberField. After that: Select/Combobox (check `@base-ui/react`'s
-`select`/`combobox` exports the way this session did for `toggle-group`/
-`checkbox`/`switch`/`radio-group`/`field`/`input` before building from
-scratch — Base UI has primitives for both).
+RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload. `Field`
+(the shared label/hint/error wrapper — also covers the brief's separate
+"FormField" entry, see `COMPONENT_INVENTORY.md`'s scope-changes log) now
+exists and is used by `TextField`/`Textarea`/`PasswordField`/
+`SearchField` — use it for `NumberField` too rather than inlining Base
+UI's `Field` parts again. **Important gotcha if you touch `Field`**: its
+label only auto-associates with a Base-UI-aware control (`Input`,
+`Checkbox`, `Switch`, or your own element via `Field.Control`'s `render`
+prop) — a bare native element passed as `children` does not get the
+wiring for free. This was found the hard way building `Field`'s own test;
+see `QUALITY_MATRIX.md`'s "A docs-accuracy catch" and don't re-break it
+by "simplifying" `NumberField`'s increment/decrement buttons to sit
+outside a `Field.Control`-wrapped input. After Family B's remaining
+inputs: Select/Combobox (check `@base-ui/react`'s `select`/`combobox`
+exports the way this session did for `toggle-group`/`checkbox`/`switch`/
+`radio-group`/`field`/`input` before building from scratch — Base UI has
+primitives for both).
 
 Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
 structural template (see `AGENTS.md`'s checklist). Consider wiring

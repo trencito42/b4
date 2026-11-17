@@ -43,8 +43,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | TimePicker | PLANNED |
 | ColorPicker | PLANNED |
 | FileUpload | PLANNED |
-| Field | PLANNED |
-| FormField | PLANNED |
+| Field | **VERIFIED** — also covers the inventory's separate "FormField" entry; one component, not two (see note below) |
 
 ## Family C — Navigation & Overlays
 
@@ -85,5 +84,11 @@ navigation / actual syntax-aware editing), not static mockups.
 
 ## Scope changes log
 
-None yet. Any future rationalization (merge/split/rename) of a listed
-component gets an entry here with the reason, not a silent removal.
+- **Field + FormField merged into one component, `Field`.** The mission
+  brief listed them as two separate Family B entries, but once built,
+  "Field" (a single control's label/hint/error wrapper) and "FormField"
+  (the brief's name for the same concept in form contexts) turned out to
+  be the same component with no daylight between them — every Family B
+  input (`TextField`, `Textarea`, `PasswordField`, `SearchField`) needs
+  exactly this one wrapper, not two different ones. Kept the name `Field`
+  since that's what the underlying Base UI primitive is also called.
