@@ -44,7 +44,7 @@ export function NumberTransition({
       value={format(value)}
       mode="vertical"
       direction={direction}
-      className={className}
+      className={["b4-number-transition", className ?? ""].filter(Boolean).join(" ")}
     />
   );
 }

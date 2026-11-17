@@ -67,12 +67,31 @@ interactive — addon with an input in one visual box; distinct from
 stylesheets. 164/164 unit, 115/115 e2e (twice), all clean on the first
 try — no new bugs this batch.
 
-## Update (2026-11-17, latest): Popover — Family C at 3/17
+## Update (2026-11-17, latest): Tabs (Family C at 4/17) + motion improvements
 
-Added `Popover` (click-triggered, real interactive content, closes on
-Escape/outside-click). No new bugs — only the already-known jsdom "no
-real animation frame" limitation needed a test adjustment, same as
-`TextTransition`/`DropdownMenu`/`Select`.
+Added `Tabs` (real Base UI roving-tabindex nav + its own `Tabs.Indicator`
+for the traveling highlight). **Real bug**: the selected-tab CSS guessed
+`[data-selected]` instead of the actual `data-active` attribute, so
+selected-tab text silently stayed the wrong (unselected) color — caught
+by the Playwright axe scan as a 1.42:1 Porcelain contrast failure, not
+by eye. **New rule for every future Base UI primitive**: check that
+primitive's own `*DataAttributes.d.ts` for its exact "is-active"/"is-
+selected" attribute name before writing CSS for it — don't assume it
+matches a previous component's convention (Checkbox/Switch/RadioGroup/
+SegmentedControl all happen to use `data-pressed`/`data-checked`; Tabs
+uses `data-active`; there's no guarantee the next one matches either).
+
+Also fixed renewed `select.spec.ts` flakiness (Storybook's background
+axe scan colliding with a manual one; a keyboard test firing too fast
+after a popup opened) with the proven settle-wait pattern — confirmed
+`workers: 2` did *not* fix it, so don't reflexively lower workers for
+every flake; check whether it's actually concurrency-related first.
+
+**User-requested**: improved `TextTransition`/`NumberTransition`'s
+animations — `crossfade` gained a subtle scale, `vertical`/`horizontal`
+switched to `springs.snap` (spatial move → spring, per `MOTION_SPEC.md`),
+`NumberTransition` gained forced `tabular-nums`. No API changes, fully
+backward compatible.
 
 ## Next action: Family B's last 4, then continue Family C
 

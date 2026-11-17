@@ -16,3 +16,10 @@
   display: inline-block;
   white-space: nowrap;
 }
+
+/* NumberTransition: fixed-width digits so the sliding replacement never
+   jitters horizontally as digit glyphs of different intrinsic widths swap
+   in and out (e.g. a narrow "1" replaced by a wider "8"). */
+.b4-number-transition {
+  font-variant-numeric: tabular-nums;
+}

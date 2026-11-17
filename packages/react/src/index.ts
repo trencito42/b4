@@ -81,6 +81,9 @@ export type { TooltipProps } from "./components/Tooltip/Tooltip.js";
 export { Popover } from "./components/Popover/Popover.js";
 export type { PopoverProps } from "./components/Popover/Popover.js";
 
+export { Tabs } from "./components/Tabs/Tabs.js";
+export type { TabsProps, TabsItem } from "./components/Tabs/Tabs.js";
+
 export { Link } from "./components/Link/Link.js";
 export type { LinkProps, LinkTone } from "./components/Link/Link.js";
 

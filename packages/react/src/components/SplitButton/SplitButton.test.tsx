@@ -28,7 +28,7 @@ describe("SplitButton", () => {
     render(<SplitButton items={items} onSelect={onSelect}>Deploy</SplitButton>);
 
     await user.click(screen.getByRole("button", { name: "More Deploy options" }));
-    await user.click(screen.getByRole("menuitem", { name: "Rollback" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Rollback" }));
 
     expect(onSelect).toHaveBeenCalledWith("rollback");
   });

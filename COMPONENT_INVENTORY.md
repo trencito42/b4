@@ -50,7 +50,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Component | Status |
 |---|---|
 | DropdownMenu | **VERIFIED** |
-| Tabs | PLANNED |
+| Tabs | **VERIFIED** |
 | Accordion | PLANNED |
 | Breadcrumbs | PLANNED |
 | Pagination | PLANNED |

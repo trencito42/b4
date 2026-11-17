@@ -54,7 +54,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
-| 3 — Family C | **STARTED (3/17)** | `DropdownMenu`, `Tooltip`, `Popover` VERIFIED. 14 more components planned. |
+| 3 — Family C | **STARTED (4/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs` VERIFIED. 13 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
@@ -328,6 +328,38 @@ adjustment (same category already seen on TextTransition/DropdownMenu).
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (173/173), `pnpm build`, Storybook build, `npx playwright test`
 (125/125, run twice).
+
+## Tabs — Family C's fourth component; another real contrast bug
+
+Built on Base UI's `Tabs`, styled with its own `Tabs.Indicator` CSS
+variables via a plain CSS transition (Base UI owns the position calc).
+The axe scan caught a real bug: the selected-tab CSS used `[data-
+selected]`, but Base UI's real attribute is `data-active` — the
+selector never matched, leaving the selected tab's text at the
+unselected color against the indicator's selected-surface background
+(1.42:1 on Porcelain). Fixed, and noted in `HANDOFF.md`: check each new
+Base UI primitive's own `*DataAttributes.d.ts` rather than assuming the
+"is-active" attribute name from another component's convention.
+
+Also fixed `select.spec.ts` e2e flakiness that returned once the suite
+passed ~125 tests — this time from Storybook's background axe scan
+colliding with a manual one, and a keyboard test firing too fast after
+a popup opened. Fixed both with the proven "settle wait" pattern;
+confirmed lowering `workers` further did *not* fix it (root cause
+wasn't concurrency), so kept `workers: 3`.
+
+## User-requested: TextTransition/NumberTransition motion improvements
+
+The user explicitly asked for these two (already-VERIFIED) components'
+animations to be improved. `crossfade` now adds a subtle scale to the
+existing opacity/blur fade; `vertical`/`horizontal` modes switched from
+a plain tween to `springs.snap` (matching `MOTION_SPEC.md`'s "spatial
+move → spring" rule); `NumberTransition` now forces tabular-nums so
+digit-width changes don't jitter the layout mid-slide. No API changes.
+
+Verified (covers both Tabs and the motion pass): `pnpm typecheck` (5/5),
+`pnpm --filter @b4/react run test` (178/178), `pnpm build`, Storybook
+build, `npx playwright test` (130/130, run multiple times).
 
 ## Git
 

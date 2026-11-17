@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { ReactNode } from "react";
-import { tween, useReducedMotion } from "@b4/motion";
+import { springs, tween, useReducedMotion } from "@b4/motion";
 
 export type TextTransitionMode = "crossfade" | "vertical" | "horizontal";
 export type TextTransitionDirection = "forward" | "backward";
@@ -28,10 +28,13 @@ const DISTANCE_PX = 10;
 
 function getVariants(mode: TextTransitionMode, direction: TextTransitionDirection) {
   if (mode === "crossfade") {
+    // A touch of scale alongside the blur/opacity fade reads as more
+    // physical than opacity/blur alone — the incoming value settles into
+    // place rather than just appearing, without being a spatial move.
     return {
-      initial: { opacity: 0, filter: "blur(4px)" },
-      animate: { opacity: 1, filter: "blur(0px)" },
-      exit: { opacity: 0, filter: "blur(4px)" },
+      initial: { opacity: 0, scale: 0.97, filter: "blur(4px)" },
+      animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+      exit: { opacity: 0, scale: 0.97, filter: "blur(4px)" },
     };
   }
 
@@ -64,6 +67,14 @@ function getVariants(mode: TextTransitionMode, direction: TextTransitionDirectio
  *   means a new `value` arriving before the previous transition finished
  *   simply redirects — the outgoing node keeps exiting, the new incoming
  *   node starts fresh — rather than snapping or stacking.
+ * - **Spatial modes get a spring, crossfade gets a tween**: `vertical`/
+ *   `horizontal` are a physical move (the new value travels into the
+ *   old one's place), so they use `springs.snap` — the same in-place-
+ *   state-change preset `Button`'s press feedback uses — rather than a
+ *   linear/eased tween, which read as mechanical for a spatial move.
+ *   `crossfade` has no spatial component (opacity/blur/scale only), where
+ *   a spring's oscillation would look like an accidental blur pulse
+ *   rather than physical motion, so it keeps a plain tween.
  */
 export function TextTransition({
   value,
@@ -74,12 +85,16 @@ export function TextTransition({
 }: TextTransitionProps) {
   const reducedMotion = useReducedMotion();
   const variants = getVariants(mode, direction);
-  const transition = reducedMotion ? { duration: 0 } : tween("base", "standard");
+  const transition = reducedMotion
+    ? { duration: 0 }
+    : mode === "crossfade"
+      ? tween("base", "standard")
+      : springs.snap;
 
   return (
     <motion.span
       layout
-      transition={transition}
+      transition={reducedMotion ? { duration: 0 } : tween("base", "standard")}
       className={["b4-text-transition", className ?? ""].filter(Boolean).join(" ")}
     >
       <AnimatePresence mode="popLayout" initial={false}>

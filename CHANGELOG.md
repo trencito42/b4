@@ -23,6 +23,21 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Tabs, and TextTransition/NumberTransition motion improvements (2026-11-17)
+
+- `@b4/react`: `Tabs`, built on Base UI's `Tabs` with its own
+  `Tabs.Indicator` for the traveling highlight.
+- Fixed: selected-tab CSS used the wrong data attribute
+  (`[data-selected]` instead of the real `data-active`), leaving
+  selected-tab text at the wrong color — a real 1.42:1 contrast failure
+  on Porcelain, caught by the Playwright axe scan.
+- Fixed: renewed `select.spec.ts` e2e flakiness (axe-scan collision,
+  a too-fast keyboard sequence) with the proven settle-wait pattern.
+- Improved (user-requested): `TextTransition`'s `crossfade` mode gained
+  a subtle scale; `vertical`/`horizontal` modes now use a spring instead
+  of a tween; `NumberTransition` now forces tabular-nums digits. No API
+  changes.
+
 ### Popover — Family C's third component (2026-11-17)
 
 - `@b4/react`: `Popover`, click-triggered, holds real interactive

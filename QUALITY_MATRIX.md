@@ -270,6 +270,76 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (173/173), `pnpm build`, Storybook build, `npx playwright test`
 (125/125, run twice).
 
+## Tabs — Family C's fourth component; a real selected-tab contrast bug (2026-11-17, still later)
+
+**VERIFIED.** Built on Base UI's `Tabs` (real roving-tabindex arrow-key
+navigation, ARIA tablist/tab/tabpanel, automatic content switching).
+The traveling indicator is Base UI's own `Tabs.Indicator`, which exposes
+its computed position as CSS custom properties
+(`--active-tab-left`/`-width` etc.) — styled with a plain CSS
+`transition`, not Motion, since Base UI itself owns the position
+calculation.
+
+**Real bug caught by the Playwright axe scan, not by eye**: the CSS
+selected-tab styling used `.b4-tabs__tab[data-selected]`, but Base UI's
+actual attribute is `data-active` (confirmed against
+`TabsTabDataAttributes` — Checkbox/Switch/RadioGroup/SegmentedControl
+all happen to use `data-pressed`/`data-checked`, so this was a
+reasonable but wrong guess for Tabs specifically). The selector never
+matched, so the selected tab silently kept the default (unselected) text
+color against the indicator's selected-surface background — on
+Porcelain that measured 1.42:1, nowhere close to AA. Fixed by using the
+correct attribute; **lesson for `HANDOFF.md`**: don't assume a Base UI
+component's "is-active" data attribute name from another component's
+convention — check `*DataAttributes.d.ts` for every new primitive, the
+same way this session already does for props.
+
+Also found the suite's `select.spec.ts` e2e tests flaking again at
+`workers: 3` once the total suite passed ~125 tests (same category as
+earlier Checkbox/NumberField flakiness, but this time it was Storybook's
+background axe scan colliding with a manual one that had no settle
+delay, plus one keyboard test firing keys too fast after a popup
+opened) — fixed both with the same "wait before the next action" pattern
+already used elsewhere, rather than lowering `workers` again (confirmed
+`workers: 2` didn't actually fix it, since the root cause wasn't
+concurrency).
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(178/178), `pnpm build`, Storybook build, `npx playwright test`
+(130/130, run multiple times for stability at `workers: 3`).
+
+## TextTransition / NumberTransition — motion improvements (user-requested, 2026-11-17)
+
+Both were already VERIFIED, but the user explicitly asked for their
+animations to be improved, so this was a deliberate motion-quality pass,
+not a bug fix:
+
+- **`crossfade` mode** now adds a subtle `scale: 0.97 → 1` alongside the
+  existing opacity/blur fade — reads as the value settling into place
+  rather than just appearing, without being a spatial move.
+- **`vertical`/`horizontal` modes now use `springs.snap`** (the same
+  in-place-state-change preset `Button`'s press feedback uses) instead
+  of a plain tween — these are a physical move (the new value travels
+  into the old one's place), and a spring reads as more "sculptural"
+  than a linear/eased tween for that, consistent with
+  `MOTION_SPEC.md`'s "spatial move → spring" rule. `crossfade` keeps a
+  plain tween deliberately — a spring's oscillation on opacity/blur
+  would look like an accidental pulse rather than physical motion, not
+  an improvement.
+- **`NumberTransition` now forces `font-variant-numeric: tabular-nums`**
+  on its own wrapper (a new `.b4-number-transition` class), so digit
+  glyphs of different intrinsic widths (a narrow "1" vs. a wide "8")
+  swapping in don't jitter the surrounding layout horizontally mid-slide
+  — `NumberTransition` already benefits from the `springs.snap` change
+  above since it's built on `TextTransition`'s `vertical` mode.
+
+No prop/API changes — fully backward compatible with every existing
+consumer (`Button`'s no users yet, but any future "accepted step" UI).
+
+Verified: same full-suite run as above (178/178 unit, 130/130 e2e,
+including the existing `motion-primitives.spec.ts` TextTransition/
+NumberTransition coverage, unchanged pass count).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

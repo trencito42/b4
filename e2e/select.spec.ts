@@ -44,6 +44,10 @@ for (const theme of ["graphite", "porcelain"]) {
           () => document.documentElement.scrollWidth <= window.innerWidth,
         ),
       ).toBe(true);
+      // Storybook's own addon-a11y runs a background axe scan on story
+      // load/update; a manually-triggered scan fired too soon can
+      // collide with it ("Axe is already running") — see TESTING.md.
+      await page.waitForTimeout(300);
       expect(
         (await new AxeBuilder({ page }).disableRules(isolatedRules).analyze()).violations,
       ).toEqual([]);
@@ -64,6 +68,10 @@ for (const theme of ["graphite", "porcelain"]) {
       "aria-disabled",
       "true",
     );
+    // Give the entrance spring a moment before firing more keys — under
+    // parallel worker load, keys sent mid-entrance can land before the
+    // popup's roving-focus setup finishes, dropping a keystroke.
+    await page.waitForTimeout(150);
     await page.keyboard.press("End");
     await page.keyboard.press("Enter");
     await expect(trigger).toContainText("Archived");
