@@ -129,3 +129,13 @@
   outline-offset: 2px;
   border-radius: var(--b4-radius-xs);
 }
+
+.b4-text-field__action-button[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.b4-number-field__input {
+  text-align: center;
+}
+

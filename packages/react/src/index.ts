@@ -56,3 +56,6 @@ export type { PasswordFieldProps } from "./components/PasswordField/PasswordFiel
 
 export { SearchField } from "./components/SearchField/SearchField.js";
 export type { SearchFieldProps } from "./components/SearchField/SearchField.js";
+
+export { NumberField } from "./components/NumberField/NumberField.js";
+export type { NumberFieldProps } from "./components/NumberField/NumberField.js";

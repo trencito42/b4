@@ -32,7 +32,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Textarea | **VERIFIED** |
 | PasswordField | **VERIFIED** |
 | SearchField | **VERIFIED** |
-| NumberField | PLANNED |
+| NumberField | **VERIFIED** |
 | InputGroup | PLANNED |
 | Select | PLANNED |
 | Combobox | PLANNED |

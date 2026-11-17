@@ -44,6 +44,8 @@ a per-npm-release history.
 - `@b4/react`: `Field` (Family B) — the shared label/hint/error wrapper,
   extracted from `TextField`/`Textarea`/`PasswordField`/`SearchField`.
   Also absorbs the brief's separate "FormField" entry (same component).
+- `@b4/react`: `NumberField` (Family B), built on Base UI's full
+  `NumberField` for real min/max clamping and stepper buttons.
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,

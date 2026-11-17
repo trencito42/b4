@@ -9,7 +9,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField, Textarea, PasswordField, SearchField, Field VERIFIED (8/19 — Field+FormField merged into one, see COMPONENT_INVENTORY.md). |
+| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField, Textarea, PasswordField, SearchField, Field, NumberField VERIFIED (9/19 — Field+FormField merged into one, see COMPONENT_INVENTORY.md). |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -183,6 +183,26 @@ not the component — see `QUALITY_MATRIX.md`.
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (69/69), `pnpm build`, Storybook build, `npx playwright test` (27/27,
 unchanged from before the refactor).
+
+## NumberField — real Base UI NumberField, and a worker-count re-tune
+
+Built on Base UI's full `NumberField` (`Root`/`Group`/`Input`/
+`Increment`/`Decrement`), not `TextField` with `type="number"` — gives
+real min/max clamping and keyboard/button stepping. Uses the shared
+`Field` wrapper. Found that the *visible* input renders `role="textbox"`,
+not `"spinbutton"` (Base UI keeps a separate hidden `type="number"` input
+for native form semantics that carries that role) — corrected the unit
+tests to query the right element rather than assume the ARIA role from
+the component's name.
+
+The Playwright worker-count flakiness (see Phase 2's Checkbox/Switch/
+RadioGroup entry) came back as the suite grew past ~27 tests at
+`workers: 4`; lowered to `workers: 3` and confirmed stable across two
+full repeat runs.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(74/74), `pnpm build`, Storybook build, `npx playwright test` (30/30,
+twice in a row at the new worker count).
 
 ## Git
 

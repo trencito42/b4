@@ -7,7 +7,7 @@ export default defineConfig({
   // flake with "Execution context was destroyed" errors that are a test-
   // infra timing issue, not a product bug — keeping worker count modest
   // avoids it. See TESTING.md.
-  workers: 4,
+  workers: 3,
   reporter: "list",
   use: {
     baseURL: "http://localhost:6106",

@@ -35,10 +35,13 @@
    - At high worker concurrency (the Playwright default scales with CPU
      cores), the single shared Storybook dev server can occasionally throw
      "Execution context was destroyed, most likely because of a
-     navigation" from `AxeBuilder.analyze()` — this is test-infra
-     contention under load, not a product bug. `playwright.config.ts` caps
-     `workers: 4` for this reason; if it still flakes, rerun before
-     assuming a regression.
+     navigation" from `AxeBuilder.analyze()`, or produce other timing-
+     dependent flakes — this is test-infra contention under load, not a
+     product bug. `playwright.config.ts` caps `workers` (lowered from 4 to
+     3 as the suite grew past ~27 tests and 4 started flaking again) — if
+     it still flakes, rerun once before assuming a regression, and if it
+     keeps flaking as the suite grows further, lower `workers` again
+     rather than assume every flake is a false alarm forever.
    - Axe's "best-practice" page-structure rules (`page-has-heading-one`,
      `landmark-one-main`, `region`) are **disabled** for isolated-component
      iframe checks (`e2e/button.spec.ts`) — they're false positives against

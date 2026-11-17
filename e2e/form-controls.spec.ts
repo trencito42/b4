@@ -101,6 +101,34 @@ for (const theme of themes) {
   });
 }
 
+for (const theme of themes) {
+  test(`NumberField is axe-clean on ${theme}`, async ({ page }) => {
+    await page.goto(
+      `/iframe.html?id=family-b-forms-inputs-numberfield--default&globals=b4Theme:${theme}`,
+    );
+    await expect(page.getByRole("textbox", { name: "Quantity" })).toHaveValue("1");
+
+    const results = await new AxeBuilder({ page })
+      .disableRules(["page-has-heading-one", "landmark-one-main", "region"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}
+
+test("NumberField stepper buttons update the value in a real browser", async ({ page }) => {
+  await page.goto("/iframe.html?id=family-b-forms-inputs-numberfield--default");
+
+  const input = page.getByRole("textbox", { name: "Quantity" });
+  await expect(input).toHaveValue("1");
+
+  await page.getByRole("button", { name: "Increase value" }).click();
+  await page.getByRole("button", { name: "Increase value" }).click();
+  await expect(input).toHaveValue("3");
+
+  await page.getByRole("button", { name: "Decrease value" }).click();
+  await expect(input).toHaveValue("2");
+});
+
 test("PasswordField toggle reveals and re-masks the value in a real browser", async ({
   page,
 }) => {

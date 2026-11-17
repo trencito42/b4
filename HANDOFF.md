@@ -3,30 +3,29 @@
 **Last session made solid progress into Phase 2** (full details:
 `PROGRESS.md`). This is a deliberate checkpoint, not a context-exhaustion
 cutoff — but it's still far from the full mission (8 phases total, ~160
-components in `COMPONENT_INVENTORY.md`, 16 VERIFIED).
+components in `COMPONENT_INVENTORY.md`, 17 VERIFIED).
 
 ## Immediate next action
 
 Continue **Phase 2**. Family A still needs ButtonGroup, SplitButton, Link,
 StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. Family B still needs
-NumberField, InputGroup, Select, Combobox, MultiSelect, Slider,
-RangeSlider, DatePicker, TimePicker, ColorPicker, FileUpload. `Field`
-(the shared label/hint/error wrapper — also covers the brief's separate
-"FormField" entry, see `COMPONENT_INVENTORY.md`'s scope-changes log) now
-exists and is used by `TextField`/`Textarea`/`PasswordField`/
-`SearchField` — use it for `NumberField` too rather than inlining Base
-UI's `Field` parts again. **Important gotcha if you touch `Field`**: its
-label only auto-associates with a Base-UI-aware control (`Input`,
-`Checkbox`, `Switch`, or your own element via `Field.Control`'s `render`
-prop) — a bare native element passed as `children` does not get the
-wiring for free. This was found the hard way building `Field`'s own test;
-see `QUALITY_MATRIX.md`'s "A docs-accuracy catch" and don't re-break it
-by "simplifying" `NumberField`'s increment/decrement buttons to sit
-outside a `Field.Control`-wrapped input. After Family B's remaining
-inputs: Select/Combobox (check `@base-ui/react`'s `select`/`combobox`
-exports the way this session did for `toggle-group`/`checkbox`/`switch`/
-`radio-group`/`field`/`input` before building from scratch — Base UI has
-primitives for both).
+InputGroup, Select, Combobox, MultiSelect, Slider, RangeSlider,
+DatePicker, TimePicker, ColorPicker, FileUpload. `Field` (the shared
+label/hint/error wrapper — also covers the brief's separate "FormField"
+entry) and all of TextField/Textarea/PasswordField/SearchField/
+NumberField are done. Next: Select/Combobox (check `@base-ui/react`'s
+`select`/`combobox` exports the way this session did for `toggle-group`/
+`checkbox`/`switch`/`radio-group`/`field`/`input`/`number-field` before
+building from scratch — Base UI has primitives for both) — they're the
+biggest remaining Family B gap and the ones other components (Family F's
+FilterBar, etc.) will likely depend on later.
+
+**Playwright `workers` may need lowering again as the e2e suite grows.**
+It went 4→3 in this session after the shared-Storybook-server flakiness
+(see item 9 below) came back at ~27 tests. If it flakes again past 30+
+tests, lower it further rather than assume every flake is the same old
+known issue forever — check whether it reproduces at `workers: 1` before
+writing it off.
 
 Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
 structural template (see `AGENTS.md`'s checklist). Consider wiring
@@ -104,12 +103,13 @@ rather than each component re-inventing pending/success/error state.
    If that push is ever rejected or the remote already has history, stop
    and report back — don't force-push.
 
-9. **Playwright's default worker count can flake against the shared
-   Storybook dev server** ("Execution context was destroyed, most likely
-   because of a navigation" from `AxeBuilder.analyze()`), purely from
-   resource contention, not a real bug. `playwright.config.ts` caps
-   `workers: 4` for this reason — don't remove that cap without reason,
-   and if tests flake anyway, rerun once before assuming a regression.
+9. **Playwright's worker count can flake against the shared Storybook dev
+   server** ("Execution context was destroyed..." or an action silently
+   not taking effect under load), purely from resource contention, not a
+   real bug. `playwright.config.ts` currently caps `workers: 3` (lowered
+   from 4 once the suite passed ~27 tests) — don't remove that cap
+   without reason, and if tests flake anyway as the suite grows, lower it
+   further rather than assume every flake is a false alarm.
 
 ## Known gaps to eventually close (not blockers, just don't forget)
 
