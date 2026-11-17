@@ -68,12 +68,20 @@ rather than each component re-inventing pending/success/error state.
    text on the dark canvas" are not automatically the same safe value** on
    the Graphite (dark) theme, because the two reference backgrounds (white
    button-fill text vs. dark canvas) are different colors — the ratio that
-   clears 4.5:1 against one can fail against the other. (On Porcelain this
-   problem doesn't arise today because the light surface and the white
-   button text happen to be the same reference color.) When adding a new
-   component that puts a status/accent color behind white text as a solid
-   fill, actually compute or axe-check it — don't assume an existing token
-   is safe for a new use. See `TESTING.md`.
+   clears 4.5:1 against one can fail against the other. This is why
+   `--b4-danger-text` and `--b4-accent-text` exist alongside `--b4-danger`/
+   `--b4-accent` — building `Badge` and testing it in Porcelain (not just
+   Graphite, which every earlier component had settled for) found a real
+   2.68:1 failure on Graphite's accent text and two borderline Porcelain
+   failures (danger, info) that hand-calculated sRGB math didn't reliably
+   predict — only the real Playwright + axe-core run did. **Every new
+   component that puts a status/accent color behind text (not a solid
+   white-text fill) should be e2e-tested in both themes before being
+   marked VERIFIED** — see `e2e/badge.spec.ts` for the pattern
+   (`&globals=b4Theme:porcelain` in the iframe URL). Button/SegmentedControl/
+   TextTransition/NumberTransition were only ever checked in Graphite —
+   revisiting them with the same both-themes e2e pattern is good, cheap
+   follow-up work.
 8. **Git**: a local repo exists with Phase 0 committed. **Do not add the
    GitHub remote or push yet.** A sibling session
    (`local_7e987ca8-a1a8-4f5b-ae73-edd712e66288`) first asked for a push

@@ -13,8 +13,33 @@ is only set when the checks below actually ran and passed — not on
 | **AnimatedIndicator** | **VERIFIED** | ✅ unstyled primitive (consumer supplies CSS); demonstrated between two targets, Graphite | ✅ exactly one DOM node under 8–10 rapid alternating moves (unit + e2e); `useReducedMotion()` collapses travel to instant | ✅ Storybook story, autodocs | `pnpm --filter @b4/react test`, `npx playwright test` (both in the full suite totals below) |
 | **TextTransition** | **VERIFIED** | ✅ crossfade/vertical/horizontal modes, Graphite | ✅ rapid successive value changes don't stack/corrupt display; unmount/remount doesn't duplicate; reduced motion collapses to instant swap | ✅ Storybook stories (3 modes + manual-control do/don't), autodocs | same suite |
 | **NumberTransition** | **VERIFIED** | ✅ static/counting/currency-format/up-down stories, Graphite | ✅ custom formatter supported; direction auto-derived from increase/decrease; rapid-click stress test in e2e | ✅ Storybook stories, autodocs | same suite |
+| **IconButton** | **VERIFIED** | ✅ 4 variants × 3 sizes, Graphite | ✅ required `aria-label`, blocks clicks while loading/disabled | ✅ Storybook stories, autodocs | same suite |
+| **ToggleButton** | **VERIFIED** | ✅ pressed/unpressed/disabled, Graphite | ✅ Base UI `Toggle` gives real `data-pressed`/keyboard (Space) for free; click + keyboard tested | ✅ Storybook stories, autodocs | same suite |
+| **Badge** | **VERIFIED — and the component that proved the theme-contrast gap was real, not hypothetical** | ✅ 6 tones, **both themes e2e'd with real axe color-contrast**, not just Graphite | ✅ static/presentational, no interaction states needed | ✅ Storybook stories (incl. all-tones overview), autodocs | `e2e/badge.spec.ts` runs axe against both the Graphite *and* Porcelain toolbar states — the first component in this repo to get that, after Button/SegmentedControl only ever checked Graphite |
 
-**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (23/23), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (7/7, incl. axe-core on Button/SegmentedControl/TextTransition stories).
+**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (33/33), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (9/9, incl. axe-core on Button/SegmentedControl/TextTransition/Badge stories, Badge in both themes).
+
+## Three more real accessibility bugs, caught by actually testing Porcelain
+
+Building Badge and testing it in *both* themes (not just Graphite, which
+every prior component had settled for) found three real token-level
+contrast failures that had shipped undetected:
+
+- Graphite's `--b4-accent` (used directly as Badge's accent-tone text
+  color) measured 2.68:1 against its own `--b4-accent-subtle-bg` —
+  nowhere close to AA. Fixed by adding `--b4-accent-text` (aliased to the
+  lighter `--b4-accent-400`), the same pattern as `--b4-danger-text`.
+- Porcelain's `--b4-danger` and `--b4-info` were both borderline (4.05–
+  4.48:1 depending on how the background tint was tuned) against their
+  own `-bg` tints. Chasing the background tint percentage alone couldn't
+  reliably clear 4.5:1; darkening `--b4-danger` itself (to `#c53128`) was
+  what actually gave real margin.
+- **Takeaway, now in `HANDOFF.md`**: don't declare a component's color
+  usage safe from hand-calculated contrast math alone — the actual
+  `color-mix()` output and axe's measurement occasionally disagreed with
+  manual sRGB-linear-mix arithmetic by enough to flip pass/fail at the
+  margins. Run the real Playwright + axe check, in both themes, before
+  calling a color pairing done.
 
 All other components in `COMPONENT_INVENTORY.md`: **PLANNED**.
 

@@ -9,13 +9,13 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Component | Status |
 |---|---|
 | Button | **VERIFIED** (see `QUALITY_MATRIX.md`) |
-| IconButton | PLANNED |
+| IconButton | **VERIFIED** |
 | ButtonGroup | PLANNED |
 | SplitButton | PLANNED |
-| ToggleButton | PLANNED |
+| ToggleButton | **VERIFIED** |
 | SegmentedControl | **VERIFIED** — the Phase 1 quality reference component (Changelog/Login sliding-capsule control named in the mission brief) |
 | Link | PLANNED |
-| Badge | PLANNED |
+| Badge | **VERIFIED** |
 | StatusBadge | PLANNED |
 | Avatar | PLANNED |
 | AvatarGroup | PLANNED |

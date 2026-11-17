@@ -31,6 +31,9 @@ a per-npm-release history.
   (built on TextTransition, direction auto-derived from increase/decrease).
 - `@b4/motion`: `useAsyncStatus` — a race-safe idle/pending/success/error
   async-state hook for the label→spinner→success(/error) pattern.
+- `@b4/react`: `IconButton`, `ToggleButton`, `Badge` (Family A). Badge is
+  the first component e2e-tested in both Graphite and Porcelain, which
+  found 3 more real contrast bugs (see Fixed, below).
 - B4 Studio: Storybook 10 instance (addon-a11y, addon-docs) plus a minimal
   Vite app shell.
 - Full docs scaffolding (`ARCHITECTURE.md`, `DESIGN_PRINCIPLES.md`,
@@ -48,3 +51,10 @@ a per-npm-release history.
   hypothetical white-on-fill use (future Toast/StatusBadge) — found by
   direct WCAG calculation while auditing the other status colors, fixed
   pre-emptively.
+- Graphite's `--b4-accent` used as Badge's accent-tone text measured
+  2.68:1 (needs 4.5:1) against its own tint background — fixed by adding
+  `--b4-accent-text`. Porcelain's `--b4-danger`/`--b4-info` were
+  borderline (4.05–4.48:1) as Badge text on their own tints — fixed by
+  darkening `--b4-danger` and tuning both tint percentages. All three
+  found by testing Badge in both themes with real axe-core, not by eye or
+  hand-calculated contrast math.

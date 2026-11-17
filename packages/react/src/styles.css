@@ -8,3 +8,6 @@
 @import "./components/Button/Button.css";
 @import "./components/SegmentedControl/SegmentedControl.css";
 @import "./components/TextTransition/TextTransition.css";
+@import "./components/IconButton/IconButton.css";
+@import "./components/ToggleButton/ToggleButton.css";
+@import "./components/Badge/Badge.css";

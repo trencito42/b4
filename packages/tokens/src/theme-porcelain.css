@@ -53,6 +53,9 @@
   --b4-accent-hover: var(--b4-accent-600);
   --b4-accent-active: var(--b4-accent-600);
   --b4-accent-subtle-bg: color-mix(in srgb, var(--b4-accent-500) 10%, var(--b4-surface-1));
+  /* Porcelain's single --b4-accent already clears AA for both fill and
+     text-on-surface use (see the danger-text comment below for why). */
+  --b4-accent-text: var(--b4-accent);
 
   /* ---- controls ---- */
   --b4-control-bg: var(--b4-gray-150);
@@ -69,12 +72,23 @@
      StatusBadge/Toast success variant); #0c7a52 clears it with margin. */
   --b4-success: #0c7a52;
   --b4-success-bg: color-mix(in srgb, #0c7a52 10%, var(--b4-surface-1));
-  --b4-warning: #b4740a;
-  --b4-warning-bg: color-mix(in srgb, #b4740a 10%, var(--b4-surface-1));
-  --b4-danger: #d6392f;
-  --b4-danger-bg: color-mix(in srgb, #d6392f 10%, var(--b4-surface-1));
+  /* #b4740a reads fine on the eye but is 3.86:1 against the near-white
+     warning-bg tint — fails AA as badge/text use. #8f5c08 clears it. */
+  --b4-warning: #8f5c08;
+  --b4-warning-bg: color-mix(in srgb, #8f5c08 10%, var(--b4-surface-1));
+  /* #d6392f was right at the edge (4.3-4.48:1 depending on tint %, measured
+     in-browser via axe-core) no matter how the bg tint was tuned — darkened
+     the base color itself instead, which gives both uses real margin. */
+  --b4-danger: #c53128;
+  --b4-danger-bg: color-mix(in srgb, #c53128 5%, var(--b4-surface-1));
+  /* On Porcelain, the light surface and white button-fill text share the
+     same reference color, so --b4-danger already clears AA for both fill
+     and text-on-surface use — no separate value needed, but the token
+     still exists so components can use one name across both themes. */
+  --b4-danger-text: var(--b4-danger);
+  /* 10% tint measured at 4.33:1 in-browser — 6% clears AA with margin. */
   --b4-info: #1c6fd1;
-  --b4-info-bg: color-mix(in srgb, #1c6fd1 10%, var(--b4-surface-1));
+  --b4-info-bg: color-mix(in srgb, #1c6fd1 6%, var(--b4-surface-1));
 
   /* ---- focus ---- */
   --b4-focus-ring-color: var(--b4-accent-500);

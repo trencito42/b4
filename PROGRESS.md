@@ -9,7 +9,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **BARELY STARTED** | Only `Button` (Family A) exists and is VERIFIED. |
+| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: nothing started yet. |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -99,6 +99,24 @@ npx playwright test                              # 2/2 pass (incl. axe-core)
     test` (23/23), `pnpm --filter @b4/motion run test` (5/5), `pnpm build`,
     `pnpm --filter @b4/studio run build-storybook`, `npx playwright test`
     (7/7, incl. axe-core and rapid-click/rapid-selection stress tests).
+
+## Phase 2 so far: IconButton, ToggleButton, Badge — and 3 more real a11y bugs
+
+- **`IconButton`**/**`ToggleButton`**: straightforward extensions of
+  Button's variant/size vocabulary (IconButton) and Base UI's `Toggle`
+  (ToggleButton, the standalone single-button counterpart to
+  SegmentedControl's grouped `ToggleGroup`).
+- **`Badge`**: the first component tested in *both* themes end-to-end
+  (`e2e/badge.spec.ts`, using `&globals=b4Theme:porcelain`), not just
+  Graphite. That found three more real token-level contrast bugs beyond
+  the two from Phase 0 — see `QUALITY_MATRIX.md`'s "Three more real
+  accessibility bugs" section and `HANDOFF.md` item 7. Fixed by adding
+  `--b4-accent-text`/`--b4-danger-text` tokens and darkening Porcelain's
+  `--b4-danger` base value.
+- Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+  (33/33), `pnpm --filter @b4/motion run test` (5/5), `pnpm build`,
+  Storybook build, `npx playwright test` (9/9, incl. Badge in both
+  themes).
 
 ## Git
 
