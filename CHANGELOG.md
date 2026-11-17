@@ -5,7 +5,39 @@ a per-npm-release history.
 
 ## Unreleased
 
+- Switch now uses shared spring travel between layout-defined thumb positions,
+  including RTL, instead of a physical CSS translateX. Added neutral selection
+  surfaces, snap press feedback, control ref and shared hit target. Seven focused
+  tests and code/build checks passed; both-theme manual browser evidence is in
+  HANDOFF.md. Full current browser regression remains pending.
+
+- Checkbox uses neutral B4 selection surfaces, animated check drawing/mixed
+  morph and snap press feedback, with instant reduced-motion changes. Added
+  control ref forwarding, shared hit-target sizing, state overview and Select
+  all stories. Focused Checkbox tests 9/9 and code/build checks passed; visual
+  browser verification of this revision remains pending.
+
+- Field's dropdown stories now reuse B4 Select (including its shared popup
+  motion) instead of inline-styled native selects. Existing story links remain
+  valid; docs explain that Select already includes Field.
+
+### Family B interaction refinement
+
+- Shared matte input surfaces and animated focus feedback. NumberField now
+  animates accepted steps without replacing its editable input; PasswordField
+  transitions the visibility glyph using the existing IconButton/TextTransition.
+- RadioGroup adds a traveling selected row, animated radio dot and optional
+  item descriptions. AnimatedIndicator supports an optional span render target.
+- React 124/124 and motion 5/5 tests, typecheck, package and Storybook builds
+  passed. Both-theme manual motion/responsive/axe evidence is recorded in
+  HANDOFF.md; automated browser regression remains pending.
+
 ### Added
+
+- Select (IMPLEMENTED; browser/visual verification pending): shared Field +
+  Base UI selection, three sizes, descriptions, controlled values, form
+  submission, null reset, read-only/disabled/error/empty states, settle-spring
+  popup, 14 unit tests and 10 stories. See QUALITY_MATRIX.md for exact evidence.
 
 - Monorepo scaffold: pnpm workspace with `packages/tokens`, `packages/motion`,
   `packages/react`, `apps/studio`.
@@ -74,3 +106,16 @@ a per-npm-release history.
   actually reset the underlying (uncontrolled) input's value — caught by
   its own unit test, fixed by always passing one fully-computed value to
   the underlying `Input` instead of mixing `value`/`defaultValue`.
+
+### Corrective verification checkpoint
+
+- Fixed Slider's double translation, native-input focus styling and extra
+  Motion keyboard stop; added sizes, neutral/accent variants, range labels,
+  formatted announcements, error/form support and responsive stories.
+- Added Combobox using stable IDs and shared option-surface motion/styles.
+- Fixed shared invalid-state semantics, disabled search/password actions,
+  focus after search clear, explicit CSS reduced motion and token literals.
+- Added modifier toolbars and aligned single-line fields with control-radius.
+- Reclassified touched components as IMPLEMENTED until full browser checks
+  are rerun. AUDIT_REPORT.md distinguishes real browser evidence from tests
+  blocked by the environment; the overall plan remains unfinished.

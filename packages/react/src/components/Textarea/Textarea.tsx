@@ -1,9 +1,12 @@
 import { forwardRef, type ReactNode, type TextareaHTMLAttributes } from "react";
 import { Field as BaseField } from "@base-ui/react/field";
 import { Field } from "../Field/Field.js";
+import { FieldControl } from "../../internal/FieldControl.js";
 
-export interface TextareaProps
-  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "defaultValue"> {
+export interface TextareaProps extends Omit<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  "value" | "defaultValue"
+> {
   label: ReactNode;
   hideLabel?: boolean;
   hint?: ReactNode;
@@ -19,7 +22,17 @@ export interface TextareaProps
  * control other than its default `<input>`.
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
-  { label, hideLabel, hint, error, disabled = false, required = false, className, rows = 4, ...rest },
+  {
+    label,
+    hideLabel,
+    hint,
+    error,
+    disabled = false,
+    required = false,
+    className,
+    rows = 4,
+    ...rest
+  },
   ref,
 ) {
   const hasError = Boolean(error);
@@ -34,7 +47,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       disabled={disabled}
       className={className}
     >
-      <div
+      <FieldControl
+        disabled={disabled}
         className={[
           "b4-text-field__control",
           "b4-text-field__control--textarea",
@@ -44,11 +58,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
           .join(" ")}
       >
         <BaseField.Control
-          render={<textarea ref={ref} rows={rows} className="b4-text-field__input" {...rest} />}
+          render={
+            <textarea ref={ref} rows={rows} className="b4-text-field__input" {...rest} />
+          }
           disabled={disabled}
           required={required}
         />
-      </div>
+      </FieldControl>
     </Field>
   );
 });

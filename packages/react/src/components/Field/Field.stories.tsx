@@ -1,66 +1,50 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Field as BaseField } from "@base-ui/react/field";
 import { Field } from "./Field";
+import { Select } from "../Select/Select";
 
 const meta: Meta<typeof Field> = {
   title: "Family B — Forms & Inputs/Field",
   component: Field,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <div style={{ width: "min(20rem, calc(100vw - 6rem))" }}>
+        <Story />
+      </div>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Field provides the shared label, hint and error. B4 Select already composes Field: use Select for dropdowns instead of styling a native select or nesting another Field around it. For a custom native control, Base UI Field.Control supplies label association, not dropdown styling or motion.",
+      },
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Field>;
 
-const selectStyle = {
-  height: "var(--b4-control-height)",
-  padding: "0 var(--b4-control-padding-x)",
-  borderRadius: "var(--b4-radius-md)",
-  border: "1.5px solid var(--b4-border-default)",
-  background: "var(--b4-surface-1)",
-  color: "var(--b4-text-primary)",
-  fontFamily: "var(--b4-font-sans)",
-  fontSize: "var(--b4-text-base)",
-} as const;
+const colors = [
+  { value: "graphite", label: "Graphite", description: "Deep, neutral tones" },
+  { value: "porcelain", label: "Porcelain", description: "Soft, light tones" },
+];
 
 /**
- * `Field` is the shared label/hint/error wrapper — `TextField`, `Textarea`,
- * `PasswordField`, and `SearchField` all use it. Use it directly only
- * when composing a custom control that none of those cover, and route
- * that control through Base UI's `Field.Control` (`render` prop) so the
- * label/id association actually wires up — see this story's source and
- * `Field.tsx`'s doc comment.
+ * Keep the existing story ID for links. Select owns its Field wrapper, so
+ * forward the label/hint/error to it rather than nesting duplicate Fields.
+ * Do not use a native select as the visual reference for a B4 dropdown.
  */
 export const WithCustomControl: Story = {
   args: {
     label: "Favorite color",
     hint: "Pick the one you'll use most.",
   },
-  render: (args) => (
-    <Field {...args}>
-      <BaseField.Control
-        render={
-          <select style={selectStyle}>
-            <option>Graphite</option>
-            <option>Porcelain</option>
-          </select>
-        }
-      />
-    </Field>
-  ),
+  render: (args) => <Select {...args} items={colors} defaultValue="graphite" />,
 };
 
 export const WithError: Story = {
   args: { label: "Favorite color", error: "Pick one." },
-  render: (args) => (
-    <Field {...args}>
-      <BaseField.Control
-        render={
-          <select style={selectStyle}>
-            <option>Graphite</option>
-            <option>Porcelain</option>
-          </select>
-        }
-      />
-    </Field>
-  ),
+  render: (args) => <Select {...args} items={colors} placeholder="Pick a color" />,
 };

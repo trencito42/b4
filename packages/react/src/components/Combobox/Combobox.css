@@ -1,0 +1,76 @@
+/* The popup and option rows reuse Select.css, just as the text-entry family
+   reuses TextField.css. Keep the option-surface recipe in one place. */
+.b4-combobox {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-control-gap);
+  min-block-size: var(--b4-control-height);
+  padding-inline: var(--b4-control-padding-x);
+  border-radius: var(--b4-control-radius);
+  background: var(--b4-control-bg);
+  color: var(--b4-control-fg);
+  transition: background-color var(--b4-duration-fast) var(--b4-ease-standard);
+}
+.b4-combobox--sm {
+  min-block-size: var(--b4-control-height-sm);
+}
+.b4-combobox--lg {
+  min-block-size: var(--b4-control-height-lg);
+}
+.b4-combobox:hover:not([data-disabled]) {
+  background: var(--b4-control-bg-hover);
+}
+.b4-combobox:has(input:focus-visible) {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
+}
+.b4-combobox[data-invalid] {
+  box-shadow: inset var(--b4-space-0) var(--b4-space-0) var(--b4-space-0)
+    var(--b4-focus-ring-width) var(--b4-danger);
+}
+.b4-combobox__input {
+  min-inline-size: var(--b4-space-0);
+  inline-size: 100%;
+  border: none;
+  background: transparent;
+  color: var(--b4-text-primary);
+  outline: none;
+  font: inherit;
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-base);
+  padding-block: var(--b4-space-4);
+}
+.b4-combobox__input::placeholder {
+  color: var(--b4-text-tertiary);
+}
+.b4-combobox__input:disabled {
+  color: var(--b4-text-disabled);
+  cursor: not-allowed;
+}
+.b4-combobox__action {
+  flex: none;
+  inline-size: var(--b4-space-10);
+  block-size: var(--b4-space-10);
+}
+.b4-combobox__action svg {
+  inline-size: var(--b4-space-7);
+  block-size: var(--b4-space-7);
+}
+.b4-combobox__empty {
+  color: var(--b4-text-secondary);
+  font-size: var(--b4-text-sm);
+}
+.b4-combobox__empty:not(:empty) {
+  padding: var(--b4-space-7);
+}
+
+.b4-combobox__action svg {
+  inline-size: var(--b4-space-7);
+  block-size: var(--b4-space-7);
+}
+@media (pointer: coarse) {
+  .b4-combobox__action {
+    min-inline-size: var(--b4-hit-target-min);
+    min-block-size: var(--b4-hit-target-min);
+  }
+}

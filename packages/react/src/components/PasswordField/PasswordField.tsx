@@ -1,6 +1,9 @@
 import { forwardRef, useState, type ReactNode } from "react";
 import { Input } from "@base-ui/react/input";
 import { Field } from "../Field/Field.js";
+import { FieldControl } from "../../internal/FieldControl.js";
+import { IconButton } from "../IconButton/IconButton.js";
+import { TextTransition } from "../TextTransition/TextTransition.js";
 
 export interface PasswordFieldProps {
   label: ReactNode;
@@ -80,8 +83,12 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
         disabled={disabled}
         className={className}
       >
-        <div
-          className={["b4-text-field__control", hasError ? "b4-text-field__control--error" : ""]
+        <FieldControl
+          disabled={disabled}
+          className={[
+            "b4-text-field__control",
+            hasError ? "b4-text-field__control--error" : "",
+          ]
             .filter(Boolean)
             .join(" ")}
         >
@@ -99,16 +106,25 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             autoComplete={autoComplete}
             className="b4-text-field__input"
           />
-          <button
+          <IconButton
             type="button"
-            className="b4-text-field__action-button"
+            variant="ghost"
+            size="sm"
+            disabled={disabled}
+            className="b4-field-action"
             onClick={() => setVisible((v) => !v)}
             aria-label={visible ? "Hide password" : "Show password"}
             aria-pressed={visible}
-          >
-            {visible ? EyeOffIcon : EyeIcon}
-          </button>
-        </div>
+            icon={
+              <TextTransition
+                value={visible ? "visible" : "masked"}
+                className="b4-field-action__glyph"
+              >
+                {visible ? EyeOffIcon : EyeIcon}
+              </TextTransition>
+            }
+          />
+        </FieldControl>
       </Field>
     );
   },

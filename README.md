@@ -6,8 +6,7 @@ sculptural) and **B4 Porcelain** (light, refined) — share one component and
 motion system. Built for SaaS apps, dashboards, developer tools, and hosting
 panels; has no dependency on any particular consumer's APIs or branding.
 
-**Status: early.** One component (`Button`) is fully built and verified;
-almost everything in `COMPONENT_INVENTORY.md` is still planned. See
+**Status: Phase 2, corrective verification in progress.** Twenty public components exist; most of the full inventory is still planned. See
 `PROGRESS.md` for exactly what exists and `HANDOFF.md` for what's next.
 
 ## Packages

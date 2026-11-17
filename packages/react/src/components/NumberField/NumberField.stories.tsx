@@ -5,6 +5,13 @@ const meta: Meta<typeof NumberField> = {
   title: "Family B — Forms & Inputs/NumberField",
   component: NumberField,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <div style={{ width: "min(20rem, calc(100vw - 6rem))" }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: { label: "Quantity", defaultValue: 1, min: 0, max: 99 },
 };
 

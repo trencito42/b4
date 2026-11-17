@@ -5,6 +5,25 @@ import { axe } from "jest-axe";
 import { PasswordField } from "./PasswordField";
 
 describe("PasswordField", () => {
+  it("keeps one native input and its contents during rapid visibility changes", async () => {
+    const user = userEvent.setup();
+    render(<PasswordField label="Password" defaultValue="example-passphrase" />);
+    const input = screen.getByLabelText("Password");
+    for (let i = 0; i < 6; i++)
+      await user.click(screen.getByRole("button", { name: /password/ }));
+    expect(screen.getByLabelText("Password")).toBe(input);
+    expect(input).toHaveValue("example-passphrase");
+    expect(input).toHaveAttribute("type", "password");
+    expect(screen.getByRole("button", { name: "Show password" })).toHaveFocus();
+  });
+  it("disables visibility changes while the field is disabled", async () => {
+    const user = userEvent.setup();
+    render(<PasswordField label="Password" disabled defaultValue="secret" />);
+    const toggle = screen.getByRole("button", { name: "Show password" });
+    expect(toggle).toBeDisabled();
+    await user.click(toggle);
+    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+  });
   it("masks the value by default", () => {
     render(<PasswordField label="Password" defaultValue="secret123" />);
     const input = screen.getByLabelText("Password") as HTMLInputElement;

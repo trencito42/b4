@@ -1,5 +1,24 @@
 # B4 — Quality Matrix
 
+Latest Switch revision: shared spring thumb travel, logical RTL layout, neutral
+selected surfaces and press feedback. Focused Switch tests 7/7, ESLint,
+typecheck, package/Storybook builds passed. Manual browser: both-theme AllStates
+screenshots, 2px thumb vertical inset, actual intermediate travel transforms,
+Space activation, eight rapid clicks and instant RTL reduced motion checked.
+Full responsive/modifier/live-axe/CLI regression is not complete; IMPLEMENTED.
+
+Latest Checkbox revision: neutral selected tokens, animated check drawing/mixed
+morph, press feedback and reduced-motion handling. Focused Checkbox tests 9/9,
+ESLint, workspace typecheck, package build and Storybook build passed. AllStates
+and Selection document the actual states. No new browser/theme/motion/axe proof
+for this revision yet; Checkbox remains IMPLEMENTED. Historical evidence below
+does not certify these changed visuals.
+
+Latest Field docs correction: WithCustomControl/WithError now reuse B4 Select
+instead of a native select. ESLint, typecheck and React 124/124 passed. These
+specific story revisions have no new browser evidence: preview connection was
+refused this turn. Field remains IMPLEMENTED; see HANDOFF.md for continuation.
+
 Per-component status against the quality gate (visual / interaction / docs /
 verification — see `TESTING.md` for what each means concretely). **VERIFIED**
 is only set when the checks below actually ran and passed — not on
@@ -7,31 +26,31 @@ is only set when the checks below actually ran and passed — not on
 
 | Component | Status | Visual (both themes) | Interaction + a11y | Docs/stories | Verification evidence |
 |---|---|---|---|---|---|
-| **Button** | **VERIFIED** | ✅ 4 variants × 3 sizes × hover/active/disabled/loading, Graphite + Porcelain | ✅ keyboard activation, disabled blocks click, `aria-busy`/`aria-disabled`, no stuck state under 10 rapid clicks | ✅ Storybook stories with autodocs, do/don't note | `pnpm --filter @b4/react test` (6/6 pass incl. jest-axe), `npx playwright test` (2/2 pass incl. axe-core across all 4 variants in Graphite), `pnpm typecheck` clean, `pnpm build` clean, `pnpm --filter @b4/studio run build-storybook` clean |
-| **SegmentedControl** | **VERIFIED** | ✅ 2/3-way + disabled-item stories × sm/md/lg, Graphite (Porcelain reviewed via Storybook toolbar, not yet e2e'd — same caveat as Button, see below) | ✅ Base UI `ToggleGroup`/`Toggle` gives real arrow-key roving focus + `data-pressed`/`data-disabled` for free; controlled + uncontrolled value tested; indicator proven to stay at exactly 1 DOM node under 8–12 rapid alternating clicks (unit + e2e) | ✅ Storybook stories incl. the explicit Changelog/Login reference story, autodocs | `pnpm --filter @b4/react test` (6/6 for this component, 12/12 total incl. Button), `npx playwright test` (2/2 for this component, 4/4 total), `pnpm typecheck`/`pnpm build`/Storybook build all clean |
+| **Button** | **IMPLEMENTED** | ✅ 4 variants × 3 sizes × hover/active/disabled/loading, Graphite + Porcelain | ✅ keyboard activation, disabled blocks click, `aria-busy`/`aria-disabled`, no stuck state under 10 rapid clicks | ✅ Storybook stories with autodocs, do/don't note | `pnpm --filter @b4/react test` (6/6 pass incl. jest-axe), `npx playwright test` (2/2 pass incl. axe-core across all 4 variants in Graphite), `pnpm typecheck` clean, `pnpm build` clean, `pnpm --filter @b4/studio run build-storybook` clean |
+| **SegmentedControl** | **IMPLEMENTED** | ✅ 2/3-way + disabled-item stories × sm/md/lg, Graphite (Porcelain reviewed via Storybook toolbar, not yet e2e'd — same caveat as Button, see below) | ✅ Base UI `ToggleGroup`/`Toggle` gives real arrow-key roving focus + `data-pressed`/`data-disabled` for free; controlled + uncontrolled value tested; indicator proven to stay at exactly 1 DOM node under 8–12 rapid alternating clicks (unit + e2e) | ✅ Storybook stories incl. the explicit Changelog/Login reference story, autodocs | `pnpm --filter @b4/react test` (6/6 for this component, 12/12 total incl. Button), `npx playwright test` (2/2 for this component, 4/4 total), `pnpm typecheck`/`pnpm build`/Storybook build all clean |
 
-| **AnimatedIndicator** | **VERIFIED** | ✅ unstyled primitive (consumer supplies CSS); demonstrated between two targets, Graphite | ✅ exactly one DOM node under 8–10 rapid alternating moves (unit + e2e); `useReducedMotion()` collapses travel to instant | ✅ Storybook story, autodocs | `pnpm --filter @b4/react test`, `npx playwright test` (both in the full suite totals below) |
+| **AnimatedIndicator** | **IMPLEMENTED** | ✅ unstyled primitive (consumer supplies CSS); demonstrated between two targets, Graphite | ✅ exactly one DOM node under 8–10 rapid alternating moves (unit + e2e); `useReducedMotion()` collapses travel to instant | ✅ Storybook story, autodocs | `pnpm --filter @b4/react test`, `npx playwright test` (both in the full suite totals below) |
 | **TextTransition** | **VERIFIED** | ✅ crossfade/vertical/horizontal modes, Graphite | ✅ rapid successive value changes don't stack/corrupt display; unmount/remount doesn't duplicate; reduced motion collapses to instant swap | ✅ Storybook stories (3 modes + manual-control do/don't), autodocs | same suite |
 | **NumberTransition** | **VERIFIED** | ✅ static/counting/currency-format/up-down stories, Graphite | ✅ custom formatter supported; direction auto-derived from increase/decrease; rapid-click stress test in e2e | ✅ Storybook stories, autodocs | same suite |
-| **IconButton** | **VERIFIED** | ✅ 4 variants × 3 sizes, Graphite | ✅ required `aria-label`, blocks clicks while loading/disabled | ✅ Storybook stories, autodocs | same suite |
+| **IconButton** | **IMPLEMENTED** | ✅ 4 variants × 3 sizes, Graphite | ✅ required `aria-label`, blocks clicks while loading/disabled | ✅ Storybook stories, autodocs | same suite |
 | **ToggleButton** | **VERIFIED** | ✅ pressed/unpressed/disabled, Graphite | ✅ Base UI `Toggle` gives real `data-pressed`/keyboard (Space) for free; click + keyboard tested | ✅ Storybook stories, autodocs | same suite |
-| **Badge** | **VERIFIED — and the component that proved the theme-contrast gap was real, not hypothetical** | ✅ 6 tones, **both themes e2e'd with real axe color-contrast**, not just Graphite | ✅ static/presentational, no interaction states needed | ✅ Storybook stories (incl. all-tones overview), autodocs | `e2e/badge.spec.ts` runs axe against both the Graphite *and* Porcelain toolbar states — the first component in this repo to get that, after Button/SegmentedControl only ever checked Graphite |
+| **Badge** | **IMPLEMENTED** | ✅ 6 tones, **both themes e2e'd with real axe color-contrast**, not just Graphite | ✅ static/presentational, no interaction states needed | ✅ Storybook stories (incl. all-tones overview), autodocs | `e2e/badge.spec.ts` runs axe against both the Graphite *and* Porcelain toolbar states — the first component in this repo to get that, after Button/SegmentedControl only ever checked Graphite |
 
-| **Checkbox** | **VERIFIED** | ✅ unchecked/checked/indeterminate/disabled, both themes e2e'd | ✅ Base UI `Checkbox.Root`/`Indicator` gives real tri-state ARIA + keyboard for free; label-click toggles via native `<label>` association | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
-| **Switch** | **VERIFIED** | ✅ off/on/disabled, both themes e2e'd | ✅ Base UI `Switch.Root`/`Thumb`; label-click + Space key toggle | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
-| **RadioGroup** | **VERIFIED** | ✅ default + disabled-item stories, both themes e2e'd | ✅ Base UI `RadioGroup`/`Radio` gives real roving-tabindex arrow-key nav + ARIA radiogroup semantics for free; verified with a real-browser keyboard test, not just unit | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated keyboard-nav e2e |
+| **Checkbox** | **IMPLEMENTED** | ✅ unchecked/checked/indeterminate/disabled, both themes e2e'd | ✅ Base UI `Checkbox.Root`/`Indicator` gives real tri-state ARIA + keyboard for free; label-click toggles via native `<label>` association | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
+| **Switch** | **IMPLEMENTED** | ✅ off/on/disabled, both themes e2e'd | ✅ Base UI `Switch.Root`/`Thumb`; label-click + Space key toggle | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
+| **RadioGroup** | **IMPLEMENTED** | ✅ default + disabled-item stories, both themes e2e'd | ✅ Base UI `RadioGroup`/`Radio` gives real roving-tabindex arrow-key nav + ARIA radiogroup semantics for free; verified with a real-browser keyboard test, not just unit | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated keyboard-nav e2e |
 
-| **TextField** | **VERIFIED** | ✅ default/hint/error/required/disabled/3-sizes stories, both themes e2e'd | ✅ Base UI `Field`+`Input` gives real label/description/error ARIA wiring; error replaces hint rather than both showing; typed-input e2e in a real browser | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
+| **TextField** | **IMPLEMENTED** | ✅ default/hint/error/required/disabled/3-sizes stories, both themes e2e'd | ✅ Base UI `Field`+`Input` gives real label/description/error ARIA wiring; error replaces hint rather than both showing; typed-input e2e in a real browser | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
 
-| **Textarea** | **VERIFIED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ Base UI `Field.Control render={<textarea/>}` pattern; multi-line typed input verified | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
-| **PasswordField** | **VERIFIED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ real-browser e2e for the show/hide toggle actually changing input `type`; toggle is keyboard-reachable (verified by unit test tabbing to it) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated toggle e2e |
-| **SearchField** | **VERIFIED — after catching and fixing a real uncontrolled-clear bug** | ✅ empty/with-value/disabled, both themes e2e'd | ✅ clear button appears only with a value and actually empties it (real-browser e2e, not just unit) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated clear e2e |
+| **Textarea** | **IMPLEMENTED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ Base UI `Field.Control render={<textarea/>}` pattern; multi-line typed input verified | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes |
+| **PasswordField** | **IMPLEMENTED** | ✅ default/hint/error/disabled, both themes e2e'd | ✅ real-browser e2e for the show/hide toggle actually changing input `type`; toggle is keyboard-reachable (verified by unit test tabbing to it) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated toggle e2e |
+| **SearchField** | **IMPLEMENTED** | ✅ empty/with-value/disabled, both themes e2e'd | ✅ clear button appears only with a value and actually empties it (real-browser e2e, not just unit) | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated clear e2e |
 
-| **Field** | **VERIFIED** | ✅ with-custom-control/with-error stories | ✅ confirmed the label only auto-associates with a Base-UI-aware control (`Input`/`Checkbox`/`Switch`/`Field.Control`'s `render` prop) — a bare native element as `children` does **not** get the wiring for free; this was found by the component's own test failing, fixed by correcting the test/story/doc, not the component (the component was already correct; the first draft of its *docs* overclaimed) | ✅ Storybook stories, autodocs | unit tests; see "A docs-accuracy catch" below |
+| **Field** | **IMPLEMENTED** | ✅ with-custom-control/with-error stories | ✅ confirmed the label only auto-associates with a Base-UI-aware control (`Input`/`Checkbox`/`Switch`/`Field.Control`'s `render` prop) — a bare native element as `children` does **not** get the wiring for free; this was found by the component's own test failing, fixed by correcting the test/story/doc, not the component (the component was already correct; the first draft of its *docs* overclaimed) | ✅ Storybook stories, autodocs | unit tests; see "A docs-accuracy catch" below |
 
-| **NumberField** | **VERIFIED** | ✅ default/hint/error/step/disabled stories, both themes e2e'd | ✅ real Base UI `NumberField` (not `type="number"` on TextField) — min/max clamping, keyboard stepping, stepper buttons all tested; visible input is `role="textbox"` not `"spinbutton"` (a hidden hidden `type="number"` input carries that role instead), test queries corrected to match | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated stepper e2e |
+| **NumberField** | **IMPLEMENTED** | ✅ default/hint/error/step/disabled stories, both themes e2e'd | ✅ real Base UI `NumberField` (not `type="number"` on TextField) — min/max clamping, keyboard stepping, stepper buttons all tested; visible input is `role="textbox"` not `"spinbutton"` (a hidden hidden `type="number"` input carries that role instead), test queries corrected to match | ✅ Storybook stories, autodocs | `e2e/form-controls.spec.ts`, both themes + dedicated stepper e2e |
 
-**Full current suite totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (74/74), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (30/30, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField/Textarea/PasswordField/SearchField/NumberField stories — form controls checked in both themes). Playwright `workers` lowered 4→3 in `playwright.config.ts` as the suite grew past ~27 tests and started flaking again at 4 — see `TESTING.md`.
+**Earlier NumberField checkpoint totals**: `pnpm typecheck` (5/5 packages clean), `pnpm --filter @b4/react run test` (74/74), `pnpm --filter @b4/motion run test` (5/5, incl. the async-status race-safety test), `pnpm build` (clean), `pnpm --filter @b4/studio run build-storybook` (clean), `npx playwright test` (30/30, incl. axe-core on Button/SegmentedControl/TextTransition/Badge/Checkbox/Switch/RadioGroup/TextField/Textarea/PasswordField/SearchField/NumberField stories — form controls checked in both themes). Playwright `workers` lowered 4→3 in `playwright.config.ts` as the suite grew past ~27 tests and started flaking again at 4 — see `TESTING.md`.
 
 ## A docs-accuracy catch: Field's label doesn't auto-associate with just anything
 
@@ -93,7 +112,7 @@ contrast failures that had shipped undetected:
   margins. Run the real Playwright + axe check, in both themes, before
   calling a color pairing done.
 
-All other components in `COMPONENT_INVENTORY.md`: **PLANNED**.
+See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives
 
@@ -159,3 +178,97 @@ Playwright startup was blocked by Storybook settings EPERM. A static Storybook
 fallback started, but access to localhost sockets was denied by the execution
 environment. These are not passing e2e results. The earlier 30/30 suite totals
 above describe the previous checkpoint, not a fresh browser run in this session.
+
+## Select checkpoint (2026-11-17)
+
+| Component | Status | Evidence | Remaining gate |
+|---|---|---|---|
+| Select | IMPLEMENTED | 14 focused tests; full React suite 94/94; motion 5/5; typecheck, package build, Storybook build; focused ESLint and standalone e2e TypeScript check passed | Real-browser interaction, rendered axe contrast, screenshots and visual review in both themes; modifier sweep |
+
+Composes the existing Field wrapper with Base UI Select. Includes single
+controlled/uncontrolled selection, null reset, form submission by value,
+read-only and disabled behavior, error/hint wiring, three sizes, wrapping
+option descriptions, empty collections, trigger ref, and keyboard navigation.
+Selected labels resolve before opening and update when the collection changes.
+Motion uses the shared settle spring and useReducedMotion. Exit retention is
+wired through Base UI actions; interrupted-exit behavior is not yet proven in
+a real browser. No claim of visual or motion verification is made here.
+
+Unit tests confirmed that disabled options are keyboard-focusable but cannot
+be selected, and read-only selects allow inspecting choices without changing
+value. Tests originally assumed otherwise; those assertions were corrected.
+Body-level axe checks include the portal, disabling only the isolated-page
+region rule as documented in TESTING.md. This does not verify color contrast.
+
+e2e/select.spec.ts adds both-theme checks at 320/390/768/1440/1920px,
+keyboard/focus restoration, bottom-edge positioning and scrolling, OS reduced
+motion and interrupted exits. These tests are written, not passing evidence:
+Storybook settings writes failed with EPERM, no listener was observed on 6106,
+and the in-app browser timed out. Browser execution remains blocked here.
+
+## Corrective visual pass (latest evidence, 2026-11-17)
+
+User rejected the visible result. The earlier VERIFIED labels were not current
+proof of the requested standard. Components changed in this pass are now marked
+IMPLEMENTED until the full browser gate is rerun. Earlier evidence in the table
+and checkpoint sections is historical, not a fresh verification of these changes.
+
+Slider: fixed double translation against Base UI, missing native-input focus
+ring, extra Motion tab stop, cramped story width and indistinguishable range
+names. Added neutral/primary variants, three sizes, error semantics, formatted
+value announcements, form props and a shared touch-target token. The default
+visual treatment is now secondary (neutral); use variant="primary" for accent.
+Actual browser geometry checked in both themes at 320/390/768/1440/1920px:
+zero vertical centering error, no label overlap and no horizontal overflow.
+Graphite and Porcelain screenshots reviewed; keyboard Tab lands on the native
+input, arrow stepping works and focus ring is visible. Storybook's live axe
+scan of AllVariants: 0 violations, 0 inconclusive, 19 passes in each theme.
+
+Combobox: shared Field and Select option styling; extracted one internal
+OptionPopupSurface for both controls. Fourteen unit tests and eleven stories.
+Actual browser filtering, keyboard selection, clearing and exit unmount were
+exercised. Both-theme popup bounds fit at all five widths after positioning
+settled. Keyboard-only navigation through forty options scrolled the last
+option into view and selected Region 40 while retaining input focus. Four
+rapid close/reopen cycles in each explicit motion mode retained exactly one
+popup and list. Live axe on the open Default popup: 0 violations and 2
+inconclusive results in each theme. These were the inactive label obscured by
+the modal overlay and the programmatically focusable scrolling popup. Label
+occlusion and keyboard scrolling were manually inspected; these raw scan
+results remain recorded, not relabeled as a complete accessibility pass.
+
+Shared fixes: explicit reduced-motion mode now zeros all CSS duration tokens
+(actual browser: reduced=0s, full=0.14s for Combobox). Field passes invalid
+state to the primitive. Disabled password/search actions are actually disabled;
+search clear restores focus to its input. Text entries use control-radius,
+with surface-radius retained for multiline textarea. Existing CSS pixel
+literals were replaced by matching shared tokens across the early components.
+A source scan found no remaining px/color literals in component CSS. This is
+not proof that every possible inline style or animation has been audited.
+
+Storybook: responsive Slider/Select/TextField examples, consistent canvas
+background, and all five modifier toolbar controls. TextField AllSizes was
+visually reviewed on a 390px viewport in both themes.
+
+The CLI Playwright attempt still failed before tests began (Storybook profile
+settings EPERM). Browser-control checks above are actual separate evidence;
+none are claimed as a passing Playwright command. Full modifier/device,
+screen-reader, clean-consumer and release gates remain unfinished.
+
+Latest final code checks including Family B refinement: React 124/124, motion
+5/5, typecheck, package build and Storybook build passed. Focused ESLint and
+standalone field-motion e2e TypeScript checks also passed. See AUDIT_REPORT.md.
+
+### Current Family B motion evidence (2026-11-17)
+
+NumberField, PasswordField and RadioGroup were inspected in Graphite and
+Porcelain at 320/390/768/1440/1920px (30 checks, no overflow). Real intermediate
+numeric translation/opacity, password-glyph crossfade/blur and radio selected
+surface travel were observed. Explicit reduced motion removes these movements.
+Six live Storybook axe scans (three controls x two themes) returned zero
+violations and zero inconclusive results. Native input identity/rapid password
+toggles, controlled radio rejection and whole-label clicks have unit coverage.
+Optional radio descriptions have a story. e2e/field-motion.spec.ts is written
+and typechecked but NOT executed. These controls and AnimatedIndicator remain
+IMPLEMENTED pending the full current browser gate; earlier e2e table entries
+describe historical evidence, not a rerun of this revision.

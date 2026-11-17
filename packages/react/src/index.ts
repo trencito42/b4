@@ -62,3 +62,9 @@ export type { NumberFieldProps } from "./components/NumberField/NumberField.js";
 
 export { Slider } from "./components/Slider/Slider.js";
 export type { SliderProps } from "./components/Slider/Slider.js";
+
+export { Select } from "./components/Select/Select.js";
+export type { SelectProps, SelectItem } from "./components/Select/Select.js";
+
+export { Combobox } from "./components/Combobox/Combobox.js";
+export type { ComboboxProps } from "./components/Combobox/Combobox.js";

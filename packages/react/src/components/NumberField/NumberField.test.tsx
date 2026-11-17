@@ -5,6 +5,19 @@ import { axe } from "jest-axe";
 import { NumberField } from "./NumberField";
 
 describe("NumberField", () => {
+  it("keeps one editable input mounted through stepping and direct edits", async () => {
+    const user = userEvent.setup();
+    render(<NumberField label="Quantity" defaultValue={5} min={0} max={99} />);
+    const input = screen.getByRole("textbox", { name: "Quantity" });
+    await user.click(screen.getByRole("button", { name: "Increase value" }));
+    await user.click(screen.getByRole("button", { name: "Increase value" }));
+    expect(screen.getByRole("textbox")).toBe(input);
+    expect(input).toHaveValue("7");
+    await user.clear(input);
+    await user.type(input, "12");
+    expect(screen.getAllByRole("textbox")).toHaveLength(1);
+    expect(input).toHaveValue("12");
+  });
   // The visible NumberField.Input renders type="text"/inputmode="numeric"
   // (role "textbox"), not type="number" — Base UI keeps a separate hidden
   // type="number" input (aria-hidden) for native form semantics. Query
@@ -44,7 +57,9 @@ describe("NumberField", () => {
   it("calls onValueChange", async () => {
     const onValueChange = vi.fn();
     const user = userEvent.setup();
-    render(<NumberField label="Quantity" defaultValue={1} onValueChange={onValueChange} />);
+    render(
+      <NumberField label="Quantity" defaultValue={1} onValueChange={onValueChange} />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Increase value" }));
     expect(onValueChange).toHaveBeenCalledWith(2, expect.anything());

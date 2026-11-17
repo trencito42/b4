@@ -36,18 +36,18 @@
 
 .b4-icon-button__icon {
   display: inline-flex;
-  width: 20px;
-  height: 20px;
+  width: var(--b4-space-8);
+  height: var(--b4-space-8);
 }
 
 .b4-icon-button--sm .b4-icon-button__icon {
-  width: 16px;
-  height: 16px;
+  width: var(--b4-space-7);
+  height: var(--b4-space-7);
 }
 
 .b4-icon-button--lg .b4-icon-button__icon {
-  width: 24px;
-  height: 24px;
+  width: var(--b4-space-9);
+  height: var(--b4-space-9);
 }
 
 .b4-icon-button--primary {
@@ -96,10 +96,10 @@
 }
 
 .b4-icon-button__spinner {
-  width: 16px;
-  height: 16px;
+  width: var(--b4-space-7);
+  height: var(--b4-space-7);
   border-radius: 50%;
-  border: 2px solid currentColor;
+  border: var(--b4-space-1) solid currentColor;
   border-right-color: transparent;
   opacity: 0.85;
   animation: b4-icon-button-spin 0.7s linear infinite;

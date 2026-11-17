@@ -1,11 +1,14 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 import { Input } from "@base-ui/react/input";
 import { Field } from "../Field/Field.js";
+import { FieldControl } from "../../internal/FieldControl.js";
 
 export type TextFieldSize = "sm" | "md" | "lg";
 
-export interface TextFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "value" | "defaultValue"> {
+export interface TextFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size" | "value" | "defaultValue"
+> {
   label: ReactNode;
   hideLabel?: boolean;
   hint?: ReactNode;
@@ -53,7 +56,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       disabled={disabled}
       className={className}
     >
-      <div
+      <FieldControl
+        disabled={disabled}
         className={[
           "b4-text-field__control",
           `b4-text-field__control--${size}`,
@@ -62,7 +66,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
           .filter(Boolean)
           .join(" ")}
       >
-        {startIcon && <span className="b4-text-field__icon" aria-hidden="true">{startIcon}</span>}
+        {startIcon && (
+          <span className="b4-text-field__icon" aria-hidden="true">
+            {startIcon}
+          </span>
+        )}
         <Input
           ref={ref}
           disabled={disabled}
@@ -71,8 +79,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
           className="b4-text-field__input"
           {...rest}
         />
-        {endIcon && <span className="b4-text-field__icon" aria-hidden="true">{endIcon}</span>}
-      </div>
+        {endIcon && (
+          <span className="b4-text-field__icon" aria-hidden="true">
+            {endIcon}
+          </span>
+        )}
+      </FieldControl>
     </Field>
   );
 });

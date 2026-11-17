@@ -3,45 +3,120 @@
 **Last session made solid progress into Phase 2** (full details:
 `PROGRESS.md`). This is a deliberate checkpoint, not a context-exhaustion
 cutoff — but it's still far from the full mission (8 phases total, ~160
-components in `COMPONENT_INVENTORY.md`, 17 VERIFIED).
+components in `COMPONENT_INVENTORY.md`, 17 previously VERIFIED; current corrections require rechecks).
 
-## Slider checkpoint requiring follow-up
+## Immediate continuation (latest, 2026-11-17)
 
-Slider is IMPLEMENTED, including range values, stories and six unit tests.
-Current checks: typecheck, React 80/80, motion 5/5, package and Storybook builds passed.
-Playwright could not start: Storybook settings EPERM, then localhost socket
-permissions blocked a static-build fallback. Run browser tests and inspect both
-themes plus density/radius/contrast/motion before marking Slider VERIFIED.
-No manual visual sweep or release audit was performed in this checkpoint.
+User explicitly requested push after Switch refinement. Attempted git add --all
+before commit/push; it failed creating .git/index.lock (Permission denied).
+No new commit or push occurred. HEAD remains cae1a5c on main; working changes
+are retained. Retry normal staging/commit/push when Git metadata is writable;
+do not alter permissions or bypass the sandbox restriction.
 
-## Immediate next action
+Newest Switch refinement: replaced the physical translateX CSS tween with a
+Motion layout-position thumb using springs.travel; root press uses snap. Layout
+uses border-box dimensions and logical flex alignment, so RTL reverses travel
+without a second offset. Selected track/thumb use neutral B4 control tokens;
+shared 44px hit target, hover/focus/disabled states and forwarded button ref.
+AllStates and RightToLeft stories added. Reduced motion disables layout travel.
+Focused Switch tests 7/7, ESLint, workspace typecheck, package and Storybook
+builds passed. Unit tests cover rapid keyboard toggles/ref/focus, controlled
+rejection and native form data in addition to existing interaction/axe tests.
 
-Continue **Phase 2**. Family A still needs ButtonGroup, SplitButton, Link,
-StatusBadge, Avatar, AvatarGroup, KeyboardShortcut. Family B still needs
-InputGroup, Select, Combobox, MultiSelect,
-DatePicker, TimePicker, ColorPicker, FileUpload. `Field` (the shared
-label/hint/error wrapper — also covers the brief's separate "FormField"
-entry) and all of TextField/Textarea/PasswordField/SearchField/
-NumberField are done. Next: Select/Combobox (check `@base-ui/react`'s
-`select`/`combobox` exports the way this session did for `toggle-group`/
-`checkbox`/`switch`/`radio-group`/`field`/`input`/`number-field` before
-building from scratch — Base UI has primitives for both) — they're the
-biggest remaining Family B gap and the ones other components (Family F's
-FilterBar, etc.) will likely depend on later.
+Real browser now works again: started pnpm storybook (exec session 56229), then
+created a FRESH tab; the earlier connection-error tab was stuck on its data URL.
+Global-settings/registry warnings were not fatal to this dev-server startup.
+Do not keep claiming browser checks are universally blocked. Switch AllStates
+screenshots inspected in Graphite and Porcelain. Measured 40x24 track / 20x20
+thumb, 2px top/bottom inset, horizontal 2/18px off and 18/2px on in LTR.
+Observed actual intermediate travel transforms, Space toggled correctly; eight
+rapid Porcelain clicks ended off with exactly one thumb per switch. Porcelain
+RTL reduced: off inset 18/2 reversed to 2/18 on, transform none immediately.
+This is manual evidence, not a passing full CLI suite. Full modifier/mobile,
+screen-reader and live axe checks for this revision remain pending; IMPLEMENTED.
+Next verify latest Checkbox and Field stories using this working fresh-tab
+workflow, then complete existing-component regression before expanding scope.
 
-**Playwright `workers` may need lowering again as the e2e suite grows.**
-It went 4→3 in this session after the shared-Storybook-server flakiness
-(see item 9 below) came back at ~27 tests. If it flakes again past 30+
-tests, lower it further rather than assume every flake is the same old
-known issue forever — check whether it reproduces at `workers: 1` before
-writing it off.
+Newest request: Checkbox also needed visual/motion refinement. It now uses
+neutral B4 selected tokens, snap press feedback, a persistent animated indicator
+and drawn/morphing check-to-mixed path. Reduced motion uses duration zero.
+Base UI owns checked state and form semantics; forwardRef targets the existing
+button. Label/touch target is at least the shared hit-target token. Added
+AllStates and Selection (derived Select all mixed state) stories.
+Checkbox focused tests 9/9, ESLint, workspace typecheck, package build and
+Storybook build passed. Three new tests cover controlled rejection, control/ref
+identity and focus across mixed/checked/unchecked, and native form data.
+No new real-browser checkbox evidence this turn; the last preview connection
+was refused. Next inspect Checkbox/Selection and AllStates in both themes,
+verify actual path/press frames and reduced motion, disabled/keyboard behavior,
+live axe and responsive layout. Keep Checkbox IMPLEMENTED until the full gate.
 
-Use `packages/react/src/components/Button/` or `SegmentedControl/` as the
-structural template (see `AGENTS.md`'s checklist). Consider wiring
-`useAsyncStatus` (in `@b4/motion`) into Button's `loading` prop and into
-whatever form-submit pattern Family B's Field/FormField end up needing,
-rather than each component re-inventing pending/success/error state.
+Latest focused correction: Field/WithCustomControl and Field/WithError no longer
+show an inline-styled native select. Both reuse B4 Select, which already owns
+Field; do not nest another wrapper. Existing story IDs are preserved. Removed
+the ad hoc selectStyle and clarified docs: Base UI Field.Control supplies label
+semantics, not B4 dropdown visuals. ESLint, typecheck, React 124/124 and
+Storybook production build passed.
+Visual recheck of these two stories is next: localhost:6106 refused the browser
+connection this turn. Storybook startup reported global-settings EPERM and a
+runtime-registry warning. Do not reuse prior browser evidence for these changed
+stories. Check both themes, keyboard selection, hint/error and reduced motion.
 
+The user visually rejected the previous checkpoint. Read AUDIT_REPORT.md for
+exact corrections and evidence. The whole plan is NOT complete. Twenty public
+components exist; seventeen touched components are IMPLEMENTED pending a full
+browser regression run. Do not use earlier VERIFIED claims as current proof.
+
+Current checks: React 124/124, motion 5/5, typecheck, package build, Storybook
+build all passed. Slider/Combobox were actually inspected through browser
+control against the user's server. Slider geometry is correct at all five
+specified widths in both themes; its AllVariants live axe scan reports zero
+violations/inconclusive. Combobox has keyboard/filter/clear/scroll/exit and
+both-theme viewport evidence, but its live axe scan has two inconclusive
+results (details in report). CLI Playwright still cannot start here: settings
+EPERM. Browser control works; use it rather than pretending localhost itself
+is universally unavailable.
+
+Latest request: Family B fields looked generic and NumberField, PasswordField,
+RadioGroup lacked motion. Implemented shared matte FieldControl with an animated
+focus halo; accepted numeric steps animate the SAME editable native input;
+password uses IconButton + TextTransition for the eye glyph only; RadioGroup
+uses AnimatedIndicator for a traveling selected row and a spring dot. Radio
+items optionally accept descriptions. AnimatedIndicator now supports span as
+well as its default div. All use existing motion presets/reduced-motion hooks.
+
+Actual browser evidence for these three: both themes at 320/390/768/1440/1920
+(30 checks, no horizontal overflow), screenshots in both themes, real in-flight
+numeric translation/opacity and password icon crossfade/blur observed, radio
+travel observed. Explicit reduced motion settled immediately; six live
+Storybook axe scans returned zero violations and zero inconclusive results.
+This is manual browser evidence, NOT a passing Playwright command.
+e2e/field-motion.spec.ts adds automated regression coverage but has not run.
+Keep AnimatedIndicator IMPLEMENTED too until its expanded render API completes
+the browser gate. Native editing/IME and physical touch still need coverage.
+
+First complete the full browser gate for the existing components, including
+all changed Field consumers, Select after popup refactor, pointer/touch Slider
+interaction and both theme/modifier matrices. Tests added: slider geometry
+and native focus, select.spec.ts, combobox.spec.ts and theme-modifiers.spec.ts.
+Run the full suite from a terminal that can access localhost normally.
+Keep the browser evidence separate from automated command results.
+
+Then continue Phase 2: MultiSelect, InputGroup and remaining Family A/B items
+in COMPONENT_INVENTORY.md. Preserve the visual standard and inspect real
+rendering before calling another component finished. Do not restart the plan
+or duplicate existing components. Combobox is now implemented, not next work.
+
+Important implementation details:
+- Slider must not add CSS translation on top of Base UI's translate property.
+- Slider motion render target uses tabIndex=-1 to avoid a second tab stop.
+- Field must forward invalid to Base UI, not merely show Field.Error.
+- Select/Combobox share internal OptionPopupSurface and Select's option CSS.
+- Combobox uses createItems for stable IDs; it is not free-form search.
+- Disabled options can be focusable but not selectable; read-only permits
+  inspection. Do not weaken behavior tests based on incorrect assumptions.
+- Storybook now exposes theme/density/radius/contrast/motion. Explicit reduced
+  mode also zeros CSS durations. User runs pnpm storybook on port 6106.
 ## Things the next session needs to know that aren't obvious from the code
 
 1. **TypeScript is pinned to 6.0.3, not latest (7.0.2).** Don't "helpfully"
@@ -121,11 +196,20 @@ rather than each component re-inventing pending/success/error state.
   showcases) — that's explicitly Phase 6, not a Phase 0 shortfall.
 
 
-## Push outcome for this checkpoint
+## Git checkpoint
 
-No new commit or push succeeded. The execution environment made `.git`
-read-only: remote setup, branch rename and index.lock creation were denied.
-The branch remains master; no origin was added. All checkpoint changes remain
-in the working tree. In an environment with writable Git metadata, review
-`git diff`, commit the checkpoint, then configure origin and push without force.
-User authorization to push is already present; no further approval is needed.
+User committed and pushed the preceding Slider batch: local main and
+origin/main both point to cae1a5c (Phase 2: Slider checkpoint). Working tree
+was clean at the start of Select work. Direct remote verification was blocked
+by DNS. Earlier Git writes failed because .git is read-only in this session.
+New Select work is local until a new commit succeeds; never imply it was pushed.
+
+Select commit/push attempt also failed at git add: cannot create .git/index.lock
+(Permission denied). No Select commit was created; all changes remain local.
+
+Final checkpoint evidence: React 119/119, motion 5/5, typecheck, package and
+Storybook builds passed. Focused ESLint and e2e TypeScript checks passed.
+Slider/Select/Combobox public imports and server rendering from the Studio
+consumer passed. No clean external-install check is claimed. git add failed
+again on .git/index.lock (Permission denied), so all corrections, Select and
+Combobox remain local. User authorization to commit/push already exists.

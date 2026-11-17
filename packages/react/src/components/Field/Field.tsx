@@ -30,8 +30,10 @@ export interface FieldProps {
  * `BaseField.Control`'s `render` prop (see `Textarea`'s source for the
  * pattern with a plain `<textarea>`). Passing a bare native element as
  * `children` directly does **not** get the label/id wiring for free —
- * confirmed by `Field.test.tsx`/`Field.stories.tsx`, which both route
- * their example `<select>` through `BaseField.Control`.
+ * confirmed by `Field.test.tsx` using `BaseField.Control` with a native
+ * select. That adapter supplies semantics, not visual dropdown styling.
+ * For a B4 dropdown use `Select`, which already composes this wrapper;
+ * see `Field.stories.tsx`. Do not nest another Field around Select.
  *
  * `Field.Error`'s `match` prop is passed literally `true` (not left to
  * native HTML5 validity) so this component's own `error` prop is what
@@ -52,6 +54,7 @@ export function Field({
 
   return (
     <BaseField.Root
+      invalid={hasError}
       disabled={disabled}
       className={["b4-text-field", className ?? ""].filter(Boolean).join(" ")}
     >

@@ -115,7 +115,7 @@
   height: 1em;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 2px solid currentColor;
+  border: var(--b4-space-1) solid currentColor;
   border-right-color: transparent;
   opacity: 0.85;
   animation: b4-button-spin 0.7s linear infinite;

@@ -8,14 +8,14 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 | Component | Status |
 |---|---|
-| Button | **VERIFIED** (see `QUALITY_MATRIX.md`) |
-| IconButton | **VERIFIED** |
+| Button | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| IconButton | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 | ButtonGroup | PLANNED |
 | SplitButton | PLANNED |
 | ToggleButton | **VERIFIED** |
-| SegmentedControl | **VERIFIED** — the Phase 1 quality reference component (Changelog/Login sliding-capsule control named in the mission brief) |
+| SegmentedControl | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 | Link | PLANNED |
-| Badge | **VERIFIED** |
+| Badge | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 | StatusBadge | PLANNED |
 | Avatar | PLANNED |
 | AvatarGroup | PLANNED |
@@ -25,25 +25,25 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 | Component | Status |
 |---|---|
-| Checkbox | **VERIFIED** |
-| Switch | **VERIFIED** |
-| RadioGroup | **VERIFIED** |
-| TextField | **VERIFIED** |
-| Textarea | **VERIFIED** |
-| PasswordField | **VERIFIED** |
-| SearchField | **VERIFIED** |
-| NumberField | **VERIFIED** |
+| Checkbox | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Switch | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| RadioGroup | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| TextField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Textarea | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| PasswordField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| SearchField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| NumberField | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 | InputGroup | PLANNED |
-| Select | PLANNED |
-| Combobox | PLANNED |
+| Select | IMPLEMENTED - corrective changes; full browser suite recheck pending |
+| Combobox | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 | MultiSelect | PLANNED |
-| Slider | IMPLEMENTED - unit/build checks passed; browser/visual checks pending |
+| Slider | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 | RangeSlider | Covered by Slider array values - IMPLEMENTED; browser/visual checks pending |
 | DatePicker | PLANNED |
 | TimePicker | PLANNED |
 | ColorPicker | PLANNED |
 | FileUpload | PLANNED |
-| Field | **VERIFIED** — also covers the inventory's separate "FormField" entry; one component, not two (see note below) |
+| Field | IMPLEMENTED - corrective changes; full browser suite recheck pending |
 
 ## Family C — Navigation & Overlays
 
@@ -65,7 +65,7 @@ brief's "specialized components" note.
 |---|---|
 | TextTransition | **VERIFIED** |
 | NumberTransition | **VERIFIED** |
-| AnimatedIndicator | **VERIFIED** |
+| AnimatedIndicator | **IMPLEMENTED** |
 | Toast | PLANNED |
 | InlineAlert | PLANNED |
 | NotificationPanel | PLANNED |

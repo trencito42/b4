@@ -1,10 +1,15 @@
-import type { ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
+import { motion } from "motion/react";
+import { springs, useReducedMotion } from "@b4/motion";
+import { AnimatedIndicator } from "../AnimatedIndicator/AnimatedIndicator.js";
+import { motionCompatibleProps } from "../../internal/motionCompatibleProps.js";
 import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
 import { Radio } from "@base-ui/react/radio";
 
 export interface RadioGroupItem<Value extends string> {
   value: Value;
   label: ReactNode;
+  description?: ReactNode;
   disabled?: boolean;
 }
 
@@ -36,11 +41,17 @@ export function RadioGroup<Value extends string>({
   className,
   ...rest
 }: RadioGroupProps<Value>) {
+  const indicatorId = useId();
+  const reducedMotion = useReducedMotion();
+  const [internalValue, setInternalValue] = useState<Value | null>(defaultValue ?? null);
+  const selected = value ?? internalValue;
   return (
     <BaseRadioGroup
-      value={value}
-      defaultValue={defaultValue}
-      onValueChange={(next) => onValueChange?.(next as Value)}
+      value={selected}
+      onValueChange={(next) => {
+        if (value === undefined) setInternalValue(next as Value);
+        onValueChange?.(next as Value);
+      }}
       disabled={disabled}
       className={["b4-radio-group", className ?? ""].filter(Boolean).join(" ")}
       {...rest}
@@ -48,13 +59,57 @@ export function RadioGroup<Value extends string>({
       {items.map((item) => (
         <label
           key={item.value}
-          className="b4-radio-group__item"
+          className={[
+            "b4-radio-group__item",
+            item.value === selected ? "b4-radio-group__item--selected" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
           data-disabled={item.disabled || disabled || undefined}
         >
-          <Radio.Root value={item.value} disabled={item.disabled} className="b4-radio-group__control">
-            <Radio.Indicator className="b4-radio-group__dot" />
+          {item.value === selected && (
+            <AnimatedIndicator
+              as="span"
+              layoutId={`b4-radio-selection-${indicatorId}`}
+              className="b4-radio-group__selection"
+              aria-hidden="true"
+            />
+          )}
+          <Radio.Root
+            value={item.value}
+            disabled={item.disabled}
+            className="b4-radio-group__control"
+            render={
+              <motion.span
+                whileTap={
+                  disabled || item.disabled || reducedMotion ? undefined : { scale: 0.9 }
+                }
+                transition={reducedMotion ? { duration: 0 } : springs.snap}
+              />
+            }
+          >
+            <Radio.Indicator
+              keepMounted
+              className="b4-radio-group__dot"
+              render={(props, state) => (
+                <motion.span
+                  {...motionCompatibleProps(props)}
+                  initial={false}
+                  animate={{
+                    scale: state.checked ? 1 : 0,
+                    opacity: state.checked ? 1 : 0,
+                  }}
+                  transition={reducedMotion ? { duration: 0 } : springs.snap}
+                />
+              )}
+            />
           </Radio.Root>
-          <span className="b4-radio-group__label">{item.label}</span>
+          <span className="b4-radio-group__content">
+            <span className="b4-radio-group__label">{item.label}</span>
+            {item.description && (
+              <span className="b4-radio-group__description">{item.description}</span>
+            )}
+          </span>
         </label>
       ))}
     </BaseRadioGroup>

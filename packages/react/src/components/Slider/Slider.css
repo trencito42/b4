@@ -1,85 +1,108 @@
 .b4-slider-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--b4-space-5);
+  --b4-slider-thumb-size: var(--b4-space-8);
+  --b4-slider-track-size: var(--b4-space-3);
+  display: grid;
+  gap: var(--b4-space-3);
+  min-inline-size: var(--b4-space-0);
+  inline-size: 100%;
   font-family: var(--b4-font-sans);
 }
-
-.b4-slider-field[data-disabled] {
-  opacity: 0.5;
+.b4-slider-field--sm {
+  --b4-slider-thumb-size: var(--b4-space-7);
+  --b4-slider-track-size: var(--b4-space-2);
 }
-
+.b4-slider-field--lg {
+  --b4-slider-thumb-size: var(--b4-space-9);
+  --b4-slider-track-size: var(--b4-space-4);
+}
+.b4-slider {
+  display: grid;
+  gap: var(--b4-control-gap);
+}
 .b4-slider-field__header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--b4-space-4);
+  gap: var(--b4-space-3) var(--b4-space-7);
 }
-
 .b4-slider-field__label {
+  overflow-wrap: anywhere;
+}
+.b4-slider-field__value {
+  margin-inline-start: auto;
+  color: var(--b4-text-primary);
   font-size: var(--b4-text-sm);
   font-weight: var(--b4-weight-medium);
-  color: var(--b4-text-secondary);
-}
-
-.b4-slider-field__value {
-  font-size: var(--b4-text-sm);
-  color: var(--b4-text-primary);
   font-variant-numeric: tabular-nums;
 }
-
-.b4-slider-field__hint {
-  font-size: var(--b4-text-xs);
-  color: var(--b4-text-tertiary);
-}
-
-.b4-slider {
-  padding: var(--b4-space-4) var(--b4-space-0);
-}
-
 .b4-slider__control {
   display: flex;
   align-items: center;
   position: relative;
-  width: 100%;
-  height: var(--b4-space-8);
+  inline-size: 100%;
+  min-block-size: max(var(--b4-hit-target-min), var(--b4-control-height));
+  padding-inline: calc(var(--b4-hit-target-min) / 2);
+  box-sizing: border-box;
   cursor: pointer;
-  touch-action: none;
+  touch-action: pan-y;
 }
-
 .b4-slider__track {
   position: relative;
-  width: 100%;
-  height: var(--b4-space-2);
-  border-radius: var(--b4-radius-full);
-  background-color: var(--b4-control-bg);
+  inline-size: 100%;
+  block-size: var(--b4-slider-track-size);
+  border-radius: var(--b4-control-radius);
+  background: var(--b4-control-bg);
 }
-
 .b4-slider__indicator {
   position: absolute;
-  height: 100%;
-  border-radius: var(--b4-radius-full);
-  background-color: var(--b4-accent);
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--b4-text-tertiary);
 }
-
+.b4-slider-field--primary .b4-slider__indicator {
+  background: var(--b4-accent);
+}
 .b4-slider__thumb {
-  position: absolute;
-  top: 50%;
-  width: calc(var(--b4-space-8) - var(--b4-space-1));
-  height: calc(var(--b4-space-8) - var(--b4-space-1));
-  transform: translate(-50%, -50%);
-  border-radius: var(--b4-radius-full);
-  background-color: var(--b4-surface-1);
-  border: var(--b4-focus-ring-width) solid var(--b4-accent);
+  /* Base UI owns position and translate. A second translate here offsets
+     the thumb twice and moves it over the field label. */
+  box-sizing: border-box;
+  inline-size: var(--b4-slider-thumb-size);
+  block-size: var(--b4-slider-thumb-size);
+  border-radius: var(--b4-control-radius);
+  background: var(--b4-text-primary);
   box-shadow: var(--b4-shadow-raised);
-  transition: box-shadow var(--b4-duration-fast) var(--b4-ease-standard);
+  cursor: grab;
+  touch-action: none;
 }
-
-.b4-slider__thumb:focus-visible {
+.b4-slider__thumb::before {
+  content: "";
+  position: absolute;
+  inset: calc((var(--b4-slider-thumb-size) - var(--b4-hit-target-min)) / 2);
+  border-radius: inherit;
+}
+.b4-slider__thumb:has(input:focus-visible) {
   outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
   outline-offset: var(--b4-focus-ring-offset);
 }
-
-.b4-slider[data-dragging] .b4-slider__thumb {
-  box-shadow: var(--b4-shadow-overlay);
+.b4-slider__thumb[data-dragging] {
+  cursor: grabbing;
+}
+.b4-slider-field[data-disabled] .b4-slider__control,
+.b4-slider-field[data-disabled] .b4-slider__thumb {
+  cursor: not-allowed;
+}
+.b4-slider-field[data-disabled] .b4-slider__thumb,
+.b4-slider-field[data-disabled] .b4-slider__indicator {
+  background: var(--b4-text-disabled);
+  box-shadow: none;
+}
+.b4-slider-field[data-disabled] .b4-slider-field__value {
+  color: var(--b4-text-disabled);
+}
+.b4-slider-field[data-invalid] .b4-slider__track {
+  background: var(--b4-danger-bg);
+}
+.b4-slider-field[data-invalid] .b4-slider__indicator {
+  background: var(--b4-danger-text);
 }

@@ -1,7 +1,7 @@
 .b4-badge {
   display: inline-flex;
   align-items: center;
-  height: 22px;
+  height: calc(var(--b4-space-8) + var(--b4-space-1));
   padding: 0 var(--b4-space-5);
   border-radius: var(--b4-radius-full);
   font-family: var(--b4-font-sans);

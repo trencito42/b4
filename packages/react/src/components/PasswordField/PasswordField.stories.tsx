@@ -5,6 +5,13 @@ const meta: Meta<typeof PasswordField> = {
   title: "Family B — Forms & Inputs/PasswordField",
   component: PasswordField,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <div style={{ width: "min(20rem, calc(100vw - 6rem))" }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: { label: "Password", autoComplete: "current-password" },
 };
 

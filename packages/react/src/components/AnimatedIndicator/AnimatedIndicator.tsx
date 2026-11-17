@@ -1,7 +1,12 @@
 import { motion, type MotionProps } from "motion/react";
 import { springs, type SpringToken, useReducedMotion } from "@b4/motion";
 
-export interface AnimatedIndicatorProps extends Omit<MotionProps, "transition" | "layoutId"> {
+export interface AnimatedIndicatorProps extends Omit<
+  MotionProps,
+  "transition" | "layoutId"
+> {
+  /** Use span inside phrasing containers such as labels/buttons. */
+  as?: "div" | "span";
   /**
    * The shared layout id this indicator travels under. Must be unique per
    * indicator instance on the page (e.g. derived from `useId()`) — reusing
@@ -28,15 +33,17 @@ export interface AnimatedIndicatorProps extends Omit<MotionProps, "transition" |
  * treatment.
  */
 export function AnimatedIndicator({
+  as = "div",
   layoutId,
   spring = "travel",
   className,
   ...rest
 }: AnimatedIndicatorProps) {
   const reducedMotion = useReducedMotion();
+  const Indicator = as === "span" ? motion.span : motion.div;
 
   return (
-    <motion.div
+    <Indicator
       layoutId={layoutId}
       className={className}
       transition={reducedMotion ? { duration: 0 } : springs[spring]}

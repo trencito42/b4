@@ -1,6 +1,7 @@
-import { forwardRef, useState, type ReactNode } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from "react";
 import { Input } from "@base-ui/react/input";
 import { Field } from "../Field/Field.js";
+import { FieldControl } from "../../internal/FieldControl.js";
 
 export interface SearchFieldProps {
   label: ReactNode;
@@ -39,49 +40,79 @@ const ClearIcon = (
  * an earlier version did the latter and the clear button silently stopped
  * clearing the real (uncontrolled) input value. See QUALITY_MATRIX.md.
  */
-export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
-  { label, hideLabel, hint, error, disabled = false, placeholder, value, defaultValue, onValueChange, className },
-  ref,
-) {
-  const [internalValue, setInternalValue] = useState(defaultValue ?? "");
-  const currentValue = value ?? internalValue;
-  const hasError = Boolean(error);
+export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
+  function SearchField(
+    {
+      label,
+      hideLabel,
+      hint,
+      error,
+      disabled = false,
+      placeholder,
+      value,
+      defaultValue,
+      onValueChange,
+      className,
+    },
+    ref,
+  ) {
+    const [internalValue, setInternalValue] = useState(defaultValue ?? "");
+    const inputRef = useRef<HTMLInputElement>(null);
+    useImperativeHandle(ref, () => inputRef.current!, []);
+    const currentValue = value ?? internalValue;
+    const hasError = Boolean(error);
 
-  function handleChange(next: string) {
-    if (value === undefined) setInternalValue(next);
-    onValueChange?.(next);
-  }
+    function handleChange(next: string) {
+      if (value === undefined) setInternalValue(next);
+      onValueChange?.(next);
+    }
 
-  return (
-    <Field label={label} hideLabel={hideLabel} hint={hint} error={error} disabled={disabled} className={className}>
-      <div
-        className={["b4-text-field__control", hasError ? "b4-text-field__control--error" : ""]
-          .filter(Boolean)
-          .join(" ")}
+    return (
+      <Field
+        label={label}
+        hideLabel={hideLabel}
+        hint={hint}
+        error={error}
+        disabled={disabled}
+        className={className}
       >
-        <span className="b4-text-field__icon" aria-hidden="true">
-          {SearchIcon}
-        </span>
-        <Input
-          ref={ref}
-          type="search"
+        <FieldControl
           disabled={disabled}
-          placeholder={placeholder}
-          value={currentValue}
-          onValueChange={handleChange}
-          className="b4-text-field__input"
-        />
-        {currentValue && (
-          <button
-            type="button"
-            className="b4-text-field__action-button"
-            onClick={() => handleChange("")}
-            aria-label="Clear search"
-          >
-            {ClearIcon}
-          </button>
-        )}
-      </div>
-    </Field>
-  );
-});
+          className={[
+            "b4-text-field__control",
+            hasError ? "b4-text-field__control--error" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <span className="b4-text-field__icon" aria-hidden="true">
+            {SearchIcon}
+          </span>
+          <Input
+            ref={inputRef}
+            type="search"
+            disabled={disabled}
+            placeholder={placeholder}
+            value={currentValue}
+            onValueChange={handleChange}
+            className="b4-text-field__input"
+          />
+          {currentValue && (
+            <button
+              type="button"
+              disabled={disabled}
+              className="b4-text-field__action-button"
+              onClick={() => {
+                handleChange("");
+                inputRef.current?.focus();
+              }}
+              aria-label="Clear search"
+            >
+              {ClearIcon}
+            </button>
+          )}
+        </FieldControl>
+      </Field>
+    );
+  },
+);

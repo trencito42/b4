@@ -1,0 +1,7 @@
+/* The canvas is the theme's canvas, not Storybook's separate background.
+   This prevents an artificial black/white tile around isolated components. */
+html,
+body {
+  background: var(--b4-surface-canvas);
+  color: var(--b4-text-primary);
+}

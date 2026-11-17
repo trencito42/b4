@@ -13,8 +13,8 @@
 
 .b4-text-field__label--hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: var(--b4-size-pixel);
+  height: var(--b4-size-pixel);
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
 }
@@ -29,10 +29,12 @@
   gap: var(--b4-space-4);
   height: var(--b4-control-height);
   padding: 0 var(--b4-control-padding-x);
-  border: 1.5px solid var(--b4-border-default);
-  border-radius: var(--b4-radius-md);
-  background-color: var(--b4-surface-1);
-  transition: border-color var(--b4-duration-fast) var(--b4-ease-standard);
+  border: var(--b4-stroke-width-control) solid transparent;
+  border-radius: var(--b4-control-radius);
+  background-color: var(--b4-control-bg);
+  transition:
+    background-color var(--b4-duration-fast) var(--b4-ease-standard),
+    border-color var(--b4-duration-fast) var(--b4-ease-standard);
 }
 
 .b4-text-field__control--sm {
@@ -43,10 +45,14 @@
   height: var(--b4-control-height-lg);
 }
 
-.b4-text-field__control:has(.b4-text-field__input:focus-visible) {
-  border-color: var(--b4-accent);
-  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
-  outline-offset: 1px;
+.b4-text-field__control:hover {
+  background-color: var(--b4-control-bg-hover);
+}
+.b4-text-field__control[data-focus-within] {
+  background-color: var(--b4-control-bg-active);
+}
+.b4-text-field[data-disabled] .b4-text-field__control {
+  background-color: var(--b4-control-bg);
 }
 
 .b4-text-field__control--error {
@@ -56,6 +62,8 @@
 /* Textarea reuses every .b4-text-field__* class except height, which must
    come from content (rows) rather than the fixed control-height tokens. */
 .b4-text-field__control--textarea {
+  /* Multiline editing is a surface rather than an elongated capsule. */
+  border-radius: var(--b4-surface-radius);
   height: auto;
   padding: var(--b4-space-5) var(--b4-control-padding-x);
   align-items: flex-start;
@@ -79,7 +87,7 @@
 }
 
 .b4-text-field__input::placeholder {
-  color: var(--b4-text-disabled);
+  color: var(--b4-text-tertiary);
 }
 
 .b4-text-field__input:disabled {
@@ -92,8 +100,8 @@
 
 .b4-text-field__icon {
   display: inline-flex;
-  width: 16px;
-  height: 16px;
+  width: var(--b4-space-7);
+  height: var(--b4-space-7);
   flex-shrink: 0;
   color: var(--b4-text-tertiary);
 }
@@ -111,8 +119,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: var(--b4-space-7);
+  height: var(--b4-space-7);
   flex-shrink: 0;
   border: none;
   background: transparent;
@@ -126,7 +134,7 @@
 
 .b4-text-field__action-button:focus-visible {
   outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
-  outline-offset: 2px;
+  outline-offset: var(--b4-space-1);
   border-radius: var(--b4-radius-xs);
 }
 
@@ -137,5 +145,57 @@
 
 .b4-number-field__input {
   text-align: center;
+}
+
+.b4-field-control {
+  position: relative;
+}
+.b4-field-control__halo {
+  position: absolute;
+  inset: calc(-1 * var(--b4-focus-ring-offset));
+  box-sizing: border-box;
+  border: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.b4-field-action {
+  flex: none;
+  inline-size: var(--b4-space-10);
+  block-size: var(--b4-space-10);
+  padding: var(--b4-space-0);
+}
+.b4-field-action[aria-pressed="true"] {
+  background: var(--b4-control-bg-selected);
+  color: var(--b4-control-fg-selected);
+}
+.b4-field-action__glyph {
+  inline-size: 100%;
+  block-size: 100%;
+}
+.b4-field-action__glyph > .b4-text-transition__item {
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.b4-number-field__value {
+  flex: 1;
+  min-inline-size: var(--b4-space-0);
+  block-size: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.b4-number-field__value .b4-number-field__input {
+  inline-size: 100%;
+}
+@media (pointer: coarse) {
+  .b4-field-action {
+    min-inline-size: var(--b4-hit-target-min);
+    min-block-size: var(--b4-hit-target-min);
+  }
+  .b4-field-control:has(.b4-field-action) {
+    min-block-size: var(--b4-hit-target-min);
+  }
 }
 

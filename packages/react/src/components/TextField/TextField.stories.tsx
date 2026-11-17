@@ -21,7 +21,7 @@ export const Disabled: Story = { args: { disabled: true, defaultValue: "disabled
 
 export const AllSizes: Story = {
   render: (args) => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, width: 280 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--b4-space-7)", width: "min(17.5rem, calc(100vw - 6rem))" }}>
       <TextField {...args} size="sm" label="Small" />
       <TextField {...args} size="md" label="Medium" />
       <TextField {...args} size="lg" label="Large" />

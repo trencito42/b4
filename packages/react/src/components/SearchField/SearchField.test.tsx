@@ -5,9 +5,26 @@ import { axe } from "jest-axe";
 import { SearchField } from "./SearchField";
 
 describe("SearchField", () => {
+  it("disables the clear action and preserves disabled contents", async () => {
+    const user = userEvent.setup();
+    render(<SearchField label="Search" disabled defaultValue="saved query" />);
+    const clear = screen.getByRole("button", { name: "Clear search" });
+    expect(clear).toBeDisabled();
+    await user.click(clear);
+    expect(screen.getByRole("searchbox")).toHaveValue("saved query");
+  });
+
+  it("returns focus to the search input after clearing", async () => {
+    const user = userEvent.setup();
+    render(<SearchField label="Search" defaultValue="query" />);
+    await user.click(screen.getByRole("button", { name: "Clear search" }));
+    expect(screen.getByRole("searchbox")).toHaveFocus();
+  });
   it("has no clear button when empty", () => {
     render(<SearchField label="Search" />);
-    expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Clear search" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a clear button once there is a value, and clears it on click", async () => {
@@ -18,7 +35,9 @@ describe("SearchField", () => {
     await user.click(clear);
 
     expect(screen.getByRole("searchbox", { name: "Search" })).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Clear search" }),
+    ).not.toBeInTheDocument();
   });
 
   it("calls onValueChange as the user types and when cleared", async () => {

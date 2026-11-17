@@ -1,5 +1,26 @@
 # B4 — Progress
 
+Latest Switch refinement (2026-11-17): replaced physical CSS thumb translation
+with shared travel-spring layout motion, neutral control tokens, snap press
+feedback, forwarded ref and minimum hit target. Added AllStates/RTL stories.
+Focused Switch tests 7/7, ESLint, typecheck, package/Storybook builds passed.
+Browser access recovered with a fresh tab and running Storybook: both themes
+visually inspected, exact thumb insets measured, real travel frames, keyboard,
+rapid changes and RTL reduced motion checked. Full browser gate remains pending.
+
+Latest Checkbox refinement (2026-11-17): neutral selected surface, snap press
+feedback, animated drawing/morph between mixed and checked, zero-duration
+reduced motion, forwarded control ref and shared minimum hit target. Added
+AllStates and Select all interaction stories. Checkbox tests 9/9, ESLint,
+workspace typecheck, package/Storybook builds passed. Browser motion/theme
+verification for this revision remains pending; no new full-suite total claimed.
+
+Latest Field story correction (2026-11-17): replaced the native-select examples
+with existing B4 Select in WithCustomControl and WithError. Preserved story IDs,
+removed inline visual styling and documented Select's existing Field ownership.
+Focused ESLint, workspace typecheck and React 124/124 passed; visual recheck of
+these story revisions is pending because the local preview refused connection.
+
 Read this + `HANDOFF.md` + `git log`/`git status` before doing anything else
 on resume. Don't re-plan from scratch — continue from what's actually here.
 
@@ -8,8 +29,8 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | Phase | Status | Notes |
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
-| 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built and VERIFIED, plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 — Family A + B to full quality gate | **IN PROGRESS** | Family A: Button, IconButton, ToggleButton, SegmentedControl, Badge VERIFIED (5/12). Family B: Checkbox, Switch, RadioGroup, TextField, Textarea, PasswordField, SearchField, Field, NumberField VERIFIED (9/19 — Field+FormField merged into one, see COMPONENT_INVENTORY.md). |
+| 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
+| 2 - Family A + B to full quality gate | **IN PROGRESS** | Twenty public components implemented across the motion foundation and Families A/B. Seventeen touched components await the current full browser gate; historical VERIFIED counts below are not current approval. See QUALITY_MATRIX.md. |
 | 3 — Family C | NOT STARTED | |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
@@ -219,3 +240,56 @@ permissions. Slider remains IMPLEMENTED until browser and visual checks run.
 The user's latest request authorizes pushing this checkpoint now, superseding
 the earlier instruction to wait for all phases. The project remains in Phase 2.
 Push outcome must be checked against the remote; do not force-push.
+
+## Select implementation checkpoint (2026-11-17)
+
+- Added Select using existing Field and Base UI Select. Three sizes, option
+  descriptions, controlled/uncontrolled values, null reset, form integration,
+  disabled/read-only/error/empty states, keyboard interaction and trigger ref.
+- Added shared popup height/z-index tokens (documented at their definitions).
+  Popup reads spacing tokens for its offset and uses the shared settle spring
+  with reduced-motion handling and exit retention.
+- 14 Select tests pass; full React suite 94/94, motion 5/5, typecheck,
+  package build and Storybook build passed. Focused ESLint and standalone
+  e2e TypeScript checks passed. Story IDs checked against generated index.json.
+- Added 10 stories and 14 Playwright cases. Browser and visual verification
+  are blocked in this environment; Select remains IMPLEMENTED, not VERIFIED.
+- Current continuation: finish Slider/Select browser gates, then Combobox.
+  Studio remains a Phase-6 placeholder; pnpm storybook is the working catalog
+  command when run from a terminal that can open localhost listeners.
+
+## Visual correction + Combobox (latest checkpoint)
+
+Twenty public components now exist. Three unchanged components retain their
+previous VERIFIED status; seventeen touched components are IMPLEMENTED pending
+the full browser recheck. This does not mean the full plan is complete.
+
+Corrected Slider geometry, states, focus, naming, form semantics and stories;
+implemented Combobox with shared popup styling and motion; fixed cross-cutting
+Field invalid state, disabled auxiliary actions, clear focus, token literals,
+control-radius and explicit CSS reduced motion. Added all modifier toolbars.
+Actual browser evidence and its limits are in QUALITY_MATRIX.md and
+AUDIT_REPORT.md. CLI Playwright remains blocked; browser control works against
+the user's running server. Do not confuse those two verification channels.
+
+Continue the correction gate across the twenty existing components before
+expanding further into Phase 2. MultiSelect and the rest of the inventory
+remain planned. No phase, release or complete audit is claimed finished here.
+
+## Family B interaction refinement (latest, 2026-11-17)
+
+Implemented animated focus feedback on the shared matte text-entry surface,
+directional stepping on NumberField's existing native input, PasswordField's
+visibility-glyph transition and RadioGroup's traveling selected row/spring dot.
+Reused IconButton, TextTransition and AnimatedIndicator; the latter now accepts
+an optional span target. Added radio descriptions and regression tests for
+native-input identity, rapid toggles, controlled rejection and whole-row clicks.
+
+Passed: React 124/124, motion 5/5, workspace typecheck, package build,
+Storybook build, focused ESLint and standalone field-motion e2e typecheck.
+Real browser: three controls in both themes at five widths (30 no-overflow
+checks), in-flight motion observed, reduced motion checked, six live axe scans
+with zero violations/inconclusive. New e2e/field-motion.spec.ts is written but
+not executed: the CLI browser gate remains blocked as recorded above.
+Next: finish the regression gate for changed shared Field consumers and the
+existing inventory before adding MultiSelect. HANDOFF.md has exact details.

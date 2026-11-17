@@ -11,6 +11,39 @@ const items = [
 ] as const;
 
 describe("RadioGroup", () => {
+  it("selects from the full option label, not only the radio circle", async () => {
+    const user = userEvent.setup();
+    render(<RadioGroup aria-label="Plan" items={items} defaultValue="free" />);
+    await user.click(screen.getByText("Enterprise"));
+    expect(screen.getByRole("radio", { name: "Enterprise" })).toBeChecked();
+  });
+  it("keeps the selected surface aligned with the controlled owner", async () => {
+    const user = userEvent.setup();
+    const change = vi.fn();
+    const { container } = render(
+      <RadioGroup aria-label="Plan" items={items} value="free" onValueChange={change} />,
+    );
+    await user.click(screen.getByRole("radio", { name: "Pro" }));
+    expect(change).toHaveBeenCalledWith("pro");
+    expect(screen.getByRole("radio", { name: "Free" })).toBeChecked();
+    expect(container.querySelectorAll(".b4-radio-group__selection")).toHaveLength(1);
+    expect(container.querySelector(".b4-radio-group__item--selected")).toHaveTextContent(
+      "Free",
+    );
+  });
+
+  it("does not accumulate selected surfaces under rapid changes", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <RadioGroup aria-label="Plan" items={items} defaultValue="free" />,
+    );
+    for (let i = 0; i < 6; i++)
+      await user.click(
+        screen.getByRole("radio", { name: i % 2 ? "Free" : "Enterprise" }),
+      );
+    expect(screen.getByRole("radio", { name: "Free" })).toBeChecked();
+    expect(container.querySelectorAll(".b4-radio-group__selection")).toHaveLength(1);
+  });
   it("selects the default value", () => {
     render(<RadioGroup aria-label="Plan" items={items} defaultValue="pro" />);
     expect(screen.getByRole("radio", { name: "Pro" })).toBeChecked();

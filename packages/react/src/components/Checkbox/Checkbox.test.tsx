@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { createRef } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
@@ -62,5 +63,51 @@ describe("Checkbox", () => {
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
+  });
+
+  it("keeps the control and its focus when a controlled owner changes mixed to checked", () => {
+    const ref = createRef<HTMLButtonElement>();
+    const { rerender } = render(
+      <Checkbox ref={ref} label="Select all" checked={false} indeterminate />,
+    );
+    const control = screen.getByRole("checkbox", { name: "Select all" });
+    control.focus();
+    rerender(<Checkbox ref={ref} label="Select all" checked />);
+    expect(control).toBeChecked();
+    expect(ref.current).toBe(control);
+    expect(control).toHaveFocus();
+    rerender(<Checkbox ref={ref} label="Select all" checked={false} />);
+    expect(control).not.toBeChecked();
+    expect(ref.current).toBe(control);
+  });
+
+  it("does not show a checked state when the controlled owner rejects a toggle", async () => {
+    const user = userEvent.setup();
+    const onCheckedChange = vi.fn();
+    render(
+      <Checkbox
+        label="Optional emails"
+        checked={false}
+        onCheckedChange={onCheckedChange}
+      />,
+    );
+    const control = screen.getByRole("checkbox");
+    for (let count = 0; count < 6; count++) await user.click(control);
+    expect(onCheckedChange).toHaveBeenCalledTimes(6);
+    expect(control).not.toBeChecked();
+    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+  });
+
+  it("preserves native form submission through the animated render target", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <form>
+        <Checkbox label="Product updates" name="updates" required />
+      </form>,
+    );
+    const form = container.querySelector("form")!;
+    expect(new FormData(form).has("updates")).toBe(false);
+    await user.click(screen.getByRole("checkbox"));
+    expect(new FormData(form).get("updates")).toBe("on");
   });
 });

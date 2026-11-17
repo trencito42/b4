@@ -7,6 +7,16 @@
 */
 
 :root {
+  /* Shared floating-surface constraints: keep long menus scrollable and
+     lifted above ordinary content; reused by future overlay components. */
+  --b4-popup-max-height: 320px;
+  --b4-z-popup: 1000;
+  /* Keep precision controls touchable even when the visible handle is small. */
+  --b4-hit-target-min: 44px;
+  /* Shared control strokes and the one-pixel accessibility clipping box.
+     These preserve existing geometry while removing per-component literals. */
+  --b4-stroke-width-control: 1.5px;
+  --b4-size-pixel: 1px;
   /* ---- spacing (4px grid) ---- */
   --b4-space-0: 0px;
   --b4-space-1: 2px;
@@ -142,6 +152,11 @@
 /* motion="reduced" — explicit opt-in, independent of OS setting */
 :root[data-b4-motion="reduced"] {
   --b4-motion-scale: 0;
+  --b4-duration-instant: 0ms;
+  --b4-duration-fast: 0ms;
+  --b4-duration-base: 0ms;
+  --b4-duration-slow: 0ms;
+  --b4-duration-slower: 0ms;
 }
 
 /* motion="full" forces motion on even if OS requests reduced (rare; explicit) */

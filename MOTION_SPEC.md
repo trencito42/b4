@@ -47,11 +47,15 @@ instant, no-animation state change. `Button` already does this for
 `@media (prefers-reduced-motion: reduce)` block in `base.css`, which zeroes
 `--b4-duration-*` unless `data-b4-motion="full"` is set.
 
-**Status: foundation only.** The reusable `TextTransition`/`NumberTransition`/
-`AnimatedIndicator` primitives, layout/morph helpers, and async
-state-transition utilities described in the mission brief are **Phase 1**
-work and do not exist yet — see `PROGRESS.md`. This file documents the
-tokens and contract they must build on, not finished components.
+**Current implementation:** `TextTransition`, `NumberTransition`,
+`AnimatedIndicator` and `useAsyncStatus` exist. SegmentedControl and RadioGroup
+reuse AnimatedIndicator's travel spring. PasswordField reuses TextTransition
+for its visibility glyph; the secret input is never duplicated. NumberField
+animates accepted numeric steps with snap while preserving the editable input
+and its identity; typing does not trigger readout replacement. Shared
+FieldControl animates focus feedback with snap. Each path honors reduced
+motion. This does not imply all inventory components are implemented; see
+`PROGRESS.md` and the current gate evidence in `QUALITY_MATRIX.md`.
 
 ## Motion is semantic, not decorative — the standard for every future component
 
