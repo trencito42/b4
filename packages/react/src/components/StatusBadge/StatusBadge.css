@@ -1,0 +1,28 @@
+.b4-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-4);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-sm);
+  color: var(--b4-text-secondary);
+}
+
+.b4-status-badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--b4-radius-full);
+  flex-shrink: 0;
+}
+
+.b4-status-badge__dot--success {
+  background-color: var(--b4-success);
+}
+.b4-status-badge__dot--warning {
+  background-color: var(--b4-warning);
+}
+.b4-status-badge__dot--danger {
+  background-color: var(--b4-danger-text);
+}
+.b4-status-badge__dot--neutral {
+  background-color: var(--b4-text-disabled);
+}

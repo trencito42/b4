@@ -156,6 +156,62 @@ contrast failures that had shipped undetected:
   margins. Run the real Playwright + axe check, in both themes, before
   calling a color pairing done.
 
+## Family A completed, DropdownMenu opens Family C (2026-11-17, later still)
+
+| Component | Status | Evidence |
+|---|---|---|
+| Link | **VERIFIED** | Unit (href/external target+rel/axe), e2e axe both themes |
+| StatusBadge | **VERIFIED** | Unit (text label always visible, decorative dot `aria-hidden`, axe), e2e axe both themes |
+| Avatar | **VERIFIED** | Unit (initials from 1/2-word names, image-error fallback, accessible name, axe), e2e axe both themes |
+| AvatarGroup | **VERIFIED** | Unit (real overflow count, no indicator when everyone fits, axe), e2e axe both themes + overflow check |
+| KeyboardShortcut | **VERIFIED** | Unit (one `<kbd>` per key in order, axe), e2e axe both themes |
+| ButtonGroup | **VERIFIED** | Unit (ARIA group, each button independently clickable, axe), e2e axe both themes |
+| SplitButton | **VERIFIED** | Unit + e2e (primary action vs. menu are independent interactions; see the bug below) |
+| **DropdownMenu** (Family C's first component) | **VERIFIED** | Real Base UI `Menu` — keyboard nav, typeahead-adjacent roving focus, positioning, `aria-hidden-focus`-exempt focus guards; unit + e2e both themes incl. disabled-item and rapid open/close |
+
+Full suite at this checkpoint: `pnpm typecheck` (5/5), `pnpm --filter
+@b4/react run test` (156/156), `pnpm --filter @b4/motion run test` (5/5),
+`pnpm build`, Storybook build, `npx playwright test` (109/109, run twice).
+
+### A real bug, caught building SplitButton's own test — not a component defect
+
+`SplitButton`'s first Storybook story args provided `items` but never
+`onSelect` (required). Clicking a menu item threw `onSelect is not a
+function` **inside** the click handler, which silently aborted before
+Base UI's own close-on-click logic could run — so the menu stayed open
+and looked broken. Standalone `DropdownMenu`, tested with a story that
+*did* supply `onSelect`, worked correctly for the identical mouse-click
+path the whole time; this was never a `DropdownMenu`/`Base UI` defect.
+Root-caused by isolating the variable (swapped triggers, added console/
+pageerror capture in a throwaway debug test) rather than guessing — the
+`page.on("pageerror", ...)` capture is what actually surfaced the thrown
+exception. Fixed the story, and added a permanent regression test
+(`e2e/dropdown-menu.spec.ts`'s "clicking a menu item with the mouse...")
+pinning the mouse-click-closes-the-menu path specifically, since no
+earlier test exercised it (existing tests only covered keyboard Enter-
+to-select and Escape-to-close).
+
+**Lesson for HANDOFF.md**: when a Storybook-driven e2e interaction
+mysteriously no-ops, check for an uncaught exception in a required prop
+the story forgot to pass before suspecting the component or Base UI —
+`page.on("pageerror", (err) => console.log(err.message))` finds this in
+seconds.
+
+### Also found: DropdownMenu's own axe/stress tests needed the same fixes as Select/Slider
+
+- Sampling color contrast before the popup's entrance-opacity spring
+  settled produced a false-positive contrast failure (measured color
+  blended with whatever was behind the still-fading popup) — same root
+  cause as the Select/Slider geometry checks' `opacity === 1` poll
+  pattern, now applied to `DropdownMenu`'s axe checks too.
+- A rapid-repeated-open/close stress test under full (non-reduced)
+  motion raced the settle spring's variable duration against the next
+  click and flaked — same category as `select.spec.ts`'s interrupted-
+  exit test, which already does its rapid cycling under
+  `reducedMotion: "reduce"` and only full-motion-tests a single,
+  non-rapid cycle. Rewrote `dropdown-menu.spec.ts`'s equivalent test to
+  match that proven-stable pattern instead of inventing a new one.
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

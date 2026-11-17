@@ -1,0 +1,21 @@
+.b4-keyboard-shortcut {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+}
+
+.b4-keyboard-shortcut__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--b4-space-3);
+  border-radius: var(--b4-radius-xs);
+  background-color: var(--b4-control-bg);
+  color: var(--b4-text-secondary);
+  font-family: var(--b4-font-mono);
+  font-size: var(--b4-text-2xs);
+  font-weight: var(--b4-weight-medium);
+  line-height: 1;
+}

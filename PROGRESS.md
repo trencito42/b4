@@ -53,8 +53,8 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 - Family A + B to full quality gate | **IN PROGRESS** | Twenty public components implemented across the motion foundation and Families A/B. All twenty are now **VERIFIED** — the full CLI regression gate (87/87 Playwright, both themes) that was blocked for the session that wrote most of this file has since been run successfully. See QUALITY_MATRIX.md's top section. Still missing: ButtonGroup, SplitButton, Link, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut (Family A); InputGroup, MultiSelect, DatePicker, TimePicker, ColorPicker, FileUpload (Family B). |
-| 3 — Family C | NOT STARTED | |
+| 2 - Family A + B to full quality gate | **Family A DONE, Family B in progress** | Family A is now complete: all 12 components VERIFIED (Button, IconButton, ToggleButton, SegmentedControl, Badge, Link, StatusBadge, Avatar, AvatarGroup, KeyboardShortcut, ButtonGroup, SplitButton). Family B: 9/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox — that's actually 12; still missing InputGroup, MultiSelect, DatePicker, TimePicker, ColorPicker, FileUpload). See QUALITY_MATRIX.md. |
+| 3 — Family C | **STARTED** | `DropdownMenu` VERIFIED — the first Family C component, pulled forward to give `SplitButton` a real menu instead of a decorative chevron. 16 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
@@ -259,6 +259,32 @@ access failed (EPERM), and the static-server fallback was blocked by
 localhost socket permissions. **Update, later the same day**: a different
 session's CLI Playwright worked; `e2e/slider.spec.ts` passes 20/20 (both
 themes, 5 widths, keyboard, native-focus). Slider is **VERIFIED**.
+
+## Family A completed; DropdownMenu opens Family C
+
+Built the rest of Family A: `Link`, `StatusBadge`, `Avatar`, `AvatarGroup`,
+`KeyboardShortcut`, `ButtonGroup`, and `SplitButton`. `SplitButton` pulled
+`DropdownMenu` forward from Family C rather than ship a decorative,
+non-functional chevron — a split button's defining feature *is* its
+attached menu. `DropdownMenu` is a real Base UI `Menu` composition
+(keyboard nav, positioning, focus-guard sentinels), reused as-is by both
+the standalone Family C component and `SplitButton`.
+
+Found and fixed a real bug while building SplitButton's own test:
+clicking a menu item silently did nothing because the first draft of
+SplitButton's story forgot to pass the required `onSelect` prop, so the
+click handler threw and aborted before Base UI's own close-on-click
+logic ran. Root-caused with `page.on("pageerror", ...)` in a throwaway
+debug test rather than guessing at the component. Added a permanent
+regression test for the mouse-click-selects-and-closes path, which no
+earlier test actually covered (only keyboard Enter and Escape were
+tested before). See QUALITY_MATRIX.md for the full writeup, including
+two more test-timing fixes found along the way (axe sampled mid-fade;
+a rapid-cycle stress test raced the settle spring under full motion).
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(156/156), `pnpm build`, Storybook build, `npx playwright test` (109/109,
+run twice for stability).
 
 ## Git
 

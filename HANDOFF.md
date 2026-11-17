@@ -39,25 +39,43 @@ closed. If you're a future session reading the detailed notes below,
 treat every "remains IMPLEMENTED / browser gate pending / CLI blocked"
 statement in them as **resolved**, not current.
 
-## Next action: the rest of Family B, then Family A, then Family C
+## Update (2026-11-17, still later): Family A done, DropdownMenu opens Family C
 
-Per the mission's phased plan and the user's own "continue, don't stop"
-instruction: finish Family B (`InputGroup`, `MultiSelect`, `DatePicker`,
-`TimePicker`, `ColorPicker`, `FileUpload`), then Family A's remainder
-(`ButtonGroup`, `SplitButton`, `Link`, `StatusBadge`, `Avatar`,
-`AvatarGroup`, `KeyboardShortcut`), then start Family C (Tabs, Accordion,
-Dialog, Popover, DropdownMenu, Tooltip, etc. — check `@base-ui/react`'s
-export list for each one, the way this session did for `select`/
-`combobox`/`slider`/`number-field`, before building from scratch; Base UI
-covers most of Family C). Keep using the shared `Field` wrapper,
-`AnimatedIndicator`, `TextTransition`/`NumberTransition`, and the
-internal helpers introduced for Select/Combobox/Slider/NumberField
-(`FieldControl`, `SteppingInput`, `motionCompatibleProps`,
-`OptionPopupSurface`, `createItems` — check
-`packages/react/src/internal/` before building something that duplicates
-one of these). Full gate (typecheck → unit tests → build → Storybook
-build → Playwright, both themes) before marking anything VERIFIED, same
-as every component above.
+Built `Link`, `StatusBadge`, `Avatar`, `AvatarGroup`, `KeyboardShortcut`,
+`ButtonGroup`, `SplitButton` — **Family A is now complete, all 12
+VERIFIED**. `SplitButton` needed a real dropdown menu (not a decorative
+chevron), so `DropdownMenu` was pulled forward from Family C and built
+properly (real Base UI `Menu`): it's the first Family C component,
+VERIFIED, and `SplitButton` just composes it.
+
+**Real bug found and fixed**: SplitButton's first story forgot to pass
+the required `onSelect` prop; clicking a menu item threw inside the
+click handler and silently blocked Base UI's own close-on-click logic.
+Found via `page.on("pageerror", ...)` in a throwaway debug test, not by
+guessing. See `QUALITY_MATRIX.md`'s "A real bug, caught building
+SplitButton's own test" for the full writeup and the two related test-
+timing fixes (axe sampling mid-fade; a rapid-cycle test racing the
+settle spring under full motion — both now follow the pattern already
+proven stable in `select.spec.ts`).
+
+## Next action: rest of Family B, then continue Family C
+
+Family B still needs `InputGroup`, `MultiSelect`, `DatePicker`,
+`TimePicker`, `ColorPicker`, `FileUpload`. Family C has 16 more
+components beyond `DropdownMenu` (Tabs, Accordion, Dialog, Popover,
+Tooltip, ContextMenu, etc.) — check `@base-ui/react`'s export list for
+each one, the way this session did for `select`/`combobox`/`slider`/
+`number-field`/`menu`, before building from scratch; Base UI covers most
+of Family C. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
+`TextTransition`/`NumberTransition`, `DropdownMenu`, and the internal
+helpers (`FieldControl`, `SteppingInput`, `motionCompatibleProps`,
+`OptionPopupSurface`, `createItems` — check `packages/react/src/
+internal/` before building something that duplicates one of these).
+Full gate (typecheck → unit tests → build → Storybook build →
+Playwright, both themes) before marking anything VERIFIED, same as every
+component above. **When a Storybook-driven e2e interaction mysteriously
+no-ops, check for an uncaught exception from a missing required story
+prop before suspecting the component** — see the SplitButton bug above.
 
 ## Historical context below (superseded where it says "pending"/"blocked" — see above)
 

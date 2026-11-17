@@ -23,6 +23,20 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Family A completed; DropdownMenu opens Family C (2026-11-17)
+
+- `@b4/react`: `Link`, `StatusBadge`, `Avatar`, `AvatarGroup`,
+  `KeyboardShortcut`, `ButtonGroup` (Family A complete, all 12 VERIFIED),
+  `SplitButton`, and `DropdownMenu` (Family C's first component, a real
+  Base UI `Menu` composition — SplitButton needed a working menu, not a
+  decorative chevron, so this was pulled forward rather than faked).
+- Fixed: SplitButton's first story was missing the required `onSelect`
+  prop, so clicking a menu item threw and silently blocked the menu's
+  own close-on-click behavior. Added a permanent regression test for the
+  mouse-click path. Also fixed two test-timing issues in
+  `dropdown-menu.spec.ts` (axe sampling mid-fade; a rapid-cycle test
+  racing the settle spring under full motion).
+
 - Switch now uses shared spring travel between layout-defined thumb positions,
   including RTL, instead of a physical CSS translateX. Added neutral selection
   surfaces, snap press feedback, control ref and shared hit target. Seven focused

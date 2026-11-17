@@ -10,16 +10,16 @@ are not silently dropped; if scope changes, it changes here with a reason.
 |---|---|
 | Button | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | IconButton | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
-| ButtonGroup | PLANNED |
-| SplitButton | PLANNED |
+| ButtonGroup | **VERIFIED** |
+| SplitButton | **VERIFIED** |
 | ToggleButton | **VERIFIED** |
 | SegmentedControl | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
-| Link | PLANNED |
+| Link | **VERIFIED** |
 | Badge | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
-| StatusBadge | PLANNED |
-| Avatar | PLANNED |
-| AvatarGroup | PLANNED |
-| KeyboardShortcut | PLANNED |
+| StatusBadge | **VERIFIED** |
+| Avatar | **VERIFIED** |
+| AvatarGroup | **VERIFIED** |
+| KeyboardShortcut | **VERIFIED** |
 
 ## Family B — Forms & Inputs
 
@@ -47,9 +47,25 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 ## Family C — Navigation & Overlays
 
-Tabs, Accordion, Breadcrumbs, Pagination, Stepper, NavigationMenu,
-DropdownMenu, ContextMenu, Tooltip, Popover, HoverCard, Dialog, AlertDialog,
-Drawer, Sheet, CommandPalette, TreeView — all **PLANNED**.
+| Component | Status |
+|---|---|
+| DropdownMenu | **VERIFIED** |
+| Tabs | PLANNED |
+| Accordion | PLANNED |
+| Breadcrumbs | PLANNED |
+| Pagination | PLANNED |
+| Stepper | PLANNED |
+| NavigationMenu | PLANNED |
+| ContextMenu | PLANNED |
+| Tooltip | PLANNED |
+| Popover | PLANNED |
+| HoverCard | PLANNED |
+| Dialog | PLANNED |
+| AlertDialog | PLANNED |
+| Drawer | PLANNED |
+| Sheet | PLANNED |
+| CommandPalette | PLANNED |
+| TreeView | PLANNED |
 
 ## Family D — Data & Content
 
@@ -96,3 +112,12 @@ navigation / actual syntax-aware editing), not static mockups.
 - **Slider / RangeSlider share one implementation.** Base UI Slider accepts
   a number or array; use Slider with array values for ranges. No separate
   duplicate component is introduced. Both inventory use cases are retained.
+
+- **SplitButton pulled `DropdownMenu` forward from Family C** rather than
+  shipping with a decorative, non-functional chevron. A split button's
+  defining feature *is* the attached menu — shipping it without one would
+  be exactly the "fake complex functionality with a static mockup"
+  failure mode the mission brief prohibits. `DropdownMenu` itself is a
+  real Base UI `Menu` composition (keyboard nav, positioning, focus
+  management), built once and reused by both the standalone Family C
+  component and `SplitButton`.

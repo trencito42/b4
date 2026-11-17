@@ -1,0 +1,30 @@
+.b4-button-group {
+  display: inline-flex;
+}
+
+.b4-button-group > .b4-button,
+.b4-button-group > .b4-icon-button {
+  border-radius: 0;
+}
+
+.b4-button-group > .b4-button:first-child,
+.b4-button-group > .b4-icon-button:first-child {
+  border-start-start-radius: var(--b4-control-radius);
+  border-end-start-radius: var(--b4-control-radius);
+}
+
+.b4-button-group > .b4-button:last-child,
+.b4-button-group > .b4-icon-button:last-child {
+  border-start-end-radius: var(--b4-control-radius);
+  border-end-end-radius: var(--b4-control-radius);
+}
+
+.b4-button-group > .b4-button:not(:first-child),
+.b4-button-group > .b4-icon-button:not(:first-child) {
+  margin-inline-start: 1px;
+}
+
+.b4-button-group > .b4-button--secondary:not(:first-child),
+.b4-button-group > .b4-icon-button--secondary:not(:first-child) {
+  box-shadow: -1px 0 0 0 var(--b4-border-subtle);
+}

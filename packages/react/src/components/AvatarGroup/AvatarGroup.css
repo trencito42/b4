@@ -1,0 +1,46 @@
+.b4-avatar-group {
+  display: flex;
+}
+
+.b4-avatar-group__item {
+  display: inline-flex;
+  border: 2px solid var(--b4-surface-1);
+  border-radius: var(--b4-radius-full);
+  margin-left: -8px;
+}
+
+.b4-avatar-group__item:first-child {
+  margin-left: 0;
+}
+
+.b4-avatar-group--sm .b4-avatar-group__item {
+  margin-left: -6px;
+}
+
+.b4-avatar-group--lg .b4-avatar-group__item {
+  margin-left: -10px;
+}
+
+.b4-avatar-group__overflow {
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--b4-control-bg);
+  color: var(--b4-text-secondary);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-xs);
+  font-weight: var(--b4-weight-semibold);
+}
+
+.b4-avatar-group--sm .b4-avatar-group__overflow {
+  width: 24px;
+  height: 24px;
+  font-size: var(--b4-text-2xs);
+}
+
+.b4-avatar-group--lg .b4-avatar-group__overflow {
+  width: 48px;
+  height: 48px;
+  font-size: var(--b4-text-sm);
+}
