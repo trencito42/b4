@@ -131,3 +131,10 @@ export type { PaginationProps } from "./components/Pagination/Pagination.js";
 
 export { Stepper } from "./components/Stepper/Stepper.js";
 export type { StepperProps, StepperStep, StepperOrientation } from "./components/Stepper/Stepper.js";
+
+export { NavigationMenu } from "./components/NavigationMenu/NavigationMenu.js";
+export type {
+  NavigationMenuProps,
+  NavigationMenuSection,
+  NavigationMenuLinkItem,
+} from "./components/NavigationMenu/NavigationMenu.js";

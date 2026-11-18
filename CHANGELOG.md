@@ -5,6 +5,22 @@ a per-npm-release history.
 
 ## Unreleased
 
+### NavigationMenu added — Family C at 13/17 (2026-11-18)
+
+- Added `NavigationMenu`, built on Base UI's own `navigation-menu`
+  primitive (`Root > List > Item > Trigger + Content`, shared `Portal >
+  Positioner > Popup > Viewport`).
+- Found and fixed a real e2e test bug (not a component bug): clicking a
+  second top-level trigger while the menu is open closes it instead of
+  switching, because the cursor hovering over the trigger on the way to
+  clicking it already switched the active section (Base UI's documented
+  hover-or-click trigger behavior), and the trailing click then closes
+  the now-active trigger. Rewrote the test to assert hover-based
+  switching and click-to-close instead.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (219/219), `pnpm build`, Storybook build, `npx playwright test`
+  (168/168, run twice). **VERIFIED**.
+
 ### Breadcrumbs, Pagination, Stepper added — Family C at 12/17 (2026-11-18)
 
 - Added `Breadcrumbs`, `Pagination`, `Stepper` — the three remaining

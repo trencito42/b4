@@ -479,6 +479,47 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 Storybook build, `npx playwright test` (162/162, run twice for
 stability).
 
+## NavigationMenu — Family C's thirteenth component (2026-11-18)
+
+**VERIFIED.** Built on Base UI's own `navigation-menu` primitive directly
+(it covers this component — no need to build it on top of `Menu`), using
+the composition from Base UI's own docs example: `Root > List > (Item >
+Trigger + Content)`, with `Portal > Positioner > Popup > Viewport`
+rendered once outside the `List` and shared across every section (only
+the active section's `Content` is moved into the `Viewport`).
+
+**Real interaction bug found and root-caused, not papered over.** The
+first e2e test written for "switching sections" used `.click()` on a
+second trigger while the first section was still open, and it
+reproducibly closed the whole menu instead of switching — confirmed in
+a real Chromium browser via a throwaway debug script
+(`page.evaluate` + a `MutationObserver` tracing `aria-expanded`
+timestamps on both triggers), not just in the test. The trace showed
+the switch actually succeeding (`Products: true→false` and
+`Resources: false→true` at the identical millisecond), then `Resources`
+closing again 6ms later. Root cause: `NavigationMenuTrigger` opens
+"when hovered or clicked" (its own docstring) — once any section is
+open, the cursor passing over a sibling trigger on the way to clicking
+it already switches the active section via hover (restMs 0 once
+mounted); the click event that follows then lands on a trigger that is
+now the *already-open* one, and `useClick`'s `toggle: isActiveItem`
+semantics mean a click on an open trigger closes it, not reopens it.
+This is intended behavior, not a library bug: switching between
+sections happens via **hover** once the menu is open; a second click on
+the same (now-active) trigger is a close action. Fixed the e2e test to
+assert what actually happens — hover-based switching (via
+`page.mouse.move`) stays open, and a second click on an already-open
+trigger closes it — rather than asserting the wrong interaction and
+either skipping the test or silently weakening it.
+
+Also caught and fixed a real axe finding: Base UI's own internal
+focus-guard sentinels here trip the `aria-hidden-focus` rule, same
+documented exception used throughout `e2e/*.spec.ts` for this pattern.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(219/219), `pnpm build`, Storybook build, `npx playwright test`
+(168/168, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

@@ -55,7 +55,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Breadcrumbs | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Pagination | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Stepper | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| NavigationMenu | PLANNED |
+| NavigationMenu | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ContextMenu | **VERIFIED** |
 | Tooltip | **VERIFIED** |
 | Popover | **VERIFIED** |

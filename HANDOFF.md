@@ -167,20 +167,46 @@ CSS** — don't assume a plausible-sounding name exists just because a
 similarly-named one does (e.g. `--b4-text-on-accent` is real,
 `--b4-accent-solid` is not).
 
-## Next action: Family B's last 4, then NavigationMenu/Drawer/Sheet/CommandPalette/TreeView
+## Update (2026-11-18): NavigationMenu — Family C at 13/17
+
+Added `NavigationMenu`, built on Base UI's own `navigation-menu`
+primitive. **New gotcha (11th)**: once any section is open, hovering a
+sibling trigger switches the active section immediately (Base UI's
+`NavigationMenuTrigger` opens "when hovered or clicked" — restMs is 0
+once the popup is already mounted). A `.click()` on that sibling
+trigger therefore lands on a trigger that hover *already* made active,
+and `useClick`'s `toggle: isActiveItem` then treats that click as a
+close, not an open — so "click a second top-level nav trigger while the
+first is open" closes the whole menu instead of switching, every time.
+This is intended behavior (switching is a hover interaction once the
+menu is open; clicking the active trigger again is how you close it),
+not a bug — confirmed by tracing real `aria-expanded` timestamps in a
+real Chromium browser with a throwaway `MutationObserver` debug script,
+not by guessing. **When writing an interaction test against any Base
+UI trigger whose docstring says "opens when hovered or clicked," don't
+assume click-to-click switching between siblings is the right
+assertion — check whether hover already does the switching once the
+first one is open, and test that instead.**
+
+## Next action: Family B's last 4, then Drawer/Sheet/CommandPalette/TreeView
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items
 (calendar grid logic, color space math, drag-and-drop) and deserve real
 scrutiny against "don't fake complex functionality," not a quick stub.
-Family C has 5 more components (`NavigationMenu`, `Drawer`, `Sheet`,
-`CommandPalette`, `TreeView`) — check `@base-ui/react`'s export list for
-each one before building from scratch, the way this session did for
-`select`/`combobox`/`slider`/`number-field`/`menu`/`context-menu`/
-`preview-card`; Base UI likely covers `NavigationMenu` directly, while
-`Drawer`/`Sheet`/`CommandPalette`/`TreeView` may need to be built on
-`Dialog`/`Menu` primitives or from scratch like Breadcrumbs/Pagination/
-Stepper were. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
+Family C has 4 more components (`Drawer`, `Sheet`, `CommandPalette`,
+`TreeView`) — check `@base-ui/react`'s export list for each one before
+building from scratch, the way this session did for `select`/
+`combobox`/`slider`/`number-field`/`menu`/`context-menu`/
+`preview-card`/`navigation-menu`. Base UI has a `drawer` export (check
+it before assuming `Sheet` needs the same or a different primitive —
+they may end up sharing one component with a side/variant prop, the
+way `RangeSlider` shares `Slider`, or may need to stay separate if
+Base UI's `drawer` doesn't cover both). `CommandPalette`/`TreeView`
+have no Base UI primitive — build `CommandPalette` on `Dialog` +
+`Combobox`'s filterable-listbox pattern, and `TreeView` from scratch
+with real ARIA `tree`/`treeitem`/`group` roles (check the ARIA APG tree
+pattern for keyboard behavior, not just visual nesting). Keep using the shared `Field` wrapper, `AnimatedIndicator`,
 `TextTransition`/`NumberTransition`, `DropdownMenu`, `IconButton`, and
 the internal helpers (`FieldControl`, `SteppingInput`,
 `motionCompatibleProps`, `OptionPopupSurface`, `createItems` — check

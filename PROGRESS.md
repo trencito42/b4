@@ -1,5 +1,22 @@
 # B4 — Progress
 
+## NavigationMenu — Family C's 13th component (2026-11-18)
+
+Built on Base UI's own `navigation-menu` primitive, matching the
+composition from Base UI's docs example (`Root > List > Item >
+Trigger + Content`, with a shared `Portal > Positioner > Popup >
+Viewport`). Found and root-caused a real interaction bug via a
+Chromium `MutationObserver` trace rather than guessing: clicking a
+second trigger while a section is already open closed the whole menu
+instead of switching, because the cursor passing over the trigger
+already switches it via hover (Base UI's own documented behavior —
+"opens when hovered or clicked"), and the trailing click then lands on
+the now-already-open trigger, which `toggle: isActiveItem` closes.
+Fixed the e2e test to assert the real interaction (hover switches,
+a second click on the open trigger closes it) instead of the wrong one.
+Full gate: typecheck 4/4, @b4/react tests 219/219, build, Storybook
+build, playwright 168/168 (run twice). **VERIFIED**.
+
 ## Breadcrumbs, Pagination, Stepper — Family C's 10th-12th components (2026-11-18)
 
 Added the three pure-presentational Family C navigation components
