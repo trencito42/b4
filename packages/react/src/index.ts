@@ -177,3 +177,6 @@ export type { NotificationPanelProps, NotificationItem } from "./components/Noti
 
 export { MorphingSurface } from "./components/MorphingSurface/MorphingSurface.js";
 export type { MorphingSurfaceProps } from "./components/MorphingSurface/MorphingSurface.js";
+
+export { ExpandingAction } from "./components/ExpandingAction/ExpandingAction.js";
+export type { ExpandingActionProps } from "./components/ExpandingAction/ExpandingAction.js";

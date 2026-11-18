@@ -1,5 +1,17 @@
 # B4 — Progress
 
+## ExpandingAction — Family E (2026-11-18)
+
+Compact icon action that genuinely widens on hover/focus via real
+`layout`-driven animation, confirmed with a real e2e `boundingBox()`
+width comparison. Caught and corrected an assumption while writing
+tests: jsdom's Motion animations don't resolve *synchronously*, but
+they do eventually resolve via `waitFor` — tested that directly rather
+than copying the "never progresses" caveat from elsewhere without
+checking it applied here. Full gate: typecheck 4/4, @b4/react tests
+306/306, build, Storybook build, playwright 246/246 (run twice).
+**VERIFIED**.
+
 ## MorphingSurface — Family E (2026-11-18)
 
 Real FLIP-based morph (Motion's `layout`/`layoutId` projection), the

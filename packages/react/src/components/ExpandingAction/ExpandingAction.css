@@ -1,0 +1,40 @@
+.b4-expanding-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+  height: var(--b4-control-height);
+  padding: 0 var(--b4-space-3);
+  border: none;
+  border-radius: var(--b4-radius-full);
+  background: var(--b4-accent);
+  color: var(--b4-text-on-accent);
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--b4-font-sans);
+}
+
+.b4-expanding-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.b4-expanding-action__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.b4-expanding-action__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.b4-expanding-action__label {
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-medium);
+  white-space: nowrap;
+}

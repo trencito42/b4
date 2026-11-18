@@ -485,7 +485,18 @@ Added `MorphingSurface`: real FLIP-based morph via Motion's `layout`/
 `layoutId`, the general-purpose counterpart to `AnimatedIndicator`. No
 new gotchas — clean first-run pass.
 
-## Next action: Family E's remaining 3 (ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
+## Update (2026-11-18): ExpandingAction — Family E at 9/11
+
+Added `ExpandingAction`: real `layout`-driven hover/focus width
+expansion, confirmed via e2e `boundingBox()`. **Correction, not a new
+gotcha**: don't assume jsdom "never runs a real animation frame" (the
+caveat recorded for `TextTransition`/`Popover`/`Dialog`) applies
+everywhere without checking — here, Motion's exit animation *does*
+eventually resolve in jsdom, just not synchronously with the
+triggering event; `waitFor` was all that was needed. Test the
+assumption before writing around it.
+
+## Next action: Family E's remaining 2 (TransitionGroup, LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/

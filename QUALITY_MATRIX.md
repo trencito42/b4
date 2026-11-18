@@ -971,6 +971,33 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (299/299), `pnpm build`, Storybook build, `npx playwright test`
 (241/241, run twice for stability).
 
+## ExpandingAction — Family E (2026-11-18)
+
+**VERIFIED.** A compact icon action that genuinely widens on hover/
+focus to reveal its label — real `layout`-driven width animation (the
+same FLIP technique `MorphingSurface` wraps), confirmed with a real
+e2e `boundingBox()` width comparison before/after hover, not a
+tooltip overlapping the button or a CSS `:hover { width }` snap. The
+label stays in the accessible name via `aria-label` at every width
+(the visible label text is `aria-hidden`, since it would otherwise
+duplicate the button's own name).
+
+**Correction made during testing, not left wrong**: the unit test for
+"hides the label on blur" initially assumed jsdom's Motion animations
+never progress at all (the documented caveat for `TextTransition`/
+`Popover`/`Dialog` elsewhere in this repo) and was written to only
+check synchronous React state. In fact Motion's exit animation *does*
+eventually resolve in jsdom via its own timer-driven internals — it
+just isn't synchronous with the triggering event. Found this by
+testing the assumption directly (`waitFor` succeeded) rather than
+copying the existing caveat without checking whether it actually
+applied here; the final test asserts the real settled DOM state via
+`waitFor`, not a weakened synchronous-only check.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(306/306), `pnpm build`, Storybook build, `npx playwright test`
+(246/246, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

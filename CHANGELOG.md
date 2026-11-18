@@ -5,6 +5,15 @@ a per-npm-release history.
 
 ## Unreleased
 
+### ExpandingAction added — Family E at 9/11 (2026-11-18)
+
+- Added `ExpandingAction`: a compact icon action that genuinely widens
+  on hover/focus via real `layout`-driven animation, confirmed with a
+  real e2e `boundingBox()` width comparison.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (306/306), `pnpm build`, Storybook build, `npx playwright test`
+  (246/246, run twice). **VERIFIED**.
+
 ### MorphingSurface added — Family E at 8/11 (2026-11-18)
 
 - Added `MorphingSurface`: a real FLIP-based morph via Motion's
