@@ -147,3 +147,6 @@ export type { SheetProps } from "./components/Sheet/Sheet.js";
 
 export { CommandPalette } from "./components/CommandPalette/CommandPalette.js";
 export type { CommandPaletteProps, CommandPaletteItem } from "./components/CommandPalette/CommandPalette.js";
+
+export { TreeView } from "./components/TreeView/TreeView.js";
+export type { TreeViewProps, TreeNode } from "./components/TreeView/TreeView.js";

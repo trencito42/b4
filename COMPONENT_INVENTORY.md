@@ -65,7 +65,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Drawer | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Sheet | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | CommandPalette | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| TreeView | PLANNED |
+| TreeView | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 
 ## Family D — Data & Content
 

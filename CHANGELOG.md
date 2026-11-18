@@ -5,6 +5,27 @@ a per-npm-release history.
 
 ## Unreleased
 
+### TreeView added — Family C complete, 17/17 (2026-11-18)
+
+- Added `TreeView`: real `tree`/`treeitem`/`group` ARIA roles, nested
+  `<ul role="group">` subtrees, roving tabindex, full ARIA APG
+  keyboard pattern. Built entirely from scratch — no Base UI primitive
+  exists for trees.
+- Found and fixed three real bugs via real-Chromium traces: keydown
+  bubbling through every ancestor row after a subtree expands
+  (fixed with an `event.currentTarget !== event.target` guard); an
+  invalid `aria-hidden` + focusable combination on the disclosure
+  control that also broke Playwright's role queries (changed to a
+  non-focusable `<span>`); a named descendant folding its own
+  `aria-label` into the ancestor's accessible name (confirmed via a
+  real accessibility snapshot, fixed by removing the extra naming
+  altogether rather than adding more overrides).
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (242/242), `pnpm build`, Storybook build, `npx playwright test`
+  (189/189, run twice). **VERIFIED**.
+
+**Family C — Navigation & Overlays is complete: 17/17 VERIFIED.**
+
 ### CommandPalette added — Family C at 16/17 (2026-11-18)
 
 - Added `CommandPalette`: a real Base UI `Dialog` wrapping a real Base

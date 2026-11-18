@@ -232,21 +232,86 @@ after close, not guessed. **Whenever you see `preventUnmountOnClose()`
 being called, grep the same component for where `.unmount()` is
 actually invoked — if there isn't one, that's the bug, every time.**
 
-## Next action: Family B's last 4, then TreeView (Family C's last component)
+## Update (2026-11-18): TreeView — Family C complete, 17/17
+
+Added `TreeView`, built entirely from scratch (no Base UI primitive
+for trees exists): real `tree`/`treeitem`/`group` ARIA roles with
+genuine nested `<ul role="group">` subtrees, roving tabindex, and the
+full ARIA APG tree keyboard pattern. **Three new gotchas, in the order
+they were found and fixed:**
+
+**Gotcha 14 — keydown bubbles through every ancestor treeitem.**
+Nesting a subtree's `<ul role="group">` *inside* its parent `<li
+role="treeitem">` (the correct, standard tree markup) means a keydown
+fired on a descendant bubbles up through every ancestor's own
+`onKeyDown` too. Any composite widget you build with this nested-row
+shape needs an `event.currentTarget !== event.target` guard at the top
+of its key handler, or an ancestor's handler will re-process (and
+override) a key the focused descendant already handled. This doesn't
+come up in Menu/Select/Tabs/Accordion because none of them nest an
+interactive row inside another interactive row — TreeView is the first
+component in this repo with that shape.
+
+**Gotcha 15 — `aria-hidden` on anything with a non-negative-or-"-1"
+tabindex is invalid, and breaks tooling too.** A `<button
+tabIndex={-1} aria-hidden="true">` is a WAI-ARIA conformance violation
+(aria-hidden is forbidden on any focusable element, and `tabIndex={-1}`
+elements ARE still focusable via `.focus()`, just not via Tab) — but
+the more immediate symptom was that Playwright's `getByRole('button',
+{ hidden: true })` returned **zero** matches for it, globally, not just
+scoped. If a `getByRole` query for a decorative/hidden interactive-
+looking element comes back empty even with `hidden: true`, check
+whether the element is BOTH focusable (has any tabindex, or is a
+native button/link/input) AND `aria-hidden` — that combination is
+invalid and tooling may not handle it predictably. Fix: make the
+element genuinely non-focusable (a `<span>`/`<div>` with no tabindex,
+not a native interactive element) if it truly should be hidden from
+assistive tech.
+
+**Gotcha 16 — a named descendant's own accessible name folds into its
+ancestor's name-from-content.** Giving an inner element its own
+`aria-label` (even a small decorative one like "Expand"/"Collapse")
+changes the *ancestor's* computed accessible name too, confirmed via
+`locator.ariaSnapshot()` in real Chromium
+(`treeitem "src"` became `treeitem "Collapse src"`). Conversely, trying
+to override the ancestor's own name with an explicit `aria-labelledby`
+pointing at just its own label (to exclude a nested subtree's content)
+tripped axe's `label-content-name-mismatch` rule instead, because the
+descendants' visible text wasn't reflected in the overridden name.
+**The actual correct behavior needs neither override**: real browsers'
+accname algorithm already excludes nested `role="treeitem"` content
+from an ancestor's name-from-content on its own — the bug was adding a
+second named, focusable element (the disclosure control) competing for
+that same name computation, not the lack of an explicit label.
+Confirmed this is the real, intended behavior (not a workaround) by
+checking axe and a real accessibility snapshot BEFORE writing the fix,
+not by guessing which override would make a test pass.
+
+**Related, jsdom-specific**: unlike real Chromium, jsdom's
+`dom-accessibility-api` (used by `@testing-library/dom`) does **not**
+exclude a nested treeitem's content from its ancestor's computed name —
+`getByRole('treeitem', { name: 'src' })` fails in a *unit* test the
+moment "src" has visible children, even though it's correct and passes
+in both axe and real-Chromium Playwright tests. Matched with a prefix
+regex (`{ name: /^src/ }`) in the unit tests rather than changing
+correct, already-verified markup to satisfy a test-environment gap —
+see `QUALITY_MATRIX.md`'s TreeView section for the full trail.
+
+**Family C — Navigation & Overlays is now complete: 17/17 VERIFIED.**
+Full gate: typecheck 4/4, @b4/react tests 242/242, build, Storybook
+build, playwright 189/189 (run twice).
+
+## Next action: Family B's last 4, then Families D/E/F
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items
 (calendar grid logic, color space math, drag-and-drop) and deserve real
 scrutiny against "don't fake complex functionality," not a quick stub.
-Family C has 1 more component (`TreeView`) — the last one, with no
-Base UI primitive to build on. Build it from scratch with real ARIA
-`tree`/`treeitem`/`group` roles (check the ARIA APG tree pattern for
-keyboard behavior — Right/Left to expand/collapse+move into/out of a
-branch, Up/Down to move between visible rows, Home/End to jump to
-first/last visible row, type-ahead by first character, not just visual
-nesting). Once it lands, Family C is complete (17/17) and Family D/E/F
-or Family B's last 4 (`DatePicker`/`TimePicker`/`ColorPicker`/
-`FileUpload`, still pending) are next per the phased plan. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
+Family C is complete (17/17 VERIFIED). Next: Family B's last 4
+(`DatePicker`, `TimePicker`, `ColorPicker`, `FileUpload` — the most
+complex remaining Family B items, deserve real scrutiny against "don't
+fake complex functionality," not a quick stub), then Families D/E/F
+per the phased plan. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
 `TextTransition`/`NumberTransition`, `DropdownMenu`, `IconButton`, and
 the internal helpers (`FieldControl`, `SteppingInput`,
 `motionCompatibleProps`, `OptionPopupSurface`, `createItems` — check

@@ -1,5 +1,26 @@
 # B4 — Progress
 
+## TreeView — Family C's 17th component, Family C complete 17/17 (2026-11-18)
+
+Real ARIA `tree`/`treeitem`/`group` with genuine nested `<ul
+role="group">` subtrees, roving tabindex, and the full ARIA APG
+keyboard pattern (arrows, Home/End) — built from scratch, no Base UI
+primitive exists for trees. Found and fixed three real bugs via
+real-Chromium traces: (1) keydown bubbling through every ancestor row
+after a subtree expands, overriding the intended focus move — fixed
+with an `event.currentTarget !== event.target` guard; (2) a disclosure
+`<button tabIndex={-1} aria-hidden="true">`, an invalid WAI-ARIA
+combination that also broke Playwright's role queries entirely —
+changed to a non-focusable `<span>`; (3) giving that span a real
+`aria-label` instead folded it into the row's accessible name (`"src"`
+→ `"Collapse src"`), confirmed via a real accessibility snapshot — kept
+it `aria-hidden` with no focusable duplicate of the row's own
+keyboard-driven expand/collapse. Full gate: typecheck 4/4, @b4/react
+tests 242/242, build, Storybook build, playwright 189/189 (run twice).
+**VERIFIED.**
+
+**Family C — Navigation & Overlays is complete: 17/17 VERIFIED.**
+
 ## CommandPalette — Family C's 16th component (2026-11-18)
 
 Real Base UI `Dialog` wrapping a real Base UI `Combobox` in its

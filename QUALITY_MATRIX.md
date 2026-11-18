@@ -608,6 +608,77 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (235/235), `pnpm build`, Storybook build, `npx playwright test`
 (183/183, run twice for stability).
 
+## TreeView — Family C's seventeenth component, Family C complete 17/17 (2026-11-18)
+
+**VERIFIED.** Real ARIA `tree`/`treeitem`/`group` markup with genuine
+nested `<ul role="group">` subtrees (not `aria-level` on a flattened
+list), roving `tabindex` (one real focusable row at a time, matching
+the roving-focus convention every other composite widget in this
+library uses), and the full ARIA APG tree keyboard pattern: Right
+expands/moves into a branch, Left collapses/moves to parent, Up/Down
+move between visible rows, Home/End jump to the first/last visible row.
+No Base UI primitive exists for trees — built entirely from scratch.
+
+**Three real bugs found and fixed, each via a real-browser trace, not
+guesswork:**
+
+1. **Keydown bubbling through every ancestor row.** Because a
+   subtree's `<ul role="group">` nests *inside* its parent `<li
+   role="treeitem">`, a keydown fired on a descendant row bubbles up
+   through every ancestor row's own `onKeyDown` handler too. Without a
+   guard, "ArrowDown after expanding a branch" would move focus to the
+   branch's first child and then get *immediately overridden* by the
+   parent's own handler also reacting to the same bubbled event —
+   confirmed with a `MutationObserver`-free trace reading
+   `document.activeElement` after each key press in a real Chromium
+   page, not assumed from reading the code. Fixed with an
+   `event.currentTarget !== event.target` guard so only the row the
+   event actually originated on handles it.
+2. **A focusable element under `aria-hidden="true"`.** The disclosure
+   chevron was a `<button tabIndex={-1} aria-hidden="true">` — WAI-ARIA
+   forbids `aria-hidden` on any focusable element (a `tabindex={-1}`
+   element is still focusable via `.focus()`, just not via Tab), and in
+   practice this made Playwright's `getByRole('button')` fail to find
+   it *at all*, even with `{ hidden: true }`. Changed it to a
+   non-focusable `<span>` with `onClick` — mouse users still get a
+   precise click target, but there's no longer a second focusable
+   control duplicating the row's own Right/Left keyboard behavior.
+3. **A named descendant's `aria-label` folding into the row's
+   accessible name.** A first attempt at fixing #2 gave the disclosure
+   button a real `aria-label` ("Expand"/"Collapse") instead of
+   `aria-hidden`. A real Chromium accessibility snapshot
+   (`locator.ariaSnapshot()`) showed this turned `treeitem "src"` into
+   `treeitem "Collapse src"` for every row with children — the
+   button's own label gets folded into the ancestor's name-from-content
+   computation. This is also why an *earlier* attempt at giving the
+   `<li>` itself an explicit `aria-labelledby` (to scope its name to
+   just its own label, excluding the nested group's content) failed
+   axe's `label-content-name-mismatch` rule instead: the visible text of
+   descendant rows wasn't reflected in the overridden name. The actual
+   correct behavior — confirmed by *removing* both overrides and
+   checking axe/Playwright's own accessible-name computation in real
+   Chromium — is that nested `role="treeitem"` descendants are
+   correctly excluded from an ancestor's name-from-content by the
+   browser's own accname algorithm; the disclosure control just needs
+   to not be a second named, focusable thing competing for that same
+   computation.
+
+**New gotcha, recorded for future sessions**: jsdom's accessible-name
+computation (`dom-accessibility-api`, used by `@testing-library/dom`)
+does **not** implement the same nested-role exclusion real browsers
+do — `getByRole('treeitem', { name: 'src' })` fails in a unit test
+immediately after the sibling group renders, even though both axe and
+Playwright (both backed by real Chromium) agree the name is correctly
+just `"src"`. Matched with `{ name: /^src/ }` in the unit tests instead
+of restructuring working, correct markup around a test-environment
+limitation — see `HANDOFF.md`.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(242/242), `pnpm build`, Storybook build, `npx playwright test`
+(189/189, run twice for stability).
+
+**Family C — Navigation & Overlays is now complete: 17/17 VERIFIED.**
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
