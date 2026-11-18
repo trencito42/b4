@@ -537,20 +537,34 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
-## Next action: Family D's remaining 13 (Card, InteractiveCard, Stat,
-EmptyState, ErrorState, Skeleton next — simpler/self-contained; then
-Timeline, ActivityFeed, CodeBlock, ChartContainer; DataTable, DataGrid,
-Calendar last — DataGrid in particular needs real scrutiny per the
-mission brief's "must be a real virtualized/sortable/filterable grid"
-note), then Family F
+## Skeleton — Family D's 3rd component (2026-11-18)
+
+**VERIFIED**. `aria-hidden` shimmer placeholder, `text`/`circle`/`rect`
+variants. Purely decorative (unlike Progress/CircularProgress/Spinner's
+genuine loading signal), so reduced motion drops the shimmer entirely
+rather than just slowing it. One real bug found and fixed: the
+width/height unit test used `toHaveStyle({ height: "2rem" })`, which
+failed because jsdom resolves `"2rem"` against its own 16px default
+root font-size when computing style — a jsdom quirk, not a component
+defect — fixed by asserting `el.style.height` directly instead. Full
+gate: typecheck, @b4/react tests 334/334, build, Storybook build,
+playwright 272/272 (run twice). Family D now: 3/15.
+
+## Next action: Family D's remaining 12 (Card, InteractiveCard, Stat,
+EmptyState, ErrorState next — simpler/self-contained; then Timeline,
+ActivityFeed, CodeBlock, ChartContainer; DataTable, DataGrid, Calendar
+last — DataGrid in particular needs real scrutiny per the mission
+brief's "must be a real virtualized/sortable/filterable grid" note),
+then Family F
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Only Family D and Family F remain, both fully PLANNED.
+above. Family D is now started (3/15: Progress, CircularProgress,
+Skeleton VERIFIED); Family F remains fully PLANNED.
 
-Family D (`Card`, `InteractiveCard`, `DataTable`, `DataGrid`,
-`Progress`, `CircularProgress`, `Stat`, `Timeline`, `ActivityFeed`,
-`Calendar`, `CodeBlock`, `EmptyState`, `ErrorState`, `Skeleton`,
-`ChartContainer`) is all PLANNED — `DataGrid` is explicitly called out
+Family D's remaining 12 (`Card`, `InteractiveCard`, `DataTable`,
+`DataGrid`, `Stat`, `Timeline`, `ActivityFeed`, `Calendar`, `CodeBlock`,
+`EmptyState`, `ErrorState`, `ChartContainer`) are all PLANNED —
+`DataGrid` is explicitly called out
 in the mission brief as needing to be a **real** virtualized/sortable/
 filterable grid, not a styled `<table>`; treat it with the same
 scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI

@@ -1,5 +1,17 @@
 # B4 — Progress
 
+## Skeleton — Family D's 3rd component (2026-11-18)
+
+`aria-hidden` loading placeholder, `text`/`circle`/`rect` variants,
+gradient shimmer sweep. Unlike Progress/CircularProgress/Spinner
+(genuine loading signal, so reduced motion only slows them), Skeleton
+is purely decorative — reduced motion drops the animation entirely.
+Found and fixed a jsdom quirk during testing: `toHaveStyle` resolves
+`"2rem"` against jsdom's own 16px default root rather than the raw
+inline value; fixed by asserting `el.style.height` directly. Full
+gate: typecheck, @b4/react tests 334/334, build, Storybook build,
+playwright 272/272 (run twice). **VERIFIED**. Family D now: 3/15.
+
 ## Progress, CircularProgress — Family D's first 2 components (2026-11-18)
 
 Real Base UI `Progress` primitives — genuine `role="progressbar"`,

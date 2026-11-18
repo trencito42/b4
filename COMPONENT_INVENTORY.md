@@ -84,7 +84,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | CodeBlock | PLANNED |
 | EmptyState | PLANNED |
 | ErrorState | PLANNED |
-| Skeleton | PLANNED |
+| Skeleton | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ChartContainer | PLANNED |
 
 DataGrid must be a real virtualized/sortable/filterable grid, not a styled

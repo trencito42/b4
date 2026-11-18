@@ -1,0 +1,48 @@
+.b4-skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--b4-control-bg) 25%,
+    var(--b4-control-bg-hover) 50%,
+    var(--b4-control-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: b4-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.b4-skeleton--text {
+  width: 100%;
+  height: 1em;
+  border-radius: var(--b4-radius-sm);
+}
+
+.b4-skeleton--circle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--b4-radius-full);
+}
+
+.b4-skeleton--rect {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--b4-radius-md);
+}
+
+@keyframes b4-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* A moving gradient sweep is purely decorative, not a progress signal
+   like Spinner's — reduced motion drops it to a static mid-tone rather
+   than just slowing it down. */
+@media (prefers-reduced-motion: reduce) {
+  .b4-skeleton {
+    animation: none;
+    background: var(--b4-control-bg-hover);
+  }
+}

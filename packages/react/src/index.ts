@@ -192,3 +192,6 @@ export type { ProgressProps } from "./components/Progress/Progress.js";
 
 export { CircularProgress } from "./components/CircularProgress/CircularProgress.js";
 export type { CircularProgressProps } from "./components/CircularProgress/CircularProgress.js";
+
+export { Skeleton } from "./components/Skeleton/Skeleton.js";
+export type { SkeletonProps, SkeletonVariant } from "./components/Skeleton/Skeleton.js";

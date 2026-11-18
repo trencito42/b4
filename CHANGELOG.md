@@ -5,6 +5,20 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Skeleton added — Family D, 3/15 (2026-11-18)
+
+- Added `Skeleton`: `aria-hidden` loading placeholder, `text`/
+  `circle`/`rect` variants, gradient shimmer sweep. Purely decorative —
+  `prefers-reduced-motion` drops the animation entirely rather than
+  slowing it.
+- Found and fixed a jsdom quirk: `toHaveStyle({ height: "2rem" })`
+  failed because jsdom resolves relative units against its own 16px
+  default root font-size when reading computed style, not the raw
+  inline value; fixed by asserting `el.style.height` directly.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (334/334), `pnpm build`, Storybook build, `npx playwright test`
+  (272/272, run twice). **VERIFIED**.
+
 ### Progress, CircularProgress added — Family D started, 2/15 (2026-11-18)
 
 - Added `Progress`/`CircularProgress`: real Base UI `Progress`

@@ -1071,6 +1071,27 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (329/329), `pnpm build`, Storybook build, `npx playwright test`
 (268/268, run twice for stability).
 
+## Skeleton — Family D's 3rd component (2026-11-18)
+
+**VERIFIED**. `aria-hidden` loading placeholder (`text`/`circle`/`rect`
+variants) with a gradient shimmer sweep (`background-position`
+`@keyframes`). `prefers-reduced-motion: reduce` drops the animation
+entirely (not just slows it) — this one is purely decorative, unlike
+Progress/CircularProgress/Spinner's genuine loading signal, so there's
+nothing lost by removing the motion outright.
+
+Bug found and fixed during testing: the width/height unit test
+originally used `toHaveStyle({ height: "2rem" })`, which failed —
+jsdom resolves `"2rem"` against its own default 16px root font-size
+(giving `32px`) when reading computed style, which doesn't match the
+raw inline style value and isn't something the component controls.
+Fixed by asserting `el.style.height` directly instead of the
+jsdom-computed value.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(334/334), `pnpm build`, Storybook build, `npx playwright test`
+(272/272, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
