@@ -5,6 +5,27 @@ a per-npm-release history.
 
 ## Unreleased
 
+### DataGrid added — Family D, 14/15, hardest component in the family (2026-11-19)
+
+- Added `DataGrid`: a real virtualized/sortable/filterable grid per
+  the mission brief's explicit bar, not a styled `<table>` capped by
+  overflow. ARIA `grid`/`row`/`columnheader`/`gridcell` roles over a
+  div-based layout (native `<table>` doesn't compose with windowed
+  rendering). Only visible rows + overscan exist in the DOM — verified
+  against 500 rows in both a unit test and a real-browser e2e count.
+- Sort and filter are genuinely internal, driven by each column's
+  `getValue: (row) => string | number` accessor — unlike `DataTable`,
+  which only sees each column's rendered output.
+- Fixed a real UX bug found via a live browser check: sorting or
+  filtering while scrolled partway down left the scroll position
+  untouched, so the new row set rendered starting mid-list. Fixed by
+  resetting scroll position on every sort/filter change.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (398/398), `pnpm build`, Storybook build, `npx playwright test` (2
+  clean full passes, 316/316 each; see QUALITY_MATRIX.md for the full
+  pass-by-pass account of intermittent, unrelated full-suite flakes
+  encountered and ruled out along the way). **VERIFIED**.
+
 ### DataTable added — Family D, 13/15 (2026-11-19)
 
 - Added `DataTable`: real `<table>` semantics, sortable `<button>`

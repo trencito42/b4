@@ -537,6 +537,80 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## DataGrid — Family D's 14th component, the hardest in the family (2026-11-19)
+
+**VERIFIED** as a genuinely real virtualized/sortable/filterable grid
+per the mission brief's explicit bar — not a styled `<table>` capped
+by `overflow`. Uses ARIA `grid`/`row`/`columnheader`/`gridcell` roles
+over a div-based layout, not a native `<table>` — a real `<table>`
+requires every `<tr>` to be a contiguous DOM child, which doesn't
+compose with windowed rendering, where only the scrolled-into-view
+rows (plus a small overscan buffer) actually exist in the DOM at any
+time. Verified this is real, not simulated, two ways: a unit test
+asserting the DOM row count stays small against 200 rows, and a
+real-browser e2e test doing the same against 500 rows via
+`document.querySelectorAll`.
+
+Sort and filter are genuinely internal, driven by each column's
+`getValue: (row) => string | number` accessor — a deliberate departure
+from `DataTable`'s controlled-only, render-output-only design.
+`DataTable` can't sort/filter for real because it only sees each
+column's *rendered* JSX; `DataGrid` can, because `getValue` hands it
+the real typed value. This is the actual reason the two components
+have different architectures, not just different feature sets.
+
+**Real UX bug found via the browser pane, not caught by anything
+written down as a requirement**: sorting or filtering while scrolled
+partway down left the scroll position untouched, so the new,
+re-ordered/shrunk row set rendered starting from wherever the user
+happened to be scrolled — this reads as "I clicked sort and nothing
+happened" (you're still looking at rows 100-117 of the old list,
+which now correspond to the WRONG rows of the new sorted/filtered
+set) rather than as a list that's scrolled past its own top. Caught by
+actually sorting the grid in the browser pane after scrolling it,
+watching the row contents, and noticing they were still mid-alphabet
+instead of starting at the top. Fixed by resetting both the React
+`scrollTop` state driving the windowing math AND the real DOM
+element's `.scrollTop` on every sort/filter change, confirmed visually
+before and after, plus a dedicated unit test and e2e test asserting
+`scrollTop === 0` after a sort. **Lesson**: any component with
+internal scroll position tied to derived data (sorted/filtered/
+paginated) needs to explicitly decide what happens to that scroll
+position when the derivation changes — "nothing" is rarely the right
+answer, and nothing in the unit-test-first workflow would have
+surfaced this without actually driving it in a browser.
+
+Also caught, mid-test-writing: `@testing-library/react`'s
+`getByRole("textbox", …)` doesn't match `<input type="search">` — that
+input's implicit role is `searchbox`, not `textbox`. Easy to miss since
+the two look identical at a glance; fixed the test queries.
+
+Full gate: typecheck, @b4/react tests 398/398, build, Storybook build.
+**Playwright needed 4 full-suite passes to land the two clean ones**
+this project's standard requires — recorded honestly:
+- Pass 1: 3 single failures (`dropdown-menu.spec.ts`,
+  `form-controls.spec.ts`'s PasswordField axe check,
+  `interactive-card.spec.ts`'s axe check).
+- Pass 2: clean, 316/316.
+- Pass 3: 1 single failure (`drawer.spec.ts`'s axe check).
+- Pass 4: clean, 316/316.
+
+Every failure across all four passes was investigated immediately by
+re-running that spec file alone with `--repeat-each` — every single
+one came back 100% green in isolation (62/62, then 15/15). None was
+ever a DataGrid spec. This is a real, recurring pattern — full-suite
+parallel runs intermittently fail a small number of otherwise-solid,
+pre-existing specs, never the same ones twice, never reproducible
+standalone — and deserves a dedicated investigation rather than
+continuing to just re-run until green each time. **Follow-up, not yet
+actioned**: look into whether this is Playwright's 3-worker parallelism
+causing resource contention (CPU/memory pressure affecting animation
+timing, which several of the flaky specs' failures were axe-timing- or
+animation-adjacent) — maybe worth trying `workers: 2` or a longer
+default timeout for axe checks specifically, or just tracking the
+flake rate over time to see if it's getting worse as the suite grows
+(it's now 316 tests; it was under 100 earlier this session).
+
 ## DataTable — Family D's 13th component (2026-11-19)
 
 **VERIFIED**. Real `<table>`/`<thead>`/`<tbody>`: sortable columns are
@@ -735,27 +809,22 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: Family D's final 2 — DataGrid, Calendar. DataGrid
-needs real scrutiny per the mission brief's "must be a real
-virtualized/sortable/filterable grid" note — treat it as the hardest
-remaining Family D component, harder than DataTable. Then Family F.
+## Next action: Family D's final component — Calendar. Then Family F.
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Family D is now at 13/15 (everything except DataGrid, Calendar
-VERIFIED); Family F remains fully PLANNED.
+above. Family D is now at 14/15 (everything except Calendar VERIFIED);
+Family F remains fully PLANNED.
 
-Family D's remaining 2 (`DataGrid`, `Calendar`) are all PLANNED —
-`DataGrid` is explicitly called out
-in the mission brief as needing to be a **real** virtualized/sortable/
-filterable grid, not a styled `<table>`; treat it with the same
-scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI
-primitive, real interaction, real tests) rather than the lighter touch
-a `Card`/`Stat`/`Skeleton` can get away with. `Calendar` here is
-presumably a read/display calendar (events/activity view), distinct
-from `DatePicker`'s input-picker grid — confirm the distinction before
-building, and reuse `DatePicker`'s month-grid math (`buildMonthGrid`/
-`addMonths`/`addDays` in `DatePicker.tsx`) rather than re-deriving it
-if the two turn out to need the same date arithmetic.
+`Calendar` is the last PLANNED Family D component — treat it with the
+same scrutiny Family B's DatePicker/ColorPicker/FileUpload (and now
+DataGrid) got: no Base UI primitive, real interaction, real tests,
+rather than the lighter touch a `Card`/`Stat`/`Skeleton` can get away
+with. `Calendar` here is presumably a read/display calendar
+(events/activity view), distinct from `DatePicker`'s input-picker grid
+— confirm the distinction before building, and reuse `DatePicker`'s
+month-grid math (`buildMonthGrid`/`addMonths`/`addDays` in
+`DatePicker.tsx`) rather than re-deriving it if the two turn out to
+need the same date arithmetic.
 
 Family F (`AppShell`, `Sidebar`, `PageHeader`, `Toolbar`, `FilterBar`,
 `InspectorPanel`, `ResizablePanels`, `ResourceMeter`, `FileExplorer`,

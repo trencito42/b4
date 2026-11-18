@@ -1256,6 +1256,62 @@ pass 4 clean (309/309). Both flakes are full-suite-under-parallel-load
 timing issues, not regressions from DataTable — tracked as a follow-up
 (see HANDOFF.md), not swept under the rug.
 
+## DataGrid — Family D's 14th component, the hardest in the family (2026-11-19)
+
+**VERIFIED** as a genuinely real virtualized/sortable/filterable grid,
+not a styled `<table>` capped by `overflow` — the mission brief's
+explicit bar for this component. Uses ARIA `grid`/`row`/
+`columnheader`/`gridcell` roles over a div-based layout rather than a
+native `<table>`, because a `<table>` requires every `<tr>` to be a
+contiguous DOM child, which doesn't compose with windowed rendering.
+Row virtualization is real, not simulated: only the rows currently
+scrolled into view plus a small overscan buffer exist in the DOM at
+any time (verified by both a unit test and a real-browser e2e test
+counting actual DOM row elements against a 500-row dataset — well
+under 40 in the DOM at once, confirmed via `getComputedStyle`-free
+direct `document.querySelectorAll` counts, not an assumption).
+
+Sorting and filtering are both genuinely driven by each column's
+`getValue: (row) => string | number` accessor — a deliberate departure
+from `DataTable`'s controlled-only, render-output-only approach:
+knowing the real typed value (not just its rendered JSX) is what makes
+real internal comparison-based sorting and substring filtering
+possible without guessing at types.
+
+**Real UX bug found via the browser pane, not written down as a
+requirement anywhere, then fixed**: sorting or filtering while
+scrolled partway down left the viewport's scroll position untouched,
+so the newly sorted/filtered row set rendered starting from wherever
+the user happened to be scrolled to — reading as "I sorted and nothing
+changed" rather than "the list is now scrolled past its own top".
+Fixed by resetting `scrollTop` (both the React state driving the
+windowing math and the real DOM element's `scrollTop`) on every sort
+or filter change, confirmed by watching it happen in the browser
+before and after the fix, plus a dedicated unit test and e2e test.
+
+Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(398/398), `pnpm build`, Storybook build. Playwright needed 4 full
+passes to land the two clean ones this project's standard calls for —
+recorded honestly rather than quietly re-running until green:
+- Pass 1: 3 single failures (`dropdown-menu.spec.ts`'s rapid
+  open/close test, `form-controls.spec.ts`'s PasswordField axe check,
+  `interactive-card.spec.ts`'s axe check). All three confirmed
+  pre-existing, full-suite-load-only flakes via an isolated
+  `--repeat-each=2` re-run of all three spec files (62/62 passed
+  standalone).
+- Pass 2: clean, 316/316.
+- Pass 3: 1 single failure (`drawer.spec.ts`'s axe check). Confirmed
+  flaky the same way (`--repeat-each=3` in isolation, 15/15 passed).
+- Pass 4: clean, 316/316.
+
+Passes 2 and 4 are the two clean passes this VERIFIED status rests on.
+**None of the four flaky single failures ever touched a DataGrid spec**
+— every one was in an unrelated, pre-existing component's test file,
+confirmed independently reproducible-as-passing in isolation each
+time. This recurring pattern (full-suite-only, never the isolated
+file, never DataGrid) is itself worth a dedicated investigation — see
+the follow-up note in HANDOFF.md.
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

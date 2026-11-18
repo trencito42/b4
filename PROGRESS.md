@@ -1,5 +1,26 @@
 # B4 — Progress
 
+## DataGrid — Family D's 14th component, hardest in the family (2026-11-19)
+
+Real virtualized/sortable/filterable grid per the mission brief's
+explicit bar — not a styled `<table>` capped by overflow. Div-based
+ARIA `grid`/`row`/`columnheader`/`gridcell` layout (native `<table>`
+doesn't compose with windowed rendering). Row virtualization is real:
+only visible rows + overscan exist in the DOM, confirmed against 500
+rows in both a unit test and a real-browser e2e count. Sort/filter are
+genuinely internal (unlike DataTable's controlled-only approach),
+driven by each column's `getValue` accessor. Found and fixed a real
+UX bug via the browser pane: sorting/filtering didn't reset scroll
+position, leaving the view stuck mid-list. Full gate: typecheck,
+@b4/react tests 398/398, build, Storybook build. Playwright needed 4
+full passes to land the required two clean ones (passes 2 and 4,
+316/316 each); passes 1 and 3 each had one unrelated single failure,
+both confirmed pre-existing full-suite-load flakes via isolated
+repeat runs, never a DataGrid spec, never reproducible standalone —
+see QUALITY_MATRIX.md for the full pass-by-pass account and
+HANDOFF.md for the follow-up this recurring pattern deserves.
+**VERIFIED**. Family D now: 14/15 — only Calendar remains.
+
 ## DataTable — Family D's 13th component (2026-11-19)
 
 Real `<table>` semantics: sortable `<button>` column headers with real

@@ -215,3 +215,5 @@ export { ChartContainer } from "./components/ChartContainer/ChartContainer.js";
 export type { ChartContainerProps, ChartLegendItem } from "./components/ChartContainer/ChartContainer.js";
 export { DataTable } from "./components/DataTable/DataTable.js";
 export type { DataTableProps, DataTableColumn, DataTableSort, SortDirection } from "./components/DataTable/DataTable.js";
+export { DataGrid } from "./components/DataGrid/DataGrid.js";
+export type { DataGridProps, DataGridColumn, DataGridSort } from "./components/DataGrid/DataGrid.js";

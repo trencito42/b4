@@ -76,7 +76,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Card | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | InteractiveCard | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | DataTable | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
-| DataGrid | PLANNED |
+| DataGrid | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | Stat | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Timeline | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ActivityFeed | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
