@@ -1,0 +1,31 @@
+.b4-breadcrumbs__list {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-sm);
+}
+
+.b4-breadcrumbs__item {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-3);
+}
+
+.b4-breadcrumbs__text {
+  color: var(--b4-text-tertiary);
+}
+
+.b4-breadcrumbs__current {
+  color: var(--b4-text-primary);
+  font-weight: var(--b4-weight-medium);
+}
+
+.b4-breadcrumbs__separator {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  color: var(--b4-text-disabled);
+}

@@ -139,28 +139,60 @@ have it (`tsc` caught this immediately when copy-pasting the pattern).
 Check the specific Root's prop types before assuming every new overlay
 component supports it.
 
-## Next action: Family B's last 4, then continue Family C
+## Update (2026-11-18): Breadcrumbs, Pagination, Stepper — Family C at 12/17
+
+Added the three remaining pure-presentational Family C components (no
+Base UI primitive exists for any of them — plain semantic HTML, not a
+Base UI wrapper): `Breadcrumbs` (`<nav>`+`<ol>`, last item is
+`aria-current="page"` text, earlier items are real `Link`s when they
+have an `href`), `Pagination` (bounded button count — first/last/
+current±1 + ellipsis, never a flat row of every page number, built on
+`IconButton` for prev/next), `Stepper` (wizard-style progress list,
+complete/active/upcoming via `aria-current="step"`, horizontal or
+vertical).
+
+**New gotcha (10th)**: a CSS custom property reference to a token that
+doesn't exist (`var(--b4-nonexistent)`) resolves to nothing silently —
+no build error, no typecheck error, and it can even *look* fine in a
+quick visual glance depending on what it's layered over. First drafts
+of `Pagination.css`/`Stepper.css` invented `--b4-accent-solid`,
+`--b4-surface-hover`, `--b4-surface-raised` (none exist in
+`packages/tokens/src/*.css`) instead of the real `--b4-accent`,
+`--b4-control-bg-hover`, `--b4-surface-2`. The only thing that caught it
+was axe's `color-contrast` rule flagging a real 1.04:1 white-on-white
+violation on Porcelain during the Playwright run. **Always grep
+`packages/tokens/src/{base,theme-graphite,theme-porcelain}.css` for the
+exact token name before writing `var(--b4-...)` in a new component's
+CSS** — don't assume a plausible-sounding name exists just because a
+similarly-named one does (e.g. `--b4-text-on-accent` is real,
+`--b4-accent-solid` is not).
+
+## Next action: Family B's last 4, then NavigationMenu/Drawer/Sheet/CommandPalette/TreeView
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items
 (calendar grid logic, color space math, drag-and-drop) and deserve real
 scrutiny against "don't fake complex functionality," not a quick stub.
-Family C has 16 more components beyond `DropdownMenu` (Tabs, Accordion,
-Dialog, Popover, Tooltip, ContextMenu, etc.) — check `@base-ui/react`'s
-export list for each one, the way this session did for `select`/
-`combobox`/`slider`/`number-field`/`menu`, before building from scratch;
-Base UI covers most of Family C, likely including `tabs`, `accordion`,
-`dialog`, `popover`, `tooltip` directly. Keep using the shared `Field`
-wrapper, `AnimatedIndicator`, `TextTransition`/`NumberTransition`,
-`DropdownMenu`, and the internal helpers (`FieldControl`,
-`SteppingInput`, `motionCompatibleProps`, `OptionPopupSurface`,
-`createItems` — check `packages/react/src/internal/` before building
-something that duplicates one of these). Full gate (typecheck → unit
-tests → build → Storybook build → Playwright, both themes) before
-marking anything VERIFIED, same as every component above. **When a
+Family C has 5 more components (`NavigationMenu`, `Drawer`, `Sheet`,
+`CommandPalette`, `TreeView`) — check `@base-ui/react`'s export list for
+each one before building from scratch, the way this session did for
+`select`/`combobox`/`slider`/`number-field`/`menu`/`context-menu`/
+`preview-card`; Base UI likely covers `NavigationMenu` directly, while
+`Drawer`/`Sheet`/`CommandPalette`/`TreeView` may need to be built on
+`Dialog`/`Menu` primitives or from scratch like Breadcrumbs/Pagination/
+Stepper were. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
+`TextTransition`/`NumberTransition`, `DropdownMenu`, `IconButton`, and
+the internal helpers (`FieldControl`, `SteppingInput`,
+`motionCompatibleProps`, `OptionPopupSurface`, `createItems` — check
+`packages/react/src/internal/` before building something that
+duplicates one of these). Full gate (typecheck → unit tests → build →
+Storybook build → Playwright, both themes, run twice) before marking
+anything VERIFIED, same as every component above. **When a
 Storybook-driven e2e interaction mysteriously no-ops, check for an
 uncaught exception from a missing required story prop before suspecting
-the component** — see the SplitButton bug above.
+the component** — see the SplitButton bug above. **Grep the real token
+names in `packages/tokens/src/*.css` before writing any new `var(--b4-
+...)` reference** — see the Pagination/Stepper gotcha above.
 
 ## Historical context below (superseded where it says "pending"/"blocked" — see above)
 
@@ -342,6 +374,23 @@ Important implementation details:
    from 4 once the suite passed ~27 tests) — don't remove that cap
    without reason, and if tests flake anyway as the suite grows, lower it
    further rather than assume every flake is a false alarm.
+
+## GitHub push is blocked by the harness, not by instruction (surface this to the user)
+
+Earlier notes in this file say the user authorized pushing once the
+checkpoint reaches a certain point, and later notes said to hold off
+until the entire mission is done. Independent of which instruction is
+current: `git push origin main` was attempted twice in this session
+family and was **denied by the Claude Code auto-mode permission
+classifier** ("[Unsanctioned Communication]"), not by a lack of user
+authorization. Do not retry it via another tool or mechanism (raw HTTP
+to the GitHub API, a different git remote URL, etc.) to work around the
+denial — that would be bypassing a permission boundary, not completing
+an authorized action. If/when the mission reaches a point where a push
+is wanted, the user needs to either run it themselves or grant it in a
+way the permission classifier accepts; a future session should just
+retry the normal `git push` once asked, and if denied again, report it
+rather than looking for a workaround.
 
 ## Known gaps to eventually close (not blockers, just don't forget)
 

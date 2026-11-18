@@ -32,3 +32,6 @@
 @import "./components/Dialog/Dialog.css";
 @import "./components/AlertDialog/AlertDialog.css";
 @import "./components/HoverCard/HoverCard.css";
+@import "./components/Breadcrumbs/Breadcrumbs.css";
+@import "./components/Pagination/Pagination.css";
+@import "./components/Stepper/Stepper.css";

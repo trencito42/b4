@@ -1,0 +1,42 @@
+.b4-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-pagination__page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--b4-control-height-sm);
+  height: var(--b4-control-height-sm);
+  padding: 0 var(--b4-space-3);
+  border: none;
+  border-radius: var(--b4-radius-md);
+  background: transparent;
+  color: var(--b4-text-secondary);
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-medium);
+  cursor: pointer;
+}
+
+.b4-pagination__page:hover {
+  background: var(--b4-control-bg-hover);
+  color: var(--b4-text-primary);
+}
+
+.b4-pagination__page[aria-current="page"] {
+  background: var(--b4-accent);
+  color: var(--b4-text-on-accent);
+}
+
+.b4-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--b4-control-height-sm);
+  height: var(--b4-control-height-sm);
+  color: var(--b4-text-disabled);
+  font-size: var(--b4-text-sm);
+}

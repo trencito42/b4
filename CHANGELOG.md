@@ -5,6 +5,22 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Breadcrumbs, Pagination, Stepper added — Family C at 12/17 (2026-11-18)
+
+- Added `Breadcrumbs`, `Pagination`, `Stepper` — the three remaining
+  pure-presentational Family C components (no Base UI primitive exists
+  for any of them). Registered in `index.ts`/`styles.css`.
+- Fixed a real bug before shipping: `Pagination.css`/`Stepper.css`
+  first referenced non-existent design tokens (`--b4-accent-solid`,
+  `--b4-surface-hover`, `--b4-surface-raised`), which resolve silently
+  to nothing rather than erroring. Caught by axe's `color-contrast` rule
+  (1.04:1 white-on-white on Porcelain). Fixed to the real tokens
+  (`--b4-accent`, `--b4-control-bg-hover`, `--b4-surface-2`).
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (216/216), `pnpm --filter @b4/motion run test` (5/5), `pnpm build`,
+  Storybook build, `npx playwright test` (162/162, run twice). All three
+  now **VERIFIED**.
+
 ### Full CLI regression gate closed (2026-11-17, later same day)
 
 - Ran the exact full automated gate an earlier session's environment

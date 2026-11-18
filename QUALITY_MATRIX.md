@@ -439,6 +439,46 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
+## Breadcrumbs, Pagination, Stepper — Family C's tenth, eleventh and twelfth components (2026-11-18)
+
+All three **VERIFIED**. All three are pure-presentational — no Base UI
+primitive exists for any of them, so each is a plain semantic-HTML
+component (`<nav><ol>`, button row, `<ol>` of steps) rather than a
+Base UI wrapper.
+
+- **`Breadcrumbs`**: `<nav>` + `<ol>`. The last item is plain text with
+  `aria-current="page"` (it's where the user already is, not a link to
+  click); earlier items render as real `Link`s when they have an `href`,
+  or plain text when they don't (a non-navigable ancestor).
+- **`Pagination`**: bounded button count — first page, last page, the
+  current page ± 1, with an ellipsis for any gap — never a flat row of
+  every page number. Built on `IconButton` (prev/next) + plain
+  `<button>`s with `aria-current="page"` on the active one.
+- **`Stepper`**: wizard-style progress list, each step
+  complete/active/upcoming, read via `aria-current="step"` on the active
+  one (not color alone). Supports horizontal and vertical orientation.
+
+**Real bug caught before any test ran**: the first draft of both
+`Pagination.css` and `Stepper.css` referenced tokens that don't exist —
+`--b4-accent-solid`, `--b4-surface-hover`, `--b4-surface-raised`. They
+compiled fine (CSS custom properties silently resolve to nothing when
+undefined) and *looked* right in a quick visual check, which is exactly
+the "looks done" trap `AGENTS.md` warns about. The actual defect only
+surfaced as an axe `color-contrast` violation on Porcelain —
+`aria-current="page"` text at white-on-white (1.04:1, needs 4.5:1)
+because the undefined `--b4-accent-solid` fill resolved to nothing. Fixed
+by using the real tokens other components already use for the same
+purpose: `--b4-accent` (not `-solid`), `--b4-control-bg-hover` (not
+`surface-hover`), `--b4-surface-2` (not `surface-raised`) — confirmed
+against `packages/tokens/src/{base,theme-graphite,theme-porcelain}.css`
+and cross-checked against `Button.css`'s existing `--b4-accent` +
+`--b4-text-on-accent` pairing before reusing it.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(216/216), `pnpm --filter @b4/motion run test` (5/5), `pnpm build`,
+Storybook build, `npx playwright test` (162/162, run twice for
+stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

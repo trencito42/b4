@@ -1,5 +1,25 @@
 # B4 — Progress
 
+## Breadcrumbs, Pagination, Stepper — Family C's 10th-12th components (2026-11-18)
+
+Added the three pure-presentational Family C navigation components
+(no Base UI primitive exists for any of them): `Breadcrumbs`, a bounded
+`Pagination` (first/last/current±1 + ellipsis, not every page number),
+and a wizard-style `Stepper` (horizontal/vertical, complete/active/
+upcoming via `aria-current="step"`). Registered in `index.ts`/
+`styles.css`. Caught and fixed a real bug before shipping: both
+`Pagination.css` and `Stepper.css` first referenced tokens that don't
+exist (`--b4-accent-solid`, `--b4-surface-hover`, `--b4-surface-raised`)
+— they compiled clean and looked fine at a glance, but axe caught a
+real 1.04:1 white-on-white contrast violation on Porcelain. Fixed by
+using the real tokens (`--b4-accent`, `--b4-control-bg-hover`,
+`--b4-surface-2`) already used by `Button.css` for the same purpose.
+Full CLI regression gate run and passed: `pnpm typecheck` (4/4),
+`pnpm --filter @b4/react run test` (216/216), `pnpm --filter @b4/motion
+run test` (5/5), `pnpm build`, Storybook build, `npx playwright test`
+(162/162, run twice for stability). All three now **VERIFIED** — see
+`QUALITY_MATRIX.md` and `COMPONENT_INVENTORY.md`.
+
 ## Full CLI regression gate closed (2026-11-17, later same day)
 
 Every note below this point describes work done by a session whose

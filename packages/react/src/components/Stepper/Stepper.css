@@ -1,0 +1,115 @@
+.b4-stepper {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--b4-font-sans);
+}
+
+.b4-stepper--horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.b4-stepper--vertical {
+  flex-direction: column;
+}
+
+.b4-stepper__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--b4-space-3);
+}
+
+.b4-stepper--horizontal .b4-stepper__step {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.b4-stepper--vertical .b4-stepper__step {
+  padding-bottom: var(--b4-space-6);
+}
+
+.b4-stepper__marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--b4-radius-full);
+  border: 1px solid var(--b4-border-default);
+  background: var(--b4-surface-2);
+  color: var(--b4-text-tertiary);
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-medium);
+}
+
+.b4-stepper__step--active .b4-stepper__marker {
+  border-color: var(--b4-accent);
+  color: var(--b4-accent-text);
+}
+
+.b4-stepper__step--complete .b4-stepper__marker {
+  border-color: var(--b4-accent);
+  background: var(--b4-accent);
+  color: var(--b4-text-on-accent);
+}
+
+.b4-stepper__marker-text {
+  line-height: 1;
+}
+
+.b4-stepper__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-1);
+}
+
+.b4-stepper--horizontal .b4-stepper__content {
+  margin-top: var(--b4-space-2);
+}
+
+.b4-stepper__label {
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-medium);
+  color: var(--b4-text-secondary);
+}
+
+.b4-stepper__step--active .b4-stepper__label,
+.b4-stepper__step--complete .b4-stepper__label {
+  color: var(--b4-text-primary);
+}
+
+.b4-stepper__description {
+  font-size: var(--b4-text-xs);
+  color: var(--b4-text-tertiary);
+}
+
+.b4-stepper__connector {
+  background: var(--b4-border-default);
+}
+
+.b4-stepper--horizontal .b4-stepper__connector {
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 20px);
+  right: calc(-50% + 20px);
+  height: 1px;
+}
+
+.b4-stepper--vertical .b4-stepper__connector {
+  position: absolute;
+  top: 28px;
+  left: 13px;
+  width: 1px;
+  height: calc(100% - 28px - var(--b4-space-6) + var(--b4-space-6));
+  bottom: 0;
+}
+
+.b4-stepper__step--complete .b4-stepper__connector {
+  background: var(--b4-accent);
+}

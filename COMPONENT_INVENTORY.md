@@ -52,9 +52,9 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | DropdownMenu | **VERIFIED** |
 | Tabs | **VERIFIED** |
 | Accordion | **VERIFIED** |
-| Breadcrumbs | PLANNED |
-| Pagination | PLANNED |
-| Stepper | PLANNED |
+| Breadcrumbs | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| Pagination | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| Stepper | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | NavigationMenu | PLANNED |
 | ContextMenu | **VERIFIED** |
 | Tooltip | **VERIFIED** |

@@ -122,3 +122,12 @@ export type { DropdownMenuProps, DropdownMenuItem } from "./components/DropdownM
 
 export { SplitButton } from "./components/SplitButton/SplitButton.js";
 export type { SplitButtonProps } from "./components/SplitButton/SplitButton.js";
+
+export { Breadcrumbs } from "./components/Breadcrumbs/Breadcrumbs.js";
+export type { BreadcrumbsProps, BreadcrumbItem } from "./components/Breadcrumbs/Breadcrumbs.js";
+
+export { Pagination } from "./components/Pagination/Pagination.js";
+export type { PaginationProps } from "./components/Pagination/Pagination.js";
+
+export { Stepper } from "./components/Stepper/Stepper.js";
+export type { StepperProps, StepperStep, StepperOrientation } from "./components/Stepper/Stepper.js";
