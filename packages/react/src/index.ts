@@ -195,3 +195,7 @@ export type { CircularProgressProps } from "./components/CircularProgress/Circul
 
 export { Skeleton } from "./components/Skeleton/Skeleton.js";
 export type { SkeletonProps, SkeletonVariant } from "./components/Skeleton/Skeleton.js";
+export { Card } from "./components/Card/Card.js";
+export type { CardProps, CardVariant, CardPadding } from "./components/Card/Card.js";
+export { InteractiveCard } from "./components/InteractiveCard/InteractiveCard.js";
+export type { InteractiveCardProps } from "./components/InteractiveCard/InteractiveCard.js";

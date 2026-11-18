@@ -1092,6 +1092,27 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (334/334), `pnpm build`, Storybook build, `npx playwright test`
 (272/272, run twice for stability).
 
+## Card, InteractiveCard — Family D's 4th and 5th components (2026-11-18)
+
+Both **VERIFIED**. `Card` is a static content surface (`flat`/`raised`/
+`outlined` variants, reusing `--b4-surface-radius`/`--b4-shadow-raised`
+rather than inventing new surface tokens) for Stat/EmptyState/
+ErrorState and other Family D content to compose with. `InteractiveCard`
+is its clickable sibling — a real `<button>`, not a `<div onClick>`, so
+it's keyboard-operable and carries correct semantics for free; shares
+`Button`'s press spring (`springs.snap`) plus a small hover lift, both
+skipped under `useReducedMotion()`, so the "action family" vocabulary
+extends to actionable surfaces, not just Button-shaped controls.
+
+No new token or testing gotchas — both components' tokens and e2e
+page-isolation `disableRules` (`page-has-heading-one`,
+`landmark-one-main`, `region`) matched the already-established pattern
+on the first attempt.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(343/343), `pnpm build`, Storybook build, `npx playwright test`
+(279/279, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

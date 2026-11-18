@@ -5,6 +5,18 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Card, InteractiveCard added — Family D, 5/15 (2026-11-18)
+
+- Added `Card`: static content surface, `flat`/`raised`/`outlined`
+  variants, reuses `--b4-surface-radius`/`--b4-shadow-raised` (no new
+  tokens needed).
+- Added `InteractiveCard`: clickable sibling, a real `<button>` sharing
+  `Button`'s press spring plus a hover lift, both skipped under
+  `useReducedMotion()`.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (343/343), `pnpm build`, Storybook build, `npx playwright test`
+  (279/279, run twice). **Both VERIFIED**.
+
 ### Skeleton added — Family D, 3/15 (2026-11-18)
 
 - Added `Skeleton`: `aria-hidden` loading placeholder, `text`/

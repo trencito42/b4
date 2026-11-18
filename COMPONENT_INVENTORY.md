@@ -73,8 +73,8 @@ are not silently dropped; if scope changes, it changes here with a reason.
 |---|---|
 | Progress | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | CircularProgress | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| Card | PLANNED |
-| InteractiveCard | PLANNED |
+| Card | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| InteractiveCard | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | DataTable | PLANNED |
 | DataGrid | PLANNED |
 | Stat | PLANNED |

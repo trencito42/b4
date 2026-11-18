@@ -1,5 +1,15 @@
 # B4 — Progress
 
+## Card, InteractiveCard — Family D's 4th and 5th components (2026-11-18)
+
+`Card`: static content surface, `flat`/`raised`/`outlined`, reuses
+`--b4-surface-radius`/`--b4-shadow-raised` (no new tokens needed).
+`InteractiveCard`: its clickable sibling, a real `<button>` sharing
+Button's press spring plus a hover lift, both skipped under
+`useReducedMotion()`. No new gotchas. Full gate: typecheck,
+@b4/react tests 343/343, build, Storybook build, playwright 279/279
+(run twice). **Both VERIFIED**. Family D now: 5/15.
+
 ## Skeleton — Family D's 3rd component (2026-11-18)
 
 `aria-hidden` loading placeholder, `text`/`circle`/`rect` variants,

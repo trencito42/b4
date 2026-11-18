@@ -53,3 +53,5 @@
 @import "./components/CircularProgress/CircularProgress.css";
 @import "./components/Skeleton/Skeleton.css";
 @import "./components/NotificationPanel/NotificationPanel.css";
+@import "./components/Card/Card.css";
+@import "./components/InteractiveCard/InteractiveCard.css";

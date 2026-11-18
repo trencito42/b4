@@ -1,0 +1,36 @@
+.b4-card {
+  box-sizing: border-box;
+  border-radius: var(--b4-surface-radius);
+  color: var(--b4-text-primary);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-card--flat {
+  background-color: var(--b4-surface-2);
+}
+
+.b4-card--raised {
+  background-color: var(--b4-surface-2);
+  box-shadow: var(--b4-shadow-raised);
+}
+
+.b4-card--outlined {
+  background-color: var(--b4-surface-1);
+  border: 1px solid var(--b4-border-default);
+}
+
+.b4-card--padding-none {
+  padding: var(--b4-space-0);
+}
+
+.b4-card--padding-sm {
+  padding: var(--b4-space-6);
+}
+
+.b4-card--padding-md {
+  padding: var(--b4-space-8);
+}
+
+.b4-card--padding-lg {
+  padding: var(--b4-space-10);
+}
