@@ -121,6 +121,12 @@ wrong with `Slider`'s geometry, documented earlier). Use fixed-inset +
 `margin: auto` centering for any future centered popup instead — no
 transform needed, nothing to collide.
 
+## Update (2026-11-18): AlertDialog — Family C at 7/17
+
+Added `AlertDialog` (reuses `Dialog`'s CSS; distinct Base UI primitive).
+Clean pass, no new bugs — the `Dialog` transform-collision and
+`Tabs`/`Accordion` per-part-attribute lessons were applied up front.
+
 ## Next action: Family B's last 4, then continue Family C
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,

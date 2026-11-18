@@ -390,6 +390,27 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (188/188), `pnpm build`, Storybook build, `npx playwright test`
 (140/140, run twice).
 
+## AlertDialog — Family C's seventh component (2026-11-18)
+
+**VERIFIED.** Reuses `Dialog`'s visual CSS (`.b4-dialog__*`) but is a
+distinct Base UI primitive (`AlertDialog`, not `Dialog` with a prop
+flag) — Base UI itself only shares the Popup/Backdrop/Title/Description
+parts between the two namespaces and gives `AlertDialog` its own
+`Root`/`Trigger`. No decorative close (×) button; only an explicit
+Cancel/Confirm choice, and — verified in a real browser, not assumed —
+it does **not** close on outside click, unlike `Dialog`. Pairs
+`Button variant="destructive"` for the confirming action, per
+`DESIGN_PRINCIPLES.md`'s "destructive actions feel serious, not showy."
+
+No bugs found this component — clean on the first typecheck/unit/e2e
+pass, likely because `Dialog`'s transform-collision lesson was already
+applied (reused its CSS) and the per-part-data-attribute lesson from
+`Tabs`/`Accordion` meant nothing was guessed.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(193/193), `pnpm build`, Storybook build, `npx playwright test`
+(145/145, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

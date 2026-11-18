@@ -54,7 +54,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
-| 3 — Family C | **STARTED (6/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs`, `Accordion`, `Dialog` VERIFIED. 11 more components planned. |
+| 3 — Family C | **STARTED (7/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs`, `Accordion`, `Dialog`, `AlertDialog` VERIFIED. 10 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
@@ -390,6 +390,19 @@ class of bug `Slider`'s geometry had) and used fixed-inset +
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (188/188), `pnpm build`, Storybook build, `npx playwright test`
 (140/140, run twice).
+
+## AlertDialog — Family C's seventh component
+
+Reuses `Dialog`'s CSS but is its own Base UI primitive, with no
+decorative close button and — verified in a real browser — no
+outside-click dismissal, forcing an explicit Cancel/Confirm choice.
+Clean on the first pass: the `Dialog` transform-collision lesson and
+the per-part data-attribute lesson from `Tabs`/`Accordion` both paid off
+here with nothing to find.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(193/193), `pnpm build`, Storybook build, `npx playwright test`
+(145/145, run twice).
 
 ## Git
 

@@ -90,6 +90,9 @@ export type { AccordionProps, AccordionItemSpec } from "./components/Accordion/A
 export { Dialog } from "./components/Dialog/Dialog.js";
 export type { DialogProps } from "./components/Dialog/Dialog.js";
 
+export { AlertDialog } from "./components/AlertDialog/AlertDialog.js";
+export type { AlertDialogProps } from "./components/AlertDialog/AlertDialog.js";
+
 export { Link } from "./components/Link/Link.js";
 export type { LinkProps, LinkTone } from "./components/Link/Link.js";
 

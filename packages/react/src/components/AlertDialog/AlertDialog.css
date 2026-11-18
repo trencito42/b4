@@ -1,0 +1,6 @@
+.b4-alert-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--b4-space-5);
+  margin-top: var(--b4-space-9);
+}

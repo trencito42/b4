@@ -61,7 +61,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Popover | **VERIFIED** |
 | HoverCard | PLANNED |
 | Dialog | **VERIFIED** |
-| AlertDialog | PLANNED |
+| AlertDialog | **VERIFIED** |
 | Drawer | PLANNED |
 | Sheet | PLANNED |
 | CommandPalette | PLANNED |

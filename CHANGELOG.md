@@ -23,6 +23,12 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### AlertDialog — Family C's seventh component (2026-11-18)
+
+- `@b4/react`: `AlertDialog`, for destructive/irreversible confirmations.
+  No decorative close button; verified it does not close on outside
+  click, unlike `Dialog`. Reuses `Dialog`'s CSS.
+
 ### Dialog — Family C's sixth component (2026-11-18)
 
 - `@b4/react`: `Dialog`, a real Base UI `Dialog` (modal, focus trap,
