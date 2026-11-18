@@ -496,7 +496,26 @@ eventually resolve in jsdom, just not synchronously with the
 triggering event; `waitFor` was all that was needed. Test the
 assumption before writing around it.
 
-## Next action: Family E's remaining 2 (TransitionGroup, LoadingOverlay), then Families D/F
+## Update (2026-11-18): TransitionGroup — Family E at 10/11
+
+Added `TransitionGroup`: real enter/exit list via `AnimatePresence`
+`mode="popLayout"`. **New gotcha (23rd)**: Storybook's preview iframe
+keeps its own error-boundary markup in the DOM **always**, not just
+when an error happens — invisible (not actually displayed) but still
+matched by a bare tag locator like `page.locator("li")` or
+`page.locator("button")`, since Playwright's locator counting doesn't
+filter by visibility by default. Confirmed by dumping every matched
+element's `outerHTML` in a throwaway debug script rather than guessing
+— found real Storybook "Missing Context/Providers" / "Misconfigured
+Webpack" boilerplate `<li>`s mixed in with the actual component's own
+3 items (reporting 5, then 8, as more polling happened). **Always
+scope an e2e locator counting generic elements (`li`, `button`, `div`,
+etc.) to the component's own class or a `data-testid`, never a bare
+tag selector against a Storybook iframe page** — this is the kind of
+false-positive-looking failure that could easily be mistaken for a
+real component bug without checking the actual matched DOM first.
+
+## Next action: Family E's last component (LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/

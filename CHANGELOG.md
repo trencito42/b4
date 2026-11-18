@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### TransitionGroup added — Family E at 10/11 (2026-11-18)
+
+- Added `TransitionGroup`: a real enter/exit list via Motion's
+  `AnimatePresence` (`mode="popLayout"`), auto-wrapping a normal keyed
+  list of children.
+- Found and fixed a real e2e test bug: a bare `page.locator("li")`
+  also matched Storybook's own always-present, invisible preview-
+  iframe error-boundary markup. Fixed by scoping to the demo's own
+  item class.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (310/310), `pnpm build`, Storybook build, `npx playwright test`
+  (250/250, run twice). **VERIFIED**.
+
 ### ExpandingAction added — Family E at 9/11 (2026-11-18)
 
 - Added `ExpandingAction`: a compact icon action that genuinely widens

@@ -88,7 +88,7 @@ brief's "specialized components" note.
 | Spinner | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | MorphingSurface | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ExpandingAction | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| TransitionGroup | PLANNED |
+| TransitionGroup | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | LoadingOverlay | PLANNED |
 
 ## Family F — Application Patterns

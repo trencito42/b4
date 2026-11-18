@@ -180,3 +180,6 @@ export type { MorphingSurfaceProps } from "./components/MorphingSurface/Morphing
 
 export { ExpandingAction } from "./components/ExpandingAction/ExpandingAction.js";
 export type { ExpandingActionProps } from "./components/ExpandingAction/ExpandingAction.js";
+
+export { TransitionGroup } from "./components/TransitionGroup/TransitionGroup.js";
+export type { TransitionGroupProps } from "./components/TransitionGroup/TransitionGroup.js";

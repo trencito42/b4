@@ -1,5 +1,16 @@
 # B4 — Progress
 
+## TransitionGroup — Family E (2026-11-18)
+
+Real enter/exit list via Motion's `AnimatePresence` (`mode=
+"popLayout"`), auto-wrapping a normal keyed list of children. Found a
+real e2e test bug (not a component bug): a bare `page.locator("li")`
+also matched Storybook's own always-present, invisible preview-iframe
+error-boundary markup — confirmed via a throwaway debug script
+dumping every matched element's HTML, fixed by scoping to the demo's
+own item class. Full gate: typecheck 4/4, @b4/react tests 310/310,
+build, Storybook build, playwright 250/250 (run twice). **VERIFIED**.
+
 ## ExpandingAction — Family E (2026-11-18)
 
 Compact icon action that genuinely widens on hover/focus via real

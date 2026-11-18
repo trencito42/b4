@@ -998,6 +998,33 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (306/306), `pnpm build`, Storybook build, `npx playwright test`
 (246/246, run twice for stability).
 
+## TransitionGroup — Family E (2026-11-18)
+
+**VERIFIED.** A real enter/exit list: items animate in and out with
+Motion's `AnimatePresence` (`mode="popLayout"`, so a removed item's
+neighbors slide smoothly into its place rather than snapping), not a
+plain `.map()` where removed items vanish and added ones appear
+instantly. Each child is automatically wrapped with the enter/exit
+motion — consumers hand it a normal keyed list, the same convention
+React already requires, not pre-wrapped `motion.*` elements.
+
+**A real e2e-only bug found and fixed in the test, not the
+component**: the first e2e assertions used a bare `page.locator("li")`
+to count rendered items, which also matched Storybook's own preview-
+iframe error-boundary markup — fixed-in-the-DOM boilerplate `<li>`
+elements that exist on every story page regardless of whether an error
+actually occurred, invisible but still matched by Playwright's default
+(non-visibility-filtered) locator count. Confirmed via a throwaway
+debug script dumping every matched `<li>`'s `outerHTML`, not assumed.
+Fixed by scoping the locator to the demo's own item class instead of a
+bare tag selector — a pattern worth remembering for any future e2e
+test counting generic elements (`li`, `button`, `div`) on a Storybook
+iframe page.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(310/310), `pnpm build`, Storybook build, `npx playwright test`
+(250/250, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
