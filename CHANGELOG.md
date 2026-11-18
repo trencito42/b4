@@ -5,6 +5,23 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Toast added — Family E at 5/11 (2026-11-18)
+
+- Added `Toast`: a real Base UI `Toast` system (`ToastProvider` +
+  `useToast()`), with genuine swipe-to-dismiss, priority levels, and a
+  `promise()` helper for loading → success/error flows.
+- **Fixed a real, pre-existing accessibility bug, live since Phase 0**:
+  Graphite theme's `--b4-accent-hover` gave Button/IconButton's
+  `:hover` state only 2.92:1 contrast against white text (needs
+  4.5:1), caught by an e2e axe scan that happens to run right after
+  clicking a primary Button. Root cause: the hover color shared a
+  token (`--b4-accent-400`) with a different, incompatible contrast
+  requirement (`--b4-accent-text`, light text on a dark surface).
+  Fixed by splitting out a dedicated `--b4-accent-hover-fill` token.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (283/283), `pnpm build`, Storybook build, `npx playwright test`
+  (227/227, run twice). **VERIFIED**.
+
 ### Spinner added — Family E at 4/11 (2026-11-18)
 
 - Added `Spinner`, the standalone counterpart to `Button`'s own inline

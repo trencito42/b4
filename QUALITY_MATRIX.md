@@ -848,6 +848,57 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (277/277), `pnpm build`, Storybook build, `npx playwright test`
 (220/220, run twice for stability).
 
+## Toast — Family E (2026-11-18)
+
+**VERIFIED.** A real Base UI `Toast` system: `ToastProvider` wraps the
+app once, `useToast()` returns `add`/`close`/`update`/`promise` for
+any component inside it to call. Genuine stacked, swipe-to-dismiss
+toasts (drag toward the dismiss edge, real `data-swiping`/
+`--toast-swipe-movement-x/y`-driven transform, not a fade timer with
+no interaction), `low`/`high` announcement priority, and a real
+`promise()` helper that ties a toast's loading → success/error states
+to an actual `Promise` — exercised in the Storybook demo and e2e with
+a real `setTimeout`-backed promise, not a canned state swap.
+
+**A real, pre-existing, previously-undiscovered bug found and fixed —
+not a Toast bug, a Button/IconButton one.** The axe scan in
+`e2e/toast.spec.ts` (which runs immediately after clicking a primary
+`Button` to trigger a toast, so the cursor is still resting on it,
+putting it in its own `:hover` state during the scan) caught a real
+WCAG AA failure: Graphite theme's `--b4-accent-hover` aliased
+`--b4-accent-400` (68% lightness), giving Button/IconButton's `:hover`
+background only **2.92:1** contrast against their white label — well
+under the 4.5:1 floor `--b4-accent` (the *resting* state, 50%
+lightness, 5.77:1) was explicitly tuned and tested for. This had been
+live since Phase 0 and never caught, because no prior e2e scan
+happened to run axe immediately after clicking a primary Button with
+the cursor left resting on it.
+
+Root cause once found: `--b4-accent-400` is shared by **two
+incompatible contrast requirements** — `--b4-accent-text` (light
+accent text/icons *on* a dark surface, e.g. `Badge`, which needs
+`--b4-accent-400` to stay light/68%, 5.99:1 against `--b4-surface-2`)
+and the hover-fill case (white text *on* the accent color, which
+needs it darker, ≤56%, to stay ≥4.5:1). No single lightness satisfies
+both. Fixed by giving the hover-fill case its own token,
+`--b4-accent-hover-fill` (55%, 4.85:1 white-on-fill), and pointing
+`--b4-accent-hover` at that instead of at `--b4-accent-400` — leaving
+`--b4-accent-400`/`--b4-accent-text` untouched at their original,
+already-correct 68%/5.99:1. Confirmed the full existing suite (every
+component using `--b4-accent-hover` or `--b4-accent-text`) still
+passes, both themes, after the split — see `theme-graphite.css`'s
+inline comment for the full reasoning.
+
+**Lesson for future token work**: a token aliased for two different
+*directions* of contrast requirement (text-on-fill vs. fill-behind-
+white-text) is a latent bug waiting for the right e2e sequence to
+surface it — check both directions before reusing a color scale step
+for a second purpose, not just "does it look right."
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(283/283), `pnpm build`, Storybook build, `npx playwright test`
+(227/227, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

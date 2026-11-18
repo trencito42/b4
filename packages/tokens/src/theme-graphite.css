@@ -24,12 +24,27 @@
 
   /* accent-500 (the default, used as white-on-accent button fill) is tuned
      to >= 4.5:1 contrast against white text, not just "looks right" — see
-     the e2e/button.spec.ts axe check. */
+     the e2e/button.spec.ts axe check. accent-400 stays at 68% lightness
+     for its OWN purpose below (--b4-accent-text: light accent text/icons
+     on a dark surface, e.g. Badge — needs to be lighter than 500, 5.99:1
+     against --b4-surface-2). --b4-accent-hover-fill is a separate value,
+     NOT an alias of accent-400: Button/IconButton's :hover keeps the same
+     white label as the resting state (white-on-fill, same >= 4.5:1 floor
+     as accent-500), which is the opposite direction from accent-400's
+     text-on-dark-surface requirement — the two can't share one token.
+     This was a real bug: --b4-accent-hover used to alias accent-400
+     directly, giving Button's hover state 2.92:1 contrast (a WCAG AA
+     failure), caught by e2e/toast.spec.ts's axe scan running immediately
+     after a primary-Button click, with the cursor still resting on it so
+     :hover's own background is what gets checked. 55% keeps a visible
+     "lighter on hover" cue against the 50% resting color while holding
+     4.85:1. */
   --b4-accent-h: 221;
   --b4-accent-s: 83%;
   --b4-accent-400: hsl(var(--b4-accent-h) var(--b4-accent-s) 68%);
   --b4-accent-500: hsl(var(--b4-accent-h) var(--b4-accent-s) 50%);
   --b4-accent-600: hsl(var(--b4-accent-h) var(--b4-accent-s) 42%);
+  --b4-accent-hover-fill: hsl(var(--b4-accent-h) var(--b4-accent-s) 55%);
 
   /* ---- surfaces (elevation by lightness, not borders/shadows) ---- */
   --b4-surface-canvas: var(--b4-gray-50);
@@ -53,7 +68,7 @@
 
   /* ---- accent (interactive brand color) ---- */
   --b4-accent: var(--b4-accent-500);
-  --b4-accent-hover: var(--b4-accent-400);
+  --b4-accent-hover: var(--b4-accent-hover-fill);
   --b4-accent-active: var(--b4-accent-600);
   --b4-accent-subtle-bg: color-mix(in srgb, var(--b4-accent-500) 16%, var(--b4-surface-2));
   /* --b4-accent (accent-500) is tuned for white-on-fill contrast, not

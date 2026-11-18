@@ -1,5 +1,24 @@
 # B4 — Progress
 
+## Toast — Family E (2026-11-18)
+
+Real Base UI `Toast` system: `ToastProvider` + `useToast()` giving
+`add`/`close`/`update`/`promise`, genuine stacked swipe-to-dismiss
+toasts, real priority levels, a real `promise()`-driven loading →
+success/error flow. Found and fixed a real, **pre-existing** bug that
+had nothing to do with Toast itself: the e2e axe scan (which runs
+right after clicking a primary Button, cursor still resting on it)
+caught Graphite's `--b4-accent-hover` giving Button/IconButton's
+`:hover` only 2.92:1 contrast against white text — a WCAG AA failure
+live since Phase 0, never caught because no prior scan happened to
+catch a Button mid-hover. Root cause: the hover color was aliasing
+`--b4-accent-400`, a token also used (in the opposite contrast
+direction) for accent text on dark surfaces — no single value
+satisfies both. Fixed by giving hover its own token
+(`--b4-accent-hover-fill`, 4.85:1) instead of sharing one meant for a
+different job. Full gate: typecheck 4/4, @b4/react tests 283/283,
+build, Storybook build, playwright 227/227 (run twice). **VERIFIED**.
+
 ## Spinner — Family E (2026-11-18)
 
 Standalone counterpart to `Button`'s own inline `loading` spinner —

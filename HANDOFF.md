@@ -425,7 +425,30 @@ design (same CSS, standalone, `role="status"` + `aria-label`). No new
 gotchas — straightforward, matched the plan in the previous entry's
 "Next action" note exactly.
 
-## Next action: Family E's remaining 7 (Toast, InlineAlert, NotificationPanel, MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
+## Update (2026-11-18): Toast — Family E at 5/11, real pre-existing Button bug found and fixed
+
+Added `Toast` (real Base UI `Toast` system: `ToastProvider` +
+`useToast()`, swipe-to-dismiss, priorities, `promise()`). **New
+gotcha (21st), and a genuinely important one**: Graphite theme's
+`--b4-accent-hover` had 2.92:1 contrast against white text — a real
+WCAG AA failure that's been in the codebase since Phase 0, caught
+only now because `e2e/toast.spec.ts`'s axe scan happens to run right
+after clicking a primary `Button`, with the cursor still resting on
+it (Playwright doesn't move the mouse away after `.click()`), so the
+scan checks the `:hover` background, not just the resting one. Fixed
+by splitting `--b4-accent-hover-fill` out as its own token instead of
+aliasing `--b4-accent-400`, which is ALSO used (in the opposite
+contrast direction — light text on a dark surface, not white text on
+a light fill) by `--b4-accent-text`/`Badge`. **No single color token
+can satisfy both "readable as fill behind white text" and "readable
+as text in front of a dark surface" — check which direction a shared
+token's contrast runs before reusing it for a second purpose,** and
+remember that **an axe scan run right after a `.click()` checks the
+clicked element's `:hover` state**, which most of this session's
+axe scans (run on page load or after a different interaction) never
+exercised.
+
+## Next action: Family E's remaining 6 (InlineAlert, NotificationPanel, MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/
