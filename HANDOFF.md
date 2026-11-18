@@ -93,6 +93,23 @@ switched to `springs.snap` (spatial move → spring, per `MOTION_SPEC.md`),
 `NumberTransition` gained forced `tabular-nums`. No API changes, fully
 backward compatible.
 
+## Update (2026-11-18): Accordion — Family C at 5/17
+
+Built on Base UI's `Accordion`. Confirmed each accordion part's own
+exact "is-open" attribute individually (Trigger: `data-panel-open`;
+Item/Panel: `data-open`) — they differ *within the same component*, not
+just across components, reinforcing the "check every part's own
+`*DataAttributes.d.ts`" rule from the `Tabs` entry above.
+
+Found that Base UI's Accordion has **no roving-tabindex arrow-key
+navigation between triggers** — it was removed following an ARIA APG
+guidance update (accordion headers are now plain Tab stops, not a
+composite widget; `orientation`/`loopFocus` are `@deprecated` and no
+longer affect focus behavior). If you're about to write a keyboard test
+for a new Family C component, don't assume arrow-key navigation exists
+just because `Tabs`/`SegmentedControl`/`RadioGroup` have it — check the
+Base UI docs/types for that specific primitive first.
+
 ## Next action: Family B's last 4, then continue Family C
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,

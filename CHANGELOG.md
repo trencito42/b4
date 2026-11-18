@@ -23,6 +23,15 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Accordion — Family C's fifth component (2026-11-18)
+
+- `@b4/react`: `Accordion`, built on Base UI's `Accordion`. Confirmed
+  per-part data attributes (Trigger's `data-panel-open` differs from
+  Item/Panel's `data-open`, within the same component).
+- Fixed a test that wrongly assumed arrow-key roving focus between
+  triggers — Base UI removed that behavior following an ARIA APG
+  update; rewrote the test for the current Tab-order contract.
+
 ### Tabs, and TextTransition/NumberTransition motion improvements (2026-11-17)
 
 - `@b4/react`: `Tabs`, built on Base UI's `Tabs` with its own

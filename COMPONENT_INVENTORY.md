@@ -51,7 +51,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 |---|---|
 | DropdownMenu | **VERIFIED** |
 | Tabs | **VERIFIED** |
-| Accordion | PLANNED |
+| Accordion | **VERIFIED** |
 | Breadcrumbs | PLANNED |
 | Pagination | PLANNED |
 | Stepper | PLANNED |

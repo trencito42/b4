@@ -84,6 +84,9 @@ export type { PopoverProps } from "./components/Popover/Popover.js";
 export { Tabs } from "./components/Tabs/Tabs.js";
 export type { TabsProps, TabsItem } from "./components/Tabs/Tabs.js";
 
+export { Accordion } from "./components/Accordion/Accordion.js";
+export type { AccordionProps, AccordionItemSpec } from "./components/Accordion/Accordion.js";
+
 export { Link } from "./components/Link/Link.js";
 export type { LinkProps, LinkTone } from "./components/Link/Link.js";
 

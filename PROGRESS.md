@@ -54,7 +54,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
-| 3 — Family C | **STARTED (4/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs` VERIFIED. 13 more components planned. |
+| 3 — Family C | **STARTED (5/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs`, `Accordion` VERIFIED. 12 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
@@ -360,6 +360,24 @@ digit-width changes don't jitter the layout mid-slide. No API changes.
 Verified (covers both Tabs and the motion pass): `pnpm typecheck` (5/5),
 `pnpm --filter @b4/react run test` (178/178), `pnpm build`, Storybook
 build, `npx playwright test` (130/130, run multiple times).
+
+## Accordion — Family C's fifth component
+
+Built on Base UI's `Accordion`, panel height animated from Base UI's own
+`--accordion-panel-height` CSS variable. Confirmed the Trigger's own
+`[data-panel-open]` attribute per-part (Item/Panel use `data-open`
+instead) rather than assuming one shared attribute name.
+
+Two findings, both test-side: the keyboard test assumed arrow-key roving
+focus between triggers, which Base UI deliberately removed (follows an
+updated ARIA APG guidance that accordion headers are plain Tab stops,
+not a composite widget) — rewrote it to verify the current, correct
+contract. Also hit a stray `*/` inside a doc comment's prose that closed
+the comment early and cascaded into unrelated-looking syntax errors.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(183/183), `pnpm build`, Storybook build, `npx playwright test`
+(135/135, run twice).
 
 ## Git
 

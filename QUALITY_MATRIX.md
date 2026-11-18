@@ -340,6 +340,33 @@ Verified: same full-suite run as above (178/178 unit, 130/130 e2e,
 including the existing `motion-primitives.spec.ts` TextTransition/
 NumberTransition coverage, unchanged pass count).
 
+## Accordion — Family C's fifth component (2026-11-18)
+
+**VERIFIED.** Built on Base UI's `Accordion`. Panel height is animated
+from Base UI's own measured `--accordion-panel-height` CSS variable via
+a plain CSS `transition`. The chevron rotates on the *Trigger's* own
+`[data-panel-open]` attribute — confirmed per-part from each Base UI
+accordion piece's own `*DataAttributes.d.ts` (Item/Panel use `data-open`
+instead; Trigger uses `data-panel-open`), per the rule `HANDOFF.md`
+added after the `Tabs` `data-active` contrast bug.
+
+Two real findings, both in test assumptions, not the component:
+- Accordion's keyboard story assumed arrow-key roving focus between
+  triggers — Base UI deliberately removed that (its `orientation`/
+  `loopFocus` props are now `@deprecated`, following a 2026 ARIA APG
+  guidance update that accordion headers are plain Tab stops, not a
+  composite widget). Rewrote the test to verify the *current, correct*
+  contract (Tab order + Enter/Space activation) instead of a behavior
+  that no longer exists by design.
+- A stray `*/` inside a JSDoc comment's prose ("Item*/*Panel*") closed
+  the comment early and produced a cascade of unrelated-looking syntax
+  errors — a reminder that doc comments containing asterisks next to
+  slashes need rewording, not escaping (there's no escape for it).
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(183/183), `pnpm build`, Storybook build, `npx playwright test`
+(135/135, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives
