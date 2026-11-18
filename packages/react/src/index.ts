@@ -186,3 +186,9 @@ export type { TransitionGroupProps } from "./components/TransitionGroup/Transiti
 
 export { LoadingOverlay } from "./components/LoadingOverlay/LoadingOverlay.js";
 export type { LoadingOverlayProps } from "./components/LoadingOverlay/LoadingOverlay.js";
+
+export { Progress } from "./components/Progress/Progress.js";
+export type { ProgressProps } from "./components/Progress/Progress.js";
+
+export { CircularProgress } from "./components/CircularProgress/CircularProgress.js";
+export type { CircularProgressProps } from "./components/CircularProgress/CircularProgress.js";

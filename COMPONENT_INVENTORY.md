@@ -69,11 +69,26 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 ## Family D — Data & Content
 
-Card, InteractiveCard, DataTable, DataGrid, Progress, CircularProgress, Stat,
-Timeline, ActivityFeed, Calendar, CodeBlock, EmptyState, ErrorState,
-Skeleton, ChartContainer — all **PLANNED**. DataGrid must be a real
-virtualized/sortable/filterable grid, not a styled `<table>` — see mission
-brief's "specialized components" note.
+| Component | Status |
+|---|---|
+| Progress | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| CircularProgress | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| Card | PLANNED |
+| InteractiveCard | PLANNED |
+| DataTable | PLANNED |
+| DataGrid | PLANNED |
+| Stat | PLANNED |
+| Timeline | PLANNED |
+| ActivityFeed | PLANNED |
+| Calendar | PLANNED |
+| CodeBlock | PLANNED |
+| EmptyState | PLANNED |
+| ErrorState | PLANNED |
+| Skeleton | PLANNED |
+| ChartContainer | PLANNED |
+
+DataGrid must be a real virtualized/sortable/filterable grid, not a styled
+`<table>` — see mission brief's "specialized components" note.
 
 ## Family E — Feedback & Motion
 

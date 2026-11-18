@@ -1,0 +1,68 @@
+.b4-circular-progress {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--b4-space-2);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-circular-progress__ring-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.b4-circular-progress__svg {
+  transform: rotate(-90deg);
+}
+
+.b4-circular-progress__track {
+  stroke: var(--b4-control-bg);
+}
+
+.b4-circular-progress__indicator {
+  stroke: var(--b4-accent);
+  transition: stroke-dashoffset var(--b4-duration-base) var(--b4-ease-standard);
+}
+
+.b4-circular-progress[data-indeterminate] .b4-circular-progress__svg {
+  animation: b4-circular-progress-spin 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b4-circular-progress[data-indeterminate] .b4-circular-progress__svg {
+    animation-duration: 2.4s;
+  }
+}
+
+@keyframes b4-circular-progress-spin {
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+.b4-circular-progress__value {
+  position: absolute;
+  font-size: var(--b4-text-xs);
+  font-weight: var(--b4-weight-medium);
+  color: var(--b4-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.b4-circular-progress__label {
+  font-size: var(--b4-text-sm);
+  color: var(--b4-text-secondary);
+}
+
+.b4-circular-progress__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

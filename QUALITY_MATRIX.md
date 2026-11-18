@@ -1044,6 +1044,33 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 **Family E — Feedback & Motion is now complete: all 11 components
 VERIFIED.**
 
+## Progress, CircularProgress — Family D's first 2 components (2026-11-18)
+
+Both **VERIFIED**. Real Base UI `Progress` primitives — genuine
+`role="progressbar"` semantics, a formatted value announced to
+assistive tech, and a real indeterminate state (`value={null}`, a
+looping animation, not a bar/ring frozen at a fake percentage) — not a
+styled `<div>` with a width percentage and no ARIA semantics.
+
+`CircularProgress` reuses the same `Progress.Root`/`Label`/`Value`
+parts for ARIA (confirming Base UI's Progress primitive is visual-
+agnostic — Track/Indicator are plain, stylable elements, not
+hardcoded to a linear bar), but renders a genuine SVG
+`stroke-dashoffset` ring computed from the same `value`/`min`/`max`
+props, rather than a CSS `conic-gradient` approximation or a rotating-
+border trick. Confirmed with a real e2e assertion comparing
+`stroke-dashoffset` between two different values, not just a visual
+screenshot.
+
+Both honor `prefers-reduced-motion` by slowing (not stopping) their
+indeterminate-state animation — the same reasoning already applied to
+`Spinner`: a loading indicator that freezes removes the loading signal
+entirely.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(329/329), `pnpm build`, Storybook build, `npx playwright test`
+(268/268, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

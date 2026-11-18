@@ -527,7 +527,22 @@ VERIFIED**, closing out the third full component family this session
 (after Family C: 17/17 and Family B: 19/19). Full gate at every step
 throughout, no exceptions.
 
-## Next action: Families D and F — both still fully PLANNED
+## Update (2026-11-18): Progress, CircularProgress — Family D started, 2/15
+
+Added `Progress`/`CircularProgress`: real Base UI `Progress`
+primitives (not a styled div with no ARIA). `CircularProgress` proves
+Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
+`Root`/`Label`/`Value` for ARIA, rendered a genuine SVG
+`stroke-dashoffset` ring computed from the same `value`/`min`/`max`
+props rather than relying on Base UI's own linear-bar width styling.
+No new gotchas.
+
+## Next action: Family D's remaining 13 (Card, InteractiveCard, Stat,
+EmptyState, ErrorState, Skeleton next — simpler/self-contained; then
+Timeline, ActivityFeed, CodeBlock, ChartContainer; DataTable, DataGrid,
+Calendar last — DataGrid in particular needs real scrutiny per the
+mission brief's "must be a real virtualized/sortable/filterable grid"
+note), then Family F
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
 above. Only Family D and Family F remain, both fully PLANNED.

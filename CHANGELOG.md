@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Progress, CircularProgress added — Family D started, 2/15 (2026-11-18)
+
+- Added `Progress`/`CircularProgress`: real Base UI `Progress`
+  primitives. `CircularProgress` renders a genuine SVG
+  `stroke-dashoffset` ring (not a `conic-gradient` approximation),
+  confirmed with a real e2e `stroke-dashoffset` comparison.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (329/329), `pnpm build`, Storybook build, `npx playwright test`
+  (268/268, run twice). **VERIFIED**.
+
 ### LoadingOverlay added — Family E complete, all 11/11 (2026-11-18)
 
 - Added `LoadingOverlay`: a real blocking overlay (`pointer-events:

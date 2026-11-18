@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## Progress, CircularProgress — Family D's first 2 components (2026-11-18)
+
+Real Base UI `Progress` primitives — genuine `role="progressbar"`,
+formatted value, real indeterminate state. `CircularProgress` reuses
+the same Root/Label/Value parts for ARIA (confirming Progress is
+visual-agnostic) but renders a real SVG `stroke-dashoffset` ring, not
+a `conic-gradient` or rotating-border approximation — confirmed with a
+real e2e comparison of `stroke-dashoffset` across two values. Both
+honor reduced motion by slowing, not stopping, their indeterminate
+animation. Full gate: typecheck 4/4, @b4/react tests 329/329, build,
+Storybook build, playwright 268/268 (run twice). **VERIFIED**. Family
+D now started: 2/15.
+
 ## LoadingOverlay — Family E's last component, Family E complete (2026-11-18)
 
 A real blocking overlay — `pointer-events: auto` genuinely intercepts

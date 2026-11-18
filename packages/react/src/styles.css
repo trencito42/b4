@@ -49,4 +49,6 @@
 @import "./components/InlineAlert/InlineAlert.css";
 @import "./components/ExpandingAction/ExpandingAction.css";
 @import "./components/LoadingOverlay/LoadingOverlay.css";
+@import "./components/Progress/Progress.css";
+@import "./components/CircularProgress/CircularProgress.css";
 @import "./components/NotificationPanel/NotificationPanel.css";
