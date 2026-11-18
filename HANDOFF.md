@@ -515,17 +515,22 @@ tag selector against a Storybook iframe page** — this is the kind of
 false-positive-looking failure that could easily be mistaken for a
 real component bug without checking the actual matched DOM first.
 
-## Next action: Family E's last component (LoadingOverlay), then Families D/F
+## Update (2026-11-18): LoadingOverlay — Family E complete, all 11/11
 
-Family E is already 3/11 (`TextTransition`/`NumberTransition`/
-`AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/
-`InlineAlert`/`NotificationPanel`/`Spinner` are comparatively
-self-contained and `Spinner` in particular can likely extract from
-`Button`'s existing inline spinner rather than building one from
-scratch (check `Button.tsx`'s `loading` state implementation first).
-`MorphingSurface`/`ExpandingAction`/`TransitionGroup`/`LoadingOverlay`
-are motion-primitive-flavored — lean on `@b4/motion`'s springs/
-durations and `useReducedMotion()`, same as every component above.
+Added `LoadingOverlay`: a real blocking overlay, proven with a real
+e2e test (a `window.alert()` on the covered button, listened for via
+Playwright's `dialog` event — no alert while visible, fires once
+hidden). Reuses `Spinner` directly. No new gotchas.
+
+**Family E — Feedback & Motion is now complete: all 11 components
+VERIFIED**, closing out the third full component family this session
+(after Family C: 17/17 and Family B: 19/19). Full gate at every step
+throughout, no exceptions.
+
+## Next action: Families D and F — both still fully PLANNED
+
+Family E is now complete (11/11 VERIFIED) — see the dedicated update
+above. Only Family D and Family F remain, both fully PLANNED.
 
 Family D (`Card`, `InteractiveCard`, `DataTable`, `DataGrid`,
 `Progress`, `CircularProgress`, `Stat`, `Timeline`, `ActivityFeed`,

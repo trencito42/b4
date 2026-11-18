@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## LoadingOverlay — Family E's last component, Family E complete (2026-11-18)
+
+A real blocking overlay — `pointer-events: auto` genuinely intercepts
+clicks on covered content, proven with a real e2e test (a
+`window.alert()` on the occluded button, listened for via Playwright's
+`dialog` event: no alert while the overlay is up, the identical click
+fires it once hidden). Reuses `Spinner` directly. Full gate: typecheck
+4/4, @b4/react tests 316/316, build, Storybook build, playwright
+254/254 (run twice). **VERIFIED**.
+
+**Family E — Feedback & Motion is now complete: all 11 components
+VERIFIED.**
+
 ## TransitionGroup — Family E (2026-11-18)
 
 Real enter/exit list via Motion's `AnimatePresence` (`mode=

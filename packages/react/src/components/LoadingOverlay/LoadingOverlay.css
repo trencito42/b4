@@ -1,0 +1,32 @@
+.b4-loading-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inset: 0;
+  background: color-mix(in srgb, var(--b4-surface-canvas) 80%, transparent);
+  pointer-events: auto;
+  z-index: var(--b4-z-overlay);
+}
+
+.b4-loading-overlay--absolute {
+  position: absolute;
+}
+
+.b4-loading-overlay--fixed {
+  position: fixed;
+}
+
+.b4-loading-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--b4-space-3);
+  color: var(--b4-text-primary);
+}
+
+.b4-loading-overlay__message {
+  margin: 0;
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-sm);
+  color: var(--b4-text-secondary);
+}

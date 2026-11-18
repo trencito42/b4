@@ -183,3 +183,6 @@ export type { ExpandingActionProps } from "./components/ExpandingAction/Expandin
 
 export { TransitionGroup } from "./components/TransitionGroup/TransitionGroup.js";
 export type { TransitionGroupProps } from "./components/TransitionGroup/TransitionGroup.js";
+
+export { LoadingOverlay } from "./components/LoadingOverlay/LoadingOverlay.js";
+export type { LoadingOverlayProps } from "./components/LoadingOverlay/LoadingOverlay.js";

@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### LoadingOverlay added — Family E complete, all 11/11 (2026-11-18)
+
+- Added `LoadingOverlay`: a real blocking overlay (`pointer-events:
+  auto` genuinely intercepts clicks on covered content), reusing
+  `Spinner` directly. Proven with a real e2e test using a
+  `window.alert()` + Playwright's `dialog` event, not assumed.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (316/316), `pnpm build`, Storybook build, `npx playwright test`
+  (254/254, run twice). **VERIFIED**.
+
+**Family E — Feedback & Motion is complete: all 11 components
+VERIFIED.**
+
 ### TransitionGroup added — Family E at 10/11 (2026-11-18)
 
 - Added `TransitionGroup`: a real enter/exit list via Motion's

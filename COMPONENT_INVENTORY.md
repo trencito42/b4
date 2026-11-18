@@ -89,7 +89,7 @@ brief's "specialized components" note.
 | MorphingSurface | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ExpandingAction | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | TransitionGroup | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| LoadingOverlay | PLANNED |
+| LoadingOverlay | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 
 ## Family F — Application Patterns
 

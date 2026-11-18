@@ -1025,6 +1025,25 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (310/310), `pnpm build`, Storybook build, `npx playwright test`
 (250/250, run twice for stability).
 
+## LoadingOverlay — Family E's last component, Family E complete (2026-11-18)
+
+**VERIFIED.** A real blocking overlay — `pointer-events: auto`
+genuinely intercepts clicks on whatever it covers while `visible`, not
+a spinner floating decoratively over still-clickable content. Proven
+with a real e2e test, not assumed: a `window.alert()` on the covered
+button, listened for via Playwright's `dialog` event — the overlay
+visible, the forced click on the occluded button, and **no alert
+fires**; once the overlay is hidden, the identical click **does** fire
+the alert. Reuses `Spinner` directly rather than reimplementing a
+spinner. Real `AnimatePresence` fade in/out, honoring reduced motion.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(316/316), `pnpm build`, Storybook build, `npx playwright test`
+(254/254, run twice for stability).
+
+**Family E — Feedback & Motion is now complete: all 11 components
+VERIFIED.**
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
