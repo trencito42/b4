@@ -63,7 +63,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Dialog | **VERIFIED** |
 | AlertDialog | **VERIFIED** |
 | Drawer | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| Sheet | PLANNED |
+| Sheet | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | CommandPalette | PLANNED |
 | TreeView | PLANNED |
 
@@ -128,6 +128,17 @@ navigation / actual syntax-aware editing), not static mockups.
   conventional name.** Base UI itself calls the primitive "PreviewCard";
   this component is named `HoverCard` to match the inventory, same kind
   of naming reconciliation as Slider/RangeSlider.
+
+- **`Sheet` shares `Drawer`'s underlying Base UI `drawer` primitive and
+  reuses its backdrop/header/title/description/content CSS classes**
+  (`.b4-drawer__*`) — same reasoning as `AlertDialog` reusing `Dialog`'s
+  CSS. Only the two components' real visual difference is its own:
+  `Drawer` is a right-edge side panel (`swipeDirection="right"`),
+  `Sheet` is a bottom-anchored mobile sheet with its own grabber handle
+  (`swipeDirection="down"`, `.b4-sheet__popup`/`.b4-sheet__grabber`).
+  Both are genuinely separate component files/directories per the
+  per-component checklist — this is CSS/primitive reuse, not one
+  component wearing two names.
 
 - **SplitButton pulled `DropdownMenu` forward from Family C** rather than
   shipping with a decorative, non-functional chevron. A split button's

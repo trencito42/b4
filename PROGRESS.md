@@ -1,5 +1,15 @@
 # B4 — Progress
 
+## Sheet — Family C's 15th component (2026-11-18)
+
+`Drawer`'s bottom-anchored sibling: same Base UI `drawer` primitive
+(`swipeDirection="down"`), reuses `Drawer`'s CSS, adds its own
+positioning and a drag grabber. Applied all of Drawer's gotchas up
+front (plain `open`/`onOpenChange`, no Motion-exit pattern) — first
+run clean, no follow-up fixes. Full gate: typecheck 4/4, @b4/react
+tests 229/229, build, Storybook build, playwright 178/178 (run twice).
+**VERIFIED**.
+
 ## Drawer — Family C's 14th component (2026-11-18)
 
 Built on Base UI's own `drawer` primitive: a right-edge side panel with

@@ -206,23 +206,34 @@ CSS-transition-completion unmount timing. Removed it; plain `open`/
 for `actionsRef`/`preventUnmountOnClose` when Motion (not CSS) drives
 the exit animation.**
 
-## Next action: Family B's last 4, then Sheet/CommandPalette/TreeView
+## Update (2026-11-18): Sheet — Family C at 15/17
+
+Added `Sheet`, sharing `Drawer`'s Base UI `drawer` primitive and CSS
+(`swipeDirection="down"` instead of `"right"`, own positioning + a drag
+grabber). Applied the Drawer gotcha (no `actionsRef`/
+`preventUnmountOnClose` on CSS-only-transition components) up front —
+first unit-test and e2e run both passed clean, zero follow-up fixes.
+Worth noting as positive evidence for the "write gotchas down" habit:
+the previous component's HANDOFF entry paid for itself immediately.
+
+## Next action: Family B's last 4, then CommandPalette/TreeView
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items
 (calendar grid logic, color space math, drag-and-drop) and deserve real
 scrutiny against "don't fake complex functionality," not a quick stub.
-Family C has 3 more components (`Sheet`, `CommandPalette`, `TreeView`).
-`Sheet` can likely reuse Base UI's same `drawer` primitive as `Drawer`
-with a different `swipeDirection` (e.g. `'down'` for a bottom sheet vs.
-`Drawer`'s `'right'` side panel) — a shared internal component with two
-public exports, the way `RangeSlider` shares `Slider`'s internals, is
-fine per AGENTS.md's reuse rule as long as each keeps its own
-documented prop API and default. `CommandPalette`/`TreeView` have no
-Base UI primitive — build `CommandPalette` on `Dialog` + `Combobox`'s
-filterable-listbox pattern, and `TreeView` from scratch with real ARIA
-`tree`/`treeitem`/`group` roles (check the ARIA APG tree pattern for
-keyboard behavior, not just visual nesting). Keep using the shared `Field` wrapper, `AnimatedIndicator`,
+Family C has 2 more components (`CommandPalette`, `TreeView`) — the
+last two, and both without a Base UI primitive to build on. Build
+`CommandPalette` on `Dialog` + `Combobox`'s filterable-listbox pattern
+(a modal with a search input and a filtered, keyboard-navigable list of
+commands — check `Combobox.tsx`'s listbox/filtering logic before
+writing new filtering code). Build `TreeView` from scratch with real
+ARIA `tree`/`treeitem`/`group` roles (check the ARIA APG tree pattern
+for keyboard behavior — Right/Left to expand/collapse+move into/out of
+a branch, Up/Down to move between visible rows, not just visual
+nesting). Once both land, Family C is complete (17/17) and Family D/E/F
+or Family B's last 4 (`DatePicker`/`TimePicker`/`ColorPicker`/
+`FileUpload`, still pending) are next per the phased plan. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
 `TextTransition`/`NumberTransition`, `DropdownMenu`, `IconButton`, and
 the internal helpers (`FieldControl`, `SteppingInput`,
 `motionCompatibleProps`, `OptionPopupSurface`, `createItems` — check

@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Sheet added — Family C at 15/17 (2026-11-18)
+
+- Added `Sheet`, `Drawer`'s bottom-anchored sibling: shares the same
+  Base UI `drawer` primitive and CSS, with `swipeDirection="down"` and
+  its own positioning/grabber handle.
+- Applied Drawer's lessons up front; first run clean.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (229/229), `pnpm build`, Storybook build, `npx playwright test`
+  (178/178, run twice). **VERIFIED**.
+
 ### Drawer added — Family C at 14/17 (2026-11-18)
 
 - Added `Drawer`, built on Base UI's own `drawer` primitive: a

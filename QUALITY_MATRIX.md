@@ -555,6 +555,26 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (224/224), `pnpm build`, Storybook build, `npx playwright test`
 (173/173, run twice for stability).
 
+## Sheet — Family C's fifteenth component (2026-11-18)
+
+**VERIFIED.** `Drawer`'s bottom-anchored sibling: same Base UI `drawer`
+primitive, `swipeDirection="down"` instead of `"right"`, reusing
+`Drawer`'s backdrop/header/title/description/content CSS
+(`.b4-drawer__*`) and adding its own positioning + a drag grabber
+(`.b4-sheet__popup`, `.b4-sheet__grabber`) — see
+`COMPONENT_INVENTORY.md`'s scope-changes log. Applied every lesson from
+`Drawer` up front rather than rediscovering them: plain `open`/
+`onOpenChange` (no `actionsRef`/`preventUnmountOnClose` — that pattern
+is for Motion-driven exits, not CSS ones), the primitive's own
+`--drawer-swipe-movement-y` var for live drag feedback, `data-swiping`
+disabling the CSS transition mid-drag. First unit-test and e2e run both
+passed clean with zero follow-up fixes needed, the payoff of writing
+down the Drawer gotchas in HANDOFF.md instead of re-deriving them.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(229/229), `pnpm build`, Storybook build, `npx playwright test`
+(178/178, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

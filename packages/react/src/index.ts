@@ -141,3 +141,6 @@ export type {
 
 export { Drawer } from "./components/Drawer/Drawer.js";
 export type { DrawerProps } from "./components/Drawer/Drawer.js";
+
+export { Sheet } from "./components/Sheet/Sheet.js";
+export type { SheetProps } from "./components/Sheet/Sheet.js";
