@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Drawer added — Family C at 14/17 (2026-11-18)
+
+- Added `Drawer`, built on Base UI's own `drawer` primitive: a
+  right-edge side panel with real swipe-to-dismiss (not a mockup).
+- Found that the `actionsRef`/`preventUnmountOnClose` pattern used by
+  `Dialog`/`AlertDialog`/`ContextMenu` (for coordinating with an
+  externally-driven Motion exit animation) is the wrong pattern for a
+  CSS-only-transition component — it left the popup stuck mounted after
+  close. Removed it in favor of plain `open`/`onOpenChange`.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (224/224), `pnpm build`, Storybook build, `npx playwright test`
+  (173/173, run twice). **VERIFIED**.
+
 ### NavigationMenu added — Family C at 13/17 (2026-11-18)
 
 - Added `NavigationMenu`, built on Base UI's own `navigation-menu`

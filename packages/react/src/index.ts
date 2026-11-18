@@ -138,3 +138,6 @@ export type {
   NavigationMenuSection,
   NavigationMenuLinkItem,
 } from "./components/NavigationMenu/NavigationMenu.js";
+
+export { Drawer } from "./components/Drawer/Drawer.js";
+export type { DrawerProps } from "./components/Drawer/Drawer.js";

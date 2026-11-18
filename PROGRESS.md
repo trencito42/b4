@@ -1,5 +1,20 @@
 # B4 — Progress
 
+## Drawer — Family C's 14th component (2026-11-18)
+
+Built on Base UI's own `drawer` primitive: a right-edge side panel with
+real swipe-to-dismiss (drag toward the right edge to close), CSS-driven
+transitions (not Motion, to avoid colliding with the primitive's own
+drag-driven `transform`). Tried the `actionsRef`/`preventUnmountOnClose`
+pattern used by Dialog/AlertDialog first; it left the popup stuck
+mounted after close in a real browser run because it raced Base UI's
+own already-correct CSS-transition unmount timing — removed it in favor
+of plain `open`/`onOpenChange`, the same simpler pattern Accordion/Tabs
+use. E2e covers a real `page.mouse` drag-to-dismiss past the primitive's
+dismiss threshold, not a simulated gesture. Full gate: typecheck 4/4,
+@b4/react tests 224/224, build, Storybook build, playwright 173/173
+(run twice). **VERIFIED**.
+
 ## NavigationMenu — Family C's 13th component (2026-11-18)
 
 Built on Base UI's own `navigation-menu` primitive, matching the

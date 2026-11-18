@@ -520,6 +520,41 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (219/219), `pnpm build`, Storybook build, `npx playwright test`
 (168/168, run twice for stability).
 
+## Drawer — Family C's fourteenth component (2026-11-18)
+
+**VERIFIED.** Built on Base UI's own `drawer` primitive (`Root > Trigger
++ Portal > Backdrop + Viewport > Popup > Content`), a right-edge side
+panel with genuine swipe-to-dismiss built into the primitive (drag the
+panel toward the right edge to close it) — not a static mockup of one.
+CSS-driven transitions keyed to `data-starting-style`/`data-ending-style`
+and the primitive's own `--drawer-swipe-movement-x` CSS var during a
+drag, consciously **not** Motion: a Motion `transform` write here would
+collide with the swipe-driven `transform` the primitive itself writes
+mid-drag, the same transform-collision class documented for Dialog and
+Slider.
+
+**Design choice made explicit, not left implicit**: unlike Dialog/
+AlertDialog/ContextMenu, `Drawer` does **not** use the `actionsRef` +
+`preventUnmountOnClose` + manual `unmount()` pattern. That pattern
+exists specifically to let an externally-driven Motion exit animation
+finish before Base UI unmounts the popup; Drawer's exit is Base UI's
+own CSS transition, which the primitive already waits on internally via
+its own `onOpenChangeComplete` detection before unmounting — adding the
+manual pattern on top was tried first and left the popup stuck mounted
+with `data-closed` in a real Chromium run (confirmed via Playwright,
+not assumed), because the manual `actionsRef.unmount()` call was racing
+Base UI's own already-correct internal unmount timing. Removed it;
+plain `open`/`onOpenChange` is correct here, matching the simpler
+pattern `Accordion`/`Tabs` (also CSS-only) already use.
+
+E2e covers a real drag-to-dismiss (`page.mouse` down/move/up past the
+primitive's own dismiss threshold, not a simulated/faked gesture),
+Escape, backdrop-click, and the close button, across both themes.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(224/224), `pnpm build`, Storybook build, `npx playwright test`
+(173/173, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

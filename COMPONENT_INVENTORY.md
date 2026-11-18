@@ -62,7 +62,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | HoverCard | **VERIFIED** |
 | Dialog | **VERIFIED** |
 | AlertDialog | **VERIFIED** |
-| Drawer | PLANNED |
+| Drawer | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Sheet | PLANNED |
 | CommandPalette | PLANNED |
 | TreeView | PLANNED |

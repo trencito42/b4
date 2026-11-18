@@ -188,25 +188,41 @@ assume click-to-click switching between siblings is the right
 assertion — check whether hover already does the switching once the
 first one is open, and test that instead.**
 
-## Next action: Family B's last 4, then Drawer/Sheet/CommandPalette/TreeView
+## Update (2026-11-18): Drawer — Family C at 14/17
+
+Added `Drawer`, built on Base UI's own `drawer` primitive (right-edge
+side panel, real swipe-to-dismiss). **New gotcha (12th)**: the
+`actionsRef`/`preventUnmountOnClose`/manual-`unmount()` pattern used by
+`Dialog`/`AlertDialog`/`ContextMenu` is specifically for coordinating
+with an *externally driven* Motion exit animation — it is NOT a
+general-purpose "wait before unmounting" pattern to reach for by
+default. Applying it to `Drawer` (whose exit is Base UI's own CSS
+transition) left the popup stuck mounted with `data-closed` after
+close in a real Playwright/Chromium run, because the manual
+`unmount()` call raced Base UI's own internal, already-correct
+CSS-transition-completion unmount timing. Removed it; plain `open`/
+`onOpenChange` is correct for any CSS-only-transition component — see
+`Accordion`/`Tabs`, which never needed the pattern either. **Only reach
+for `actionsRef`/`preventUnmountOnClose` when Motion (not CSS) drives
+the exit animation.**
+
+## Next action: Family B's last 4, then Sheet/CommandPalette/TreeView
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items
 (calendar grid logic, color space math, drag-and-drop) and deserve real
 scrutiny against "don't fake complex functionality," not a quick stub.
-Family C has 4 more components (`Drawer`, `Sheet`, `CommandPalette`,
-`TreeView`) — check `@base-ui/react`'s export list for each one before
-building from scratch, the way this session did for `select`/
-`combobox`/`slider`/`number-field`/`menu`/`context-menu`/
-`preview-card`/`navigation-menu`. Base UI has a `drawer` export (check
-it before assuming `Sheet` needs the same or a different primitive —
-they may end up sharing one component with a side/variant prop, the
-way `RangeSlider` shares `Slider`, or may need to stay separate if
-Base UI's `drawer` doesn't cover both). `CommandPalette`/`TreeView`
-have no Base UI primitive — build `CommandPalette` on `Dialog` +
-`Combobox`'s filterable-listbox pattern, and `TreeView` from scratch
-with real ARIA `tree`/`treeitem`/`group` roles (check the ARIA APG tree
-pattern for keyboard behavior, not just visual nesting). Keep using the shared `Field` wrapper, `AnimatedIndicator`,
+Family C has 3 more components (`Sheet`, `CommandPalette`, `TreeView`).
+`Sheet` can likely reuse Base UI's same `drawer` primitive as `Drawer`
+with a different `swipeDirection` (e.g. `'down'` for a bottom sheet vs.
+`Drawer`'s `'right'` side panel) — a shared internal component with two
+public exports, the way `RangeSlider` shares `Slider`'s internals, is
+fine per AGENTS.md's reuse rule as long as each keeps its own
+documented prop API and default. `CommandPalette`/`TreeView` have no
+Base UI primitive — build `CommandPalette` on `Dialog` + `Combobox`'s
+filterable-listbox pattern, and `TreeView` from scratch with real ARIA
+`tree`/`treeitem`/`group` roles (check the ARIA APG tree pattern for
+keyboard behavior, not just visual nesting). Keep using the shared `Field` wrapper, `AnimatedIndicator`,
 `TextTransition`/`NumberTransition`, `DropdownMenu`, `IconButton`, and
 the internal helpers (`FieldControl`, `SteppingInput`,
 `motionCompatibleProps`, `OptionPopupSurface`, `createItems` — check
