@@ -5,6 +5,22 @@ a per-npm-release history.
 
 ## Unreleased
 
+### NotificationPanel added — Family E at 7/11 (2026-11-18)
+
+- Added `NotificationPanel`: a persistent notification list in a
+  popover, built on the existing `Popover`. Unread state uses a dot +
+  bolder text + a visually-hidden "(unread)" announcement, never color
+  alone.
+- Found and fixed a real test bug: passing a wrapper component instead
+  of the actual element to `Popover`'s `trigger` prop silently breaks
+  every click, since cloning props onto a component doesn't forward
+  them to what it renders.
+- Fixed the same `--b4-text-disabled`-on-non-disabled-text mistake
+  (4th occurrence this session) on the item timestamps.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (295/295), `pnpm build`, Storybook build, `npx playwright test`
+  (237/237, run twice). **VERIFIED**.
+
 ### InlineAlert added — Family E at 6/11 (2026-11-18)
 
 - Added `InlineAlert`: a persistent page-level message (distinct from

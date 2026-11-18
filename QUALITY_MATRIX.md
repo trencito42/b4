@@ -916,6 +916,42 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (289/289), `pnpm build`, Storybook build, `npx playwright test`
 (231/231, run twice for stability).
 
+## NotificationPanel — Family E (2026-11-18)
+
+**VERIFIED.** A persistent notification list in a popover — distinct
+from `Toast` (transient) and a single `InlineAlert` (one message, not
+a list). Built on the existing `Popover` for its chrome, not a second
+popup implementation. Unread state is never color-only: each unread
+item gets a visible dot *and* bolder title text *and* a visually-hidden
+"(unread)" announcement, the same "color never carries meaning alone"
+rule applied throughout this session.
+
+**Two real bugs caught, neither a Toast/NotificationPanel-specific
+one:**
+
+- **Test bug, caught immediately**: the first draft of the unit tests
+  passed a wrapper *component* (`function Trigger() { return
+  <IconButton .../> }`) as `Popover`'s `trigger` prop instead of the
+  `IconButton` element itself. `Popover` clones the element it's given
+  with the handlers Base UI's own `Trigger` needs; cloning props onto a
+  wrapper component doesn't forward them to what it renders, so every
+  test's click silently did nothing. Fixed by passing the real element.
+  Worth remembering for any future test that renders a `Popover`/
+  `Dialog`/similar `trigger` prop: always the element, never a
+  component around it.
+- **The same `--b4-text-disabled`-for-non-disabled-text mistake as
+  Pagination/Stepper/DatePicker**, caught by axe again: the item
+  timestamp ("2m ago", "1h ago") used `--b4-text-disabled` for purely
+  visual de-emphasis on fully interactive, clickable list items — 2.43:1
+  on Porcelain. Fixed to `--b4-text-tertiary`. This is now the single
+  most-repeated mistake category this session (4th occurrence) — grep
+  `packages/tokens/src/*.css` for the real token name before writing
+  `var(--b4-...)`, every time, not just when a scan happens to catch it.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(295/295), `pnpm build`, Storybook build, `npx playwright test`
+(237/237, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

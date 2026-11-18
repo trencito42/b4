@@ -171,3 +171,6 @@ export type { ToastProviderProps, ToastObject, ToastAddOptions } from "./compone
 
 export { InlineAlert } from "./components/InlineAlert/InlineAlert.js";
 export type { InlineAlertProps, InlineAlertTone } from "./components/InlineAlert/InlineAlert.js";
+
+export { NotificationPanel } from "./components/NotificationPanel/NotificationPanel.js";
+export type { NotificationPanelProps, NotificationItem } from "./components/NotificationPanel/NotificationPanel.js";

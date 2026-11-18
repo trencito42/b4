@@ -84,7 +84,7 @@ brief's "specialized components" note.
 | AnimatedIndicator | **VERIFIED** (incl. span-as-root support added for RadioGroup) |
 | Toast | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | InlineAlert | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| NotificationPanel | PLANNED |
+| NotificationPanel | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Spinner | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | MorphingSurface | PLANNED |
 | ExpandingAction | PLANNED |

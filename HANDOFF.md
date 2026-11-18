@@ -456,7 +456,30 @@ No new gotchas — clean first-run pass, matching the pattern of
 components built right after a gotcha-heavy one (same as
 ColorPicker following DatePicker/TimePicker).
 
-## Next action: Family E's remaining 5 (NotificationPanel, MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
+## Update (2026-11-18): NotificationPanel — Family E at 7/11
+
+Added `NotificationPanel`: a persistent notification list in a
+popover, built on the existing `Popover`. **New gotcha (22nd)**:
+`Popover`'s (and presumably `Dialog`'s/any similar component's)
+`trigger` prop clones the element it's given with Base UI's own
+Trigger handlers — pass a wrapper *component* instead of the actual
+trigger element (e.g. `function Trigger() { return <IconButton
+.../>; }` then `trigger={<Trigger />}`) and every click silently does
+nothing, because cloning props onto a component doesn't forward them
+to what that component renders. Always pass the real element to a
+`trigger` prop, never a component around it — this cost a full
+test-debugging cycle (all 6 unit tests failed identically) before the
+cause was found.
+
+**Also the 4th occurrence this session** of the `--b4-text-disabled`-
+on-non-disabled-text mistake (Pagination/Stepper, DatePicker's
+outside-month days, now NotificationPanel's timestamps) — grep
+`packages/tokens/src/*.css` for the real token name before writing
+`var(--b4-...)`, every single time, not just when a scan happens to
+catch it. This has now cost 4 separate rebuild+retest cycles across
+the session for the exact same category of mistake.
+
+## Next action: Family E's remaining 4 (MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/

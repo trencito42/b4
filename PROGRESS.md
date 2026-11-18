@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## NotificationPanel — Family E (2026-11-18)
+
+Persistent notification list in a popover, built on the existing
+`Popover`. Unread state uses a dot + bolder text + visually-hidden
+"(unread)" announcement, never color alone. Caught a real test bug
+(passing a wrapper component instead of the actual trigger element to
+`Popover`'s `trigger` prop silently breaks click handling) and the
+same `--b4-text-disabled`-on-non-disabled-text mistake as Pagination/
+Stepper/DatePicker — now a 4-time-repeated pattern, worth grepping
+real token names every time. Full gate: typecheck 4/4, @b4/react tests
+295/295, build, Storybook build, playwright 237/237 (run twice).
+**VERIFIED**.
+
 ## InlineAlert — Family E (2026-11-18)
 
 Persistent, page-level message, distinct from `Toast`/`Badge`. Four
