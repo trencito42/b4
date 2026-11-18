@@ -795,6 +795,42 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (265/265), `pnpm build`, Storybook build, `npx playwright test`
 (209/209, run twice for stability).
 
+## FileUpload — Family B's last component, Family B complete (2026-11-18)
+
+**VERIFIED.** A real dropzone: the actual native `<input
+type="file">` sits over the whole visible area (click-to-browse and
+keyboard operability — Tab + Enter opens the native picker — come from
+genuine browser behavior, not reimplemented); real client-side
+validation (`accept`, `maxSizeBytes`, `maxFiles`) against the real
+`FileList`; a real file list with working per-file removal. Not a
+swatch delegating to a native picker with no custom UI, and not a fake
+progress bar — there is no backend to upload to, so the component's
+honest job is selection, validation, and list management, with real
+`File` objects handed to the consumer via `onValueChange` for them to
+actually upload.
+
+**A real, load-bearing bug caught by the e2e drag-and-drop test, not
+assumed away**: the first draft relied on "drop a file onto a native
+`<input type="file">` and the browser populates `.files` for you" —
+true for a genuine, trusted, OS-level drag, but a Playwright test
+dispatching a scripted `drop` `DragEvent` (the only way to verify this
+in CI) does **not** trigger that native behavior, because browsers
+correctly refuse to set `.files` from an untrusted/synthetic event.
+Rather than weaken the test to "assume it works," switched to the
+standard, verifiable mechanism every real drag-and-drop uploader
+actually uses: a real `onDrop` handler reading `event.dataTransfer
+.files` directly. This is also the more honest implementation —
+reading `dataTransfer.files` is well-defined and testable regardless
+of event trust, so the behavior under test is the same behavior a real
+user gets.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(273/273), `pnpm build`, Storybook build, `npx playwright test`
+(216/216, run twice for stability).
+
+**Family B — Inputs & Forms is now complete: all 19 components
+VERIFIED.**
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

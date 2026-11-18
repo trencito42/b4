@@ -5,6 +5,23 @@ a per-npm-release history.
 
 ## Unreleased
 
+### FileUpload added — Family B complete, all 19/19 (2026-11-18)
+
+- Added `FileUpload`: a real dropzone (native `<input type="file">`
+  over the whole visible area, real `accept`/`maxSizeBytes`/
+  `maxFiles` validation, a real file list with removal).
+- Found and fixed a real bug via the e2e drag-and-drop test: relying
+  on native browser behavior to populate a file input's `.files` on
+  drop doesn't work for a scripted drop event (browsers refuse to set
+  `.files` from untrusted events). Switched to a real `onDrop` handler
+  reading `event.dataTransfer.files` directly — the standard,
+  trust-independent mechanism every real uploader uses.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (273/273), `pnpm build`, Storybook build, `npx playwright test`
+  (216/216, run twice). **VERIFIED**.
+
+**Family B — Inputs & Forms is complete: all 19 components VERIFIED.**
+
 ### ColorPicker added — Family B, third of the last 4 (2026-11-18)
 
 - Added `ColorPicker`: a real draggable + keyboard-operable saturation/

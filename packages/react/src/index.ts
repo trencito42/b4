@@ -159,3 +159,6 @@ export type { TimePickerProps, TimeValue } from "./components/TimePicker/TimePic
 
 export { ColorPicker } from "./components/ColorPicker/ColorPicker.js";
 export type { ColorPickerProps } from "./components/ColorPicker/ColorPicker.js";
+
+export { FileUpload } from "./components/FileUpload/FileUpload.js";
+export type { FileUploadProps } from "./components/FileUpload/FileUpload.js";

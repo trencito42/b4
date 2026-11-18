@@ -387,7 +387,82 @@ worth recording: the investment in writing down gotchas 17-19 for
 DatePicker/TimePicker paid for itself immediately on the very next
 component.
 
-## Next action: Family B's last 1 (FileUpload), then Families D/E/F
+## Update (2026-11-18): FileUpload — Family B complete, all 19/19
+
+Added `FileUpload`: a real dropzone (native `<input type="file">`
+positioned over the whole visible area, real `accept`/`maxSizeBytes`/
+`maxFiles` validation, a real file list with removal). **New gotcha
+(20th), and an important one**: "drop a file onto a native `<input
+type="file">` and the browser will populate its `.files` for you" is
+**true only for a genuine, trusted, OS-level drag** — a scripted/
+synthetic `drop` `DragEvent` (the only way to exercise this in an
+automated test) does **not** trigger that native behavior, because
+browsers correctly refuse to set a file input's `.files` from an
+untrusted event, for security reasons. The first draft of this
+component relied on exactly that untested assumption; the Playwright
+e2e drag-and-drop test caught it immediately (the dropped file never
+appeared). Fixed by switching to a real `onDrop` handler reading
+`event.dataTransfer.files` directly — the standard mechanism every
+real drag-and-drop uploader library actually uses, and also the more
+honest one: it doesn't depend on event trust, so the same code path
+handles a real human drag and a test-dispatched one identically.
+**Any future component that wants "native browser behavior" to do
+something for free should get that claim verified by an e2e test
+before relying on it, especially around file APIs, clipboard, and
+other browser features gated behind user-trust/security checks.**
+
+**Family B — Inputs & Forms is now complete: all 19 components
+VERIFIED**, closing out the full component families' two largest
+remaining categories this session (Family C: 17/17, Family B: 19/19).
+Full gate at every step: typecheck → unit tests → build → Storybook
+build → Playwright (both themes, run twice) before marking anything
+VERIFIED, no exceptions, matching every component above.
+
+## Next action: Families D/E/F per the phased plan
+
+Family E is already 3/11 (`TextTransition`/`NumberTransition`/
+`AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/
+`InlineAlert`/`NotificationPanel`/`Spinner` are comparatively
+self-contained and `Spinner` in particular can likely extract from
+`Button`'s existing inline spinner rather than building one from
+scratch (check `Button.tsx`'s `loading` state implementation first).
+`MorphingSurface`/`ExpandingAction`/`TransitionGroup`/`LoadingOverlay`
+are motion-primitive-flavored — lean on `@b4/motion`'s springs/
+durations and `useReducedMotion()`, same as every component above.
+
+Family D (`Card`, `InteractiveCard`, `DataTable`, `DataGrid`,
+`Progress`, `CircularProgress`, `Stat`, `Timeline`, `ActivityFeed`,
+`Calendar`, `CodeBlock`, `EmptyState`, `ErrorState`, `Skeleton`,
+`ChartContainer`) is all PLANNED — `DataGrid` is explicitly called out
+in the mission brief as needing to be a **real** virtualized/sortable/
+filterable grid, not a styled `<table>`; treat it with the same
+scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI
+primitive, real interaction, real tests) rather than the lighter touch
+a `Card`/`Stat`/`Skeleton` can get away with. `Calendar` here is
+presumably a read/display calendar (events/activity view), distinct
+from `DatePicker`'s input-picker grid — confirm the distinction before
+building, and reuse `DatePicker`'s month-grid math (`buildMonthGrid`/
+`addMonths`/`addDays` in `DatePicker.tsx`) rather than re-deriving it
+if the two turn out to need the same date arithmetic.
+
+Family F (`AppShell`, `Sidebar`, `PageHeader`, `Toolbar`, `FilterBar`,
+`InspectorPanel`, `ResizablePanels`, `ResourceMeter`, `FileExplorer`,
+`QueryEditor`) is all PLANNED and explicitly the most "layout
+composition of other components" family — build it last, since it's
+most likely to want things from Families A-D already in place
+(`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
+have real syntax-aware editing per the mission brief, not a styled
+`<textarea>` — this is probably the single hardest component left in
+the whole inventory and deserves a dedicated session, not a quick
+build at the end of a long one).
+
+Across all three: keep the full gate (typecheck → unit tests → build
+→ Storybook build → Playwright, both themes, run twice) before marking
+anything VERIFIED, and keep checking `packages/tokens/src/*.css` for
+real token names before writing `var(--b4-...)` — gotcha 10
+(Pagination/Stepper) is the single most-repeated mistake category this
+session; grepping first costs nothing and the fix-after-axe-catches-it
+cycle costs a full rebuild+retest loop every time it's skipped.
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items

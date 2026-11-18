@@ -1,5 +1,24 @@
 # B4 — Progress
 
+## FileUpload — Family B's last component, Family B complete (2026-11-18)
+
+A real dropzone: native `<input type="file">` over the whole visible
+area for click-to-browse and keyboard operability, real `accept`/
+`maxSizeBytes`/`maxFiles` validation, a real file list with removal.
+Caught a real, load-bearing bug via the e2e drag-and-drop test: relying
+on "the browser populates a file input's `.files` when something is
+dropped on it" doesn't hold for a scripted drop event (browsers refuse
+to set `.files` from untrusted events), so a Playwright test exercising
+it failed — not a test-environment quirk to work around, but a sign the
+implementation needed a real `onDrop` handler reading `event
+.dataTransfer.files` directly, which is also the standard, more honest
+mechanism every real drag-and-drop uploader uses. Full gate: typecheck
+4/4, @b4/react tests 273/273, build, Storybook build, playwright
+216/216 (run twice). **VERIFIED**.
+
+**Family B — Inputs & Forms is now complete: all 19 components
+VERIFIED.**
+
 ## ColorPicker — Family B, third of the last 4 (2026-11-18)
 
 A real color picker: draggable + keyboard-operable saturation/
