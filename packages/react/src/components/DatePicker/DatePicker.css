@@ -1,0 +1,95 @@
+.b4-date-picker__trigger {
+  min-width: 180px;
+  justify-content: flex-start;
+}
+
+.b4-date-picker__calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+  width: 280px;
+  font-family: var(--b4-font-sans);
+}
+
+.b4-date-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.b4-date-picker__month-label {
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-semibold);
+  color: var(--b4-text-primary);
+}
+
+.b4-date-picker__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-1);
+}
+
+.b4-date-picker__weekday-row,
+.b4-date-picker__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.b4-date-picker__weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  font-size: var(--b4-text-xs);
+  font-weight: var(--b4-weight-medium);
+  color: var(--b4-text-tertiary);
+}
+
+.b4-date-picker__cell {
+  display: flex;
+}
+
+.b4-date-picker__day {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: none;
+  border-radius: var(--b4-radius-md);
+  background: transparent;
+  color: var(--b4-text-primary);
+  font-size: var(--b4-text-sm);
+  cursor: pointer;
+}
+
+.b4-date-picker__day:hover {
+  background: var(--b4-control-bg-hover);
+}
+
+.b4-date-picker__day:focus-visible {
+  outline: 2px solid var(--b4-focus-ring-color);
+  outline-offset: 1px;
+}
+
+.b4-date-picker__day--outside {
+  color: var(--b4-text-tertiary);
+}
+
+.b4-date-picker__day--selected {
+  background: var(--b4-accent);
+  color: var(--b4-text-on-accent);
+}
+
+.b4-date-picker__day--disabled {
+  color: var(--b4-text-disabled);
+  cursor: not-allowed;
+}
+
+.b4-date-picker__day--disabled:hover {
+  background: transparent;
+}
+
+.b4-date-picker__day[aria-current="date"]:not(.b4-date-picker__day--selected) {
+  box-shadow: inset 0 0 0 1px var(--b4-border-strong);
+}

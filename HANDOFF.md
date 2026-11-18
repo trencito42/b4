@@ -301,7 +301,46 @@ see `QUALITY_MATRIX.md`'s TreeView section for the full trail.
 Full gate: typecheck 4/4, @b4/react tests 242/242, build, Storybook
 build, playwright 189/189 (run twice).
 
-## Next action: Family B's last 4, then Families D/E/F
+## Update (2026-11-18): DatePicker — Family B, first of the last 4
+
+Added `DatePicker`: a real ARIA APG "Date Picker Dialog" grid wrapped
+in the existing `Popover` component (reused, not rebuilt). **New
+gotchas:**
+
+**Gotcha 17 — a cross-*state-dependent-render* focus move needs a
+`useEffect`, not a synchronous call or `requestAnimationFrame`.**
+`TreeView`'s roving-focus fix (call `.focus()` synchronously right
+after `setState`, since `.focus()` works regardless of an element's
+current `tabindex`) only works when the target element **already
+exists** in the DOM before the state change — i.e., when the state
+change doesn't alter which elements render. `DatePicker`'s PageUp/
+PageDown changes `visibleMonth`, which re-renders an entirely
+*different set* of day buttons; the target date's button doesn't exist
+yet in the same tick as the `setVisibleMonth` call, because React
+flushes the re-render after the event handler returns, not
+synchronously mid-handler. `requestAnimationFrame` (tried first, by
+analogy to the already-fixed TreeView case) raced React's own
+scheduling unpredictably here. The correct fix: a `useEffect` keyed on
+the value that should receive focus, which by definition only runs
+after the DOM reflects the state that triggered it. **Rule of thumb**:
+synchronous focus-after-setState is safe only when the target element
+was already rendered before the state change; if the state change
+itself determines which elements exist, use `useEffect` instead.
+
+**Gotcha 18 — "dimmed because it's from another month" is not the
+same contrast exemption as "dimmed because it's disabled."** The
+grid's adjacent-month days are fully real, clickable, selectable
+buttons — clicking one navigates to that month and selects it — so
+styling them with `--b4-text-disabled` (which axe/WCAG implicitly
+tolerate failing contrast on, since genuinely disabled controls are
+exempt) was a real `color-contrast` violation once a sighted-but-
+low-vision user tried to read "11" at 2.43:1. Any "de-emphasized but
+still interactive" text needs a token that actually passes AA
+(`--b4-text-tertiary` here) — `--b4-text-disabled` is for elements
+that are *actually* `disabled`/`aria-disabled`, not merely
+visually quieter.
+
+## Next action: Family B's last 3 (TimePicker, ColorPicker, FileUpload), then Families D/E/F
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items

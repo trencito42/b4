@@ -150,3 +150,6 @@ export type { CommandPaletteProps, CommandPaletteItem } from "./components/Comma
 
 export { TreeView } from "./components/TreeView/TreeView.js";
 export type { TreeViewProps, TreeNode } from "./components/TreeView/TreeView.js";
+
+export { DatePicker } from "./components/DatePicker/DatePicker.js";
+export type { DatePickerProps } from "./components/DatePicker/DatePicker.js";

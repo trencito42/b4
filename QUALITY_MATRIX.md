@@ -679,6 +679,57 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 
 **Family C — Navigation & Overlays is now complete: 17/17 VERIFIED.**
 
+## DatePicker — Family B, first of the last 4 (2026-11-18)
+
+**VERIFIED.** A real ARIA APG "Date Picker Dialog" grid
+(`role="grid"`/`"row"`/`"gridcell"`, roving tabindex over day buttons,
+Left/Right/Up/Down day-and-week navigation, PageUp/PageDown month
+navigation, Home/End for the start/end of the visible week, Enter/
+Space to select) — not a native `<input type="date">` wrapper or a
+text field with no real picker behind it. The popup chrome is the
+existing `Popover` component, reused rather than rebuilt; the trigger
+shows the selected date (locale-formatted via `Intl.DateTimeFormat`)
+or a placeholder.
+
+**Real bugs found and fixed, each confirmed before committing to a
+fix, not guessed:**
+
+- **Cross-month focus moves don't work with a synchronous
+  `querySelector` + `.focus()` call.** PageUp/PageDown (and an arrow
+  key crossing a month boundary) change `visibleMonth`, which
+  re-renders a different set of day buttons — the target date's button
+  doesn't exist in the DOM yet in the same tick as the `setState` call
+  that changes the visible month (React flushes the re-render after
+  the event handler returns). A `requestAnimationFrame` wrapper (the
+  approach tried first, matching `TreeView`'s same-month case) raced
+  React's own scheduling unpredictably for this cross-month case.
+  Fixed with a `useEffect` keyed on the focused date, which only runs
+  after the DOM reflects the new month.
+- **A `color-contrast` violation on days from the adjacent month.**
+  First draft used `--b4-text-disabled` for the dimmed "outside the
+  current month" days — but those days are fully real, clickable,
+  selectable buttons (clicking a December day while viewing November
+  navigates to December and selects it), not disabled ones, so the
+  disabled-contrast exemption doesn't apply. axe caught the real
+  2.43:1 contrast ratio on Porcelain. Fixed to `--b4-text-tertiary`
+  (the same token already used elsewhere in this library for
+  de-emphasized-but-still-interactive text).
+- **`aria-dialog-name` violation**: the `Popover` wrapping the
+  calendar had no accessible name since `DatePicker` didn't pass a
+  `title`. Fixed by passing the field's own `label` as the popover's
+  title — gives the dialog a real name and a sensible visible heading,
+  not just a silencing `aria-label`.
+
+**Scope, logged honestly** (see `COMPONENT_INVENTORY.md`'s scope log):
+weeks start on Sunday (not locale-aware) and there's no Shift+PageUp/
+PageDown year jump. Both are real, bounded simplifications for v1, not
+silently dropped requirements — everything else in the ARIA APG
+pattern is implemented and tested for real.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(249/249), `pnpm build`, Storybook build, `npx playwright test`
+(195/195, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

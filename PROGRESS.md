@@ -1,5 +1,22 @@
 # B4 — Progress
 
+## DatePicker — Family B, first of the last 4 (2026-11-18)
+
+Real ARIA APG "Date Picker Dialog" grid (`role="grid"`, roving
+tabindex, full arrow-key/PageUp/PageDown/Home/End navigation, Enter to
+select) wrapped in the existing `Popover` component. Found and fixed
+three real bugs: a cross-month focus move needed a `useEffect` (not a
+synchronous `.focus()` call or `requestAnimationFrame`) since the
+target button doesn't exist until React re-renders the new month; a
+real `color-contrast` violation on adjacent-month days (they're fully
+clickable, not disabled, so the disabled-text token didn't apply);
+and a missing accessible name on the popover dialog, fixed by passing
+the field's own label as the popover's title. Scope, logged honestly:
+weeks start on Sunday, no Shift+PageUp/PageDown year jump — real
+simplifications, not dropped requirements. Full gate: typecheck 4/4,
+@b4/react tests 249/249, build, Storybook build, playwright 195/195
+(run twice). **VERIFIED**.
+
 ## TreeView — Family C's 17th component, Family C complete 17/17 (2026-11-18)
 
 Real ARIA `tree`/`treeitem`/`group` with genuine nested `<ul

@@ -5,6 +5,23 @@ a per-npm-release history.
 
 ## Unreleased
 
+### DatePicker added — Family B, first of the last 4 (2026-11-18)
+
+- Added `DatePicker`: a real ARIA APG "Date Picker Dialog" grid
+  (full arrow-key/PageUp/PageDown/Home/End keyboard navigation, roving
+  tabindex, min/max range enforcement) wrapped in the existing
+  `Popover` component.
+- Found and fixed three real bugs: a cross-month focus move needed a
+  `useEffect` instead of a synchronous call or `requestAnimationFrame`;
+  a real `color-contrast` violation on adjacent-month days (fully
+  clickable, not disabled, so the disabled-text token was wrong); a
+  missing accessible name on the popover dialog.
+- Scope, logged honestly: weeks start on Sunday, no Shift+PageUp/
+  PageDown year jump.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (249/249), `pnpm build`, Storybook build, `npx playwright test`
+  (195/195, run twice). **VERIFIED**.
+
 ### TreeView added — Family C complete, 17/17 (2026-11-18)
 
 - Added `TreeView`: real `tree`/`treeitem`/`group` ARIA roles, nested

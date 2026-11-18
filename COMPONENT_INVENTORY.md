@@ -39,7 +39,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | MultiSelect | **VERIFIED** |
 | Slider | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | RangeSlider | Covered by Slider array values - **VERIFIED** alongside Slider |
-| DatePicker | PLANNED |
+| DatePicker | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | TimePicker | PLANNED |
 | ColorPicker | PLANNED |
 | FileUpload | PLANNED |
@@ -128,6 +128,17 @@ navigation / actual syntax-aware editing), not static mockups.
   conventional name.** Base UI itself calls the primitive "PreviewCard";
   this component is named `HoverCard` to match the inventory, same kind
   of naming reconciliation as Slider/RangeSlider.
+
+- **`DatePicker`'s calendar grid is a real, from-scratch ARIA APG Date
+  Picker Dialog implementation (not a native `<input type="date">`
+  wrapper), with two deliberate v1 scope simplifications, logged
+  honestly rather than silently dropped**: weeks always start on Sunday
+  (not locale-aware), and there's no Shift+PageUp/PageDown year jump
+  (only PageUp/PageDown for month). Both are real, bounded
+  simplifications a future session can extend — not faked
+  functionality; every other part of the grid (day/week arrow
+  navigation, Home/End, month navigation, min/max range enforcement,
+  roving tabindex, real keyboard selection) works for real.
 
 - **`Sheet` shares `Drawer`'s underlying Base UI `drawer` primitive and
   reuses its backdrop/header/title/description/content CSS classes**
