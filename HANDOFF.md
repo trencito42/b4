@@ -371,7 +371,23 @@ check it against that pattern before writing tests, not after a test
 reveals it's missing** — this one was caught by re-reading the
 component's own logic, not by a failure.
 
-## Next action: Family B's last 2 (ColorPicker, FileUpload), then Families D/E/F
+## Update (2026-11-18): ColorPicker — Family B, third of the last 4
+
+Added `ColorPicker`: a real draggable + keyboard-operable saturation/
+brightness area, a real Base UI `Slider` reused for hue, a hex text
+field synced both ways, real HSV↔RGB↔hex math. Every lesson from
+DatePicker/TimePicker applied up front — standard controlled/
+uncontrolled state from the start, composing `TextField`/`Popover`/the
+raw Base UI `Slider` directly instead of reinventing them, watching
+for the ambient-`aria-labelledby` trap before it could bite. Result:
+every unit test, the build, and every e2e test (including real
+`page.mouse` pointer drags on both the 2D area and the hue slider)
+passed on the first run — no new gotchas this time, which is itself
+worth recording: the investment in writing down gotchas 17-19 for
+DatePicker/TimePicker paid for itself immediately on the very next
+component.
+
+## Next action: Family B's last 1 (FileUpload), then Families D/E/F
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items

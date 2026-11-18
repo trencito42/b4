@@ -768,6 +768,33 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (257/257), `pnpm build`, Storybook build, `npx playwright test`
 (202/202, run twice for stability).
 
+## ColorPicker — Family B, third of the last 4 (2026-11-18)
+
+**VERIFIED.** A real color picker, not a swatch button delegating to a
+native `<input type="color">` and not a static gradient image: a
+draggable *and* keyboard-operable saturation/brightness area (real
+`pointerdown`/`pointermove` handling plus arrow-key nudging, `role=
+"slider"` with a live `aria-valuetext`), a real Base UI `Slider` for
+hue (reused directly, not reimplemented — styled with a CSS hue-ramp
+track), and a hex text field that stays in sync both directions. HSV
+is the canonical editing state (it maps directly onto the 2D area and
+the hue slider); the public API is a plain `#rrggbb` hex string,
+converted at the edges with real, from-scratch HSV↔RGB↔hex math (no
+new dependency pulled in for it).
+
+Applying the lessons from `DatePicker`/`TimePicker` up front —
+the standard controlled/uncontrolled `useState` pattern from the
+start, composing `TextField`/`Popover`/the raw Base UI `Slider`
+directly rather than reinventing any of them, and checking for the
+ambient-`aria-labelledby` trap before it could bite — **every unit
+test, the full build, and every e2e test (including real
+`page.mouse` pointer drags on both the 2D area and the hue slider)
+passed on the first run, zero follow-up fixes needed.**
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(265/265), `pnpm build`, Storybook build, `npx playwright test`
+(209/209, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

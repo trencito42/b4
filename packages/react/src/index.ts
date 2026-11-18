@@ -156,3 +156,6 @@ export type { DatePickerProps } from "./components/DatePicker/DatePicker.js";
 
 export { TimePicker } from "./components/TimePicker/TimePicker.js";
 export type { TimePickerProps, TimeValue } from "./components/TimePicker/TimePicker.js";
+
+export { ColorPicker } from "./components/ColorPicker/ColorPicker.js";
+export type { ColorPickerProps } from "./components/ColorPicker/ColorPicker.js";

@@ -41,7 +41,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | RangeSlider | Covered by Slider array values - **VERIFIED** alongside Slider |
 | DatePicker | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | TimePicker | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| ColorPicker | PLANNED |
+| ColorPicker | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | FileUpload | PLANNED |
 | Field | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 

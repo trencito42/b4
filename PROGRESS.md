@@ -1,5 +1,19 @@
 # B4 — Progress
 
+## ColorPicker — Family B, third of the last 4 (2026-11-18)
+
+A real color picker: draggable + keyboard-operable saturation/
+brightness area (`pointerdown`/`pointermove` + arrow-key nudging,
+`role="slider"` with live `aria-valuetext`), a real Base UI `Slider`
+reused for hue, hex text field synced both ways, real HSV↔RGB↔hex math.
+Applied every lesson from DatePicker/TimePicker up front (standard
+controlled/uncontrolled state, composing existing primitives directly,
+watching for the ambient-label trap) — every unit test, build, and e2e
+test (including real pointer drags on both the area and hue slider)
+passed on the first run. Full gate: typecheck 4/4, @b4/react tests
+265/265, build, Storybook build, playwright 209/209 (run twice).
+**VERIFIED**.
+
 ## TimePicker — Family B, second of the last 4 (2026-11-18)
 
 Two real Base UI `NumberField` instances (hours, minutes) composed

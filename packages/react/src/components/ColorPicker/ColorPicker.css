@@ -1,0 +1,123 @@
+.b4-color-picker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+  height: var(--b4-control-height);
+  padding: 0 var(--b4-space-3);
+  border: 1px solid var(--b4-border-default);
+  border-radius: var(--b4-radius-md);
+  background: var(--b4-control-bg);
+  cursor: pointer;
+  font-family: var(--b4-font-sans);
+}
+
+.b4-color-picker__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.b4-color-picker__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--b4-radius-sm);
+  border: 1px solid var(--b4-border-subtle);
+  flex-shrink: 0;
+}
+
+.b4-color-picker__trigger-text {
+  font-size: var(--b4-text-sm);
+  color: var(--b4-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.b4-color-picker__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+  width: 220px;
+  font-family: var(--b4-font-sans);
+}
+
+.b4-color-picker__area {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: var(--b4-radius-md);
+  touch-action: none;
+  overflow: hidden;
+}
+
+.b4-color-picker__area-white {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+}
+
+.b4-color-picker__area-black {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+}
+
+.b4-color-picker__area-thumb {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--b4-radius-full);
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  outline: none;
+  cursor: pointer;
+}
+
+.b4-color-picker__area-thumb:focus-visible {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 0 3px var(--b4-focus-ring-color);
+}
+
+.b4-color-picker__hue-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  touch-action: none;
+}
+
+.b4-color-picker__hue-track {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  border-radius: var(--b4-radius-full);
+  background: linear-gradient(
+    to right,
+    #ff0000,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #ff00ff,
+    #ff0000
+  );
+}
+
+.b4-color-picker__hue-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--b4-radius-full);
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  outline: none;
+  cursor: pointer;
+}
+
+.b4-color-picker__hue-thumb:focus-visible {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 0 3px var(--b4-focus-ring-color);
+}
+
+.b4-color-picker__hex-field {
+  width: 100%;
+}

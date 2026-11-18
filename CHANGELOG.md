@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### ColorPicker added — Family B, third of the last 4 (2026-11-18)
+
+- Added `ColorPicker`: a real draggable + keyboard-operable saturation/
+  brightness area, a real Base UI `Slider` reused for hue, a hex text
+  field synced both ways, real HSV↔RGB↔hex math — not a swatch
+  delegating to `<input type="color">` and not a static gradient image.
+- Applied every lesson from DatePicker/TimePicker up front; every unit
+  test, the build, and every e2e test (including real pointer drags on
+  the area and hue slider) passed on the first run.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (265/265), `pnpm build`, Storybook build, `npx playwright test`
+  (209/209, run twice). **VERIFIED**.
+
 ### TimePicker added — Family B, second of the last 4 (2026-11-18)
 
 - Added `TimePicker`: two real Base UI `NumberField` instances (hours,
