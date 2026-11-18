@@ -1,0 +1,41 @@
+.b4-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.b4-spinner__circle {
+  display: block;
+  border-radius: 50%;
+  border: var(--b4-space-1) solid currentColor;
+  border-right-color: transparent;
+  opacity: 0.85;
+  animation: b4-spinner-spin 0.7s linear infinite;
+}
+
+.b4-spinner--sm .b4-spinner__circle {
+  width: 16px;
+  height: 16px;
+}
+
+.b4-spinner--md .b4-spinner__circle {
+  width: 20px;
+  height: 20px;
+}
+
+.b4-spinner--lg .b4-spinner__circle {
+  width: 28px;
+  height: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b4-spinner__circle {
+    animation-duration: 1.4s;
+  }
+}
+
+@keyframes b4-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

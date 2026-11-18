@@ -162,3 +162,6 @@ export type { ColorPickerProps } from "./components/ColorPicker/ColorPicker.js";
 
 export { FileUpload } from "./components/FileUpload/FileUpload.js";
 export type { FileUploadProps } from "./components/FileUpload/FileUpload.js";
+
+export { Spinner } from "./components/Spinner/Spinner.js";
+export type { SpinnerProps, SpinnerSize } from "./components/Spinner/Spinner.js";

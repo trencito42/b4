@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## Spinner — Family E (2026-11-18)
+
+Standalone counterpart to `Button`'s own inline `loading` spinner —
+same visual design, extracted for use outside `Button`. `role="status"`
+with an `aria-label`, reduced motion slows rather than stops the
+animation (mirrors `Button`'s own existing choice). Full gate:
+typecheck 4/4, @b4/react tests 277/277, build, Storybook build,
+playwright 220/220 (run twice). **VERIFIED**.
+
 ## FileUpload — Family B's last component, Family B complete (2026-11-18)
 
 A real dropzone: native `<input type="file">` over the whole visible

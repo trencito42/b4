@@ -5,6 +5,14 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Spinner added — Family E at 4/11 (2026-11-18)
+
+- Added `Spinner`, the standalone counterpart to `Button`'s own inline
+  `loading` spinner, extracted for use outside `Button`.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (277/277), `pnpm build`, Storybook build, `npx playwright test`
+  (220/220, run twice). **VERIFIED**.
+
 ### FileUpload added — Family B complete, all 19/19 (2026-11-18)
 
 - Added `FileUpload`: a real dropzone (native `<input type="file">`

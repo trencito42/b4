@@ -85,7 +85,7 @@ brief's "specialized components" note.
 | Toast | PLANNED |
 | InlineAlert | PLANNED |
 | NotificationPanel | PLANNED |
-| Spinner | PLANNED (Button already has an inline spinner for its own `loading` state; a standalone `Spinner` component for use outside Button doesn't exist yet) |
+| Spinner | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | MorphingSurface | PLANNED |
 | ExpandingAction | PLANNED |
 | TransitionGroup | PLANNED |

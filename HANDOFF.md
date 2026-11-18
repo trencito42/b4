@@ -418,7 +418,14 @@ Full gate at every step: typecheck → unit tests → build → Storybook
 build → Playwright (both themes, run twice) before marking anything
 VERIFIED, no exceptions, matching every component above.
 
-## Next action: Families D/E/F per the phased plan
+## Update (2026-11-18): Spinner — Family E at 4/11
+
+Added `Spinner`, extracted from `Button`'s existing inline spinner
+design (same CSS, standalone, `role="status"` + `aria-label`). No new
+gotchas — straightforward, matched the plan in the previous entry's
+"Next action" note exactly.
+
+## Next action: Family E's remaining 7 (Toast, InlineAlert, NotificationPanel, MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/

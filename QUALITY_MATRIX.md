@@ -831,6 +831,23 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 **Family B — Inputs & Forms is now complete: all 19 components
 VERIFIED.**
 
+## Spinner — Family E (2026-11-18)
+
+**VERIFIED.** The standalone counterpart to `Button`'s own inline
+`loading` spinner — same visual design (a `currentColor` border-spin
+circle), extracted for use anywhere a loading state needs to show
+without being inside a `Button`. `role="status"` with an `aria-label`
+("Loading" by default, overridable) announces the state once. Honors
+`prefers-reduced-motion` by **slowing** the animation (0.7s → 1.4s)
+rather than stopping it outright — a continuous loading indicator that
+freezes removes the loading signal entirely, a worse outcome for
+vestibular-sensitive users than a slower spin; this mirrors `Button`'s
+existing spinner's own choice, not a new policy invented here.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(277/277), `pnpm build`, Storybook build, `npx playwright test`
+(220/220, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
