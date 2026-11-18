@@ -1,5 +1,29 @@
 # B4 — Progress
 
+## CodeBlock — Family D's 11th component (2026-11-18)
+
+**VERIFIED**, but only after fixing a real bug caught by a live browser
+check (not just the automated gate): the original `await
+navigator.clipboard.writeText(code)` had no `try`/`catch`, so a denied
+clipboard permission threw an uncaught rejection and left the UI with
+zero feedback. Fixed with a proper `try`/`catch` and a third `"failed"`
+copy state (own icon, `aria-label`, and `aria-live` announcement).
+Writing the failure-path test then exposed a SECOND bug — in the test
+itself: `userEvent.setup()` installs its own `navigator.clipboard`
+stub, silently overwriting a mock set up before it, so the earlier
+success-path test had been passing against user-event's real stub all
+along, not the intended mock. Fixed by mocking clipboard *after*
+`userEvent.setup()` in both tests. Full gate: typecheck, @b4/react
+tests 374/374, build, Storybook build, playwright 299/299 (run twice —
+an earlier interrupted run showing only 19 passed was a false reading
+from killing a manually-started dev server mid-run, discarded and
+re-run clean). Family D now: 11/15.
+
+Also fixed a stale phase-status table further down this file that
+still said "Family A DONE, Family B mostly done" and listed Family C
+as "STARTED (9/17)" — both had been complete for a while; the table
+just hadn't been updated to match the dated log entries below it.
+
 ## Timeline, ActivityFeed — Family D's 9th and 10th components (2026-11-18)
 
 `Timeline`: chronological connected list, per-item tone dot, real
@@ -367,10 +391,10 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 |---|---|---|
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
-| 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
-| 3 — Family C | **STARTED (9/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs`, `Accordion`, `Dialog`, `AlertDialog`, `ContextMenu`, `HoverCard` VERIFIED. 8 more components planned. |
-| 4 — Family D | NOT STARTED | |
-| 5 — Family E/F advanced + specialized components | NOT STARTED | |
+| 2 — Family A + B to full quality gate | **DONE** | Family A: all 12 components VERIFIED. Family B: all 19/19 VERIFIED (including DatePicker, TimePicker, ColorPicker, FileUpload). See QUALITY_MATRIX.md and COMPONENT_INVENTORY.md — this row was stale (said "Family B mostly done") until 2026-11-18; Family B finished the same day as the FileUpload checkpoint below. |
+| 3 — Family C | **DONE** | All 17/17 VERIFIED. See QUALITY_MATRIX.md. |
+| 4 — Family D | **STARTED (10/15)** | Progress, CircularProgress, Skeleton, Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline, ActivityFeed VERIFIED. CodeBlock in progress; DataTable, DataGrid, Calendar, ChartContainer remain PLANNED. See QUALITY_MATRIX.md. |
+| 5 — Family E/F advanced + specialized components | **Family E DONE (11/11), Family F NOT STARTED** | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
 | 7 — Independent audit against quality gate | NOT STARTED | |
 | 8 — Packaging/release readiness | NOT STARTED | See `RELEASE_CHECKLIST.md`. |

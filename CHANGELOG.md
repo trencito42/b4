@@ -5,6 +5,24 @@ a per-npm-release history.
 
 ## Unreleased
 
+### CodeBlock added — Family D, 11/15 (2026-11-18)
+
+- Added `CodeBlock`: real copyable code display, `language` label,
+  optional line numbers. No bundled syntax tokenizer — `language` is a
+  display label only, keeping the package's dependency footprint small.
+- Fixed a real bug found via a live browser check: an unhandled
+  clipboard-write rejection (e.g. denied permission) left the UI with
+  no feedback. Added a `try`/`catch` and a distinct `"failed"` copy
+  state with its own icon, `aria-label`, and `aria-live` announcement.
+- Fixed a test-only bug the failure-path test exposed:
+  `userEvent.setup()` installs its own `navigator.clipboard` stub,
+  silently overriding a mock set up before it — the original
+  success-path test had been passing against that stub, not the
+  intended mock. Fixed by mocking clipboard after `userEvent.setup()`.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (374/374), `pnpm build`, Storybook build, `npx playwright test`
+  (299/299, run twice). **VERIFIED**.
+
 ### Timeline, ActivityFeed added — Family D, 10/15 (2026-11-18)
 
 - Added `Timeline`: chronological connected list with a per-item tone

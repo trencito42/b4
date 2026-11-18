@@ -1154,6 +1154,45 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (367/367), `pnpm build`, Storybook build, `npx playwright test`
 (294/294, run twice for stability).
 
+## CodeBlock — Family D's 11th component (2026-11-18)
+
+**VERIFIED**, with a real bug found and fixed mid-implementation, not
+just at the usual doc-update stage. First implementation wrapped
+`navigator.clipboard.writeText` in `await` with no `try`/`catch`: a
+live check in the browser pane (not just the automated gate) showed
+that when the clipboard write is denied — e.g. no permission, an
+insecure context, a cross-origin iframe — the promise rejection went
+fully uncaught (`Uncaught (in promise) NotAllowedError`) and the UI
+gave zero feedback: the button just silently sat there. Fixed by
+wrapping the write in `try`/`catch`, adding a third `"failed"` copy
+state (distinct icon, distinct `aria-label`, distinct `aria-live`
+announcement) alongside `"idle"`/`"copied"`, auto-resetting either way
+after 2s via a properly cleaned-up (`useEffect` cleanup) timer ref.
+
+Writing the failure-path unit test surfaced a second, unrelated bug —
+this time in the test, not the component: `@testing-library/user-event`'s
+`setup()` installs its own `navigator.clipboard` stub (for its
+`copy()`/`paste()` helpers) the instant it's called, silently
+overwriting whatever mock was defined beforehand — so a test that
+calls `userEvent.setup()` *after* mocking `navigator.clipboard`
+(the order both copy tests originally used) ends up asserting against
+user-event's real stub, not the test's own mock. Since that stub
+always resolves, the earlier "copies to clipboard" test was passing
+for the wrong reason the whole time — only writing the
+previously-missing failure-path test exposed it. Fixed by mocking
+`navigator.clipboard` *after* `userEvent.setup()` in both tests, with a
+comment explaining why the order matters. CodeBlock intentionally does
+not bundle a syntax-tokenizer dependency (`language` is a plain display
+label) to keep this package's dependency footprint small; a consumer
+wanting real highlighting pre-renders tokenized markup into `code`.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(374/374), `pnpm build`, Storybook build, `npx playwright test`
+(299/299, run twice for stability — the real count; an interrupted
+mid-session run that showed only 19 passed was a false reading caused
+by killing a manually-started Storybook dev server on the same port
+mid-run, not a real test failure, and was discarded and re-run clean).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

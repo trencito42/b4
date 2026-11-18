@@ -537,6 +537,60 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## CodeBlock — Family D's 11th component (2026-11-18)
+
+**VERIFIED** — but two real bugs were found and fixed along the way,
+both worth internalizing for future components:
+
+1. **Uncaught clipboard rejection, caught by a live browser check, not
+   the automated gate.** The first implementation did
+   `await navigator.clipboard.writeText(code)` with no `try`/`catch`.
+   Opening the Storybook story in the browser pane and clicking Copy
+   showed `Uncaught (in promise) NotAllowedError` in the console and
+   zero UI feedback — the button just sat there. Any environment where
+   clipboard permission can be denied (cross-origin iframe, insecure
+   context, no permission grant) would hit this. Fixed with a real
+   `try`/`catch` and a third `"failed"` copy state (its own icon,
+   `aria-label`, and `aria-live` announcement), auto-resetting after 2s
+   via a `useEffect`-cleaned-up timer ref. **Lesson**: the automated
+   gate (unit + e2e axe) doesn't catch "the happy path works but the
+   failure path throws uncaught" — that needs an actual interactive
+   check, which is why this one got caught at all.
+2. **`userEvent.setup()` silently hijacks `navigator.clipboard`.**
+   Writing the failure-path unit test exposed that
+   `@testing-library/user-event`'s `setup()` installs its own
+   `navigator.clipboard` stub (for its `copy()`/`paste()` helpers) the
+   moment it's called — overwriting any mock defined beforehand. Both
+   copy tests had been calling `userEvent.setup()` *after* mocking
+   clipboard, so the "copies to clipboard" test had been passing
+   against user-event's own always-resolving stub the whole time, not
+   the test's mock — a false-positive the project hadn't had before.
+   Fixed by moving the clipboard mock to *after* `userEvent.setup()` in
+   both tests. **Lesson**: any future component test that mocks
+   `navigator.clipboard` (or likely other browser APIs user-event
+   also stubs) needs to set the mock up after `userEvent.setup()`, not
+   before.
+
+CodeBlock itself deliberately doesn't bundle a syntax-tokenizer
+dependency — `language` is a plain display label, not something this
+component tokenizes — to keep the package's dependency footprint
+small; a consumer wanting real highlighting pre-renders tokenized
+markup into `code` itself.
+
+Full gate: typecheck, @b4/react tests 374/374, build, Storybook build,
+playwright 299/299 (run twice — note: an earlier run during this same
+component's work showed only 19 passed; that was a false reading from
+killing a manually-started Storybook dev server sharing Playwright's
+port mid-run, not a real failure, and was discarded in favor of a
+clean re-run). Family D now: 11/15.
+
+Also fixed a real doc inconsistency a later check surfaced: PROGRESS.md
+had a phase-status table that still said "Family A DONE, Family B
+mostly done" and "Family C STARTED (9/17)" — both had actually been
+complete for a while (19/19 and 17/17 respectively, confirmed in
+COMPONENT_INVENTORY.md), the table had just never been updated to match
+the dated log entries underneath it. Fixed.
+
 ## Timeline, ActivityFeed — Family D's 9th and 10th components (2026-11-18)
 
 **Both VERIFIED**. `Timeline`: chronological connected list of events,
@@ -599,20 +653,19 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: Family D's remaining 5 (CodeBlock, ChartContainer
-next — simpler/self-contained; then DataTable, DataGrid, Calendar
-last — DataGrid in particular needs real scrutiny per the mission
-brief's "must be a real virtualized/sortable/filterable grid" note),
-then Family F
+## Next action: Family D's remaining 4 (ChartContainer next —
+simpler/self-contained; then DataTable, DataGrid, Calendar last —
+DataGrid in particular needs real scrutiny per the mission brief's
+"must be a real virtualized/sortable/filterable grid" note), then
+Family F
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Family D is now at 10/15 (Progress, CircularProgress, Skeleton,
+above. Family D is now at 11/15 (Progress, CircularProgress, Skeleton,
 Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline,
-ActivityFeed VERIFIED); Family F remains fully PLANNED.
+ActivityFeed, CodeBlock VERIFIED); Family F remains fully PLANNED.
 
-Family D's remaining 5 (`DataTable`, `DataGrid`, `Calendar`,
-`CodeBlock`, `ChartContainer`) are all PLANNED — `DataGrid` is
-explicitly called out
+Family D's remaining 4 (`DataTable`, `DataGrid`, `Calendar`,
+`ChartContainer`) are all PLANNED — `DataGrid` is explicitly called out
 in the mission brief as needing to be a **real** virtualized/sortable/
 filterable grid, not a styled `<table>`; treat it with the same
 scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI

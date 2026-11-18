@@ -209,3 +209,5 @@ export { Timeline } from "./components/Timeline/Timeline.js";
 export type { TimelineProps, TimelineItem, TimelineItemTone } from "./components/Timeline/Timeline.js";
 export { ActivityFeed } from "./components/ActivityFeed/ActivityFeed.js";
 export type { ActivityFeedProps, ActivityFeedItem } from "./components/ActivityFeed/ActivityFeed.js";
+export { CodeBlock } from "./components/CodeBlock/CodeBlock.js";
+export type { CodeBlockProps } from "./components/CodeBlock/CodeBlock.js";
