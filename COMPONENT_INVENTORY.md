@@ -40,7 +40,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Slider | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | RangeSlider | Covered by Slider array values - **VERIFIED** alongside Slider |
 | DatePicker | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| TimePicker | PLANNED |
+| TimePicker | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ColorPicker | PLANNED |
 | FileUpload | PLANNED |
 | Field | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
@@ -139,6 +139,15 @@ navigation / actual syntax-aware editing), not static mockups.
   functionality; every other part of the grid (day/week arrow
   navigation, Home/End, month navigation, min/max range enforcement,
   roving tabindex, real keyboard selection) works for real.
+
+- **`TimePicker` composes Base UI's `NumberField` primitive directly
+  (two instances: hours, minutes) plus `SegmentedControl` for AM/PM**,
+  reusing the exact internal recipe (`FieldControl`/`SteppingInput`/
+  `motionCompatibleProps`) `NumberField.tsx` already established,
+  rather than inventing a new numeric-stepper pattern. It does not use
+  the wrapped `NumberField` *component* itself, since that bundles its
+  own `Field` — nesting two of those inside `TimePicker`'s own `Field`
+  would duplicate labels/hints.
 
 - **`Sheet` shares `Drawer`'s underlying Base UI `drawer` primitive and
   reuses its backdrop/header/title/description/content CSS classes**

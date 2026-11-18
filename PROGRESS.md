@@ -1,5 +1,20 @@
 # B4 — Progress
 
+## TimePicker — Family B, second of the last 4 (2026-11-18)
+
+Two real Base UI `NumberField` instances (hours, minutes) composed
+directly with the same internal recipe `NumberField.tsx` established,
+plus `SegmentedControl` for AM/PM. Caught two real bugs before any
+test ran: no internal `useState` fallback meant an uncontrolled
+instance (defaultValue only) would never update from user interaction
+(fixed by adding the standard controlled/uncontrolled pattern every
+other stateful component here follows); and Base UI's ambient
+`Field.Root` context gives every `NumberField.Input` the SAME
+`aria-labelledby` regardless of its own `aria-label`, so both segments
+had the identical computed name until explicitly cleared. Full gate:
+typecheck 4/4, @b4/react tests 257/257, build, Storybook build,
+playwright 202/202 (run twice). **VERIFIED**.
+
 ## DatePicker — Family B, first of the last 4 (2026-11-18)
 
 Real ARIA APG "Date Picker Dialog" grid (`role="grid"`, roving

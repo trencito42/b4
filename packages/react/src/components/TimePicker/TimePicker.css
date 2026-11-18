@@ -1,0 +1,30 @@
+.b4-time-picker__row {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+}
+
+/* .b4-time-picker__segment composes with the shared .b4-text-field__control
+   class (border/background/radius/height) — only the narrower padding and
+   gap for a short numeric segment are this component's own. */
+.b4-time-picker__segment {
+  gap: var(--b4-space-1);
+  padding-inline: var(--b4-space-2);
+}
+
+.b4-time-picker__input {
+  width: 2.5ch;
+  border: none;
+  background: transparent;
+  color: var(--b4-text-primary);
+  font-size: var(--b4-text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  outline: none;
+}
+
+.b4-time-picker__separator {
+  color: var(--b4-text-tertiary);
+  font-size: var(--b4-text-sm);
+  font-weight: var(--b4-weight-medium);
+}

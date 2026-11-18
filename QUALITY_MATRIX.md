@@ -730,6 +730,44 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (249/249), `pnpm build`, Storybook build, `npx playwright test`
 (195/195, run twice for stability).
 
+## TimePicker — Family B, second of the last 4 (2026-11-18)
+
+**VERIFIED.** Two real Base UI `NumberField` instances (hours, minutes)
+composed directly — reusing the same `FieldControl`/`SteppingInput`/
+`motionCompatibleProps` recipe `NumberField.tsx` established, not the
+wrapped `NumberField` component itself (which bundles its own `Field`;
+nesting two inside this component's own `Field` would duplicate
+labels/hints) — plus `SegmentedControl` for AM/PM in 12-hour mode.
+Real value clamping (1-12 or 0-23 for hours, 0-59 for minutes),
+keyboard arrow-key stepping, and press-to-step buttons, all from the
+underlying primitive — not a fake spinner bolted onto a text input.
+
+**A real design bug caught before any test ran**: the first draft had
+no internal `useState` fallback — `current = value ?? defaultValue ??
+{...}` reads `defaultValue` as a constant with no way to update it, so
+an **uncontrolled** `TimePicker` (no `value` prop, only `defaultValue`)
+would never visually respond to user interaction at all. Caught by
+re-reading the component against the established controlled/
+uncontrolled pattern every other stateful component in this library
+follows (`const [uncontrolled, setUncontrolled] = useState(...); const
+value = controlled ?? uncontrolled`), before writing a single test —
+not discovered by a failing test.
+
+**A real accessible-naming bug, found via the same mechanism
+`CommandPalette`'s `aria-dialog-name` bug was found**: Base UI's
+`NumberField.Input` always sets `aria-labelledby` from the ambient
+`Field.Root` context (the outer "Reminder time" label), which wins
+over this Input's own explicit `aria-label="Hours"`/`"Minutes"` per
+the accname spec regardless of which one was set last — both segments
+ended up with the SAME computed name ("Reminder time"), confirmed by
+`getByRole('textbox', { name: 'Hours' })` finding nothing. Fixed by
+explicitly clearing `aria-labelledby` on each segment's rendered
+input, letting its own `aria-label` take effect.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(257/257), `pnpm build`, Storybook build, `npx playwright test`
+(202/202, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

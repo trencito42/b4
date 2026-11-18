@@ -5,6 +5,20 @@ a per-npm-release history.
 
 ## Unreleased
 
+### TimePicker added — Family B, second of the last 4 (2026-11-18)
+
+- Added `TimePicker`: two real Base UI `NumberField` instances (hours,
+  minutes) plus `SegmentedControl` for AM/PM, reusing
+  `NumberField.tsx`'s own internal recipe.
+- Found and fixed two real bugs before/during testing: no uncontrolled-
+  mode `useState` fallback (a `defaultValue`-only instance would never
+  update from interaction); and an ambient `aria-labelledby` from the
+  surrounding `Field.Root` context overriding each segment's own
+  `aria-label`, giving both segments the same computed accessible name.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (257/257), `pnpm build`, Storybook build, `npx playwright test`
+  (202/202, run twice). **VERIFIED**.
+
 ### DatePicker added — Family B, first of the last 4 (2026-11-18)
 
 - Added `DatePicker`: a real ARIA APG "Date Picker Dialog" grid

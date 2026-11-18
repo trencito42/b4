@@ -340,7 +340,38 @@ still interactive" text needs a token that actually passes AA
 that are *actually* `disabled`/`aria-disabled`, not merely
 visually quieter.
 
-## Next action: Family B's last 3 (TimePicker, ColorPicker, FileUpload), then Families D/E/F
+## Update (2026-11-18): TimePicker — Family B, second of the last 4
+
+Added `TimePicker`: two real Base UI `NumberField` instances (hours,
+minutes) composed directly with `NumberField.tsx`'s own internal
+recipe, plus `SegmentedControl` for AM/PM. **New gotcha (19th)**:
+every `NumberField.Input` (and likely every Base UI input rendered
+inside a `Field.Root`) automatically picks up `aria-labelledby` from
+the **ambient** `Field.Root` context — the surrounding `label` prop —
+and this wins over the Input's own explicit `aria-label` regardless of
+prop order, per the accname spec (`aria-labelledby` always beats
+`aria-label` when both are present on an element). Composing more than
+one such input inside a single outer `Field` (as any multi-segment
+control — time, phone number, etc. — naturally would) means every
+segment gets the SAME computed accessible name unless you explicitly
+clear the ambient `aria-labelledby` on each one's rendered input
+(`aria-labelledby={undefined}` in the `render` callback, after
+spreading the base props) so its own `aria-label` takes over. **Check
+for this whenever composing more than one Base-UI-Field-aware input
+inside one outer `Field` wrapper.**
+
+Also caught a real bug before writing a single test: the first draft
+had no internal `useState` fallback for the uncontrolled case
+(`current = value ?? defaultValue ?? {...}` reads `defaultValue` as a
+constant, never updating it) — an uncontrolled `TimePicker` would
+never respond to interaction at all. Fixed by adding the standard
+controlled/uncontrolled pattern every other stateful component in this
+library already follows. **When building a new stateful component,
+check it against that pattern before writing tests, not after a test
+reveals it's missing** — this one was caught by re-reading the
+component's own logic, not by a failure.
+
+## Next action: Family B's last 2 (ColorPicker, FileUpload), then Families D/E/F
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items

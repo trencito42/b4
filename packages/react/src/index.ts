@@ -153,3 +153,6 @@ export type { TreeViewProps, TreeNode } from "./components/TreeView/TreeView.js"
 
 export { DatePicker } from "./components/DatePicker/DatePicker.js";
 export type { DatePickerProps } from "./components/DatePicker/DatePicker.js";
+
+export { TimePicker } from "./components/TimePicker/TimePicker.js";
+export type { TimePickerProps, TimeValue } from "./components/TimePicker/TimePicker.js";
