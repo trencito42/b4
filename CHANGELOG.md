@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Stat, EmptyState, ErrorState added — Family D, 8/15 (2026-11-18)
+
+- Added `Stat`: labeled metric with an optional `up`/`down`/`neutral`
+  trend delta, reusing `--b4-success`/`--b4-danger-text` directly for
+  the trend text color (no new tokens needed).
+- Added `EmptyState` and `ErrorState`: share an "icon + title +
+  description + optional action" shape but stay separate components —
+  `ErrorState` is `role="alert"`, `EmptyState` is not (a real semantic
+  difference, not just a color swap).
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (359/359), `pnpm build`, Storybook build, `npx playwright test`
+  (288/288, run twice). **All three VERIFIED**.
+
 ### Card, InteractiveCard added — Family D, 5/15 (2026-11-18)
 
 - Added `Card`: static content surface, `flat`/`raised`/`outlined`

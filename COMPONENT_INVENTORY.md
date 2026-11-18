@@ -77,13 +77,13 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | InteractiveCard | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | DataTable | PLANNED |
 | DataGrid | PLANNED |
-| Stat | PLANNED |
+| Stat | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Timeline | PLANNED |
 | ActivityFeed | PLANNED |
 | Calendar | PLANNED |
 | CodeBlock | PLANNED |
-| EmptyState | PLANNED |
-| ErrorState | PLANNED |
+| EmptyState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| ErrorState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Skeleton | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ChartContainer | PLANNED |
 

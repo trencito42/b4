@@ -1113,6 +1113,29 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (343/343), `pnpm build`, Storybook build, `npx playwright test`
 (279/279, run twice for stability).
 
+## Stat, EmptyState, ErrorState — Family D's 6th, 7th, 8th components (2026-11-18)
+
+All three **VERIFIED**. `Stat` is a labeled metric with an optional
+trend delta (`up`/`down`/`neutral`); reused `--b4-success`/
+`--b4-danger-text` directly for the trend text color rather than
+inventing new tokens — both themes' own doc comments confirm those
+two were already tuned for plain-text-on-surface contrast (not just
+icon-on-tint, which is `--b4-success-bg`/`--b4-danger-bg`'s job), and
+the e2e axe pass on both themes confirmed it held in practice.
+
+`EmptyState`/`ErrorState` share the same "icon + title + description +
+optional action" shape but are deliberately not merged into one
+component with a `tone` prop: `ErrorState` is `role="alert"` (an
+assistive-tech-should-announce-this failure) while `EmptyState` is a
+plain `role`-less container (a "no data yet" state isn't an alert) —
+different ARIA semantics, not just different color, so they stay
+separate the same way `InlineAlert`'s tones stay inside one component
+only because they genuinely share one semantic role.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(359/359), `pnpm build`, Storybook build, `npx playwright test`
+(288/288, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

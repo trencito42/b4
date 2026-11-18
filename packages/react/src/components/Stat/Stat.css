@@ -1,0 +1,56 @@
+.b4-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-stat__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--b4-text-secondary);
+}
+
+.b4-stat__value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--b4-space-5);
+}
+
+.b4-stat__value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--b4-text-primary);
+}
+
+.b4-stat__trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.b4-stat__trend-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+}
+
+.b4-stat__trend--up {
+  color: var(--b4-success);
+}
+
+.b4-stat__trend--down {
+  color: var(--b4-danger-text);
+}
+
+.b4-stat__trend--neutral {
+  color: var(--b4-text-tertiary);
+}
+
+.b4-stat__description {
+  font-size: 0.8125rem;
+  color: var(--b4-text-tertiary);
+}

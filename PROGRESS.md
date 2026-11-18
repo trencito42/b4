@@ -1,5 +1,16 @@
 # B4 — Progress
 
+## Stat, EmptyState, ErrorState — Family D's 6th, 7th, 8th components (2026-11-18)
+
+`Stat`: labeled metric + optional trend delta, reused `--b4-success`/
+`--b4-danger-text` directly (both themes' own comments confirm they're
+tuned for text-on-surface, not just icon-on-tint). `EmptyState`/
+`ErrorState` share a shape but stay separate components: `ErrorState`
+is `role="alert"`, `EmptyState` isn't — different semantics, not just
+different color. Full gate: typecheck, @b4/react tests 359/359, build,
+Storybook build, playwright 288/288 (run twice). **All three VERIFIED**.
+Family D now: 8/15.
+
 ## Card, InteractiveCard — Family D's 4th and 5th components (2026-11-18)
 
 `Card`: static content surface, `flat`/`raised`/`outlined`, reuses
