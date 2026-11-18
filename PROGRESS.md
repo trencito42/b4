@@ -1,5 +1,17 @@
 # B4 — Progress
 
+## ChartContainer — Family D's 12th component (2026-11-19)
+
+Chart chrome (title, description, actions, accessible legend), not a
+charting engine — no bundled tokenizer-equivalent dependency, same
+reasoning as CodeBlock. Legend pairs every color swatch with a visible
+text label (swatch itself `aria-hidden`). Spot-checked visually in
+both themes in the browser pane before writing e2e. Full gate:
+typecheck, @b4/react tests 381/381, build, Storybook build, playwright
+303/303 (run twice). **VERIFIED**. Family D now: 12/15 — the "simpler/
+self-contained" components are done; DataTable, DataGrid, and Calendar
+remain, the hardest three.
+
 ## CodeBlock — Family D's 11th component (2026-11-18)
 
 **VERIFIED**, but only after fixing a real bug caught by a live browser

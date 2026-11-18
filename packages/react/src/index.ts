@@ -211,3 +211,5 @@ export { ActivityFeed } from "./components/ActivityFeed/ActivityFeed.js";
 export type { ActivityFeedProps, ActivityFeedItem } from "./components/ActivityFeed/ActivityFeed.js";
 export { CodeBlock } from "./components/CodeBlock/CodeBlock.js";
 export type { CodeBlockProps } from "./components/CodeBlock/CodeBlock.js";
+export { ChartContainer } from "./components/ChartContainer/ChartContainer.js";
+export type { ChartContainerProps, ChartLegendItem } from "./components/ChartContainer/ChartContainer.js";

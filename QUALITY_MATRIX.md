@@ -1193,6 +1193,25 @@ mid-session run that showed only 19 passed was a false reading caused
 by killing a manually-started Storybook dev server on the same port
 mid-run, not a real test failure, and was discarded and re-run clean).
 
+## ChartContainer — Family D's 12th, and last "simpler" component (2026-11-19)
+
+**VERIFIED**. Deliberately doesn't bundle a charting library — same
+reasoning as `CodeBlock` not bundling a syntax tokenizer — it owns the
+chrome (title, description, actions slot, accessible legend) around
+whatever chart a consumer renders into `children` (an SVG, a
+`<canvas>`, or another library's output). The legend pairs every
+color swatch with a visible text label and marks the swatch itself
+`aria-hidden`, per DESIGN_PRINCIPLES.md's "color never carries meaning
+alone" rule — verified both by a unit test asserting the pairing and
+by the real e2e axe pass in both themes. Visually spot-checked in the
+browser pane in both themes before writing e2e, per the renewed
+"verify by looking, not just by green checkmarks" practice established
+this session.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(381/381), `pnpm build`, Storybook build, `npx playwright test`
+(303/303, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### ChartContainer added — Family D, 12/15 (2026-11-19)
+
+- Added `ChartContainer`: chart chrome — title, description, actions
+  slot, accessible legend — around whatever chart a consumer renders
+  into `children`. No bundled charting library, same reasoning as
+  `CodeBlock` not bundling a syntax tokenizer.
+- Legend pairs every color swatch with a visible text label and marks
+  the swatch `aria-hidden`, per the "color never carries meaning
+  alone" rule.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (381/381), `pnpm build`, Storybook build, `npx playwright test`
+  (303/303, run twice). **VERIFIED**.
+
 ### CodeBlock added — Family D, 11/15 (2026-11-18)
 
 - Added `CodeBlock`: real copyable code display, `language` label,

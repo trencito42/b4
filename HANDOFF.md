@@ -537,6 +537,26 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## ChartContainer — Family D's 12th component (2026-11-19)
+
+**VERIFIED**. Chart chrome only — title, description, an actions slot,
+and an accessible legend (swatch `aria-hidden`, paired with a real
+visible text label, per DESIGN_PRINCIPLES.md's "color never carries
+meaning alone" rule) — around whatever chart a consumer renders into
+`children`. Deliberately no bundled charting library, same reasoning
+as CodeBlock not bundling a tokenizer: keeps the package's dependency
+footprint small, and a real chart implementation is squarely the
+consumer's domain-specific choice (Recharts, D3, raw SVG, etc.), not
+something a general component library should impose.
+
+Before writing e2e, opened the Storybook story in the browser pane and
+visually checked both themes — a direct continuation of the polish
+check that caught CodeBlock's clipboard bug; this one had no surprises.
+No new gotchas. Full gate: typecheck, @b4/react tests 381/381, build,
+Storybook build, playwright 303/303 (run twice). Family D now: 12/15 —
+the "simpler/self-contained" components (everything but DataTable,
+DataGrid, Calendar) are now all done.
+
 ## CodeBlock — Family D's 11th component (2026-11-18)
 
 **VERIFIED** — but two real bugs were found and fixed along the way,
@@ -653,19 +673,17 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: Family D's remaining 4 (ChartContainer next —
-simpler/self-contained; then DataTable, DataGrid, Calendar last —
-DataGrid in particular needs real scrutiny per the mission brief's
-"must be a real virtualized/sortable/filterable grid" note), then
-Family F
+## Next action: Family D's final 3 — DataTable, DataGrid, Calendar,
+the hardest remaining components. DataGrid in particular needs real
+scrutiny per the mission brief's "must be a real virtualized/sortable/
+filterable grid" note. Then Family F.
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Family D is now at 11/15 (Progress, CircularProgress, Skeleton,
-Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline,
-ActivityFeed, CodeBlock VERIFIED); Family F remains fully PLANNED.
+above. Family D is now at 12/15 (everything except DataTable,
+DataGrid, Calendar VERIFIED); Family F remains fully PLANNED.
 
-Family D's remaining 4 (`DataTable`, `DataGrid`, `Calendar`,
-`ChartContainer`) are all PLANNED — `DataGrid` is explicitly called out
+Family D's remaining 3 (`DataTable`, `DataGrid`, `Calendar`) are all
+PLANNED — `DataGrid` is explicitly called out
 in the mission brief as needing to be a **real** virtualized/sortable/
 filterable grid, not a styled `<table>`; treat it with the same
 scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI

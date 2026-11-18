@@ -85,7 +85,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | EmptyState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ErrorState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Skeleton | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| ChartContainer | PLANNED |
+| ChartContainer | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 
 DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 `<table>` — see mission brief's "specialized components" note.

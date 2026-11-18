@@ -1,0 +1,65 @@
+.b4-chart-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-6);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-chart-container__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--b4-space-6);
+}
+
+.b4-chart-container__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-2);
+}
+
+.b4-chart-container__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--b4-text-primary);
+}
+
+.b4-chart-container__description {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--b4-text-tertiary);
+}
+
+.b4-chart-container__actions {
+  flex: 0 0 auto;
+}
+
+.b4-chart-container__chart {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.b4-chart-container__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--b4-space-7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.b4-chart-container__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-3);
+  font-size: 0.75rem;
+  color: var(--b4-text-secondary);
+}
+
+.b4-chart-container__legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--b4-radius-full);
+  flex: 0 0 auto;
+}
