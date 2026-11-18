@@ -58,3 +58,5 @@
 @import "./components/Stat/Stat.css";
 @import "./components/EmptyState/EmptyState.css";
 @import "./components/ErrorState/ErrorState.css";
+@import "./components/Timeline/Timeline.css";
+@import "./components/ActivityFeed/ActivityFeed.css";

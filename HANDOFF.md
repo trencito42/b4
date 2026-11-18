@@ -537,6 +537,21 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## Timeline, ActivityFeed — Family D's 9th and 10th components (2026-11-18)
+
+**Both VERIFIED**. `Timeline`: chronological connected list of events,
+per-item tone dot (`neutral`/`success`/`warning`/`danger`/`info`,
+reusing the same tokens StatusBadge's dots use), connecting line drawn
+via `::before` on the item element so it spans correctly regardless of
+content height. `ActivityFeed`: its actor-attributed sibling, reuses
+`Avatar` directly rather than reimplementing initials/image-fallback
+logic. Both render as a real `<ol>`/`<li>` list. Kept as two separate
+components rather than one with an optional-avatar prop — Timeline's
+common case is a system event with no actor, so an avatar-shaped prop
+would be the wrong default for it. No new gotchas. Full gate:
+typecheck, @b4/react tests 367/367, build, Storybook build, playwright
+294/294 (run twice). Family D now: 10/15.
+
 ## Stat, EmptyState, ErrorState — Family D's 6th, 7th, 8th components (2026-11-18)
 
 **All three VERIFIED**. `Stat`: a labeled metric with an optional
@@ -584,20 +599,20 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: Family D's remaining 7 (Timeline, ActivityFeed,
-CodeBlock, ChartContainer next — simpler/self-contained; then
-DataTable, DataGrid, Calendar last — DataGrid in particular needs real
-scrutiny per the mission brief's "must be a real virtualized/sortable/
-filterable grid" note), then Family F
+## Next action: Family D's remaining 5 (CodeBlock, ChartContainer
+next — simpler/self-contained; then DataTable, DataGrid, Calendar
+last — DataGrid in particular needs real scrutiny per the mission
+brief's "must be a real virtualized/sortable/filterable grid" note),
+then Family F
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Family D is now at 8/15 (Progress, CircularProgress, Skeleton,
-Card, InteractiveCard, Stat, EmptyState, ErrorState VERIFIED); Family F
-remains fully PLANNED.
+above. Family D is now at 10/15 (Progress, CircularProgress, Skeleton,
+Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline,
+ActivityFeed VERIFIED); Family F remains fully PLANNED.
 
-Family D's remaining 7 (`DataTable`, `DataGrid`, `Timeline`,
-`ActivityFeed`, `Calendar`, `CodeBlock`, `ChartContainer`) are all
-PLANNED — `DataGrid` is explicitly called out
+Family D's remaining 5 (`DataTable`, `DataGrid`, `Calendar`,
+`CodeBlock`, `ChartContainer`) are all PLANNED — `DataGrid` is
+explicitly called out
 in the mission brief as needing to be a **real** virtualized/sortable/
 filterable grid, not a styled `<table>`; treat it with the same
 scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI

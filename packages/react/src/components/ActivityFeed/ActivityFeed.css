@@ -1,0 +1,41 @@
+.b4-activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--b4-font-sans);
+}
+
+.b4-activity-feed__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--b4-space-6);
+}
+
+.b4-activity-feed__avatar {
+  margin-top: 1px;
+}
+
+.b4-activity-feed__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-1);
+  min-width: 0;
+}
+
+.b4-activity-feed__text {
+  font-size: 0.8125rem;
+  color: var(--b4-text-secondary);
+}
+
+.b4-activity-feed__actor {
+  font-weight: 600;
+  color: var(--b4-text-primary);
+}
+
+.b4-activity-feed__timestamp {
+  font-size: 0.75rem;
+  color: var(--b4-text-tertiary);
+}

@@ -205,3 +205,7 @@ export { EmptyState } from "./components/EmptyState/EmptyState.js";
 export type { EmptyStateProps } from "./components/EmptyState/EmptyState.js";
 export { ErrorState } from "./components/ErrorState/ErrorState.js";
 export type { ErrorStateProps } from "./components/ErrorState/ErrorState.js";
+export { Timeline } from "./components/Timeline/Timeline.js";
+export type { TimelineProps, TimelineItem, TimelineItemTone } from "./components/Timeline/Timeline.js";
+export { ActivityFeed } from "./components/ActivityFeed/ActivityFeed.js";
+export type { ActivityFeedProps, ActivityFeedItem } from "./components/ActivityFeed/ActivityFeed.js";

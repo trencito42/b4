@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## Timeline, ActivityFeed — Family D's 9th and 10th components (2026-11-18)
+
+`Timeline`: chronological connected list, per-item tone dot, real
+`<ol>`/`<li>`. `ActivityFeed`: its actor-attributed sibling, reuses
+`Avatar` directly. Kept as two components, not one with an optional
+avatar, since Timeline's common case (system events) has no actor.
+Full gate: typecheck, @b4/react tests 367/367, build, Storybook build,
+playwright 294/294 (run twice). **Both VERIFIED**. Family D now: 10/15.
+
 ## Stat, EmptyState, ErrorState — Family D's 6th, 7th, 8th components (2026-11-18)
 
 `Stat`: labeled metric + optional trend delta, reused `--b4-success`/

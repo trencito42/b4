@@ -1136,6 +1136,24 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (359/359), `pnpm build`, Storybook build, `npx playwright test`
 (288/288, run twice for stability).
 
+## Timeline, ActivityFeed — Family D's 9th and 10th components (2026-11-18)
+
+Both **VERIFIED**. `Timeline` is a chronological, connected list of
+events with a per-item tone dot and a real connecting line drawn via
+`::before` on the item rather than a fixed-height element, so it spans
+correctly regardless of content height. `ActivityFeed` is its actor-
+attributed sibling — reuses `Avatar` directly rather than
+reimplementing initials/image-fallback logic. Both render as a real
+`<ol>`/`<li>` list, not styled `<div>`s, so screen readers announce
+position/count per entry. Kept as two separate components rather than
+one with an optional-avatar prop: Timeline's "no actor" case is the
+common one (system events), so forcing every consumer through an
+actor-shaped prop would be the wrong default for its own use case.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(367/367), `pnpm build`, Storybook build, `npx playwright test`
+(294/294, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

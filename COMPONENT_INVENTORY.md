@@ -78,8 +78,8 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | DataTable | PLANNED |
 | DataGrid | PLANNED |
 | Stat | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| Timeline | PLANNED |
-| ActivityFeed | PLANNED |
+| Timeline | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
+| ActivityFeed | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Calendar | PLANNED |
 | CodeBlock | PLANNED |
 | EmptyState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |

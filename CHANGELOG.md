@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Timeline, ActivityFeed added — Family D, 10/15 (2026-11-18)
+
+- Added `Timeline`: chronological connected list with a per-item tone
+  dot and a real `<ol>`/`<li>` structure.
+- Added `ActivityFeed`: its actor-attributed sibling, reusing `Avatar`
+  directly for the actor image/initials.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (367/367), `pnpm build`, Storybook build, `npx playwright test`
+  (294/294, run twice). **Both VERIFIED**.
+
 ### Stat, EmptyState, ErrorState added — Family D, 8/15 (2026-11-18)
 
 - Added `Stat`: labeled metric with an optional `up`/`down`/`neutral`
