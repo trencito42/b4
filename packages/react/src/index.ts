@@ -213,3 +213,5 @@ export { CodeBlock } from "./components/CodeBlock/CodeBlock.js";
 export type { CodeBlockProps } from "./components/CodeBlock/CodeBlock.js";
 export { ChartContainer } from "./components/ChartContainer/ChartContainer.js";
 export type { ChartContainerProps, ChartLegendItem } from "./components/ChartContainer/ChartContainer.js";
+export { DataTable } from "./components/DataTable/DataTable.js";
+export type { DataTableProps, DataTableColumn, DataTableSort, SortDirection } from "./components/DataTable/DataTable.js";

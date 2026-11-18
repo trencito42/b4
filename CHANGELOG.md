@@ -5,6 +5,22 @@ a per-npm-release history.
 
 ## Unreleased
 
+### DataTable added — Family D, 13/15 (2026-11-19)
+
+- Added `DataTable`: real `<table>` semantics, sortable `<button>`
+  column headers with real `aria-sort`, optional row selection reusing
+  `Checkbox` (incl. real indeterminate "select all"). Sort and
+  selection are both fully controlled, not managed internally.
+- Fixed a real CSS specificity bug found via a live browser check: the
+  `--end` right-align modifier classes were silently losing to a
+  higher-specificity base rule and staying left-aligned. Fixed and
+  added an e2e assertion on the real computed `text-align`.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (389/389), `pnpm build`, Storybook build, `npx playwright test`
+  (two clean full passes, 309/309 each; two intermittent single
+  failures in between were confirmed pre-existing flakes unrelated to
+  this component via isolated repeat runs). **VERIFIED**.
+
 ### ChartContainer added — Family D, 12/15 (2026-11-19)
 
 - Added `ChartContainer`: chart chrome — title, description, actions

@@ -1,0 +1,89 @@
+.b4-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--b4-font-sans);
+  font-size: 0.8125rem;
+}
+
+.b4-data-table__caption {
+  text-align: left;
+  padding-bottom: var(--b4-space-5);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--b4-text-primary);
+}
+
+.b4-data-table__caption--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.b4-data-table th,
+.b4-data-table td {
+  padding: var(--b4-space-5) var(--b4-space-6);
+  text-align: left;
+  border-bottom: 1px solid var(--b4-border-subtle);
+}
+
+.b4-data-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--b4-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.b4-data-table tbody tr:hover {
+  background-color: var(--b4-surface-1);
+}
+
+.b4-data-table tbody tr[data-selected] {
+  background-color: var(--b4-accent-subtle-bg);
+}
+
+.b4-data-table tbody td {
+  color: var(--b4-text-secondary);
+}
+
+.b4-data-table__select-cell {
+  width: 1%;
+  white-space: nowrap;
+}
+
+/* Specificity has to match-or-beat the base `.b4-data-table th, td` rule
+   above (0,1,1), not just rely on source order, or "end" alignment is
+   silently overridden back to left — caught by a real browser check,
+   not the automated gate (jsdom computed styles don't resolve CSS
+   custom property cascades, so a unit test wouldn't have caught this). */
+.b4-data-table th.b4-data-table__header--end,
+.b4-data-table td.b4-data-table__cell--end {
+  text-align: right;
+}
+
+.b4-data-table__sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.b4-data-table__sort-button:hover {
+  color: var(--b4-text-primary);
+}
+
+.b4-data-table__sort-button:focus-visible {
+  outline: 2px solid var(--b4-accent-500);
+  outline-offset: 2px;
+  border-radius: var(--b4-radius-xs);
+}

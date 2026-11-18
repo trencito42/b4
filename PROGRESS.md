@@ -1,5 +1,26 @@
 # B4 — Progress
 
+## DataTable — Family D's 13th component (2026-11-19)
+
+Real `<table>` semantics: sortable `<button>` column headers with real
+`aria-sort`, optional row selection reusing `Checkbox` (incl. real
+indeterminate "select all"). Fully controlled sort/selection — the
+component can't sort generically since it only knows each column's
+rendered content, not its value type; DataGrid owns in-component
+sort/filter. Caught a real CSS specificity bug via a live browser
+check: the `--end` right-align modifier classes were losing to the
+base `th, td` rule (two selector parts beats one) despite coming later
+in the file — `getComputedStyle` caught it instantly, nothing in the
+automated gate would have. Fixed by raising the modifier's specificity
+and added an e2e assertion on the real computed style. Full gate:
+typecheck, @b4/react tests 389/389, build, Storybook build. Playwright
+needed 4 full-suite passes to land two clean ones — passes 2 and 3
+each had one isolated failure (`dropdown-menu.spec.ts`,
+`chart-container.spec.ts`), both confirmed as pre-existing flakes
+unrelated to DataTable via isolated `--repeat-each=3` runs (both came
+back fully green standalone). **VERIFIED**. Family D now: 13/15 — only
+DataGrid and Calendar remain.
+
 ## ChartContainer — Family D's 12th component (2026-11-19)
 
 Chart chrome (title, description, actions, accessible legend), not a

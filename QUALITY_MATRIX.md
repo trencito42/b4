@@ -1212,6 +1212,50 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (381/381), `pnpm build`, Storybook build, `npx playwright test`
 (303/303, run twice for stability).
 
+## DataTable — Family D's 13th component (2026-11-19)
+
+**VERIFIED**, with a real CSS specificity bug caught by a live browser
+check, not the automated gate. A real `<table>`/`<thead>`/`<tbody>`
+with sortable-column affordance (clickable `<button>` headers, real
+`aria-sort`) and optional row selection (reuses `Checkbox`, including
+its real indeterminate "select all" state) — both fully controlled
+(`sort`/`onSortChange`, `selectedIds`/`onSelectedIdsChange`) rather
+than sorted/managed internally, because DataTable only knows each
+column's *rendered* content, not its underlying value type, so it
+can't sort generically without either a per-column comparator or
+silently stringifying everything. `DataGrid` (next) is where
+virtualized, in-component sort/filter belongs.
+
+The bug: `.b4-data-table__header--end`/`__cell--end` (right-alignment
+modifier classes) were being silently overridden back to `text-align:
+left` by the earlier, higher-specificity `.b4-data-table th, td` base
+rule (two selector parts vs. the modifier's one) — a classic CSS
+specificity trap that source order alone doesn't fix. `getComputedStyle`
+in the browser pane caught it immediately (`textAlign: "left"` when it
+should've been `"right"`); nothing in the automated gate would have,
+since neither the unit tests nor the e2e suite asserted computed
+`text-align` before this. Fixed by raising the modifier selectors'
+specificity (`.b4-data-table th.b4-data-table__header--end`, etc.) and
+added an e2e assertion on the real computed style so this can't regress
+silently again.
+
+Also reused `--b4-accent-subtle-bg` (not `--b4-control-bg-selected`,
+which is tuned for a strong selected-*control* fill like a selected
+tab, not a readable row-background tint) for the selected-row
+highlight — checked both themes visually before committing to it.
+
+Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(389/389), `pnpm build`, Storybook build, `npx playwright test` run
+across four full passes while chasing a clean pair: pass 1 clean
+(309/309), pass 2 showed one failure (`dropdown-menu.spec.ts`'s rapid
+open/close test — pre-existing, confirmed flaky via isolated
+`--repeat-each=3`, 2/3 passed, unrelated to this component), pass 3
+showed a different single failure (`chart-container.spec.ts`'s axe
+check — also confirmed flaky in isolation, 12/12 passed under repeat),
+pass 4 clean (309/309). Both flakes are full-suite-under-parallel-load
+timing issues, not regressions from DataTable — tracked as a follow-up
+(see HANDOFF.md), not swept under the rug.
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

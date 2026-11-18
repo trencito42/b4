@@ -537,6 +537,68 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## DataTable — Family D's 13th component (2026-11-19)
+
+**VERIFIED**. Real `<table>`/`<thead>`/`<tbody>`: sortable columns are
+real `<button>` headers with `aria-sort` (not a clickable `<th>` div),
+row selection reuses `Checkbox` including its genuine indeterminate
+"select all" state. Sorting and selection are both fully *controlled*
+(`sort`/`onSortChange`, `selectedIds`/`onSelectedIdsChange`) — DataTable
+deliberately does not sort data internally, because it only knows each
+column's rendered output, not the underlying value's real type, so
+generic sorting would mean either demanding a per-column comparator or
+silently `String()`-ing everything (worse). `DataGrid` is where
+virtualized, in-component sort/filter belongs — this component is its
+lighter, non-virtualized sibling.
+
+**Real bug caught by the browser-pane check, not the automated gate**:
+the `--end` alignment modifier classes
+(`.b4-data-table__header--end`/`__cell--end`) were silently losing to
+the base `.b4-data-table th, td` rule and staying left-aligned, because
+that base rule has HIGHER CSS specificity (an element + class selector)
+than the modifier (a single class) — source order doesn't save you from
+a specificity loss. `getComputedStyle` in the browser pane showed
+`textAlign: "left"` immediately; nothing in the unit or e2e suite was
+asserting computed style before this, so it would have shipped
+silently. Fixed by raising the modifier selectors' specificity
+(`.b4-data-table th.b4-data-table__header--end`) and added a
+dedicated e2e assertion on the real computed `text-align` so this
+exact regression can't sneak back in unnoticed. **Lesson for future
+components**: a CSS modifier class only wins if its specificity is
+equal-or-higher than whatever it's meant to override — check this,
+don't assume source order is enough, especially for any `.component
+element, element` base rule (specificity (0,1,1)) paired with a
+single-class modifier (0,1,0).
+
+Also deliberately used `--b4-accent-subtle-bg` for the selected-row
+tint, not `--b4-control-bg-selected` — the latter is tuned for a
+strong, near-solid fill appropriate to a selected *control* (e.g. a
+selected segmented-control tab), and would make a selected table row
+nearly unreadable (confirmed this by checking what it actually renders
+as in Porcelain: a near-black fill). Checked both themes visually
+before committing to the choice.
+
+**Playwright needed 4 full-suite passes to land two clean ones** —
+worth recording honestly rather than quietly re-running until green
+and saying nothing. Pass 1: clean, 309/309. Pass 2: one failure,
+`dropdown-menu.spec.ts`'s "survives rapid repeated open/close" test.
+Pass 3: a *different* single failure, `chart-container.spec.ts`'s axe
+check. Both were investigated immediately: re-running each spec file
+alone with `--repeat-each=3` came back fully green both times (3/3 and
+12/12), meaning both are pre-existing, timing-sensitive flakes that
+only surface under the full suite's parallel load — not regressions
+introduced by DataTable, and not something DataTable's own commit
+should carry the blame for. Pass 4: clean, 309/309. Full gate overall:
+typecheck, @b4/react tests 389/389, build, Storybook build. Family D
+now: 13/15 — only DataGrid and Calendar remain.
+
+**Follow-up, not yet actioned**: `dropdown-menu.spec.ts`'s rapid
+open/close test and `chart-container.spec.ts`'s axe-clean-on-graphite
+test are both intermittently flaky under full-suite parallel load.
+Worth a dedicated investigation pass (likely animation/timing-related,
+given DropdownMenu's history in this file) before they cause confusion
+in a future session that doesn't already have this context.
+
 ## ChartContainer — Family D's 12th component (2026-11-19)
 
 **VERIFIED**. Chart chrome only — title, description, an actions slot,
@@ -673,17 +735,17 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: Family D's final 3 — DataTable, DataGrid, Calendar,
-the hardest remaining components. DataGrid in particular needs real
-scrutiny per the mission brief's "must be a real virtualized/sortable/
-filterable grid" note. Then Family F.
+## Next action: Family D's final 2 — DataGrid, Calendar. DataGrid
+needs real scrutiny per the mission brief's "must be a real
+virtualized/sortable/filterable grid" note — treat it as the hardest
+remaining Family D component, harder than DataTable. Then Family F.
 
 Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Family D is now at 12/15 (everything except DataTable,
-DataGrid, Calendar VERIFIED); Family F remains fully PLANNED.
+above. Family D is now at 13/15 (everything except DataGrid, Calendar
+VERIFIED); Family F remains fully PLANNED.
 
-Family D's remaining 3 (`DataTable`, `DataGrid`, `Calendar`) are all
-PLANNED — `DataGrid` is explicitly called out
+Family D's remaining 2 (`DataGrid`, `Calendar`) are all PLANNED —
+`DataGrid` is explicitly called out
 in the mission brief as needing to be a **real** virtualized/sortable/
 filterable grid, not a styled `<table>`; treat it with the same
 scrutiny Family B's DatePicker/ColorPicker/FileUpload got (no Base UI
