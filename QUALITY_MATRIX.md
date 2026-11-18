@@ -899,6 +899,23 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (283/283), `pnpm build`, Storybook build, `npx playwright test`
 (227/227, run twice for stability).
 
+## InlineAlert — Family E (2026-11-18)
+
+**VERIFIED.** A persistent, page-level message — distinct from
+`Toast` (transient, self-dismisses) and `Badge`/`StatusBadge` (small
+inline labels). Four tones (info/success/warning/danger), each
+pairing its color with a genuinely distinct icon glyph, not the same
+shape recolored — `DESIGN_PRINCIPLES.md`'s "color never carries
+meaning alone" rule, already established by `StatusBadge`, applied
+here too. Reused the exact `--b4-{tone}`/`--b4-{tone}-bg`/
+`--b4-danger-text` token triad `Badge.css` already established,
+rather than inventing a parallel tone system. Optional `dismissible`
+with a real working close button.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(289/289), `pnpm build`, Storybook build, `npx playwright test`
+(231/231, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

@@ -168,3 +168,6 @@ export type { SpinnerProps, SpinnerSize } from "./components/Spinner/Spinner.js"
 
 export { ToastProvider, useToast, toastManager } from "./components/Toast/Toast.js";
 export type { ToastProviderProps, ToastObject, ToastAddOptions } from "./components/Toast/Toast.js";
+
+export { InlineAlert } from "./components/InlineAlert/InlineAlert.js";
+export type { InlineAlertProps, InlineAlertTone } from "./components/InlineAlert/InlineAlert.js";

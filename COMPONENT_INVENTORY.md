@@ -83,7 +83,7 @@ brief's "specialized components" note.
 | NumberTransition | **VERIFIED** |
 | AnimatedIndicator | **VERIFIED** (incl. span-as-root support added for RadioGroup) |
 | Toast | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| InlineAlert | PLANNED |
+| InlineAlert | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | NotificationPanel | PLANNED |
 | Spinner | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | MorphingSurface | PLANNED |

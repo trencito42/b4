@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### InlineAlert added — Family E at 6/11 (2026-11-18)
+
+- Added `InlineAlert`: a persistent page-level message (distinct from
+  `Toast`), four tones each with a distinct icon glyph, reusing
+  `Badge.css`'s tone-token triad. Optional dismissible with a real
+  close button.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (289/289), `pnpm build`, Storybook build, `npx playwright test`
+  (231/231, run twice). **VERIFIED**.
+
 ### Toast added — Family E at 5/11 (2026-11-18)
 
 - Added `Toast`: a real Base UI `Toast` system (`ToastProvider` +

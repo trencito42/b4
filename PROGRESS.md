@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## InlineAlert — Family E (2026-11-18)
+
+Persistent, page-level message, distinct from `Toast`/`Badge`. Four
+tones, each with its own distinct icon (not color alone), reusing the
+exact `--b4-{tone}`/`--b4-{tone}-bg`/`--b4-danger-text` token triad
+`Badge.css` already established. Optional dismissible with a real
+close button. Full gate: typecheck 4/4, @b4/react tests 289/289,
+build, Storybook build, playwright 231/231 (run twice). **VERIFIED**.
+
 ## Toast — Family E (2026-11-18)
 
 Real Base UI `Toast` system: `ToastProvider` + `useToast()` giving

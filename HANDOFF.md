@@ -448,7 +448,15 @@ clicked element's `:hover` state**, which most of this session's
 axe scans (run on page load or after a different interaction) never
 exercised.
 
-## Next action: Family E's remaining 6 (InlineAlert, NotificationPanel, MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
+## Update (2026-11-18): InlineAlert — Family E at 6/11
+
+Added `InlineAlert`: persistent page-level message, four tones each
+with a distinct icon, reusing `Badge.css`'s exact tone-token triad.
+No new gotchas — clean first-run pass, matching the pattern of
+components built right after a gotcha-heavy one (same as
+ColorPicker following DatePicker/TimePicker).
+
+## Next action: Family E's remaining 5 (NotificationPanel, MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/
