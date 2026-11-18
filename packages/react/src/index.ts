@@ -87,6 +87,9 @@ export type { TabsProps, TabsItem } from "./components/Tabs/Tabs.js";
 export { Accordion } from "./components/Accordion/Accordion.js";
 export type { AccordionProps, AccordionItemSpec } from "./components/Accordion/Accordion.js";
 
+export { Dialog } from "./components/Dialog/Dialog.js";
+export type { DialogProps } from "./components/Dialog/Dialog.js";
+
 export { Link } from "./components/Link/Link.js";
 export type { LinkProps, LinkTone } from "./components/Link/Link.js";
 

@@ -23,6 +23,15 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### Dialog — Family C's sixth component (2026-11-18)
+
+- `@b4/react`: `Dialog`, a real Base UI `Dialog` (modal, focus trap,
+  backdrop, Escape/outside-click-to-close).
+- Avoided a real class of bug before shipping: centering via `transform:
+  translate(...)` would have collided with Motion's own `scale`
+  transform on the same element (the "double transform" issue `Slider`
+  had) — used fixed-inset + `margin: auto` centering instead.
+
 ### Accordion — Family C's fifth component (2026-11-18)
 
 - `@b4/react`: `Accordion`, built on Base UI's `Accordion`. Confirmed

@@ -60,7 +60,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Tooltip | **VERIFIED** |
 | Popover | **VERIFIED** |
 | HoverCard | PLANNED |
-| Dialog | PLANNED |
+| Dialog | **VERIFIED** |
 | AlertDialog | PLANNED |
 | Drawer | PLANNED |
 | Sheet | PLANNED |

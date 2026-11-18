@@ -110,6 +110,17 @@ for a new Family C component, don't assume arrow-key navigation exists
 just because `Tabs`/`SegmentedControl`/`RadioGroup` have it — check the
 Base UI docs/types for that specific primitive first.
 
+## Update (2026-11-18): Dialog — Family C at 6/17
+
+Added `Dialog` (modal, focus trap, backdrop). Avoided a real class of
+bug before it shipped: don't center a popup with `transform: translate
+(...)` when `OptionPopupSurface` also animates that element's `scale` —
+Motion writes `transform` directly and will silently clobber a
+CSS-set one rather than compose with it (this is exactly what went
+wrong with `Slider`'s geometry, documented earlier). Use fixed-inset +
+`margin: auto` centering for any future centered popup instead — no
+transform needed, nothing to collide.
+
 ## Next action: Family B's last 4, then continue Family C
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,

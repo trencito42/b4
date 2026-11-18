@@ -1,0 +1,56 @@
+.b4-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--b4-z-modal);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Centered with fixed inset + margin:auto, not a CSS `transform:
+   translate(...)` — Motion (via OptionPopupSurface) animates this same
+   element's `scale` by writing directly to the `transform` style
+   property, which would silently overwrite a CSS-set transform rather
+   than compose with it (the exact "double transform" class of bug
+   Slider's geometry had, documented in QUALITY_MATRIX.md). Auto-margin
+   centering needs no transform at all, so there's nothing to collide. */
+.b4-dialog__popup {
+  position: fixed;
+  inset: var(--b4-space-9);
+  margin: auto;
+  z-index: var(--b4-z-modal);
+  box-sizing: border-box;
+  width: min(480px, 100%);
+  height: fit-content;
+  max-height: 100%;
+  overflow: auto;
+  padding: var(--b4-space-9);
+  border-radius: var(--b4-surface-radius);
+  background-color: var(--b4-surface-overlay);
+  color: var(--b4-text-primary);
+  box-shadow: var(--b4-shadow-overlay);
+  font-family: var(--b4-font-sans);
+  outline: none;
+}
+
+.b4-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--b4-space-6);
+}
+
+.b4-dialog__title {
+  margin: 0;
+  font-size: var(--b4-text-lg);
+  font-weight: var(--b4-weight-semibold);
+}
+
+.b4-dialog__description {
+  margin: var(--b4-space-4) 0 0;
+  color: var(--b4-text-secondary);
+  font-size: var(--b4-text-sm);
+  line-height: var(--b4-leading-normal);
+}
+
+.b4-dialog__content {
+  margin-top: var(--b4-space-7);
+}

@@ -54,7 +54,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 0 — Init, tokens/themes, motion foundations, Studio shell, docs infra | **DONE** | See below. |
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 - Family A + B to full quality gate | **Family A DONE, Family B mostly done** | Family A: all 12 components VERIFIED. Family B: 15/19 VERIFIED (Checkbox, Switch, RadioGroup, Field, TextField, Textarea, PasswordField, SearchField, NumberField, Slider/RangeSlider, Select, Combobox, MultiSelect, InputGroup). Still PLANNED: DatePicker, TimePicker, ColorPicker, FileUpload. See QUALITY_MATRIX.md. |
-| 3 — Family C | **STARTED (5/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs`, `Accordion` VERIFIED. 12 more components planned. |
+| 3 — Family C | **STARTED (6/17)** | `DropdownMenu`, `Tooltip`, `Popover`, `Tabs`, `Accordion`, `Dialog` VERIFIED. 11 more components planned. |
 | 4 — Family D | NOT STARTED | |
 | 5 — Family E/F advanced + specialized components | NOT STARTED | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
@@ -378,6 +378,18 @@ the comment early and cascaded into unrelated-looking syntax errors.
 Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (183/183), `pnpm build`, Storybook build, `npx playwright test`
 (135/135, run twice).
+
+## Dialog — Family C's sixth component; prevented a Slider-class bug before it shipped
+
+Real Base UI `Dialog`, modal by default. Recognized before building
+that centering the popup with `transform: translate(-50%, -50%)` would
+collide with Motion's own `scale` transform (the same "double transform"
+class of bug `Slider`'s geometry had) and used fixed-inset +
+`margin: auto` centering instead, which needs no transform at all.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(188/188), `pnpm build`, Storybook build, `npx playwright test`
+(140/140, run twice).
 
 ## Git
 

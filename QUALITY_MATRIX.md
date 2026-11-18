@@ -367,6 +367,29 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (183/183), `pnpm build`, Storybook build, `npx playwright test`
 (135/135, run twice).
 
+## Dialog — Family C's sixth component; a near-miss caught before shipping (2026-11-18)
+
+**VERIFIED.** Real Base UI `Dialog` — modal by default (focus trap,
+backdrop, Escape/outside-click-to-close, scroll lock). Close button
+composes `IconButton` via `Dialog.Close`'s `render` prop.
+
+**Caught before it ever ran, not after**: the first draft centered the
+popup with `position: fixed; top/left: 50%; transform: translate(-50%,
+-50%)`. That's exactly the "double transform" class of bug `Slider`'s
+geometry had (documented above) — `OptionPopupSurface` animates this
+same element's `scale` via Motion, which writes directly to the
+`transform` style property and would have silently overwritten the
+CSS-set centering transform rather than composing with it. Recognized
+the pattern from the Slider writeup before building and switched to
+fixed-inset + `margin: auto` centering, which needs no transform at
+all. No regression test needed for a bug that was designed around
+rather than shipped and found — recorded here so the *reasoning* isn't
+lost, since there's no failing test to point to.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(188/188), `pnpm build`, Storybook build, `npx playwright test`
+(140/140, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives
