@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### CommandPalette added — Family C at 16/17 (2026-11-18)
+
+- Added `CommandPalette`: a real Base UI `Dialog` wrapping a real Base
+  UI `Combobox` in its documented `inline` mode.
+- Found and fixed a real bug: the first draft called
+  `preventUnmountOnClose()` without wiring `actionsRef`/`unmount()`,
+  leaving the popup permanently stuck mounted after every close.
+  Confirmed via a real Chromium run, fixed by completing the pattern
+  `Dialog.tsx`/`AlertDialog.tsx` already use correctly.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (235/235), `pnpm build`, Storybook build, `npx playwright test`
+  (183/183, run twice). **VERIFIED**.
+
 ### Sheet added — Family C at 15/17 (2026-11-18)
 
 - Added `Sheet`, `Drawer`'s bottom-anchored sibling: shares the same

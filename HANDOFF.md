@@ -216,22 +216,35 @@ first unit-test and e2e run both passed clean, zero follow-up fixes.
 Worth noting as positive evidence for the "write gotchas down" habit:
 the previous component's HANDOFF entry paid for itself immediately.
 
-## Next action: Family B's last 4, then CommandPalette/TreeView
+## Update (2026-11-18): CommandPalette — Family C at 16/17
+
+Added `CommandPalette`: a real Base UI `Dialog` + `Combobox` in its
+documented `inline` mode. **New gotcha (13th)**: `preventUnmountOnClose()`
+and `actionsRef`/`unmount()` are two halves of ONE pattern — calling
+`preventUnmountOnClose()` without also wiring an `actionsRef` and
+calling `.unmount()` from the exit-animation-complete callback leaves
+the popup **permanently** stuck mounted with `data-closed` after every
+close. This happened here from copy-pasting `Dialog.tsx`'s
+`onOpenChange` handler without also copying its `actionsRef`/
+`OptionPopupSurface.onExitComplete` wiring. Confirmed via a real
+Chromium run checking the popup element's own `data-*` attributes
+after close, not guessed. **Whenever you see `preventUnmountOnClose()`
+being called, grep the same component for where `.unmount()` is
+actually invoked — if there isn't one, that's the bug, every time.**
+
+## Next action: Family B's last 4, then TreeView (Family C's last component)
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,
 `FileUpload` — these are the most complex remaining Family B items
 (calendar grid logic, color space math, drag-and-drop) and deserve real
 scrutiny against "don't fake complex functionality," not a quick stub.
-Family C has 2 more components (`CommandPalette`, `TreeView`) — the
-last two, and both without a Base UI primitive to build on. Build
-`CommandPalette` on `Dialog` + `Combobox`'s filterable-listbox pattern
-(a modal with a search input and a filtered, keyboard-navigable list of
-commands — check `Combobox.tsx`'s listbox/filtering logic before
-writing new filtering code). Build `TreeView` from scratch with real
-ARIA `tree`/`treeitem`/`group` roles (check the ARIA APG tree pattern
-for keyboard behavior — Right/Left to expand/collapse+move into/out of
-a branch, Up/Down to move between visible rows, not just visual
-nesting). Once both land, Family C is complete (17/17) and Family D/E/F
+Family C has 1 more component (`TreeView`) — the last one, with no
+Base UI primitive to build on. Build it from scratch with real ARIA
+`tree`/`treeitem`/`group` roles (check the ARIA APG tree pattern for
+keyboard behavior — Right/Left to expand/collapse+move into/out of a
+branch, Up/Down to move between visible rows, Home/End to jump to
+first/last visible row, type-ahead by first character, not just visual
+nesting). Once it lands, Family C is complete (17/17) and Family D/E/F
 or Family B's last 4 (`DatePicker`/`TimePicker`/`ColorPicker`/
 `FileUpload`, still pending) are next per the phased plan. Keep using the shared `Field` wrapper, `AnimatedIndicator`,
 `TextTransition`/`NumberTransition`, `DropdownMenu`, `IconButton`, and

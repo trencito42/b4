@@ -1,0 +1,92 @@
+.b4-command-palette__backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: var(--b4-z-overlay);
+}
+
+.b4-command-palette__popup {
+  position: fixed;
+  inset: var(--b4-space-9);
+  margin: auto;
+  width: min(560px, 100%);
+  max-height: min(420px, 100%);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--b4-surface-radius);
+  border: 1px solid var(--b4-border-subtle);
+  background: var(--b4-surface-overlay);
+  box-shadow: var(--b4-shadow-overlay);
+  overflow: hidden;
+  z-index: var(--b4-z-overlay);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-command-palette__input {
+  flex-shrink: 0;
+  height: var(--b4-control-height-lg);
+  padding: 0 var(--b4-space-5);
+  border: none;
+  border-bottom: 1px solid var(--b4-border-subtle);
+  background: transparent;
+  color: var(--b4-text-primary);
+  font-size: var(--b4-text-md);
+  font-family: inherit;
+  outline: none;
+}
+
+.b4-command-palette__input::placeholder {
+  color: var(--b4-text-disabled);
+}
+
+.b4-command-palette__empty {
+  padding: var(--b4-space-6);
+  text-align: center;
+  font-size: var(--b4-text-sm);
+  color: var(--b4-text-tertiary);
+}
+
+.b4-command-palette__list {
+  overflow-y: auto;
+  padding: var(--b4-space-2);
+}
+
+.b4-command-palette__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--b4-space-3);
+  padding: var(--b4-space-3) var(--b4-space-3);
+  border-radius: var(--b4-radius-md);
+  color: var(--b4-text-primary);
+  font-size: var(--b4-text-sm);
+  cursor: pointer;
+}
+
+.b4-command-palette__item[data-highlighted] {
+  background: var(--b4-control-bg-hover);
+}
+
+.b4-command-palette__item[data-disabled] {
+  color: var(--b4-text-disabled);
+  cursor: not-allowed;
+}
+
+.b4-command-palette__item-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-1);
+  min-width: 0;
+}
+
+.b4-command-palette__item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.b4-command-palette__item-description {
+  font-size: var(--b4-text-xs);
+  color: var(--b4-text-tertiary);
+}

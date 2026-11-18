@@ -575,6 +575,39 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (229/229), `pnpm build`, Storybook build, `npx playwright test`
 (178/178, run twice for stability).
 
+## CommandPalette — Family C's sixteenth component (2026-11-18)
+
+**VERIFIED.** A real Base UI `Dialog` wrapping a real Base UI `Combobox`
+in its documented `inline` mode — the list renders directly in the
+dialog body instead of in its own floating popup, exactly the
+composition Base UI's own `inline` prop docstring describes for a
+`Combobox.Root` > `Dialog.Root` palette, with `Combobox`'s `open`/
+`onOpenChange` bound to the same state as the `Dialog`'s (per that same
+docstring) so the filter query and highlighted item reset whenever the
+palette closes. Filtering, keyboard navigation, and selection are all
+Base UI's real combobox behavior — not a fake static list with custom
+filtering logic bolted on.
+
+**Real bug found and fixed, not guessed around.** The first draft set
+`details.preventUnmountOnClose()` on close (copy-pasted from `Dialog`'s
+established pattern) but never wired an `actionsRef` to call
+`unmount()` afterward — confirmed in a real Chromium run that this left
+the popup permanently stuck with `data-closed`/`data-ending-style` after
+every close (Escape, backdrop click, selecting an item), never actually
+unmounting, because `preventUnmountOnClose()` tells Base UI "wait, I'll
+tell you when to finish" and nothing ever did. Root-caused by checking
+the dialog element's own data attributes in a throwaway Playwright
+script after the "stuck open" symptom, not by guessing. Fixed by adding
+`actionsRef` + calling `actionsRef.current?.unmount()` in
+`OptionPopupSurface`'s `onExitComplete`, exactly the pattern `Dialog.tsx`
+and `AlertDialog.tsx` already use correctly — the bug was an incomplete
+copy-paste (took half the pattern, not the whole thing), not a design
+flaw.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(235/235), `pnpm build`, Storybook build, `npx playwright test`
+(183/183, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

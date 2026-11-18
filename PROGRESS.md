@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## CommandPalette — Family C's 16th component (2026-11-18)
+
+Real Base UI `Dialog` wrapping a real Base UI `Combobox` in its
+documented `inline` mode (list renders in the dialog body, not a
+floating popup) — the exact composition Base UI's own docs describe
+for this exact use case. Found and fixed a real bug via a real
+Chromium run: the first draft called `preventUnmountOnClose()` on
+close but never wired `actionsRef`/`unmount()` to finish it, leaving
+the popup stuck mounted after every close. Fixed by completing the
+pattern `Dialog.tsx`/`AlertDialog.tsx` already use correctly. Full
+gate: typecheck 4/4, @b4/react tests 235/235, build, Storybook build,
+playwright 183/183 (run twice). **VERIFIED**.
+
 ## Sheet — Family C's 15th component (2026-11-18)
 
 `Drawer`'s bottom-anchored sibling: same Base UI `drawer` primitive

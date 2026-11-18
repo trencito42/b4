@@ -144,3 +144,6 @@ export type { DrawerProps } from "./components/Drawer/Drawer.js";
 
 export { Sheet } from "./components/Sheet/Sheet.js";
 export type { SheetProps } from "./components/Sheet/Sheet.js";
+
+export { CommandPalette } from "./components/CommandPalette/CommandPalette.js";
+export type { CommandPaletteProps, CommandPaletteItem } from "./components/CommandPalette/CommandPalette.js";
