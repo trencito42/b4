@@ -56,10 +56,10 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Pagination | PLANNED |
 | Stepper | PLANNED |
 | NavigationMenu | PLANNED |
-| ContextMenu | PLANNED |
+| ContextMenu | **VERIFIED** |
 | Tooltip | **VERIFIED** |
 | Popover | **VERIFIED** |
-| HoverCard | PLANNED |
+| HoverCard | **VERIFIED** |
 | Dialog | **VERIFIED** |
 | AlertDialog | **VERIFIED** |
 | Drawer | PLANNED |
@@ -119,6 +119,15 @@ navigation / actual syntax-aware editing), not static mockups.
   just duplicate it. `MultiSelect`'s trigger shows a comma-joined summary
   of up to two selected labels or a "{n} selected" count beyond that —
   chip-per-item display is a real possible follow-up, not shipped.
+
+- **`ContextMenu` reuses `DropdownMenu`'s item type and CSS classes**
+  (`DropdownMenuItem`, `.b4-dropdown-menu__*`) rather than a parallel
+  implementation — it's the same visual menu, opened by right-click
+  instead of a trigger click.
+- **`HoverCard` is Base UI's `preview-card` under the mission brief's
+  conventional name.** Base UI itself calls the primitive "PreviewCard";
+  this component is named `HoverCard` to match the inventory, same kind
+  of naming reconciliation as Slider/RangeSlider.
 
 - **SplitButton pulled `DropdownMenu` forward from Family C** rather than
   shipping with a decorative, non-functional chevron. A split button's

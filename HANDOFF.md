@@ -127,6 +127,18 @@ Added `AlertDialog` (reuses `Dialog`'s CSS; distinct Base UI primitive).
 Clean pass, no new bugs — the `Dialog` transform-collision and
 `Tabs`/`Accordion` per-part-attribute lessons were applied up front.
 
+## Update (2026-11-18): ContextMenu, HoverCard — Family C at 9/17
+
+Added `ContextMenu` (reuses `DropdownMenu`'s item type/CSS) and
+`HoverCard` (Base UI's actual name is `PreviewCard` — search for that if
+`HoverCard` doesn't turn up in `node_modules`). **New gotcha**: not
+every popup-based Base UI primitive supports the `actionsRef`/
+`preventUnmountOnClose` retention pattern used by `Menu`/`Select`/
+`Dialog`/`AlertDialog`/`Tooltip`/`Popover` — `ContextMenu.Root` doesn't
+have it (`tsc` caught this immediately when copy-pasting the pattern).
+Check the specific Root's prop types before assuming every new overlay
+component supports it.
+
 ## Next action: Family B's last 4, then continue Family C
 
 Family B still needs `DatePicker`, `TimePicker`, `ColorPicker`,

@@ -411,6 +411,32 @@ Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
 (193/193), `pnpm build`, Storybook build, `npx playwright test`
 (145/145, run twice).
 
+## ContextMenu, HoverCard — Family C's eighth and ninth components (2026-11-18)
+
+Both **VERIFIED**.
+
+- **`ContextMenu`**: real Base UI `ContextMenu` (right-click/long-press),
+  reusing `DropdownMenuItem`'s shape and `.b4-dropdown-menu__*` CSS —
+  one visual menu, two ways to open it. One real API difference caught
+  by `tsc`, not guessed: unlike `Menu`/`Select`/`Dialog`,
+  `ContextMenu.Root` has **no `actionsRef`/`preventUnmountOnClose`** —
+  it manages its own unmount timing, so `OptionPopupSurface`'s
+  `onExitComplete` is a documented no-op here, not copy-pasted
+  unchanged from `DropdownMenu`.
+- **`HoverCard`**: Base UI names the underlying primitive "PreviewCard",
+  not "HoverCard" — used the mission brief's conventional name for the
+  component, noted the actual Base UI name in the doc comment so a
+  future search for "PreviewCard" in `node_modules` isn't a dead end.
+
+Both clean on the first unit-test pass; `ContextMenu`'s e2e suite
+explicitly verifies a plain left-click does *not* open it (only
+right-click does) — the one behavior worth pinning given the whole
+point of the component is that distinction.
+
+Verified: `pnpm typecheck` (5/5), `pnpm --filter @b4/react run test`
+(200/200), `pnpm build`, Storybook build, `npx playwright test`
+(152/152, run twice).
+
 See COMPONENT_INVENTORY.md for the current status of every remaining component.
 
 ## Known gaps on the Phase 1 motion primitives

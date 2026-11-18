@@ -23,6 +23,14 @@ a per-npm-release history.
   `ToggleButton` (`e2e/icon-toggle-button.spec.ts`), the only two
   previously-verified components with none.
 
+### ContextMenu, HoverCard — Family C's eighth and ninth components (2026-11-18)
+
+- `@b4/react`: `ContextMenu` (right-click/long-press, reuses
+  `DropdownMenu`'s item type and CSS) and `HoverCard` (Base UI's
+  `PreviewCard` under the conventional name).
+- Found: `ContextMenu.Root` has no `actionsRef`/`preventUnmountOnClose`,
+  unlike every other popup component so far — caught by `tsc`.
+
 ### AlertDialog — Family C's seventh component (2026-11-18)
 
 - `@b4/react`: `AlertDialog`, for destructive/irreversible confirmations.
