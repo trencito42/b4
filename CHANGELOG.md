@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### MorphingSurface added — Family E at 8/11 (2026-11-18)
+
+- Added `MorphingSurface`: a real FLIP-based morph via Motion's
+  `layout`/`layoutId`, the general-purpose counterpart to
+  `AnimatedIndicator` — confirmed with a real e2e `boundingBox()` width
+  comparison before/after, not just a text-content check.
+- Full gate: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+  (299/299), `pnpm build`, Storybook build, `npx playwright test`
+  (241/241, run twice). **VERIFIED**.
+
 ### NotificationPanel added — Family E at 7/11 (2026-11-18)
 
 - Added `NotificationPanel`: a persistent notification list in a

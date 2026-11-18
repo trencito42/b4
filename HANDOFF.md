@@ -479,7 +479,13 @@ outside-month days, now NotificationPanel's timestamps) — grep
 catch it. This has now cost 4 separate rebuild+retest cycles across
 the session for the exact same category of mistake.
 
-## Next action: Family E's remaining 4 (MorphingSurface, ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
+## Update (2026-11-18): MorphingSurface — Family E at 8/11
+
+Added `MorphingSurface`: real FLIP-based morph via Motion's `layout`/
+`layoutId`, the general-purpose counterpart to `AnimatedIndicator`. No
+new gotchas — clean first-run pass.
+
+## Next action: Family E's remaining 3 (ExpandingAction, TransitionGroup, LoadingOverlay), then Families D/F
 
 Family E is already 3/11 (`TextTransition`/`NumberTransition`/
 `AnimatedIndicator` from Phase 1) — natural next stop, since `Toast`/

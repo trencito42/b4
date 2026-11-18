@@ -174,3 +174,6 @@ export type { InlineAlertProps, InlineAlertTone } from "./components/InlineAlert
 
 export { NotificationPanel } from "./components/NotificationPanel/NotificationPanel.js";
 export type { NotificationPanelProps, NotificationItem } from "./components/NotificationPanel/NotificationPanel.js";
+
+export { MorphingSurface } from "./components/MorphingSurface/MorphingSurface.js";
+export type { MorphingSurfaceProps } from "./components/MorphingSurface/MorphingSurface.js";

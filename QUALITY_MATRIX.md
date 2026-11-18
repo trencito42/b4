@@ -952,6 +952,25 @@ Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
 (295/295), `pnpm build`, Storybook build, `npx playwright test`
 (237/237, run twice for stability).
 
+## MorphingSurface — Family E (2026-11-18)
+
+**VERIFIED.** A real FLIP-based morph (Motion's `layout`/`layoutId`
+projection measuring real size/position before and after a re-render
+and animating the visual difference), not a fade/crossfade standing in
+for one — confirmed with a real e2e assertion comparing
+`boundingBox().width` before and after a click, not just checking that
+text changed. The general-purpose counterpart to `AnimatedIndicator`:
+that one is a decorative indicator traveling behind other content;
+this one is the content surface itself morphing, including across two
+different mount points via a shared `layoutId` (e.g. a list item
+expanding into a detail panel elsewhere in the tree). No CSS file —
+purely behavioral, like `AnimatedIndicator`, styled entirely by the
+consumer's own `className`/`style`.
+
+Verified: `pnpm typecheck` (4/4), `pnpm --filter @b4/react run test`
+(299/299), `pnpm build`, Storybook build, `npx playwright test`
+(241/241, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

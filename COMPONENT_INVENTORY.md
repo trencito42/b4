@@ -86,7 +86,7 @@ brief's "specialized components" note.
 | InlineAlert | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | NotificationPanel | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Spinner | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| MorphingSurface | PLANNED |
+| MorphingSurface | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ExpandingAction | PLANNED |
 | TransitionGroup | PLANNED |
 | LoadingOverlay | PLANNED |

@@ -1,5 +1,17 @@
 # B4 — Progress
 
+## MorphingSurface — Family E (2026-11-18)
+
+Real FLIP-based morph (Motion's `layout`/`layoutId` projection), the
+general-purpose counterpart to `AnimatedIndicator` — that one is a
+decorative indicator; this one is the content surface itself morphing,
+including across two different mount points via a shared `layoutId`.
+Confirmed with a real e2e `boundingBox()` width comparison, not just a
+text-content check. No CSS file, purely behavioral like
+`AnimatedIndicator`. Full gate: typecheck 4/4, @b4/react tests
+299/299, build, Storybook build, playwright 241/241 (run twice).
+**VERIFIED**.
+
 ## NotificationPanel — Family E (2026-11-18)
 
 Persistent notification list in a popover, built on the existing
