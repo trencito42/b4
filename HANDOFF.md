@@ -1,29 +1,69 @@
 # HANDOFF — read this first on any resume
 
-## Current state (2026-11-19) — Phases 6–8 complete in-repo
+## Mission status — **COMPLETE in-repo** (prompt phases 0–8, 2026-11-19)
 
-Branch `main`. Families A–F: **83/83 VERIFIED**. Studio Vite app (`pnpm
-dev:studio` → 5173), Storybook (6106), Phase 7 audit (`PHASE7_AUDIT.md`),
-Phase 8 packaging smokes + CI, Studio e2e, and visual-regression baselines
-are all in place.
+The B4 mission brief is fulfilled in this repository. **Not published to npm**
+without explicit user authorization and a confirmed package scope.
 
-**Only open mission item:** `npm publish` under the real scope — **requires
-explicit user authorization** (`RELEASE_CHECKLIST.md`).
+### Project identity
 
-**Latest gate:** `pnpm release:verify`, then `npx playwright test`
-**368/368** (run twice, stable on 2026-11-19). Playwright starts Storybook
-`:6106` and Studio `vite preview` `:5173` (rebuild `apps/studio` before
-preview if Studio UI changed).
+B4 — commercial-grade React design system, Graphite + Porcelain, 83 public
+components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 
-**Gotcha:** do not animate `color` on token-driven components when Studio
-changes `data-b4-theme` — axe catches mid-transition contrast failures
-(`SegmentedControl`, `Link` fixed).
+### Current Git state
 
-`pnpm` is not on this machine's PATH. Use `npm exec --yes pnpm@12.21.0`
-or `node_modules\.bin`. Playwright's `webServer` command calls `pnpm`
-and fails until a Storybook server is already on port 6106
-(`apps/studio/node_modules/.bin/storybook.cmd dev -p 6106 --ci`);
-`reuseExistingServer` then skips the command.
+| Item | Value |
+|---|---|
+| Branch | `main` |
+| Latest checkpoint | `93ad0ac` — Phase 7–8 (smokes, Studio e2e, visual baselines) |
+| Prior checkpoints | `13eabb0` Phase 6 Studio; `14b2894` Family F close |
+| Uncommitted | none expected after mission-close doc commit |
+
+### Completed work (prompt §10)
+
+Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
+**VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
+
+### Current task
+
+**None** — resume only for publish, consumer-specific integration, or new
+scope.
+
+### Next actions (ordered)
+
+1. **Optional:** `git push origin main` if local branch is ahead of remote.
+2. **Publish (blocked):** confirm real npm scope → user authorizes →
+   `pnpm publish --dry-run` per `RELEASE_CHECKLIST.md`.
+
+### Files to inspect on resume
+
+`PROGRESS.md`, `COMPONENT_INVENTORY.md`, `RELEASE_CHECKLIST.md`,
+`apps/studio/src/studio/StudioApp.tsx`, `playwright.config.ts`.
+
+### Verification (evidence 2026-11-19)
+
+```
+npm exec --yes pnpm@12.21.0 run release:verify
+npx playwright test                         # 368 tests; run twice on milestones
+```
+
+Playwright `webServer`: Storybook `:6106` + Studio `vite preview` `:5173`.
+Rebuild `apps/studio` before preview if Studio UI changed.
+
+### Known issues / constraints
+
+- Do **not** animate `color` on token-driven controls when Studio swaps
+  `data-b4-theme` (axe mid-transition) — fixed on `SegmentedControl`, `Link`.
+- `pnpm` may be absent from PATH on Windows — use `npm exec --yes pnpm@12.21.0`
+  or `node_modules\.bin`.
+- No Blipmade imports anywhere (hard rule).
+- `references/` has no third-party screenshots — see `references/README.md`.
+
+### Environment note
+
+If Playwright cannot start `webServer`, run Storybook manually on `:6106`
+(`apps/studio/node_modules/.bin/storybook.cmd dev -p 6106 --ci`); config uses
+`reuseExistingServer` when not in CI.
 
 ## THE BLOCKING GATE BELOW IS CLOSED (2026-11-17, later same day — read this first)
 
@@ -1343,32 +1383,8 @@ way the permission classifier accepts; a future session should just
 retry the normal `git push` once asked, and if denied again, report it
 rather than looking for a workaround.
 
-## Known gaps to eventually close (not blockers, just don't forget)
+## Historical archive
 
-- No CI workflow yet (`RELEASE_CHECKLIST.md`).
-- No visual regression testing yet.
-- The Porcelain-theme axe check for Button only exists as a manual WCAG
-  calculation, not a Playwright run with the theme toolbar switched —
-  see `QUALITY_MATRIX.md`'s "known gaps."
-- `apps/studio`'s Vite app shell is a one-screen placeholder, not the real
-  B4 Studio (nav, category browser, configurator, 3 integration
-  showcases) — that's explicitly Phase 6, not a Phase 0 shortfall.
-
-
-## Git checkpoint
-
-User committed and pushed the preceding Slider batch: local main and
-origin/main both point to cae1a5c (Phase 2: Slider checkpoint). Working tree
-was clean at the start of Select work. Direct remote verification was blocked
-by DNS. Earlier Git writes failed because .git is read-only in this session.
-New Select work is local until a new commit succeeds; never imply it was pushed.
-
-Select commit/push attempt also failed at git add: cannot create .git/index.lock
-(Permission denied). No Select commit was created; all changes remain local.
-
-Final checkpoint evidence: React 119/119, motion 5/5, typecheck, package and
-Storybook builds passed. Focused ESLint and e2e TypeScript checks passed.
-Slider/Select/Combobox public imports and server rendering from the Studio
-consumer passed. No clean external-install check is claimed. git add failed
-again on .git/index.lock (Permission denied), so all corrections, Select and
-Combobox remain local. User authorization to commit/push already exists.
+Content above this marker (except the operational header) is a chronological
+implementation log from earlier checkpoints. Trust **only** the header and
+`PROGRESS.md` / `QUALITY_MATRIX.md` for current mission state.

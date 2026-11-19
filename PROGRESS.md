@@ -1,5 +1,8 @@
 # B4 — Progress
 
+**Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
+the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
+
 ## Phase 7 & 8 — Audit, packaging, Studio e2e, visual baselines (2026-11-19)
 
 - **Phase 7** horizontal audit recorded in `PHASE7_AUDIT.md` (token/CSS spot
@@ -33,8 +36,8 @@ Built the real `apps/studio` product shell (replacing the Phase 0 placeholder):
   (`.github/workflows/ci.yml`).
 - Verified: `tsc` on `@b4/studio`, `vite build` clean.
 
-Storybook remains the per-component API surface. Phase 7 audit and Phase 8
-packaging are still open — see phase table below.
+Storybook remains the per-component API surface. Phases 7–8 closed 2026-11-19
+(see phase table below).
 
 ## FileExplorer and QueryEditor — Family F complete, 10/10 (2026-11-19)
 
@@ -53,10 +56,8 @@ After setting a 40rem editor measure so lines are not clipped, the
 FileExplorer and QueryEditor specs were re-run. Both themes were
 inspected from browser screenshots.
 
-Studio (`apps/studio/src/App.tsx`) is still the Phase 0 placeholder.
-Phase 6 (configurator and the three integration showcases) is the
-remaining product work. No CI workflow and no visual-regression suite
-yet.
+Studio lives at `apps/studio/src/studio/StudioApp.tsx` (Phase 6 shipped).
+CI, Studio e2e, and visual baselines shipped in Phase 7–8.
 
 ## ResourceMeter — Family F's 8th component (2026-11-19)
 
@@ -615,8 +616,8 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 4 — Family D | **DONE** | All 15/15 components VERIFIED (Progress, CircularProgress, Skeleton, Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline, ActivityFeed, CodeBlock, ChartContainer, DataTable, DataGrid, Calendar). See QUALITY_MATRIX.md. |
 | 5 — Family E/F advanced + specialized components | **DONE** | Family E 11/11, Family F 10/10 VERIFIED. |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | **DONE** (2026-11-19) | Vite Studio app + CI workflow. Storybook unchanged as component reference. |
-| 7 — Independent audit against quality gate | NOT STARTED | |
-| 8 — Packaging/release readiness | NOT STARTED | See `RELEASE_CHECKLIST.md`. |
+| 7 — Independent audit against quality gate | **DONE** (2026-11-19) | `PHASE7_AUDIT.md`; inventory 83/83 unchanged. |
+| 8 — Packaging/release readiness | **DONE in-repo** (2026-11-19) | `release:verify`, smokes, CI, LICENSE, examples — **publish blocked** until user OK (`RELEASE_CHECKLIST.md`). |
 
 ## What Phase 0 actually did
 

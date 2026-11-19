@@ -51,7 +51,8 @@ rationale.
 | `QUALITY_MATRIX.md` | Per-component quality-gate status with evidence. |
 | `PROGRESS.md` | Phase-by-phase status; read on every resume. |
 | `TESTING.md` | How to actually verify a component. |
-| `RELEASE_CHECKLIST.md` | What's needed before any publish (not done). |
+| `RELEASE_CHECKLIST.md` | Packaging proofs + what's needed before npm publish. |
+| `PHASE7_AUDIT.md` | Phase 7 horizontal quality audit record. |
 | `CHANGELOG.md` | Real repo milestones. |
 | `HANDOFF.md` | Next actions and non-obvious gotchas; read on every resume. |
 | `AGENTS.md` | How a coding agent should work in this repo. |

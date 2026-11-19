@@ -86,9 +86,19 @@ npx playwright install chromium   # once per machine
 npx playwright test
 ```
 
+## Release gate (Phases 7–8)
+
+```bash
+pnpm release:verify    # typecheck, build, unit tests, Storybook build, smokes
+npx playwright test    # full suite incl. Studio + visual baselines (run twice on milestones)
+```
+
+CI runs the same checks on push/PR (`.github/workflows/ci.yml`).
+
 ## Known gaps (tracked, not hidden)
 
-- No visual regression testing yet (`playwright.toHaveScreenshot`).
-- No CI workflow file yet — all verification above is run locally by hand.
-  Setting up GitHub Actions (or equivalent) to run this on every push is
-  Phase 8 scope, tracked in `RELEASE_CHECKLIST.md`.
+- **npm publish** — proofs done; scope + explicit user authorization still
+  required (`RELEASE_CHECKLIST.md`).
+- **`references/`** — no third-party reference screenshots committed
+  (licensing/size); art direction is specified in `ART_DIRECTION.md` and
+  visual baselines live under `e2e/visual-regression.spec.ts-snapshots/`.
