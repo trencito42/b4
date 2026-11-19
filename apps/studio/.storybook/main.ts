@@ -10,6 +10,18 @@ const config: StorybookConfig = {
   docs: {
     defaultName: "Docs",
   },
+  core: {
+    disableTelemetry: true,
+  },
+  async viteFinal(viteConfig) {
+    viteConfig.server = {
+      ...viteConfig.server,
+      host: true,
+      strictPort: true,
+      allowedHosts: true,
+    };
+    return viteConfig;
+  },
 };
 
 export default config;

@@ -34,6 +34,10 @@ pnpm storybook        # interactive component docs, http://localhost:6106
 pnpm dev:studio        # B4 Studio app, http://localhost:5173
 ```
 
+**Phone on the same Wi‑Fi:** run `powershell -File scripts/dev-lan.ps1` (Admin once if
+Windows Firewall blocks), then open the printed `http://192.168.x.x:5173` and
+`:6106` URLs on the device.
+
 See `TESTING.md` for the full verification sequence (typecheck, unit
 tests, Playwright + axe) and `ARCHITECTURE.md` for the version/tooling
 rationale.
