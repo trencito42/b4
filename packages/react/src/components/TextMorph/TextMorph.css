@@ -1,16 +1,64 @@
-.b4-text-morph {
-  position: relative;
-  display: inline-flex;
-}
+/**
+ * B4 TextMorph — CSS
+ *
+ * Provides inline baseline-aligned layout for text morphing, maintaining
+ * whitespace, font kerning, and absolute overlay positioning for exiting segments.
+ */
 
-.b4-text-morph__visible {
-  display: inline-flex;
-  flex-wrap: wrap;
+.b4-text-morph {
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline;
+  white-space: pre-wrap;
+  line-height: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  box-sizing: border-box;
 }
 
 .b4-text-morph__token {
   display: inline-block;
   white-space: pre;
+  vertical-align: baseline;
+  line-height: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  will-change: transform, opacity, filter;
+}
+
+.b4-text-morph__token--space {
+  display: inline-block;
+  white-space: pre;
+}
+
+.b4-text-morph__exiting-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.b4-text-morph__exiting-token {
+  position: absolute;
+  display: inline-block;
+  white-space: pre;
+  vertical-align: baseline;
+  line-height: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  pointer-events: none;
   will-change: transform, opacity, filter;
 }
 
@@ -18,7 +66,10 @@
   position: absolute;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+  border-width: 0;
 }

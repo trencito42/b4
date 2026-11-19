@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { TextTransition } from "../TextTransition/TextTransition.js";
+import { TextMorph } from "../TextMorph/TextMorph.js";
 
 export interface NumberTransitionProps {
   /** The numeric value to display. */
@@ -10,6 +11,12 @@ export interface NumberTransitionProps {
    * percentages, fixed decimals, etc.
    */
   format?: (value: number) => string;
+  /**
+   * Transition mode:
+   * - "vertical" (default): slides digits vertically based on increase/decrease direction
+   * - "digits" / "morph": digit-aware text morphing using place-value continuity
+   */
+  mode?: "vertical" | "digits" | "morph";
   className?: string;
 }
 
@@ -26,15 +33,19 @@ const defaultFormatter = new Intl.NumberFormat(undefined);
 export function NumberTransition({
   value,
   format = (n) => defaultFormatter.format(n),
+  mode = "vertical",
   className,
 }: NumberTransitionProps) {
-  // Mutating a ref during render to diff against the previous value is a
-  // known simplification — it's correct for the normal render path but not
-  // guaranteed under React's StrictMode double-render (the direction could
-  // theoretically read a ref already advanced by a discarded render pass).
-  // Acceptable here because a wrong *direction* only affects which way the
-  // digits slide, never correctness of the displayed value. Revisit with
-  // useSyncExternalStore or a reducer if this ever needs to be exact.
+  if (mode === "digits" || mode === "morph") {
+    return (
+      <TextMorph
+        value={format(value)}
+        mode="numbers"
+        className={["b4-number-transition", className ?? ""].filter(Boolean).join(" ")}
+      />
+    );
+  }
+
   const previousValue = useRef(value);
   const direction = value >= previousValue.current ? "forward" : "backward";
   previousValue.current = value;

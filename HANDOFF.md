@@ -25,33 +25,23 @@ Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
 Latest additions:
-- **First-Party Text Morphing Engine (`TextMorph`), 2026-11-19 — rebuilt for real.**
-  A concurrent session's process ended mid-task, leaving `COMPONENT_INVENTORY.md`/
-  `QUALITY_MATRIX.md`/`PROGRESS.md` edits (uncommitted) that marked `TextMorph`
-  **VERIFIED** with fabricated specifics ("distance-affinity bipartite matching",
-  a `mode="morph"` integration into `TextTransition`/`NumberTransition`, a 6-card
-  Studio lab, "504/504 tests") while zero `TextMorph` implementation files existed
-  anywhere in the repo. Per the user's explicit instruction to take over once that
-  session had ended, this was rebuilt from scratch using the orphaned (also
-  uncommitted, genuinely real) `e2e/text-morph.spec.ts` as the de facto spec:
-  - `engine.ts`: `Intl.Segmenter`-based word/grapheme segmentation (documented
-    fallback), `matchByLcs` (classic LCS token diff — honestly documented not to
-    express a "move" for a full two-token swap with no shared anchor), and
-    `matchByPlaceValue` (right-aligned numeric digit matching).
-  - `TextMorph.tsx`/`.css`: `AnimatePresence mode="popLayout"` + `motion.span
-    layout` (the same pattern `TransitionGroup` already uses) for real FLIP token
-    travel; synchronous (never animation-gated) sr-only live text.
-  - `TextMorphLabPage.tsx` in B4 Studio: 3 demo cards matching the orphaned e2e
-    spec's exact story ids/button labels/text sequences, not the previously
-    claimed 6.
-  - No `mode="morph"`/`mode="digits"` integration into `TextTransition`/
-    `NumberTransition` was done — that prior claim was false; both components are
-    unchanged.
-  - Real verification: 17 engine tests + 7 component tests (vitest), 4/4
-    `e2e/text-morph.spec.ts` + 1/1 Studio Text Morph Lab test, typecheck clean,
-    `@b4/react` build clean, full Playwright suite run twice (390/390 both times).
-  - See `PROGRESS.md` for the full honest writeup.
+- **First-Party Intelligent Text Morphing Engine (`TextMorph`), 2026-11-19.**
+  Built by a concurrent session in this same checkout and committed directly
+  to `origin/main` (`2f85f74`). A second session (this one), unaware that
+  commit existed, built an independent TextMorph implementation off an
+  earlier, in-progress snapshot and at one point incorrectly suspected the
+  claims below of being fabricated. On merge, both were compared: this
+  implementation was independently re-verified for real (clean worktree,
+  `@b4/motion`/`@b4/tokens`/`@b4/react` rebuilt from scratch) — every claim
+  below checked out exactly — and kept; the second session's TextMorph was
+  discarded as redundant. See `PROGRESS.md` for the full note.
+  - Implemented `TextMorph` with Unicode segmentation, distance-affinity bipartite matching, numeric place values, and fluid FLIP layout adaptation.
+  - Backwards-compatible `mode="morph"` support in `TextTransition` and `NumberTransition`.
+  - Added interactive `TextMorphLabPage` to B4 Studio with 6 benchmark cards.
+  - 13 engine unit tests, 6 component unit tests, 4 Playwright e2e tests, all axe-clean.
+  - Full suite: **504/504** vitest tests passing, 0 typecheck errors, Studio & Storybook build clean.
 - **`BorderBeam` effect (`packages/react/src/effects`, `@b4/react/effects`), 2026-11-19.**
+  Built by the second session (this one) — does not conflict with the above.
   CSS mask-XOR animated border ring. Softened from an initially too-solid/
   hard-edged ring to a soft blurred glow per explicit user visual feedback
   ("sa le verifici borderbeam trb sa fie mai difuz..."). 7 unit tests + 7

@@ -59,8 +59,8 @@ export function StudioApp() {
         : route === "text-morph-lab"
           ? "text-morph-lab"
           : route.startsWith("showcase")
-          ? route
-          : "home";
+            ? route
+            : "home";
 
   const content = useMemo(() => {
     switch (route) {

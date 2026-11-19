@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { ReactNode } from "react";
 import { springs, tween, useReducedMotion } from "@b4/motion";
+import { TextMorph } from "../TextMorph/TextMorph.js";
 
-export type TextTransitionMode = "crossfade" | "vertical" | "horizontal";
+export type TextTransitionMode = "crossfade" | "vertical" | "horizontal" | "morph";
 export type TextTransitionDirection = "forward" | "backward";
 
 export interface TextTransitionProps {
@@ -83,6 +84,15 @@ export function TextTransition({
   className,
   children,
 }: TextTransitionProps) {
+  if (mode === "morph") {
+    return (
+      <TextMorph
+        value={value}
+        className={["b4-text-transition", className ?? ""].filter(Boolean).join(" ")}
+      />
+    );
+  }
+
   const reducedMotion = useReducedMotion();
   const variants = getVariants(mode, direction);
   const transition = reducedMotion

@@ -96,7 +96,7 @@ DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 |---|---|
 | TextTransition | **VERIFIED** |
 | NumberTransition | **VERIFIED** |
-| TextMorph | **VERIFIED** (first-party intelligent text morphing: LCS-based word/grapheme token matching, right-aligned place-value digit matching, Motion `layout`/FLIP token travel, Studio lab — see QUALITY_MATRIX.md for the real evidence this time) |
+| TextMorph | **VERIFIED** (first-party intelligent text morphing engine with distance-affinity bipartite matching, numeric place values, FLIP spatial continuity, and Studio lab) |
 | AnimatedIndicator | **VERIFIED** (incl. span-as-root support added for RadioGroup) |
 | Toast | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | InlineAlert | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |

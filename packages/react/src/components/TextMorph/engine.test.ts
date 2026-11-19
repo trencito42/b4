@@ -1,127 +1,197 @@
-import { describe, expect, it } from "vitest";
-import { segment, segmentFallback, matchByLcs, matchByPlaceValue, looksNumeric } from "./engine";
+import { describe, it, expect } from "vitest";
+import {
+  tokenizeText,
+  diffTokens,
+  segmentGraphemes,
+  segmentWords,
+  segmentNumeric,
+  isNumericString,
+} from "./engine.js";
 
-describe("segment", () => {
-  it("splits words, keeping whitespace as its own token", () => {
-    expect(segment("Write report", "word")).toEqual(["Write", " ", "report"]);
+describe("TextMorph Engine", () => {
+  describe("segmentGraphemes", () => {
+    it("preserves compound emoji as single graphemes", () => {
+      // Family emoji with zero-width joiners
+      const family = "👨‍👩‍👧‍👦";
+      const segs = segmentGraphemes(family);
+      expect(segs).toHaveLength(1);
+      expect(segs[0]).toBe(family);
+    });
+
+    it("preserves skin tone modifiers as single graphemes", () => {
+      const thumbsUp = "👍🏽";
+      const segs = segmentGraphemes(thumbsUp);
+      expect(segs).toHaveLength(1);
+      expect(segs[0]).toBe(thumbsUp);
+    });
+
+    it("preserves Romanian diacritics and accented characters", () => {
+      const text = "Bună dimineața și mulțumesc";
+      const segs = segmentGraphemes(text);
+      expect(segs.join("")).toBe(text);
+      expect(segs.includes("ă")).toBe(true);
+      expect(segs.includes("ț")).toBe(true);
+      expect(segs.includes("ș")).toBe(true);
+    });
   });
 
-  it("splits grapheme clusters, including a real emoji as one token", () => {
-    const result = segment("Hi👍", "grapheme");
-    expect(result).toEqual(["H", "i", "👍"]);
+  describe("segmentWords", () => {
+    it("distinguishes words, spaces, and punctuation", () => {
+      const words = segmentWords("Save changes, now!");
+      expect(words).toEqual([
+        { text: "Save", type: "word" },
+        { text: " ", type: "whitespace" },
+        { text: "changes", type: "word" },
+        { text: ",", type: "punctuation" },
+        { text: " ", type: "whitespace" },
+        { text: "now", type: "word" },
+        { text: "!", type: "punctuation" },
+      ]);
+    });
   });
 
-  it("keeps Romanian diacritics as single precomposed graphemes", () => {
-    expect(segment("Bună", "grapheme")).toEqual(["B", "u", "n", "ă"]);
-  });
-});
+  describe("segmentNumeric & place values", () => {
+    it("identifies numeric strings correctly", () => {
+      expect(isNumericString("1204")).toBe(true);
+      expect(isNumericString("$99.95")).toBe(true);
+      expect(isNumericString("-12.5%")).toBe(true);
+      expect(isNumericString("45 MB/s")).toBe(true);
+      expect(isNumericString("Server deployed")).toBe(false);
+    });
 
-describe("segmentFallback", () => {
-  it("still handles astral/surrogate-pair characters as one token each", () => {
-    expect(segmentFallback("Hi👍", "grapheme")).toEqual(["H", "i", "👍"]);
-  });
+    it("assigns right-to-left place values to integer digits", () => {
+      const tokens = segmentNumeric("1204");
+      const digits = tokens.filter((t) => t.type === "digit");
+      expect(digits).toHaveLength(4);
+      // '1' is thousands (place 3), '2' is hundreds (place 2), '0' is tens (place 1), '4' is units (place 0)
+      expect(digits[0]!.text).toBe("1");
+      expect(digits[0]!.numericPlace).toBe(3);
+      expect(digits[1]!.text).toBe("2");
+      expect(digits[1]!.numericPlace).toBe(2);
+      expect(digits[2]!.text).toBe("0");
+      expect(digits[2]!.numericPlace).toBe(1);
+      expect(digits[3]!.text).toBe("4");
+      expect(digits[3]!.numericPlace).toBe(0);
+    });
 
-  it("splits words and keeps whitespace tokens", () => {
-    expect(segmentFallback("cat and dog", "word")).toEqual(["cat", " ", "and", " ", "dog"]);
-  });
-});
+    it("assigns negative place values to fraction digits", () => {
+      const tokens = segmentNumeric("$99.50");
+      const prefix = tokens.find((t) => t.type === "symbol");
+      expect(prefix?.text).toBe("$");
 
-describe("looksNumeric", () => {
-  it("accepts currency, percentages and thousands separators", () => {
-    expect(looksNumeric("$98,204")).toBe(true);
-    expect(looksNumeric("18.7%")).toBe(true);
-    expect(looksNumeric("-12.5")).toBe(true);
-  });
-
-  it("rejects ordinary text and version-like strings with letters", () => {
-    expect(looksNumeric("Write report")).toBe(false);
-    expect(looksNumeric("v1.2.3-beta")).toBe(false);
-  });
-});
-
-describe("matchByLcs", () => {
-  it("marks every token persistent when nothing changed", () => {
-    const result = matchByLcs(["cat", " ", "and", " ", "dog"], ["cat", " ", "and", " ", "dog"]);
-    expect(result.every((t) => t.kind === "persistent")).toBe(true);
-  });
-
-  it("keeps the unmoved middle token persistent in a full two-word swap", () => {
-    const result = matchByLcs(["cat", " ", "and", " ", "dog"], ["dog", " ", "and", " ", "cat"]);
-    const persistentTexts = result.filter((t) => t.kind === "persistent").map((t) => t.text);
-    // "and" and its surrounding spaces never moved relative to each
-    // other, so LCS keeps all three persistent. A full swap of the
-    // *first and last* tokens, though, is a known, honest limitation
-    // of plain LCS diffing (shared with Git diffs, Myers diff, and
-    // React's own key-based list reconciliation): LCS can only express
-    // insert/delete, never "move", so when two tokens trade places
-    // with nothing in between to anchor a direction, both genuinely
-    // exit and re-enter rather than animating a swap — see the
-    // `matchByLcs` doc comment.
-    expect(persistentTexts).toEqual([" ", "and", " "]);
-    expect(result.filter((t) => t.kind === "exiting").map((t) => t.text)).toEqual(["cat", "dog"]);
-    expect(result.filter((t) => t.kind === "entering").map((t) => t.text)).toEqual(["dog", "cat"]);
+      const digits = tokens.filter((t) => t.type === "digit");
+      expect(digits).toHaveLength(4);
+      // 9, 9 are places 1, 0
+      expect(digits[0]!.numericPlace).toBe(1);
+      expect(digits[1]!.numericPlace).toBe(0);
+      // 5, 0 are places -1, -2
+      expect(digits[2]!.numericPlace).toBe(-1);
+      expect(digits[3]!.numericPlace).toBe(-2);
+    });
   });
 
-  it("keeps duplicate tokens as distinct, independently tracked instances", () => {
-    const result = matchByLcs(["cat", " ", "and", " ", "cat"], ["cat", " ", "and", " ", "cat", "!"]);
-    const persistent = result.filter((t) => t.kind === "persistent");
-    expect(persistent).toHaveLength(5);
-    // Both "cat" instances matched to *different* prior occurrences,
-    // not both collapsed onto the first "cat".
-    const catMatches = persistent.filter((t) => t.text === "cat");
-    const prevIndices = catMatches.map((t) => (t.kind === "persistent" ? t.prevIndex : -1));
-    expect(new Set(prevIndices).size).toBe(2);
-  });
+  describe("diffTokens", () => {
+    it("matches identical words and identifies entering/exiting", () => {
+      const oldTokens = tokenizeText("Write report", "words");
+      const newTokens = tokenizeText("Review report", "words");
+      const diff = diffTokens(oldTokens, newTokens);
 
-  it("handles insertions and deletions", () => {
-    const result = matchByLcs(["Write", " ", "report"], ["Review", " ", "report"]);
-    expect(result.some((t) => t.kind === "exiting" && t.text === "Write")).toBe(true);
-    expect(result.some((t) => t.kind === "entering" && t.text === "Review")).toBe(true);
-    expect(result.some((t) => t.kind === "persistent" && t.text === " ")).toBe(true);
-    expect(result.some((t) => t.kind === "persistent" && t.text === "report")).toBe(true);
-  });
+      // "report" and " " should match
+      const matchedNew = diff.newTokens.filter((t) => diff.matches.has(t.id));
+      expect(matchedNew.map((t) => t.text)).toEqual([" ", "report"]);
 
-  it("handles empty-to-text and text-to-empty", () => {
-    const toEmpty = matchByLcs(["hi"], []);
-    expect(toEmpty.every((t) => t.kind === "exiting")).toBe(true);
-    const fromEmpty = matchByLcs([], ["hi"]);
-    expect(fromEmpty.every((t) => t.kind === "entering")).toBe(true);
-  });
-});
+      // "Write" is exiting
+      expect(diff.exitingTokens.map((t) => t.text)).toEqual(["Write"]);
 
-describe("matchByPlaceValue", () => {
-  it("keeps unchanged low-order digits persistent, e.g. 1204 -> 1318 shares no digit by position but matches by value where it genuinely repeats", () => {
-    const result = matchByPlaceValue("99", "100");
-    // 99 -> 100: ones place 9->0 changes, tens place 9->0 changes, a
-    // new hundreds-place "1" enters — nothing is wrongly treated as
-    // "the whole number replaced".
-    const entering = result.filter((t) => t.kind === "entering").map((t) => t.text);
-    expect(entering).toContain("1");
-  });
+      // "Review" is entering
+      const entering = diff.newTokens.filter((t) => !diff.matches.has(t.id));
+      expect(entering.map((t) => t.text)).toEqual(["Review"]);
+    });
 
-  it("preserves an unchanged currency symbol and thousands separator", () => {
-    const result = matchByPlaceValue("$98,204", "$99,204");
-    const persistentTexts = result.filter((t) => t.kind === "persistent").map((t) => t.text);
-    expect(persistentTexts).toContain("$");
-    expect(persistentTexts).toContain(",");
-    expect(persistentTexts.filter((t) => t === "2" || t === "0" || t === "4")).toHaveLength(3);
-  });
+    it("supports word swapping with spatial continuity", () => {
+      const oldTokens = tokenizeText("cat and dog", "words");
+      const newTokens = tokenizeText("dog and cat", "words");
+      const diff = diffTokens(oldTokens, newTokens);
 
-  it("only changes the ones digit when going from 0 to 1000 at the low end, and enters new high-order digits", () => {
-    const result = matchByPlaceValue("0", "1000");
-    const entering = result.filter((t) => t.kind === "entering").map((t) => t.text);
-    expect(entering).toEqual(["1", "0", "0"]);
-  });
+      // Every token has a match
+      expect(diff.exitingTokens).toHaveLength(0);
+      expect(diff.matches.size).toBe(5);
 
-  it("handles negative-to-positive decimal transitions", () => {
-    const result = matchByPlaceValue("-12.5", "18.7");
-    expect(result.some((t) => t.kind === "exiting" && t.text === "-")).toBe(true);
-    expect(result.some((t) => t.kind === "persistent" && t.text === ".")).toBe(true);
-  });
+      // "cat" in newTokens has the old "cat" id
+      const oldCat = oldTokens.find((t) => t.text === "cat");
+      const newCat = diff.newTokens.find((t) => t.text === "cat");
+      expect(newCat?.id).toBe(oldCat?.id);
 
-  it("keeps reading order left-to-right in its output", () => {
-    const result = matchByPlaceValue("200", "200");
-    const text = result.map((t) => t.text).join("");
-    expect(text).toBe("200");
+      // "dog" in newTokens has the old "dog" id
+      const oldDog = oldTokens.find((t) => t.text === "dog");
+      const newDog = diff.newTokens.find((t) => t.text === "dog");
+      expect(newDog?.id).toBe(oldDog?.id);
+    });
+
+    it("matches repeated words by relative proximity rather than jumping", () => {
+      const oldTokens = tokenizeText("the dog and the cat", "words");
+      const newTokens = tokenizeText("the cat and the dog", "words");
+      const diff = diffTokens(oldTokens, newTokens);
+
+      const oldThe1 = oldTokens[0];
+      const oldThe2 = oldTokens[6];
+
+      const newThe1 = diff.newTokens[0];
+      const newThe2 = diff.newTokens[6];
+
+      // First "the" matches first "the", second matches second
+      expect(newThe1?.id).toBe(oldThe1?.id);
+      expect(newThe2?.id).toBe(oldThe2?.id);
+    });
+
+    it("digit-aware matching aligns place values for counters (99 -> 100)", () => {
+      const oldTokens = tokenizeText("99", "numbers");
+      const newTokens = tokenizeText("100", "numbers");
+      const diff = diffTokens(oldTokens, newTokens);
+
+      // In 99: places 1 (tens), 0 (units)
+      // In 100: places 2 (hundreds), 1 (tens), 0 (units)
+      // Units '0' matches units '9' in-place
+      const oldUnits = oldTokens.find((t) => t.numericPlace === 0);
+      const newUnits = diff.newTokens.find((t) => t.numericPlace === 0);
+      expect(newUnits?.id).toBe(oldUnits?.id);
+
+      // Tens '0' matches tens '9' in-place
+      const oldTens = oldTokens.find((t) => t.numericPlace === 1);
+      const newTens = diff.newTokens.find((t) => t.numericPlace === 1);
+      expect(newTens?.id).toBe(oldTens?.id);
+
+      // Hundreds '1' is entering
+      const newHundreds = diff.newTokens.find((t) => t.numericPlace === 2);
+      expect(diff.matches.has(newHundreds!.id)).toBe(false);
+    });
+
+    it("preserves stationary digits and currency symbols ($1204 -> $1318)", () => {
+      const oldTokens = tokenizeText("$1204", "numbers");
+      const newTokens = tokenizeText("$1318", "numbers");
+      const diff = diffTokens(oldTokens, newTokens);
+
+      const oldDollar = oldTokens.find((t) => t.text === "$");
+      const newDollar = diff.newTokens.find((t) => t.text === "$");
+      expect(newDollar?.id).toBe(oldDollar?.id);
+
+      const oldThousands = oldTokens.find((t) => t.text === "1" && t.numericPlace === 3);
+      const newThousands = diff.newTokens.find((t) => t.text === "1" && t.numericPlace === 3);
+      expect(newThousands?.id).toBe(oldThousands?.id);
+    });
+
+    it("handles transition to and from empty text cleanly", () => {
+      const emptyTokens = tokenizeText("", "words");
+      const textTokens = tokenizeText("Hello", "words");
+
+      const diffEnter = diffTokens(emptyTokens, textTokens);
+      expect(diffEnter.exitingTokens).toHaveLength(0);
+      expect(diffEnter.newTokens).toHaveLength(1);
+
+      const diffExit = diffTokens(textTokens, emptyTokens);
+      expect(diffExit.newTokens).toHaveLength(0);
+      expect(diffExit.exitingTokens).toHaveLength(1);
+      expect(diffExit.exitingTokens[0]?.text).toBe("Hello");
+    });
   });
 });

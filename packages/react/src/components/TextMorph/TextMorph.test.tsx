@@ -1,49 +1,75 @@
-import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 import { axe } from "jest-axe";
-import { TextMorph } from "./TextMorph";
+import { TextMorph } from "./TextMorph.js";
 
-describe("TextMorph", () => {
-  it("renders the full value in a visually-hidden element for assistive tech", () => {
-    render(<TextMorph value="Write report" />);
-    expect(screen.getByText("Write report", { selector: ".b4-text-morph__sr-only" })).toBeInTheDocument();
+describe("TextMorph Component", () => {
+  it("renders the text and exposes accessible name for screen readers", () => {
+    render(<TextMorph value="Server deployed" />);
+    const el = screen.getByLabelText("Server deployed");
+    expect(el).toBeInTheDocument();
+    expect(el).toHaveClass("b4-text-morph");
+
+    // The screen-reader span should contain the full text
+    const srOnly = el.querySelector(".b4-text-morph__sr-only");
+    expect(srOnly).toHaveTextContent("Server deployed");
+
+    // Visual tokens have aria-hidden="true"
+    const tokens = el.querySelectorAll(".b4-text-morph__token");
+    expect(tokens.length).toBeGreaterThan(0);
+    tokens.forEach((t) => {
+      expect(t).toHaveAttribute("aria-hidden", "true");
+    });
   });
 
-  it("marks the animated token region aria-hidden so the value isn't announced twice", () => {
-    const { container } = render(<TextMorph value="Write report" />);
-    const visible = container.querySelector(".b4-text-morph__visible");
-    expect(visible).toHaveAttribute("aria-hidden", "true");
+  it("updates visual tokens when value changes", () => {
+    const { rerender } = render(<TextMorph value="Write report" mode="words" />);
+    expect(screen.getByLabelText("Write report")).toBeInTheDocument();
+
+    act(() => {
+      rerender(<TextMorph value="Review report" mode="words" />);
+    });
+
+    expect(screen.getByLabelText("Review report")).toBeInTheDocument();
+    const srOnly = document.querySelector(".b4-text-morph__sr-only");
+    expect(srOnly).toHaveTextContent("Review report");
   });
 
-  it("renders one token per word, including the surviving middle token on a word swap", () => {
-    const { container, rerender } = render(<TextMorph value="cat and dog" />);
-    const tokensBefore = within(container.querySelector(".b4-text-morph__visible")!).getAllByText(/./);
-    expect(tokensBefore.map((t) => t.textContent)).toContain("and");
+  it("supports character mode for fine-grained grapheme changes", () => {
+    const { rerender } = render(<TextMorph value="Save" mode="characters" />);
+    expect(screen.getByLabelText("Save")).toBeInTheDocument();
 
-    rerender(<TextMorph value="dog and cat" />);
-    expect(screen.getByText("dog and cat", { selector: ".b4-text-morph__sr-only" })).toBeInTheDocument();
+    act(() => {
+      rerender(<TextMorph value="Saved" mode="characters" />);
+    });
+
+    expect(screen.getByLabelText("Saved")).toBeInTheDocument();
   });
 
-  it("updates the sr-only text immediately on a numeric change", () => {
-    const { rerender } = render(<TextMorph value="$98,204" />);
-    expect(screen.getByText("$98,204", { selector: ".b4-text-morph__sr-only" })).toBeInTheDocument();
+  it("supports numeric place-value mode", () => {
+    const { rerender } = render(<TextMorph value="$1204" mode="numbers" />);
+    expect(screen.getByLabelText("$1204")).toBeInTheDocument();
 
-    rerender(<TextMorph value="$99,204" />);
-    expect(screen.getByText("$99,204", { selector: ".b4-text-morph__sr-only" })).toBeInTheDocument();
+    act(() => {
+      rerender(<TextMorph value="$1318" mode="numbers" />);
+    });
+
+    expect(screen.getByLabelText("$1318")).toBeInTheDocument();
   });
 
-  it("supports character-level morphing for diacritic-sensitive text", () => {
-    render(<TextMorph value="Bună dimineața!" mode="characters" locale="ro" />);
-    expect(screen.getByText("Bună dimineața!", { selector: ".b4-text-morph__sr-only" })).toBeInTheDocument();
+  it("renders with custom as tag (e.g. h2)", () => {
+    render(<TextMorph value="Title header" as="h2" />);
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveClass("b4-text-morph");
   });
 
-  it("applies a custom className to the root", () => {
-    const { container } = render(<TextMorph value="hi" className="custom-morph" />);
-    expect(container.querySelector(".b4-text-morph")).toHaveClass("custom-morph");
-  });
-
-  it("has no axe violations", async () => {
-    const { container } = render(<TextMorph value="Write report" />);
+  it("has no axe accessibility violations", async () => {
+    const { container } = render(
+      <div>
+        <TextMorph value="Active users: 1,420" />
+      </div>,
+    );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });

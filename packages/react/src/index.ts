@@ -17,6 +17,10 @@ export type {
   TextTransitionDirection,
 } from "./components/TextTransition/TextTransition.js";
 
+export { TextMorph } from "./components/TextMorph/TextMorph.js";
+export type { TextMorphProps } from "./components/TextMorph/TextMorph.js";
+export type { TextMorphMode, MorphToken, DiffResult } from "./components/TextMorph/engine.js";
+
 export { NumberTransition } from "./components/NumberTransition/NumberTransition.js";
 export type { NumberTransitionProps } from "./components/NumberTransition/NumberTransition.js";
 
@@ -191,9 +195,6 @@ export type {
 
 export { LoadingOverlay } from "./components/LoadingOverlay/LoadingOverlay.js";
 export type { LoadingOverlayProps } from "./components/LoadingOverlay/LoadingOverlay.js";
-
-export { TextMorph } from "./components/TextMorph/TextMorph.js";
-export type { TextMorphProps, TextMorphMode } from "./components/TextMorph/TextMorph.js";
 
 export { Progress } from "./components/Progress/Progress.js";
 export type { ProgressProps } from "./components/Progress/Progress.js";

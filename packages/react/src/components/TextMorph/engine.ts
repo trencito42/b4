@@ -1,198 +1,426 @@
 /**
- * TextMorph's pure text-matching engine — no React, no DOM, fully unit
- * testable in isolation. Two responsibilities:
+ * B4 First-Party Intelligent Text Morphing Engine
  *
- * 1. `segment()`: split a string into the tokens TextMorph treats as
- *    individually-animatable units — words or Unicode grapheme
- *    clusters (via `Intl.Segmenter`, with a documented fallback for
- *    environments that lack it — see `segmentFallback`).
- * 2. `matchByLcs`/`matchByPlaceValue`: given the previous and next
- *    token arrays, decide which tokens are the *same* token that
- *    moved (persistent), which are new (entering) and which
- *    disappeared (exiting) — the actual "matching" in text morphing.
- *    Two strategies:
- *      - `matchByLcs`: a classic longest-common-subsequence diff
- *        (same idea as a line-level text diff, applied to tokens).
- *        Handles insertion, deletion and substitution correctly, and
- *        because LCS only ever matches tokens in increasing original
- *        order, correctly keeps duplicate tokens ("the cat and the
- *        dog saw the cat") distinct instances rather than collapsing
- *        them into one. Honest limitation, shared with every plain
- *        LCS/Myers-style diff (Git diffs, React's own key-based list
- *        reconciliation): it can express insert/delete but not
- *        "move" — two tokens trading places with nothing between them
- *        to anchor a direction (e.g. the very first and last word of
- *        a sentence swapping, with no shared middle) both genuinely
- *        exit and re-enter rather than animating as a swap. A token
- *        with stable neighbors on at least one side (the common case)
- *        is correctly tracked as persistent and simply moves.
- *      - `matchByPlaceValue`: right-aligned positional matching for
- *        numeric strings, so unchanged low-order digits stay put and
- *        only the digits that actually changed (plus any newly
- *        appeared higher-order digit, e.g. 99 → 100) animate — digit
- *        identity by *place value*, not by character index from the
- *        left, which would misalign as soon as the digit count changes.
+ * Implements locale-aware text tokenization, Unicode grapheme segmentation,
+ * digit-place-value parsing, and distance-affinity diffing for seamless
+ * spatial text transformations.
  */
 
-export interface Token {
-  id: string;
+export type TextMorphMode = "auto" | "words" | "characters" | "numbers";
+
+export type TokenType =
+  | "word"
+  | "whitespace"
+  | "punctuation"
+  | "digit"
+  | "symbol"
+  | "grapheme";
+
+export interface MorphToken {
+  /** The text slice represented by this token */
   text: string;
+  /** Syntactic or semantic type of token */
+  type: TokenType;
+  /** Index in original source string */
+  index: number;
+  /**
+   * For numeric digits: the 10^n place value relative to decimal point.
+   * e.g. for "123.45":
+   * '3' has place 0 (units)
+   * '2' has place 1 (tens)
+   * '1' has place 2 (hundreds)
+   * '4' has place -1 (tenths)
+   * '5' has place -2 (hundredths)
+   */
+  numericPlace?: number;
+  /** Unique persistent identity assigned during diffing */
+  id: string;
 }
 
-export type MatchedToken =
-  | { kind: "persistent"; id: string; text: string; prevIndex: number; nextIndex: number }
-  | { kind: "entering"; id: string; text: string; nextIndex: number }
-  | { kind: "exiting"; id: string; text: string; prevIndex: number };
+export interface MatchPair {
+  oldId: string;
+  oldToken: MorphToken;
+  newToken: MorphToken;
+}
+
+export interface DiffResult {
+  /** Tokens present in the new text to be rendered in flow */
+  newTokens: MorphToken[];
+  /** Map of newToken.id -> MatchPair */
+  matches: Map<string, MatchPair>;
+  /** Exiting tokens from previous text that are not matched in new text */
+  exitingTokens: MorphToken[];
+}
 
 let idCounter = 0;
-function nextId(prefix: string): string {
-  idCounter += 1;
-  return `${prefix}-${idCounter}`;
+export function generateTokenId(prefix = "token"): string {
+  return `${prefix}-${++idCounter}`;
+}
+
+/** Check if a string represents a number or numeric measurement (e.g. "1204", "$99.95", "-12.5%", "45 MB/s") */
+export function isNumericString(str: string): boolean {
+  const trimmed = str.trim();
+  if (!trimmed) return false;
+  // Contains at least one digit and only common currency/signs/digits/separators/units
+  return /\d/.test(trimmed) && /^[\s$€£¥₹₽₩+\-−~≈]*\d[\d\s,.'’_]*(\.\d+)?[\s%€$A-Za-z/]*$/.test(trimmed);
 }
 
 /**
- * Splits `text` into grapheme clusters (`granularity: "grapheme"`) or
- * words (`granularity: "word"`), using `Intl.Segmenter` when available.
- * `Intl.Segmenter` is what makes this safe for combining-diacritic
- * sequences, most emoji (including many ZWJ compounds), and
- * locale-aware word boundaries — a plain `Array.from(string)` or
- * `.split(" ")` gets all of these wrong (splits a combining accent
- * from its base letter, splits inside a compound emoji, doesn't know
- * CJK text has no spaces between words).
+ * Unicode-aware grapheme segmenter with fallback.
+ * Properly segments emojis (including ZWJ families 👨‍👩‍👧‍👦, flags 🇷🇴, skin tones 👍🏽)
+ * and composite diacritics (e.g. Romanian ș, ț, ă, î, â).
  */
-export function segment(text: string, granularity: "word" | "grapheme", locale?: string): string[] {
+export function segmentGraphemes(text: string, locale?: string): string[] {
+  if (!text) return [];
   if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
-    const segmenter = new Intl.Segmenter(locale, { granularity });
-    return Array.from(segmenter.segment(text), (s) => s.segment);
-  }
-  return segmentFallback(text, granularity);
-}
-
-/**
- * Fallback for environments without `Intl.Segmenter` (older browsers,
- * some SSR runtimes). Documented limitation: this does NOT correctly
- * handle combining diacritics typed as separate code points (rare in
- * practice — most real-world Romanian/Unicode text uses precomposed
- * characters, which `Array.from` *does* split correctly since it's
- * surrogate-pair-aware), ZWJ emoji sequences (each component emoji
- * becomes its own token instead of one compound glyph), or
- * script-aware word boundaries for languages without spaces. It is a
- * safe, honest degradation — tokens may be split slightly differently
- * than with `Intl.Segmenter`, not corrupted or crashing.
- */
-export function segmentFallback(text: string, granularity: "word" | "grapheme"): string[] {
-  if (granularity === "grapheme") {
-    // Array.from is surrogate-pair-aware (real emoji/astral characters
-    // survive as one token each); it just doesn't join multi-code-point
-    // clusters like a base letter + combining accent or a ZWJ sequence.
-    return Array.from(text);
-  }
-  // Keep whitespace as its own token (so it participates in the
-  // matching/animation like any other token, rather than being
-  // silently dropped or re-inserted with no identity).
-  return text.split(/(\s+)/).filter((t) => t.length > 0);
-}
-
-/** True for a string made up of digit/numeric-punctuation tokens only — used by TextMorph's `mode="auto"` to pick the numeric matching strategy. */
-export function looksNumeric(text: string): boolean {
-  return /^[\s\-+$€£%0-9.,]+$/.test(text) && /\d/.test(text);
-}
-
-function toTokens(strings: string[], idPrefix: string): Token[] {
-  return strings.map((text) => ({ id: nextId(idPrefix), text }));
-}
-
-/**
- * Longest-common-subsequence diff between two token-string arrays.
- * Standard O(n·m) DP table — fine at sentence/label length (this is
- * not meant for paragraph-scale text). Matches are found by walking
- * the DP table backward; because the walk only ever moves to a
- * strictly earlier (row, col), duplicate token values can never both
- * match the same single prior occurrence, so "cat and dog and cat"
- * keeps its two "cat"s as distinct, independently-tracked instances.
- */
-export function matchByLcs(prevStrings: string[], nextStrings: string[]): MatchedToken[] {
-  const n = prevStrings.length;
-  const m = nextStrings.length;
-  const dp: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m + 1).fill(0));
-
-  for (let i = n - 1; i >= 0; i--) {
-    for (let j = m - 1; j >= 0; j--) {
-      dp[i]![j] = prevStrings[i] === nextStrings[j] ? dp[i + 1]![j + 1]! + 1 : Math.max(dp[i + 1]![j]!, dp[i]![j + 1]!);
+    try {
+      const segmenter = new (Intl as any).Segmenter(locale, { granularity: "grapheme" });
+      const results: string[] = [];
+      for (const seg of segmenter.segment(text)) {
+        results.push(seg.segment);
+      }
+      return results;
+    } catch {
+      // Fall through to fallback
     }
   }
 
-  const prevIds = toTokens(prevStrings, "p");
-  const nextIds = toTokens(nextStrings, "n");
-  const result: MatchedToken[] = [];
+  // Fallback: match Unicode grapheme cluster approximation (base character + combining marks)
+  const graphemeRegex = /\P{M}\p{M}*/gu;
+  const matches = text.match(graphemeRegex);
+  return matches && matches.length > 0 ? matches : Array.from(text);
+}
 
-  let i = 0;
-  let j = 0;
-  while (i < n && j < m) {
-    if (prevStrings[i] === nextStrings[j]) {
-      result.push({ kind: "persistent", id: prevIds[i]!.id, text: nextStrings[j]!, prevIndex: i, nextIndex: j });
-      i += 1;
-      j += 1;
-    } else if (dp[i + 1]![j]! >= dp[i]![j + 1]!) {
-      result.push({ kind: "exiting", id: prevIds[i]!.id, text: prevStrings[i]!, prevIndex: i });
-      i += 1;
+/**
+ * Locale-aware word segmenter with fallback.
+ * Distinguishes words, whitespaces, and punctuation.
+ */
+export function segmentWords(text: string, locale?: string): { text: string; type: TokenType }[] {
+  if (!text) return [];
+  if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
+    try {
+      const segmenter = new (Intl as any).Segmenter(locale, { granularity: "word" });
+      const results: { text: string; type: TokenType }[] = [];
+      for (const seg of segmenter.segment(text)) {
+        let type: TokenType = "word";
+        if (seg.isWordLike) {
+          type = "word";
+        } else if (/^\s+$/.test(seg.segment)) {
+          type = "whitespace";
+        } else {
+          type = "punctuation";
+        }
+        results.push({ text: seg.segment, type });
+      }
+      return results;
+    } catch {
+      // Fall through to fallback
+    }
+  }
+
+  // Fallback: regex for word-like, whitespace, punctuation
+  const regex = /([^\s\p{P}]+|\s+|[\p{P}])/gu;
+  const results: { text: string; type: TokenType }[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    const raw = match[0];
+    let type: TokenType = "word";
+    if (/^\s+$/.test(raw)) {
+      type = "whitespace";
+    } else if (/^[\p{P}]$/u.test(raw)) {
+      type = "punctuation";
+    }
+    results.push({ text: raw, type });
+  }
+  return results;
+}
+
+/**
+ * Segments a numeric string into structured tokens tagged with place values (units, tens, tenths, etc.)
+ */
+export function segmentNumeric(text: string): MorphToken[] {
+  if (!text) return [];
+  const tokens: MorphToken[] = [];
+  
+  // Find where the main number starts and ends
+  // Format: [prefix][integerDigits][separator][fractionDigits][suffix]
+  const numMatch = text.match(/^([^\d]*)([\d,.'’_\s]+?)(?:([.,])(\d+))?([^\d]*)$/);
+  
+  if (!numMatch) {
+    // If complex format, segment as words/digits
+    return segmentWords(text).map((item, idx) => ({
+      text: item.text,
+      type: item.type,
+      index: idx,
+      id: generateTokenId("num"),
+    }));
+  }
+
+  const prefix = numMatch[1] ?? "";
+  const integerPart = numMatch[2] ?? "";
+  const decimalSep = numMatch[3];
+  const fractionPart = numMatch[4];
+  const suffix = numMatch[5] ?? "";
+
+  let currentIndex = 0;
+
+  // Prefix tokens
+  if (prefix) {
+    tokens.push({
+      text: prefix,
+      type: "symbol",
+      index: currentIndex,
+      id: generateTokenId("pre"),
+    });
+    currentIndex += prefix.length;
+  }
+
+  // Extract pure digits from integer part to calculate place values right-to-left
+  const intChars = Array.from(integerPart);
+  const intDigitsOnly = intChars.filter((c) => /\d/.test(c));
+  let digitRank = intDigitsOnly.length - 1; // 0 for units, 1 for tens, 2 for hundreds...
+
+  for (const char of intChars) {
+    if (/\d/.test(char)) {
+      tokens.push({
+        text: char,
+        type: "digit",
+        index: currentIndex,
+        numericPlace: digitRank--,
+        id: generateTokenId("digit"),
+      });
     } else {
-      result.push({ kind: "entering", id: nextIds[j]!.id, text: nextStrings[j]!, nextIndex: j });
-      j += 1;
+      tokens.push({
+        text: char,
+        type: /^\s+$/.test(char) ? "whitespace" : "punctuation",
+        index: currentIndex,
+        id: generateTokenId("sep"),
+      });
     }
-  }
-  while (i < n) {
-    result.push({ kind: "exiting", id: prevIds[i]!.id, text: prevStrings[i]!, prevIndex: i });
-    i += 1;
-  }
-  while (j < m) {
-    result.push({ kind: "entering", id: nextIds[j]!.id, text: nextStrings[j]!, nextIndex: j });
-    j += 1;
+    currentIndex += char.length;
   }
 
-  return result;
+  // Decimal separator
+  if (decimalSep) {
+    tokens.push({
+      text: decimalSep,
+      type: "punctuation",
+      index: currentIndex,
+      id: generateTokenId("dec"),
+    });
+    currentIndex += decimalSep.length;
+  }
+
+  // Fraction digits
+  if (fractionPart) {
+    const fracChars = Array.from(fractionPart);
+    let fracRank = -1; // -1 for tenths, -2 for hundredths...
+    for (const char of fracChars) {
+      if (/\d/.test(char)) {
+        tokens.push({
+          text: char,
+          type: "digit",
+          index: currentIndex,
+          numericPlace: fracRank--,
+          id: generateTokenId("frac"),
+        });
+      } else {
+        tokens.push({
+          text: char,
+          type: "punctuation",
+          index: currentIndex,
+          id: generateTokenId("sep"),
+        });
+      }
+      currentIndex += char.length;
+    }
+  }
+
+  // Suffix tokens
+  if (suffix) {
+    tokens.push({
+      text: suffix,
+      type: "symbol",
+      index: currentIndex,
+      id: generateTokenId("suf"),
+    });
+  }
+
+  return tokens;
 }
 
 /**
- * Right-aligned digit matching: pairs characters from the *end* of
- * `prevStr`/`nextStr` backward (ones place, tens place, …), so a
- * changed low-order digit never misidentifies an unchanged high-order
- * one as having moved, and a value that gained a new leading digit
- * (99 → 100) correctly shows just that one digit "entering" rather
- * than re-animating the whole number. Non-digit characters (currency
- * symbols, thousands separators, decimal points, signs) participate
- * the same way, by their own position from the right — this is a
- * positional strategy, not a semantic one, which is the right
- * tradeoff for place-value digits specifically.
+ * Resolves the effective mode if "auto" was requested.
  */
-export function matchByPlaceValue(prevStr: string, nextStr: string): MatchedToken[] {
-  const prev = Array.from(prevStr);
-  const next = Array.from(nextStr);
-  const prevIds = toTokens(prev, "p");
-  const nextIds = toTokens(next, "n");
-  const maxLen = Math.max(prev.length, next.length);
+export function resolveEffectiveMode(value: string, mode: TextMorphMode): "words" | "characters" | "numbers" {
+  if (mode !== "auto") return mode;
+  if (isNumericString(value)) return "numbers";
+  // If it's a short token with no whitespace (e.g. "Save", "Submit", "Open"), character morphing looks magical
+  if (value.length <= 8 && !/\s/.test(value)) return "characters";
+  return "words";
+}
 
-  // Build right-to-left first (that's how place-value alignment works —
-  // ones place, tens place, …), each slot holding at most an exiting
-  // old digit immediately followed by its persistent/entering
-  // replacement, then reverse once at the end to restore left-to-right
-  // reading order — this keeps an exiting digit adjacent to the digit
-  // replacing it (not shoved to the end of the whole output), so
-  // neighboring tokens' layout-shift reads as that one place value
-  // changing in place, not the entire number reshuffling.
-  const slots: MatchedToken[][] = [];
-  for (let k = 0; k < maxLen; k++) {
-    const pi = prev.length - 1 - k;
-    const ni = next.length - 1 - k;
-    const slot: MatchedToken[] = [];
-    if (pi >= 0 && ni >= 0 && prev[pi] === next[ni]) {
-      slot.push({ kind: "persistent", id: prevIds[pi]!.id, text: next[ni]!, prevIndex: pi, nextIndex: ni });
-    } else {
-      if (pi >= 0) slot.push({ kind: "exiting", id: prevIds[pi]!.id, text: prev[pi]!, prevIndex: pi });
-      if (ni >= 0) slot.push({ kind: "entering", id: nextIds[ni]!.id, text: next[ni]!, nextIndex: ni });
-    }
-    slots.push(slot);
+/**
+ * Tokenizes text according to the selected mode.
+ */
+export function tokenizeText(value: string | number, mode: TextMorphMode = "auto", locale?: string): MorphToken[] {
+  const str = String(value ?? "");
+  if (!str) return [];
+
+  const effectiveMode = resolveEffectiveMode(str, mode);
+
+  if (effectiveMode === "numbers") {
+    return segmentNumeric(str);
   }
 
-  return slots.reverse().flat();
+  if (effectiveMode === "characters") {
+    const graphemes = segmentGraphemes(str, locale);
+    let currentIndex = 0;
+    return graphemes.map((g) => {
+      let type: TokenType = "grapheme";
+      if (/^\s+$/.test(g)) type = "whitespace";
+      else if (/^[\p{P}]$/u.test(g)) type = "punctuation";
+      else if (/^\d$/.test(g)) type = "digit";
+
+      const tok: MorphToken = {
+        text: g,
+        type,
+        index: currentIndex,
+        id: generateTokenId("char"),
+      };
+      currentIndex += g.length;
+      return tok;
+    });
+  }
+
+  // Words mode
+  const words = segmentWords(str, locale);
+  let currentIndex = 0;
+  return words.map((w) => {
+    const tok: MorphToken = {
+      text: w.text,
+      type: w.type,
+      index: currentIndex,
+      id: generateTokenId("word"),
+    };
+    currentIndex += w.text.length;
+    return tok;
+  });
+}
+
+/**
+ * Computes optimal bipartite / affinity diffing between old tokens and new tokens.
+ *
+ * Employs distance affinity:
+ * When a token (e.g. "the" or " ") occurs multiple times, matches the pair
+ * with the smallest relative positional distance |oldPos - newPos| to prevent
+ * cross-jumping across the screen.
+ *
+ * In numeric mode, matches digits by place-value when characters differ
+ * (e.g. units 9 -> units 0) so digits transform in-place.
+ */
+export function diffTokens(oldTokens: MorphToken[], newTokens: MorphToken[]): DiffResult {
+  const matches = new Map<string, MatchPair>();
+  const matchedOldIndices = new Set<number>();
+  const matchedNewIndices = new Set<number>();
+
+  const oldTotal = Math.max(oldTokens.length, 1);
+  const newTotal = Math.max(newTokens.length, 1);
+
+  interface ScoredCandidate {
+    oldIndex: number;
+    newIndex: number;
+    score: number;
+  }
+
+  const candidates: ScoredCandidate[] = [];
+
+  // 1. Generate candidate matches with scoring
+  for (let n = 0; n < newTokens.length; n++) {
+    const nTok = newTokens[n];
+    if (!nTok) continue;
+    const nRel = n / newTotal;
+
+    for (let o = 0; o < oldTokens.length; o++) {
+      const oTok = oldTokens[o];
+      if (!oTok) continue;
+      const oRel = o / oldTotal;
+      const distPenalty = Math.abs(nRel - oRel) * 30;
+
+      // Case A: Exact character/text match
+      if (nTok.text === oTok.text) {
+        let score = 100 - distPenalty;
+        if (nTok.type === oTok.type) score += 20;
+        // Strong bonus if numeric place values match
+        if (nTok.numericPlace !== undefined && nTok.numericPlace === oTok.numericPlace) {
+          score += 50;
+        }
+        candidates.push({ oldIndex: o, newIndex: n, score });
+      }
+      // Case B: Numeric mode in-place digit match (same place value, different digit)
+      else if (
+        nTok.type === "digit" &&
+        oTok.type === "digit" &&
+        nTok.numericPlace !== undefined &&
+        nTok.numericPlace === oTok.numericPlace
+      ) {
+        // Digits at same place value (e.g. 9 -> 0 at units) get high affinity
+        const score = 60 - distPenalty;
+        candidates.push({ oldIndex: o, newIndex: n, score });
+      }
+    }
+  }
+
+  // 2. Sort candidates by highest score (best match first)
+  candidates.sort((a, b) => b.score - a.score);
+
+  // 3. Greedily match optimal pairs
+  for (const cand of candidates) {
+    if (matchedOldIndices.has(cand.oldIndex) || matchedNewIndices.has(cand.newIndex)) {
+      continue;
+    }
+    const oldTok = oldTokens[cand.oldIndex];
+    const newTok = newTokens[cand.newIndex];
+    if (!oldTok || !newTok) continue;
+
+    matchedOldIndices.add(cand.oldIndex);
+    matchedNewIndices.add(cand.newIndex);
+
+    // Assign stable identity from old token to new token
+    newTok.id = oldTok.id;
+
+    matches.set(newTok.id, {
+      oldId: oldTok.id,
+      oldToken: oldTok,
+      newToken: newTok,
+    });
+  }
+
+  // 4. Compute entering tokens (unmatched in new)
+  for (let n = 0; n < newTokens.length; n++) {
+    if (!matchedNewIndices.has(n)) {
+      const newTok = newTokens[n];
+      if (newTok) {
+        // Keep its own unique enter id
+        newTok.id = generateTokenId("enter");
+      }
+    }
+  }
+
+  // 5. Compute exiting tokens (unmatched in old)
+  const exitingTokens: MorphToken[] = [];
+  for (let o = 0; o < oldTokens.length; o++) {
+    if (!matchedOldIndices.has(o)) {
+      const oTok = oldTokens[o];
+      if (oTok) {
+        exitingTokens.push(oTok);
+      }
+    }
+  }
+
+  return {
+    newTokens,
+    matches,
+    exitingTokens,
+  };
 }

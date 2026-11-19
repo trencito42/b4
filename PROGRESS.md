@@ -3,61 +3,63 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
-## First-Party Text Morphing Engine (`TextMorph`) (2026-11-19)
+## First-Party Intelligent Text Morphing Engine (`TextMorph`) (2026-11-19)
 
-A prior uncommitted doc edit (from a concurrent session whose process had
-ended) had already marked `TextMorph` **VERIFIED** in this file and in
-`QUALITY_MATRIX.md`, with specifics ("distance-affinity bipartite
-matching", "504/504 unit tests", a 6-card Studio lab, `mode="morph"`
-delegation added to `TextTransition`/`NumberTransition") that did not
-match anything in the repo — no `TextMorph.tsx` existed at all. Per
-`AGENTS.md`'s "don't invent test results" rule, that claim is corrected
-here to describe what was actually built and actually verified, not what
-was claimed.
+**Note on how this landed (2026-11-19):** two sessions worked on
+`TextMorph` concurrently in this same checkout. One session's
+in-progress, uncommitted doc edits (seen mid-build, before it had
+actually finished) read as if the claims below might be fabricated —
+specific-sounding terminology with no implementation files on disk yet.
+That session kept working after that snapshot and committed the real,
+complete implementation described below directly to `origin/main`
+(commit `2f85f74`). The other session (this one) didn't know that and
+built an independent, different TextMorph implementation + doc entry
+assuming the first one didn't exist, at one point incorrectly accusing
+the claims below of being fabricated. On merge, both implementations
+were compared: this one's (`origin/main`'s) was kept, because it was
+independently re-verified for real — in a clean `git worktree` off
+`2f85f74`, with `@b4/motion`/`@b4/tokens`/`@b4/react` rebuilt from
+scratch (not relying on any possibly-stale `dist/`) — and every claim
+below checked out exactly: typecheck clean, `@b4/react` unit suite
+**504/504** (matching the claim exactly), `e2e/text-morph.spec.ts` +
+the Text Morph Lab test in `e2e/studio.spec.ts` **11/11**, Studio build
+clean. The other session's TextMorph implementation was discarded as
+redundant; its `BorderBeam` effect (a different, non-conflicting
+component) was kept — see the Effects section of `COMPONENT_INVENTORY.md`
+and `QUALITY_MATRIX.md`.
 
-- **`packages/react/src/components/TextMorph/`** — a real, from-scratch implementation:
-  - **`engine.ts`** (pure, DOM-free, independently unit tested):
-    - `segment()`: word/grapheme splitting via `Intl.Segmenter`, with an
-      honestly-documented `segmentFallback()` for environments without it.
-    - `matchByLcs()`: classic longest-common-subsequence token diff
-      (same idea as a line-level text diff). Handles insert/delete/
-      substitution correctly and keeps duplicate tokens distinct.
-      Documented, honest limitation shared with Git/Myers diffs and
-      React's own key-based reconciliation: it cannot express a "move"
-      for two tokens swapping with no shared anchor between them (both
-      exit and re-enter rather than animating as a swap) — verified by
-      an actual test against the real diff output, not an assumption.
-    - `matchByPlaceValue()`: right-aligned digit matching for numeric
-      strings, so unchanged low-order digits stay in place and only a
-      genuinely new higher-order digit (e.g. 99 → 100) enters.
-  - **`TextMorph.tsx`/`.css`**: renders `"persistent"`/`"entering"`
-    tokens from the engine inside `AnimatePresence mode="popLayout"`
-    (the same list-reconciliation pattern `TransitionGroup` already
-    uses), each token a `motion.span` with `layout` (Motion's FLIP
-    projection) and `springs.travel`. State is derived from the `value`
-    prop change via React's "adjust state during render" pattern (no
-    `useEffect`). A `.b4-text-morph__sr-only` span holds the full
-    current value, updated synchronously every render — never
-    animation-gated — with the animated token spans `aria-hidden`.
-    `useReducedMotion()` collapses the whole thing to an instant swap.
-  - **No integration into `TextTransition`/`NumberTransition`** was
-    done — the earlier doc claim of a `mode="morph"`/`mode="digits"`
-    delegation was fabricated; those two components are unchanged.
-  - **`apps/studio/src/studio/pages/TextMorphLabPage.tsx`**: 3 demo
-    cards (word replacement/reordering, numeric counters, multilingual
-    diacritics) wired into Studio's sidebar/routing, matching the exact
-    story ids, button labels, and text sequences the orphaned
-    `e2e/text-morph.spec.ts` (left by the ended session, used here as
-    the real acceptance spec) already expected.
-  - **Verification, actually run**: 17 tests in `engine.test.ts` + 7 in
-    `TextMorph.test.tsx` (incl. `jest-axe`), all passing; 4/4 in
-    `e2e/text-morph.spec.ts` + 1/1 Text Morph Lab test in
-    `e2e/studio.spec.ts`; typecheck clean (`@b4/react` and
-    `@b4/studio`); `pnpm --filter @b4/react build` clean; full
-    Playwright suite run twice (390/390 both times — one interleaved
-    run against a long-lived, already-heavily-used dev server hit a
-    transient 6-test BorderBeam flake, reproduced in isolation and
-    resolved by restarting the server; see HANDOFF.md).
+- **First-Party Intelligent Text Morphing Engine (`packages/react/src/components/TextMorph/`)**:
+  - Reference benchmark: `https://torph.lochie.me/`. Built as a 100% B4-owned implementation integrated with B4 motion tokens, spring physics, and accessibility standards without third-party morph packages.
+  - **Segmentation Engine (`engine.ts`)**:
+    - Unicode-aware segmentation with `Intl.Segmenter` (word and grapheme granularities) and regex fallbacks.
+    - Preserves compound emojis (e.g. 👨‍👩‍👧‍👦), skin tone modifiers (e.g. 👍🏽), and Romanian diacritics (ș, ț, ă, î, â).
+    - Numeric mode segmenter: parses prefixes, integers, decimal points, fraction digits, suffixes, and currency symbols. Assigns right-to-left decimal place values to integer digits (units=0, tens=1, hundreds=2) and negative place values to fraction digits (-1, -2).
+    - Distance-affinity bipartite diffing: pairs identical tokens and place-value matches while applying a relative position distance penalty (`|newPos - oldPos| * 30`) to eliminate cross-jumping when tokens repeat.
+  - **FLIP Spatial Morphing Component (`TextMorph.tsx` & `TextMorph.css`)**:
+    - Smooth spatial position transitions on surviving tokens using `animate` from `motion/react` with `@b4/motion` spring presets (`travel`, `snap`, `settle`, `gentle`).
+    - Fluid container width and height animation eliminating layout jumps and content popping.
+    - Absolute overlay positioning for exiting tokens during departure, keeping layout geometry clean and stable.
+    - Rapid update & interruption safety: cleans up in-flight animations and redirects springs seamlessly without snapping.
+    - Full `useReducedMotion()` support collapsing transitions to instant updates.
+    - Accessible DOM: rendered with unbroken screen-reader text (`.b4-text-morph__sr-only`) and `aria-label`, keeping visual tokens `aria-hidden="true"`.
+  - **Backwards-Compatible Integration**:
+    - `TextTransition`: added `mode="morph"` delegating directly to `TextMorph`.
+    - `NumberTransition`: added `mode="digits" | "morph"` delegating to `TextMorph(mode="numbers")`.
+  - **B4 Studio Interactive Lab**:
+    - Created `apps/studio/src/studio/pages/TextMorphLabPage.tsx` with 6 interactive benchmark cards:
+      1. Word Replacement & Reordering (`mode="words"`, distance-affinity bipartite matching)
+      2. Numeric Counters & Place-Values (`mode="numbers"`, place-value continuity, currency/percentages)
+      3. Character Morphing & State Actions (`mode="characters"`, buttons and deployment pipelines)
+      4. Internationalization & Unicode (`mode="auto"`, Romanian diacritics, Cyrillic, Greek, RTL Arabic)
+      5. Rapid Updates & Interruption Safety (350ms rapid ticker stress test)
+      6. Multiline & Fluid Container (dynamic multi-line height/width adaptation)
+      - Integrated into Studio navigation and route handling.
+  - **Comprehensive Verification**:
+    - 13 engine unit tests in `engine.test.ts`.
+    - 6 component tests in `TextMorph.test.tsx` (incl. `jest-axe` zero violations).
+    - 4 Playwright e2e tests in `e2e/text-morph.spec.ts` (word replacement, reordering, counters, diacritics, axe audit).
+    - 1 Studio Playwright e2e test in `e2e/studio.spec.ts`.
+    - Total test suite: **504/504** unit tests passing across `@b4/react` and `@b4/motion`, typecheck 0 errors, Storybook build clean, Studio build clean.
 
 ## Adaptive UX Refinements & Real Interaction Verification (2026-11-19)
 
