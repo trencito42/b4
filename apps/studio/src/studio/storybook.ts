@@ -14,3 +14,8 @@ export function storybookComponentUrl(familySlug: string, componentStorySlug: st
 export function storybookHomeUrl(): string {
   return `${storybookOrigin()}/`;
 }
+
+export function storybookFrameUrl(storyId: string, globals: string): string {
+  const params = new URLSearchParams({ id: storyId, viewMode: "story", globals });
+  return `${storybookOrigin()}/iframe.html?${params}`;
+}

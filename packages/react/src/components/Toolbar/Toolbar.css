@@ -1,5 +1,6 @@
 .b4-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--b4-space-6);
   padding: var(--b4-space-4);

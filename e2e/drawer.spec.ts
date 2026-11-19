@@ -14,6 +14,17 @@ for (const theme of themes) {
     const results = await new AxeBuilder({ page }).disableRules(isolatedRules).analyze();
     expect(results.violations).toEqual([]);
   });
+
+  test(`Drawer keeps all of its content inside a 390px viewport on ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/iframe.html?id=family-c-navigation-overlays-drawer--default&globals=b4Theme:${theme};b4Motion:reduced`);
+    await page.getByRole("button", { name: "Open drawer" }).click();
+    const drawer = page.getByRole("dialog");
+    await expect.poll(() => drawer.evaluate((element) => {
+      const { left, right, top, bottom } = element.getBoundingClientRect();
+      return [left, top, right, bottom];
+    })).toEqual([0, 0, 390, 844]);
+  });
 }
 
 test("Drawer opens on trigger click and closes on Escape", async ({ page }) => {

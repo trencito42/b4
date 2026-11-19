@@ -81,9 +81,13 @@ export function ShowcaseSettingsPage({ previewWidth }: { previewWidth: StudioPre
   const [draft, setDraft] = useState<SettingsState>(initialState);
   const [tab, setTab] = useState("profile");
   const [emailError, setEmailError] = useState<string | undefined>();
+  const [passwords, setPasswords] = useState({ current: "", next: "" });
+  const [passwordError, setPasswordError] = useState<{ current?: string; next?: string }>({});
+  const [saving, setSaving] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
 
-  const isDirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(saved), [draft, saved]);
+  const isDirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(saved), [draft, saved]) ||
+    Boolean(passwords.current || passwords.next);
 
   function update<K extends keyof SettingsState>(key: K, value: SettingsState[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
@@ -96,14 +100,29 @@ export function ShowcaseSettingsPage({ previewWidth }: { previewWidth: StudioPre
       throw new Error("validation failed");
     }
     setEmailError(undefined);
+    if (passwords.current || passwords.next) {
+      const current = passwords.current ? undefined : "Enter the current password.";
+      const next = passwords.next.length >= 12 ? undefined : "Enter at least 12 characters.";
+      if (current || next) {
+        setPasswordError({ current, next });
+        setTab("security");
+        throw new Error("validation failed");
+      }
+    }
+    setSaving(true);
     await new Promise((resolve) => setTimeout(resolve, 900));
     setSaved(draft);
+    setPasswords((latest) => latest === passwords ? { current: "", next: "" } : latest);
+    setPasswordError({});
+    setSaving(false);
     toastManager.add({ title: "Settings saved", type: "success" });
   }
 
   function confirmDiscard() {
     setDraft(saved);
     setEmailError(undefined);
+    setPasswords({ current: "", next: "" });
+    setPasswordError({});
     setDiscardOpen(false);
     toastManager.add({ title: "Changes discarded", type: "info" });
   }
@@ -203,8 +222,14 @@ export function ShowcaseSettingsPage({ previewWidth }: { previewWidth: StudioPre
               label: "Security",
               content: (
                 <div className="b4-showcase-settings__section">
-                  <PasswordField label="Current password" autoComplete="current-password" />
-                  <PasswordField label="New password" autoComplete="new-password" hint="At least 12 characters." />
+                  <PasswordField label="Current password" autoComplete="current-password" value={passwords.current} error={passwordError.current} onValueChange={(current) => {
+                    setPasswords((previous) => ({ ...previous, current }));
+                    setPasswordError((previous) => ({ ...previous, current: undefined }));
+                  }} />
+                  <PasswordField label="New password" autoComplete="new-password" hint="At least 12 characters." value={passwords.next} error={passwordError.next} onValueChange={(next) => {
+                    setPasswords((previous) => ({ ...previous, next }));
+                    setPasswordError((previous) => ({ ...previous, next: undefined }));
+                  }} />
                   <Switch
                     label="Require two-factor authentication"
                     checked={draft.twoFactor}
@@ -275,7 +300,7 @@ export function ShowcaseSettingsPage({ previewWidth }: { previewWidth: StudioPre
           <div className="b4-showcase-settings__bar" role="group" aria-label="Unsaved changes">
             <span className="b4-showcase-settings__bar-text">You have unsaved changes.</span>
             <div className="b4-showcase-settings__bar-actions">
-              <Button variant="ghost" size="sm" onClick={() => setDiscardOpen(true)}>
+              <Button variant="ghost" size="sm" disabled={saving} onClick={() => setDiscardOpen(true)}>
                 Discard
               </Button>
               <Button variant="primary" size="sm" onAction={handleSave}>

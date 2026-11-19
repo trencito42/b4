@@ -17,6 +17,8 @@ Phase 8 packaging proofs are done in-repo (see `pnpm release:verify`).
 - [x] `.d.ts` — consumer-smoke exercises typed imports from dist.
 - [x] CSS distribution — consumer + Studio import `@b4/react` styles without
       extra CSS tooling.
+- [x] Ops Console and Storefront exercise public package entry points in
+      `pnpm consumer-fixtures-smoke`, part of the local release gate and CI.
 - [x] `LICENSE` (MIT) at repo root.
 - [x] `CHANGELOG.md` tracks repo milestones (not npm releases yet).
 

@@ -25,7 +25,8 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 The November 20 Batch 3 review covers the 18 entries specified for forms
 craftsmanship, with `RangeSlider` exercised through `Slider` array values.
-The forms checks passed and the whole-suite gate remains in TESTING.
+The November 20 continuation closed the whole-suite gate with two full
+browser passes and the release checks.
 [Forms audit](FORMS_CRAFTSMANSHIP.md)
 [Quality matrix](QUALITY_MATRIX.md#batch-3--forms-craftsmanship-2026-11-20)
 

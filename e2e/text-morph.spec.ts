@@ -28,7 +28,9 @@ test.describe("TextMorph Component", () => {
     await nextBtn.click();
     await expect(srOnly).toHaveText("Archive report");
 
-    // Axe audit
+    // The outgoing glyph is decorative and fades through intermediate colors.
+    // Audit the stable, readable label after the real animation removes it.
+    await expect(morphRoot.locator(".b4-text-morph__exiting-token")).toHaveCount(0);
     const results = await new AxeBuilder({ page })
       .disableRules(["page-has-heading-one", "landmark-one-main", "region"])
       .analyze();

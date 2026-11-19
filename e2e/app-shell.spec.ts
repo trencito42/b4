@@ -29,3 +29,10 @@ test("AppShell renders without a sidebar landmark when none is passed", async ({
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await expect(page.getByRole("main")).toBeVisible();
 });
+
+test("AppShell clamps a wide sidebar to the mobile viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/iframe.html?id=family-f-application-patterns-appshell--adaptive-mobile");
+  await page.getByRole("button", { name: "Toggle navigation menu" }).click();
+  await expect(page.getByRole("navigation")).toHaveCSS("width", "272px");
+});

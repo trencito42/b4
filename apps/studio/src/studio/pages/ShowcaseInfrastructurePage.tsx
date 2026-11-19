@@ -2,119 +2,203 @@ import { useState } from "react";
 import {
   AlertDialog,
   Button,
+  DataTable,
+  Drawer,
+  EmptyState,
   FileExplorer,
   InspectorPanel,
   PageHeader,
   QueryEditor,
-  ResizablePanels,
   ResourceMeter,
+  SearchField,
+  Select,
   StatusBadge,
   toastManager,
+  type DataTableSort,
 } from "@b4/react";
 import { infraFiles } from "../sampleData.js";
 import type { StudioPreviewWidth } from "../settings.js";
 
-type NodeStatus = "online" | "restarting";
+const nodes = [
+  { id: "n1", name: "edge-01", region: "eu-west-1", cpu: 72, memory: 61 },
+  { id: "n2", name: "edge-02", region: "eu-central-1", cpu: 46, memory: 37 },
+];
 
-export function ShowcaseInfrastructurePage({ previewWidth }: { previewWidth: StudioPreviewWidth }) {
+const regions = [
+  { value: "all", label: "All regions" },
+  ...nodes.map(({ region }) => ({ value: region, label: region })),
+];
+
+export function ShowcaseInfrastructurePage({
+  previewWidth,
+}: {
+  previewWidth: StudioPreviewWidth;
+}) {
+  const [search, setSearch] = useState("");
+  const [region, setRegion] = useState("all");
+  const [sort, setSort] = useState<DataTableSort>();
   const [selectedId, setSelectedId] = useState<string | null>("n1");
-  const [query, setQuery] = useState("select id, status\nfrom nodes\nwhere region = 'eu'");
-  const [nodeStatus, setNodeStatus] = useState<NodeStatus>("online");
-  const [restartOpen, setRestartOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [restartId, setRestartId] = useState<string | null>(null);
+  const [restarting, setRestarting] = useState<string | null>(null);
+  const [query, setQuery] = useState("select id, status\nfrom nodes");
 
-  async function handleRestart() {
-    setRestartOpen(false);
-    setNodeStatus("restarting");
-    await new Promise((resolve) => setTimeout(resolve, 1600));
-    setNodeStatus("online");
-    toastManager.add({ title: "edge-01 restarted", type: "success" });
+  const selected = nodes.find((node) => node.id === selectedId);
+  const restartTarget = nodes.find((node) => node.id === restartId);
+  const rows = nodes.filter(
+    (node) =>
+      (region === "all" || node.region === region) &&
+      node.name.includes(search.trim().toLowerCase()),
+  );
+  if (sort) {
+    const direction = sort.direction === "asc" ? 1 : -1;
+    rows.sort(
+      (a, b) =>
+        direction *
+        (sort.columnKey === "cpu" ? a.cpu - b.cpu : a.name.localeCompare(b.name)),
+    );
+  }
+
+  async function restart() {
+    if (!restartTarget || restarting) return;
+    setRestartId(null);
+    setRestarting(restartTarget.id);
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    setRestarting(null);
+    toastManager.add({ title: restartTarget.name + " restarted", type: "success" });
+  }
+
+  function showNode(id: string) {
+    setSelectedId(id);
+    setDetailsOpen(true);
   }
 
   const frameClass =
-    previewWidth === "390"
-      ? "b4-studio__preview-frame--390"
-      : previewWidth === "768"
-        ? "b4-studio__preview-frame--768"
-        : previewWidth === "1440"
-          ? "b4-studio__preview-frame--1440"
-          : "";
-
+    previewWidth === "full" ? "" : "b4-studio__preview-frame--" + previewWidth;
   return (
     <div className={["b4-studio__preview-frame", frameClass].filter(Boolean).join(" ")}>
       <PageHeader
         title="Infrastructure"
-        description="Cluster browser, capacity meters, and a query surface — sample data only."
-        actions={<StatusBadge status="degraded">Sample cluster</StatusBadge>}
+        description="Filter cluster nodes, inspect capacity and run a simulated restart."
+        actions={<StatusBadge status="online">Sample cluster</StatusBadge>}
       />
-      <div className="b4-studio__infra-stack" style={{ marginTop: "var(--b4-space-10)" }}>
-        <ResizablePanels aria-label="Resize cluster panes" defaultSplit={34} minSplit={22} maxSplit={55}>
+      <div className="b4-studio__infra-stack">
+        <div className="b4-studio__visual-controls">
+          <SearchField
+            label="Find a node"
+            placeholder="Search by node name"
+            value={search}
+            onValueChange={setSearch}
+          />
+          <Select
+            label="Region"
+            items={regions}
+            value={region}
+            onValueChange={(value) => setRegion(value ?? "all")}
+          />
+        </div>
+        {rows.length ? (
+          <DataTable
+            caption="Cluster nodes"
+            columns={[
+              { key: "name", header: "Node", sortable: true },
+              { key: "region", header: "Region" },
+              {
+                key: "cpu",
+                header: "CPU",
+                sortable: true,
+                render: (node) => node.cpu + "%",
+              },
+              {
+                key: "state",
+                header: "Status",
+                render: (node) => (
+                  <StatusBadge status={node.id === restarting ? "idle" : "online"}>
+                    {node.id === restarting ? "Restarting" : "Healthy"}
+                  </StatusBadge>
+                ),
+              },
+              {
+                key: "details",
+                header: "Details",
+                render: (node) => (
+                  <Button size="sm" variant="ghost" onClick={() => showNode(node.id)}>
+                    Inspect {node.name}
+                  </Button>
+                ),
+              },
+            ]}
+            rows={rows}
+            getRowId={(node) => node.id}
+            sort={sort}
+            onSortChange={setSort}
+          />
+        ) : (
+          <EmptyState title="No matching nodes" />
+        )}
+        <div className="b4-studio__infra-browser">
           <FileExplorer
             data={infraFiles}
             aria-label="Cluster files"
             defaultExpandedIds={["cluster", "nodes"]}
             selectedId={selectedId}
-            onSelectedIdChange={setSelectedId}
+            onSelectedIdChange={(id) => {
+              if (id && nodes.some((node) => node.id === id)) showNode(id);
+              else setSelectedId(id);
+            }}
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--b4-space-6)", padding: "var(--b4-space-6)" }}>
-            <ResourceMeter label="CPU" value={72} max={100} unit="%" />
-            <ResourceMeter label="Memory" value={61} max={128} unit="GB" />
-            <ResourceMeter label="Object storage" value={4.1} max={5} unit="TB" tone="warning" />
-          </div>
-        </ResizablePanels>
-        <ResizablePanels aria-label="Resize inspector and query" orientation="horizontal" defaultSplit={42}>
-          <QueryEditor aria-label="Cluster query" value={query} onValueChange={setQuery} />
-          <InspectorPanel
-            title={
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                <span>edge-01.yaml</span>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  disabled={nodeStatus === "restarting"}
-                  onClick={() => setRestartOpen(true)}
-                >
-                  Restart node
-                </Button>
-              </span>
-            }
-            sections={[
-              {
-                id: "general",
-                title: "Instance",
-                properties: [
-                  { id: "region", label: "Region", value: "eu-west-1" },
-                  { id: "role", label: "Role", value: "edge" },
-                  {
-                    id: "status",
-                    label: "Status",
-                    value:
-                      nodeStatus === "restarting" ? (
-                        <StatusBadge status="idle">Restarting…</StatusBadge>
-                      ) : (
-                        <StatusBadge status="online">Healthy</StatusBadge>
-                      ),
-                  },
-                ],
-              },
-              {
-                id: "network",
-                properties: [
-                  { id: "ipv4", label: "IPv4", value: "10.24.8.12" },
-                  { id: "ipv6", label: "IPv6", value: "2604:…" },
-                ],
-              },
-            ]}
+          <QueryEditor
+            aria-label="Cluster query"
+            value={query}
+            onValueChange={setQuery}
           />
-        </ResizablePanels>
-        <AlertDialog
-          title="Restart edge-01?"
-          description="The node will be briefly unreachable while it restarts. This is a sample action — no real node is affected."
-          confirmLabel="Restart node"
-          open={restartOpen}
-          onOpenChange={setRestartOpen}
-          onConfirm={handleRestart}
-        />
+        </div>
       </div>
+      <Drawer
+        title={selected?.name ?? "Node details"}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      >
+        {selected && (
+          <div className="b4-studio__infra-stack">
+            <InspectorPanel
+              title="Instance"
+              sections={[
+                {
+                  id: "general",
+                  properties: [
+                    { id: "region", label: "Region", value: selected.region },
+                    {
+                      id: "status",
+                      label: "Status",
+                      value: selected.id === restarting ? "Restarting" : "Healthy",
+                    },
+                  ],
+                },
+              ]}
+            />
+            <ResourceMeter label="CPU" value={selected.cpu} max={100} unit="%" />
+            <ResourceMeter label="Memory" value={selected.memory} max={128} unit="GB" />
+            <Button
+              variant="destructive"
+              disabled={Boolean(restarting)}
+              onClick={() => setRestartId(selected.id)}
+            >
+              Restart node
+            </Button>
+          </div>
+        )}
+      </Drawer>
+      <AlertDialog
+        title={"Restart " + (restartTarget?.name ?? "node") + "?"}
+        description="The sample node will be briefly unavailable."
+        confirmLabel="Restart node"
+        open={Boolean(restartTarget)}
+        onOpenChange={(open) => {
+          if (!open) setRestartId(null);
+        }}
+        onConfirm={restart}
+      />
     </div>
   );
 }

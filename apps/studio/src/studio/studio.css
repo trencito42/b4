@@ -53,6 +53,24 @@
   min-width: 7rem;
 }
 
+@media (max-width: 48rem) {
+  .b4-studio__header-actions {
+    padding-inline: var(--b4-space-4);
+  }
+
+  .b4-studio__config {
+    flex: 1 0 100%;
+    min-inline-size: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-block-end: var(--b4-space-3);
+  }
+
+  .b4-studio__config-group {
+    flex: none;
+  }
+}
+
 .b4-studio__config-label {
   font-size: 0.6875rem;
   font-weight: 500;
@@ -177,7 +195,45 @@
   display: flex;
   flex-direction: column;
   gap: var(--b4-space-8);
-  min-height: 28rem;
+}
+
+.b4-studio__preview-frame > .b4-studio__infra-stack {
+  margin-block-start: var(--b4-space-8);
+}
+
+.b4-studio__infra-browser {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--b4-space-8);
+}
+
+.b4-studio__visual-review, .b4-studio__visual-controls {
+  display: grid;
+  gap: var(--b4-space-8);
+}
+
+.b4-studio__visual-controls {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.b4-studio__visual-scroll {
+  display: flex;
+  gap: var(--b4-space-6);
+  overflow-x: auto;
+  padding-block-end: var(--b4-space-4);
+}
+
+.b4-studio__visual-panel {
+  flex: none;
+}
+
+.b4-studio__visual-panel iframe {
+  display: block;
+  width: 100%;
+  height: 70dvh;
+  border: 0;
+  border-radius: var(--b4-surface-radius);
+  background: var(--b4-surface-1);
 }
 
 .b4-showcase-checkout {

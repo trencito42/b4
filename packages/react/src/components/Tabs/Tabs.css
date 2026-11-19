@@ -2,6 +2,9 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
   gap: 2px;
   padding: 4px;
   background-color: var(--b4-control-bg);

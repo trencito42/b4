@@ -18,6 +18,7 @@ import { EffectsLabPage } from "./pages/EffectsLabPage.js";
 import { HomePage } from "./pages/HomePage.js";
 import { MotionLabPage } from "./pages/MotionLabPage.js";
 import { TextMorphLabPage } from "./pages/TextMorphLabPage.js";
+import { VisualReviewPage } from "./pages/VisualReviewPage.js";
 import { ShowcaseAnalyticsPage } from "./pages/ShowcaseAnalyticsPage.js";
 import { ShowcaseBillingPage } from "./pages/ShowcaseBillingPage.js";
 import { ShowcaseCheckoutPage } from "./pages/ShowcaseCheckoutPage.js";
@@ -40,6 +41,7 @@ export type StudioRoute =
   | "motion-lab"
   | "text-morph-lab"
   | "effects-lab"
+  | "visual-review"
   | "showcase-analytics"
   | "showcase-infrastructure"
   | "showcase-billing"
@@ -66,6 +68,8 @@ export function StudioApp() {
           ? "text-morph-lab"
           : route === "effects-lab"
             ? "effects-lab"
+            : route === "visual-review"
+              ? route
             : route.startsWith("showcase")
               ? route
               : "home";
@@ -80,6 +84,8 @@ export function StudioApp() {
         return <TextMorphLabPage />;
       case "effects-lab":
         return <EffectsLabPage />;
+      case "visual-review":
+        return <VisualReviewPage settings={settings} />;
       case "showcase-analytics":
         return <ShowcaseAnalyticsPage previewWidth={settings.previewWidth} />;
       case "showcase-infrastructure":
@@ -93,7 +99,7 @@ export function StudioApp() {
       default:
         return <HomePage />;
     }
-  }, [route, settings.previewWidth, catalogQuery]);
+  }, [route, settings, catalogQuery]);
 
   return (
     <ToastProvider>
@@ -113,6 +119,7 @@ export function StudioApp() {
                     { id: "motion-lab", label: "Motion Lab", onClick: () => setRoute("motion-lab") },
                     { id: "text-morph-lab", label: "Text Morphing Lab", onClick: () => setRoute("text-morph-lab") },
                     { id: "effects-lab", label: "Effects Lab", onClick: () => setRoute("effects-lab") },
+                    { id: "visual-review", label: "Visual review", onClick: () => setRoute("visual-review") },
                   ],
                 },
                 {

@@ -29,7 +29,7 @@ describe("AppShell", () => {
       </AppShell>,
     );
     const sidebar = container.querySelector(".b4-app-shell__sidebar") as HTMLElement;
-    expect(sidebar.style.width).toBe("300px");
+    expect(sidebar.style.getPropertyValue("--sidebar-width")).toBe("300px");
   });
 
   it("has no axe violations", async () => {

@@ -1,5 +1,15 @@
 # HANDOFF — read this first on any resume
 
+## Local continuation (2026-11-20)
+
+Studio has a live Visual review page, an interactive Infrastructure
+showcase and verified Settings and Confirmation flows. The workspace includes
+the inherited consumer fixtures and component fixes. The release gate and
+two fresh Playwright runs passed, each with 450 tests. The second run used a
+separate checkout with a fresh frozen install and build. Publication
+requires the npm scope and explicit authorization in the release checklist.
+[Quality matrix](QUALITY_MATRIX.md) [Release checklist](RELEASE_CHECKLIST.md)
+
 ## Batch 3 forms review (2026-11-20)
 
 The forms review records the baseline defects, the fixes, and the inspected

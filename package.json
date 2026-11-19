@@ -19,10 +19,11 @@
     "test:watch": "pnpm --filter @b4/react run test -- --watch",
     "test:e2e": "playwright test",
     "consumer-smoke": "node scripts/consumer-smoke.mjs",
+    "consumer-fixtures-smoke": "node scripts/consumer-fixtures-smoke.mjs",
     "ssr-smoke": "node scripts/ssr-smoke.mjs",
     "treeshake-check": "node scripts/treeshake-check.mjs",
     "audit:craftsmanship": "node scripts/craftsmanship-audit.mjs",
-    "release:verify": "pnpm build && pnpm typecheck && pnpm --filter @b4/react run test && pnpm --filter @b4/motion run test && pnpm --filter @b4/studio run build && pnpm --filter @b4/studio run build-storybook && pnpm consumer-smoke && pnpm ssr-smoke && pnpm treeshake-check && pnpm audit:craftsmanship"
+    "release:verify": "pnpm build && pnpm typecheck && pnpm --filter @b4/react run test && pnpm --filter @b4/motion run test && pnpm --filter @b4/studio run build && pnpm --filter @b4/studio run build-storybook && pnpm consumer-smoke && pnpm consumer-fixtures-smoke && pnpm ssr-smoke && pnpm treeshake-check && pnpm audit:craftsmanship"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

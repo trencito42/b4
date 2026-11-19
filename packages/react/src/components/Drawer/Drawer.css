@@ -20,6 +20,7 @@
 
 .b4-drawer__popup {
   position: fixed;
+  box-sizing: border-box;
   top: 0;
   right: 0;
   height: 100dvh;
@@ -31,6 +32,7 @@
   padding-top: max(var(--b4-space-6), env(safe-area-inset-top));
   padding-bottom: max(var(--b4-space-6), env(safe-area-inset-bottom));
   padding-right: max(var(--b4-space-6), env(safe-area-inset-right));
+  padding-left: max(var(--b4-space-6), env(safe-area-inset-left));
   background: var(--b4-surface-overlay);
   border-left: 1px solid var(--b4-border-subtle);
   box-shadow: var(--b4-shadow-overlay);

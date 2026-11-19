@@ -26,7 +26,8 @@ export const OverContent: Story = {
             style={{
               position: "relative",
               marginTop: 16,
-              width: 320,
+              width: "min(320px, 100%)",
+              boxSizing: "border-box",
               height: 180,
               border: "1px solid var(--b4-border-subtle)",
               borderRadius: "var(--b4-radius-md)",

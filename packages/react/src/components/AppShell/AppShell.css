@@ -82,7 +82,7 @@
     left: 0;
     bottom: 0;
     z-index: var(--b4-z-overlay);
-    width: min(300px, 85vw);
+    width: min(var(--sidebar-width), 85vw);
     height: 100dvh;
     box-shadow: var(--b4-shadow-overlay);
     transform: translateX(-100%);

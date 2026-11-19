@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm --filter @b4/react run test
@@ -27,6 +27,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y fonts-inter
       - run: pnpm exec playwright install chromium --with-deps
       - run: pnpm consumer-smoke
+      - run: pnpm consumer-fixtures-smoke
       - run: pnpm ssr-smoke
       - run: pnpm treeshake-check
       - run: pnpm audit:craftsmanship

@@ -1,3 +1,14 @@
+.b4-data-table__scroll {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.b4-data-table__scroll:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: calc(-1 * var(--b4-focus-ring-width));
+}
+
 .b4-data-table {
   width: 100%;
   border-collapse: collapse;

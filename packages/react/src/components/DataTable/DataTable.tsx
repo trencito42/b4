@@ -35,9 +35,29 @@ export interface DataTableProps<Row> {
 }
 
 const SortIcon = ({ direction }: { direction: SortDirection | "none" }) => (
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.75} aria-hidden="true">
-    {direction !== "desc" && <path d="M5 6.5 8 3.5l3 3" strokeLinecap="round" strokeLinejoin="round" opacity={direction === "asc" ? 1 : 0.4} />}
-    {direction !== "asc" && <path d="M5 9.5 8 12.5l3-3" strokeLinecap="round" strokeLinejoin="round" opacity={direction === "desc" ? 1 : 0.4} />}
+  <svg
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.75}
+    aria-hidden="true"
+  >
+    {direction !== "desc" && (
+      <path
+        d="M5 6.5 8 3.5l3 3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={direction === "asc" ? 1 : 0.4}
+      />
+    )}
+    {direction !== "asc" && (
+      <path
+        d="M5 9.5 8 12.5l3-3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity={direction === "desc" ? 1 : 0.4}
+      />
+    )}
   </svg>
 );
 
@@ -67,12 +87,19 @@ export function DataTable<Row>({
 }: DataTableProps<Row>) {
   const selectable = selectedIds !== undefined && onSelectedIdsChange !== undefined;
   const allIds = rows.map(getRowId);
-  const allSelected = selectable && allIds.length > 0 && allIds.every((id) => selectedIds!.has(id));
-  const someSelected = selectable && !allSelected && allIds.some((id) => selectedIds!.has(id));
+  const allSelected =
+    selectable && allIds.length > 0 && allIds.every((id) => selectedIds!.has(id));
+  const someSelected =
+    selectable && !allSelected && allIds.some((id) => selectedIds!.has(id));
 
   const toggleAll = (checked: boolean) => {
     if (!selectable) return;
-    onSelectedIdsChange!(checked ? new Set(allIds) : new Set());
+    const next = new Set(selectedIds);
+    for (const id of allIds) {
+      if (checked) next.add(id);
+      else next.delete(id);
+    }
+    onSelectedIdsChange!(next);
   };
 
   const toggleRow = (id: string, checked: boolean) => {
@@ -85,78 +112,112 @@ export function DataTable<Row>({
 
   const handleSort = (columnKey: string) => {
     if (!onSortChange) return;
-    const direction: SortDirection = sort?.columnKey === columnKey && sort.direction === "asc" ? "desc" : "asc";
+    const direction: SortDirection =
+      sort?.columnKey === columnKey && sort.direction === "asc" ? "desc" : "asc";
     onSortChange({ columnKey, direction });
   };
 
   return (
-    <table className={["b4-data-table", className ?? ""].filter(Boolean).join(" ")}>
-      <caption className={["b4-data-table__caption", hideCaption ? "b4-data-table__caption--hidden" : ""].filter(Boolean).join(" ")}>
-        {caption}
-      </caption>
-      <thead>
-        <tr>
-          {selectable && (
-            <th scope="col" className="b4-data-table__select-cell">
-              <Checkbox
-                checked={allSelected}
-                indeterminate={someSelected}
-                onCheckedChange={toggleAll}
-                aria-label="Select all rows"
-                disabled={allIds.length === 0}
-              />
-            </th>
-          )}
-          {columns.map((column) => {
-            const isSorted = sort?.columnKey === column.key;
-            const ariaSort = isSorted ? (sort!.direction === "asc" ? "ascending" : "descending") : undefined;
-            return (
-              <th
-                key={column.key}
-                scope="col"
-                aria-sort={column.sortable ? (ariaSort ?? "none") : undefined}
-                className={["b4-data-table__header", column.align === "end" ? "b4-data-table__header--end" : ""].filter(Boolean).join(" ")}
-              >
-                {column.sortable ? (
-                  <button type="button" className="b4-data-table__sort-button" onClick={() => handleSort(column.key)}>
-                    {column.header}
-                    <SortIcon direction={isSorted ? sort!.direction : "none"} />
-                  </button>
-                ) : (
-                  column.header
-                )}
+    <div
+      className="b4-data-table__scroll"
+      tabIndex={0}
+      role="region"
+      aria-label={
+        typeof caption === "string" ? `${caption} scroll area` : "Table scroll area"
+      }
+    >
+      <table className={["b4-data-table", className ?? ""].filter(Boolean).join(" ")}>
+        <caption
+          className={[
+            "b4-data-table__caption",
+            hideCaption ? "b4-data-table__caption--hidden" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {caption}
+        </caption>
+        <thead>
+          <tr>
+            {selectable && (
+              <th scope="col" className="b4-data-table__select-cell">
+                <Checkbox
+                  checked={allSelected}
+                  indeterminate={someSelected}
+                  onCheckedChange={toggleAll}
+                  aria-label="Select all rows"
+                  disabled={allIds.length === 0}
+                />
               </th>
+            )}
+            {columns.map((column) => {
+              const isSorted = sort?.columnKey === column.key;
+              const ariaSort = isSorted
+                ? sort!.direction === "asc"
+                  ? "ascending"
+                  : "descending"
+                : undefined;
+              return (
+                <th
+                  key={column.key}
+                  scope="col"
+                  aria-sort={column.sortable ? (ariaSort ?? "none") : undefined}
+                  className={[
+                    "b4-data-table__header",
+                    column.align === "end" ? "b4-data-table__header--end" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  {column.sortable ? (
+                    <button
+                      type="button"
+                      className="b4-data-table__sort-button"
+                      onClick={() => handleSort(column.key)}
+                    >
+                      {column.header}
+                      <SortIcon direction={isSorted ? sort!.direction : "none"} />
+                    </button>
+                  ) : (
+                    column.header
+                  )}
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const id = getRowId(row);
+            const isSelected = selectable && selectedIds!.has(id);
+            return (
+              <tr key={id} data-selected={isSelected || undefined}>
+                {selectable && (
+                  <td className="b4-data-table__select-cell">
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={(checked) => toggleRow(id, checked)}
+                      aria-label={`Select ${getRowLabel ? getRowLabel(row) : id}`}
+                    />
+                  </td>
+                )}
+                {columns.map((column) => (
+                  <td
+                    key={column.key}
+                    className={
+                      column.align === "end" ? "b4-data-table__cell--end" : undefined
+                    }
+                  >
+                    {column.render
+                      ? column.render(row)
+                      : String((row as Record<string, unknown>)[column.key] ?? "")}
+                  </td>
+                ))}
+              </tr>
             );
           })}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => {
-          const id = getRowId(row);
-          const isSelected = selectable && selectedIds!.has(id);
-          return (
-            <tr key={id} data-selected={isSelected || undefined}>
-              {selectable && (
-                <td className="b4-data-table__select-cell">
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={(checked) => toggleRow(id, checked)}
-                    aria-label={`Select ${getRowLabel ? getRowLabel(row) : id}`}
-                  />
-                </td>
-              )}
-              {columns.map((column) => (
-                <td
-                  key={column.key}
-                  className={column.align === "end" ? "b4-data-table__cell--end" : undefined}
-                >
-                  {column.render ? column.render(row) : String((row as Record<string, unknown>)[column.key] ?? "")}
-                </td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   );
 }

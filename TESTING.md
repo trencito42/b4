@@ -86,6 +86,44 @@ npx playwright install chromium   # once per machine
 npx playwright test
 ```
 
+## The craftsmanship audit
+
+```bash
+pnpm audit:craftsmanship
+```
+
+A mechanical sweep over every component, every story file and the Studio
+catalog (`scripts/craftsmanship-audit.mjs`). It writes
+`CRAFTMANSHIP_AUDIT.md` and exits non-zero on any BLOCKER, so it is part
+of `pnpm release:verify` and CI. It checks the invariants a human eye
+misses — an unresolvable `var(--b4-*)`, a hardcoded colour, a story with
+no `Default`, a catalog link pointing at a story that does not exist.
+
+Two rules about the audit itself, learned the hard way:
+
+- **It must not report false positives.** A gate that cries wolf gets
+  ignored, and then it protects nothing. Tokenised durations count as
+  reduced-motion safe (the token layer zeroes them); a component sharing
+  another component's stylesheet may use that component's class names.
+- **A colour literal is only excusable in writing.** A stylesheet opts one
+  out with `/* b4-audit-allow: <reason> */`, and the reason is required —
+  the report lists every exemption rather than hiding it, so the next
+  reader can challenge it.
+
+## Before a Playwright run
+
+Two failures here look exactly like product bugs and are not:
+
+- **A long-lived Storybook dev server serves a stale index.** It does not
+  pick up new or renamed stories, so a story that was just added resolves
+  in one run and not the next — and the failure reads as "the component
+  is not rendered!". Kill the Storybook process and let Playwright start
+  a fresh one before any run that depends on a story id.
+- **A dev server on `:5173` silently replaces the Studio preview.** Check
+  `Get-NetTCPConnection -LocalPort 5173` before trusting a Studio
+  failure; the reserved ports are `:5173` (Studio preview) and `:6106`
+  (Storybook).
+
 ## Release gate (Phases 7–8)
 
 ```bash
@@ -94,6 +132,20 @@ npx playwright test    # full suite incl. Studio + visual baselines (run twice o
 ```
 
 CI runs the same checks on push/PR (`.github/workflows/ci.yml`).
+
+## Visual review
+
+Studio’s **Visual review** compares live Storybook stories in Graphite and
+Porcelain at widths of 320, 390, 768, 1024, 1440, and 1920 px. Run Storybook
+alongside Studio. For a non-local deployment, set `VITE_STORYBOOK_URL` to a
+Storybook origin that allows framing by the Studio host.
+
+To capture every default story in Chromium, run `node scripts/visual-review.mjs`
+while Storybook is serving. Set `B4_REVIEW_ORIGIN` to use a static Storybook
+server on a different port. The script writes the screenshot index and JSON
+measurements to `test-results/visual-review/` and reports rendering errors
+and document overflow. The default matrix uses reduced motion for consistent
+captures. Playwright interaction specs test active motion and popup behavior.
 
 ## Known gaps (tracked, not hidden)
 

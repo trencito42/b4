@@ -5,3 +5,25 @@ body {
   background: var(--b4-surface-canvas);
   color: var(--b4-text-primary);
 }
+
+.b4-story-canvas {
+  padding: var(--b4-space-10);
+}
+
+@media (max-width: 30rem) {
+  .sb-show-main.sb-main-centered #storybook-root {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    padding-inline: var(--b4-space-4);
+  }
+
+  .b4-story-canvas {
+    min-inline-size: 0;
+    padding-inline: var(--b4-space-5);
+  }
+
+  .b4-story-canvas > * {
+    box-sizing: border-box;
+    max-inline-size: 100%;
+  }
+}

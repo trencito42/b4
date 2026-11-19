@@ -1,5 +1,15 @@
 # B4 — Progress
 
+## Current checkpoint (2026-11-20)
+
+The continuation consolidated the inherited component work and consumer
+fixtures, corrected the TextMorph audit timing, and finished a live Studio
+comparison page and the Infrastructure
+workflow. The cross-library Chromium review cleared document overflow across
+both themes at six widths. See the current acceptance evidence before
+reading the historical phases below. [Requirements](REQUIREMENTS_TRACEABILITY.md)
+[Quality matrix](QUALITY_MATRIX.md)
+
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 

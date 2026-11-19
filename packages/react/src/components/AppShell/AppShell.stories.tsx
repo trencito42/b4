@@ -34,6 +34,7 @@ export const Default: Story = {
 export const AdaptiveMobile: Story = {
   render: () => (
     <AppShell
+      sidebarWidth={320}
       header={
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px" }}>
           <AppShellMobileTrigger />

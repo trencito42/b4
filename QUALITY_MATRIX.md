@@ -1,8 +1,38 @@
 ﻿# B4 — Quality Matrix
 
+## Continuation verification (2026-11-20)
+
+- `pnpm install --frozen-lockfile --offline` accepted the workspace lockfile.
+- A separate checkout with the final source changes applied passed a fresh
+  `pnpm install --frozen-lockfile` and the package, Studio and Storybook builds.
+- `pnpm release:verify` passed with 548 React tests and 5 motion tests.
+  Package, Studio, Storybook, and consumer fixture builds passed, along with
+  the public entry-point, SSR and tree-shaking checks.
+- The craftsmanship audit reported 89 public components, one effect and
+  92 story files, with zero blockers and zero warnings.
+- The final browser suite passed twice on fresh Storybook and Studio
+  processes, **450/450** in the workspace and **450/450** in the separate
+  checkout. Both runs passed the settled TextMorph contrast audit and the
+  mobile Drawer geometry checks in Graphite and Porcelain.
+- The Storybook default matrix captured 1,104 views with no render
+  failures and no horizontal document overflow across both themes at
+  320, 390, 768, 1024, 1440 and 1920 px. The first pass found overflow in
+  50 views. The responsive canvas and local scrolling in wide controls
+  resolved those findings.
+- Studio review captured 36 default views and eight interaction states
+  across Infrastructure, Settings and Confirmation. The mobile Drawer
+  clipped its left edge while open. The fixed panel was recaptured and
+  measured inside the 390 px viewport in both themes.
+
+The local captures are in `test-results/b4-library-review-final/` and
+`test-results/b4-showcase-review/`. The Storybook matrix covers default
+states with reduced motion. Interaction tests cover live motion,
+keyboard and emulated touch. [Testing](TESTING.md)
+
 ## Batch 3 — Forms craftsmanship (2026-11-20)
 
-**Forms checks passed. Whole-suite gate remains in TESTING.**
+**Batch 3 checkpoint.** The forms checks passed. The TextMorph suite finding
+recorded below was investigated during the continuation above.
 
 The review records findings and evidence for all 18 entries in scope.
 `RangeSlider` uses the same implementation as

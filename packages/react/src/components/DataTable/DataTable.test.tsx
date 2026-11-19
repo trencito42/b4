@@ -131,4 +131,16 @@ describe("DataTable", () => {
     );
     expect(await axe(container)).toHaveNoViolations();
   });
+
+  it("preserves selections on other pages when toggling visible rows", async () => {
+    const onSelectedIdsChange = vi.fn();
+    const user = userEvent.setup();
+    const props = { caption: "Items", columns, rows, getRowId: (row: Row) => row.id, onSelectedIdsChange };
+    const { rerender } = render(<DataTable {...props} selectedIds={new Set(["other-page"])} />);
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    expect(onSelectedIdsChange).toHaveBeenLastCalledWith(new Set(["other-page", "a", "b"]));
+    rerender(<DataTable {...props} selectedIds={new Set(["other-page", "a", "b"])} />);
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    expect(onSelectedIdsChange).toHaveBeenLastCalledWith(new Set(["other-page"]));
+  });
 });

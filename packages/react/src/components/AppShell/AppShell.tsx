@@ -10,6 +10,8 @@ import {
 } from "react";
 import { useControllableState } from "../../hooks/useControllableState.js";
 
+const focusableSelector = "button, [href], input, select, textarea, [tabindex]";
+
 export interface AppShellContextValue {
   mobileNavOpen: boolean;
   setMobileNavOpen: (open: boolean) => void;
@@ -42,7 +44,9 @@ export function AppShellMobileTrigger({
   return (
     <button
       type="button"
-      className={["b4-app-shell__mobile-trigger", className ?? ""].filter(Boolean).join(" ")}
+      className={["b4-app-shell__mobile-trigger", className ?? ""]
+        .filter(Boolean)
+        .join(" ")}
       aria-label={ariaLabel}
       aria-expanded={mobileNavOpen}
       aria-controls={sidebarId}
@@ -126,6 +130,8 @@ export function AppShell({
   const navRef = useRef<HTMLElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const hasSidebar = Boolean(sidebar);
+  const mobileDrawerOpen = hasSidebar && isMobile && isOpen;
 
   // Detect mobile viewport for inert focus isolation
   useEffect(() => {
@@ -147,36 +153,55 @@ export function AppShell({
 
   // Focus management & Escape key handling
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || !hasSidebar) return;
 
     if (isOpen) {
       lastFocusedRef.current = document.activeElement as HTMLElement | null;
-      // Focus first focusable item inside the opened nav drawer
-      requestAnimationFrame(() => {
-        if (navRef.current) {
-          const firstFocusable = navRef.current.querySelector<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-          );
-          firstFocusable?.focus();
-        }
-      });
+      const getTabs = () =>
+        Array.from(
+          navRef.current?.querySelectorAll<HTMLElement>(focusableSelector) ?? [],
+        ).filter(
+          (element) =>
+            element.tabIndex >= 0 &&
+            !element.matches(":disabled") &&
+            element.getClientRects().length > 0,
+        );
+      const frame = requestAnimationFrame(() =>
+        (getTabs()[0] ?? navRef.current)?.focus(),
+      );
 
       const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.defaultPrevented) return;
         if (e.key === "Escape") {
           e.preventDefault();
           closeNav();
-          lastFocusedRef.current?.focus();
+        }
+        if (e.key === "Tab") {
+          const tabs = getTabs();
+          const first = tabs[0];
+          const last = tabs.at(-1);
+          const active = document.activeElement;
+          if (
+            !tabs.includes(active as HTMLElement) ||
+            active === (e.shiftKey ? first : last)
+          ) {
+            e.preventDefault();
+            (e.shiftKey ? last : first)?.focus();
+          }
         }
       };
       window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
+      return () => {
+        cancelAnimationFrame(frame);
+        window.removeEventListener("keydown", handleKeyDown);
+      };
     } else {
       if (lastFocusedRef.current && document.contains(lastFocusedRef.current)) {
         lastFocusedRef.current.focus();
         lastFocusedRef.current = null;
       }
     }
-  }, [isOpen, isMobile, closeNav]);
+  }, [isOpen, isMobile, closeNav, hasSidebar]);
 
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
@@ -215,6 +240,7 @@ export function AppShell({
                 ref={navRef}
                 id={sidebarId}
                 aria-label={sidebarLabel}
+                tabIndex={-1}
                 data-open={isOpen ? "true" : "false"}
                 className="b4-app-shell__sidebar"
                 inert={isMobile && !isOpen ? true : undefined}
@@ -222,7 +248,6 @@ export function AppShell({
                 onClick={handleNavClick}
                 style={
                   {
-                    width: sidebarWidth,
                     "--sidebar-width": `${sidebarWidth}px`,
                   } as React.CSSProperties
                 }
@@ -231,7 +256,9 @@ export function AppShell({
               </nav>
             </>
           )}
-          <main className="b4-app-shell__content">{children}</main>
+          <main className="b4-app-shell__content" inert={mobileDrawerOpen || undefined}>
+            {children}
+          </main>
         </div>
       </div>
     </AppShellContext.Provider>

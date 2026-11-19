@@ -11,7 +11,7 @@ non-zero on any BLOCKER, so it can gate CI.
 |---|---|
 | Components audited | 89 |
 | Effects audited | 1 |
-| Stories files audited | 91 |
+| Stories files audited | 92 |
 | Studio catalog entries | 90 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |

@@ -60,7 +60,7 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
               <div className="b4-showcase-checkout__amount">
                 <span className="b4-showcase-checkout__amount-prefix">$</span>
                 <NumberTransition
-                  value={status === "done" ? RENT_AMOUNT : RENT_AMOUNT}
+                  value={RENT_AMOUNT}
                   format={(value) => value.toLocaleString()}
                   mode="morph"
                 />

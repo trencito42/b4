@@ -114,10 +114,10 @@ const preview: Preview = {
 
       return (
         <div
+          className="b4-story-canvas"
           style={{
             background: "var(--b4-surface-canvas)",
             color: "var(--b4-text-primary)",
-            padding: "var(--b4-space-10)",
             fontFamily: "var(--b4-font-sans)",
           }}
         >
