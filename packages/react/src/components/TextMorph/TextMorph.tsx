@@ -228,21 +228,29 @@ export const TextMorph = forwardRef<HTMLElement, TextMorphProps>(function TextMo
           });
         }
       } else {
-        // Entering token: fade in + subtle scale/translate
+        // Entering token: a quick, fixed-duration fade + slide-up — no
+        // `scale()` and no lingering blur. An earlier version animated
+        // scale(0.85→1) + blur(3px→0) + translateY together on the same
+        // spring as everything else; because a spring's settle time isn't
+        // fixed, that read as the new character visibly squishing/melting
+        // for the whole transition and only "snapping" into its true shape
+        // at the very end — reported as ugly, not refined. A short
+        // `durations.fast` tween with the dedicated `easings.enter` curve
+        // (decelerating, no overshoot) resolves in ~140ms: the letter
+        // slides up and fades in without ever being a visibly distorted
+        // shape along the way.
         const enterAnim = animate(
           el,
           {
             opacity: [0, 1],
-            transform: ["scale(0.85) translate3d(0px, 4px, 0)", "scale(1) translate3d(0px, 0px, 0)"],
-            filter: ["blur(3px)", "blur(0px)"],
+            transform: ["translate3d(0px, 3px, 0)", "translate3d(0px, 0px, 0)"],
           },
-          springConfig,
+          { duration: durations.fast, ease: easings.enter },
         );
         activeAnimationsRef.current.add(enterAnim);
         enterAnim.then(() => {
           el.style.opacity = "";
           el.style.transform = "";
-          el.style.filter = "";
           activeAnimationsRef.current.delete(enterAnim);
         });
       }

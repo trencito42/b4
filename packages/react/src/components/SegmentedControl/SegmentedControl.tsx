@@ -99,6 +99,20 @@ export function SegmentedControl<Value extends string>({
             {isSelected && (
               <AnimatedIndicator
                 layoutId={`b4-segmented-indicator-${indicatorId}`}
+                // Without this, Motion's `layout` projection treats ANY
+                // re-render that changes this element's box as something
+                // to FLIP-animate — including a resize caused by an
+                // unrelated density/radius/contrast token change on a
+                // distant ancestor, which doesn't unmount this indicator
+                // (same selected item, same React instance). The result
+                // was every OTHER segmented control's indicator visibly
+                // chasing its new size/position whenever you touched any
+                // one of the Studio header's configurator controls — "the
+                // dots jump." Gating on `displayValue` means Motion only
+                // treats it as a real layout change (worth animating)
+                // when the selection itself changes; a pure external
+                // resize now just follows the instant CSS reflow.
+                layoutDependency={displayValue}
                 className="b4-segmented-control__indicator"
               />
             )}

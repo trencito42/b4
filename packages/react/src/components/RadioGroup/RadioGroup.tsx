@@ -79,6 +79,12 @@ export function RadioGroup<Value extends string>({
             <AnimatedIndicator
               as="span"
               layoutId={`b4-radio-selection-${indicatorId}`}
+              // See SegmentedControl's identical fix: without this, an
+              // unrelated density/radius/contrast resize that doesn't
+              // change `selected` still makes Motion FLIP-animate this
+              // persisting indicator toward its new size, instead of
+              // just following the instant CSS reflow.
+              layoutDependency={selected}
               className="b4-radio-group__selection"
               aria-hidden="true"
             />
