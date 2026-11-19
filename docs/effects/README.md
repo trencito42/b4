@@ -25,18 +25,30 @@ imperative `play()/reverse()/reset()/prepare()` API accepting
 view for another.
 
 **What is actually implemented today is different and smaller in scope.**
-`DistortionWave` as committed is a single-surface decorative accent: a
-`backdrop-filter`-based refraction band that sweeps across one child using
-CSS keyframes, in the same family as `BorderBeam` (decorative overlay,
-`aria-hidden`, no DOM swap, no WebGL, no snapshot/capture pipeline). It does
-not transition between two views and has no `revealed`/`source`/`capture`
-API. This is recorded here rather than silently upgraded in the docs to
-match the brief — see [DISTORTION_WAVE.md](./DISTORTION_WAVE.md) for the
-real API and the explicit gap list.
+`DistortionWave` as committed is a single-surface decorative accent, in the
+same family as `BorderBeam` (decorative overlay, `aria-hidden`, no DOM
+swap, no snapshot/capture pipeline). It does not transition between two
+views and has no `revealed`/`source`/`capture` API.
+
+As of 2026-11-19 it **does** include real WebGL2 rendering (added after
+explicit feedback that the first CSS-only version read as too basic): a
+`backdrop-filter` band genuinely distorts the real content behind it, and
+a GLSL ES 3.00 shader running in an actual `<canvas>` renders the
+chromatic-aberration/caustic-shimmer/specular crest riding on top of that
+band — not a flat CSS gradient standing in for one. `BorderBeam` was
+upgraded the same day from a thin uniform ring to a comet-tail gradient
+plus a path-travelling spark plus a large soft multi-hue ambient halo
+(`tone="aurora"`, blended from existing B4 tokens via `color-mix`, not a
+hardcoded rainbow). Neither upgrade implements the brief's harder ask —
+DOM-content snapshot capture and a two-view transition system — see each
+effect's own doc for the precise, current gap list.
 
 Do not treat this README or the per-effect docs as claiming the original
-WebGL view-transition `DistortionWave` exists. It does not, as of this
-writing (2026-11-19).
+WebGL *view-transition* `DistortionWave` (the snapshot/two-view system)
+exists. It does not, as of this writing (2026-11-19). What changed today
+is that the single-surface decorative effects now use real WebGL
+rendering where they didn't before — a real quality upgrade, not the
+harder, separate view-transition feature.
 
 ## Composing effects
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 import { useReducedMotion } from "@b4/motion";
 
 export type BorderBeamSize = "sm" | "md" | "lg";
-export type BorderBeamTone = "accent" | "success" | "warning" | "danger" | "info";
+export type BorderBeamTone = "accent" | "success" | "warning" | "danger" | "info" | "aurora";
 
 export interface BorderBeamProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ export interface BorderBeamProps {
   active?: boolean;
   /** Beam line thickness. Defaults to "sm". */
   size?: BorderBeamSize;
-  /** Semantic color, read from existing B4 tokens — not a custom hex. */
+  /** Semantic color, read from existing B4 tokens — not a custom hex. "aurora" blends three existing tokens (accent/danger/warning) into a soft multi-hue halo instead of a single flat color. */
   tone?: BorderBeamTone;
   /** Seconds per full revolution. Defaults to 6. */
   duration?: number;
@@ -24,10 +24,10 @@ export interface BorderBeamProps {
 // light has room to spread instead of being cut off flush against a hard
 // edge. blur softens the conic-gradient itself into a diffuse glow rather
 // than a crisp line.
-const sizeToGeometry: Record<BorderBeamSize, { width: string; clip: string; blur: string }> = {
-  sm: { width: "1.5px", clip: "6px", blur: "3px" },
-  md: { width: "2.5px", clip: "9px", blur: "4.5px" },
-  lg: { width: "4px", clip: "13px", blur: "6px" },
+const sizeToGeometry: Record<BorderBeamSize, { width: string; clip: string; blur: string; spark: string }> = {
+  sm: { width: "1.5px", clip: "6px", blur: "3px", spark: "5px" },
+  md: { width: "2.5px", clip: "9px", blur: "4.5px", spark: "7px" },
+  lg: { width: "4px", clip: "13px", blur: "6px", spark: "9px" },
 };
 
 const toneToVar: Record<BorderBeamTone, string> = {
@@ -36,6 +36,11 @@ const toneToVar: Record<BorderBeamTone, string> = {
   warning: "var(--b4-warning)",
   danger: "var(--b4-danger-text)",
   info: "var(--b4-info)",
+  // The thin comet ring still needs one color even in "aurora" mode —
+  // the multi-hue blend lives in the halo (.b4-border-beam__halo--aurora
+  // in BorderBeam.css), which reads --b4-accent-500/--b4-danger/
+  // --b4-warning directly rather than through this single-value map.
+  aurora: "var(--b4-accent-500)",
 };
 
 /**
@@ -82,21 +87,48 @@ export function BorderBeam({
     <div ref={containerRef} className={["b4-border-beam", className ?? ""].filter(Boolean).join(" ")} style={{ borderRadius: radius }}>
       {children}
       {active && (
-        <span
-          aria-hidden="true"
-          className={["b4-border-beam__ring", spinning ? "b4-border-beam__ring--spinning" : ""].filter(Boolean).join(" ")}
-          style={
-            {
-              borderRadius: radius,
-              "--b4-border-beam-clip": sizeToGeometry[size].clip,
-              "--b4-border-beam-blur": sizeToGeometry[size].blur,
-              "--b4-border-beam-color": toneToVar[tone],
-              "--b4-border-beam-duration": `${duration}s`,
-            } as CSSProperties
-          }
-        >
-          <span className="b4-border-beam__gradient" />
-        </span>
+        <>
+          {/* The ambient halo deliberately lives OUTSIDE the masked ring
+              below: the ring's mask clips its content to a thin band
+              around the border, but the halo is meant to bloom well past
+              the card's own edges (inset is negative), so it cannot be a
+              child of that masked element without being clipped away. */}
+          <span
+            aria-hidden="true"
+            className={[
+              "b4-border-beam__halo",
+              tone === "aurora" ? "b4-border-beam__halo--aurora" : "",
+              spinning ? "b4-border-beam__halo--breathing" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            style={
+              {
+                borderRadius: radius,
+                "--b4-border-beam-color": toneToVar[tone],
+              } as CSSProperties
+            }
+          />
+          <span
+            aria-hidden="true"
+            className={["b4-border-beam__ring", spinning ? "b4-border-beam__ring--spinning" : ""].filter(Boolean).join(" ")}
+            style={
+              {
+                borderRadius: radius,
+                "--b4-border-beam-clip": sizeToGeometry[size].clip,
+                "--b4-border-beam-blur": sizeToGeometry[size].blur,
+                "--b4-border-beam-color": toneToVar[tone],
+                "--b4-border-beam-duration": `${duration}s`,
+                "--b4-border-beam-spark-size": sizeToGeometry[size].spark,
+                "--b4-border-beam-radius": radius,
+              } as CSSProperties
+            }
+          >
+            <span className="b4-border-beam__gradient b4-border-beam__gradient--wake" />
+            <span className="b4-border-beam__gradient" />
+            <span className="b4-border-beam__spark" />
+          </span>
+        </>
       )}
     </div>
   );

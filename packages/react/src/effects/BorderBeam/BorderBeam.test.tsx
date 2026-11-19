@@ -77,6 +77,36 @@ describe("BorderBeam", () => {
     expect(ring).toHaveClass("b4-border-beam__ring--spinning");
   });
 
+  it("renders a travelling spark and a counter-rotating wake layer", () => {
+    const { container } = render(
+      <BorderBeam size="md">
+        <span>Card</span>
+      </BorderBeam>,
+    );
+    expect(container.querySelector(".b4-border-beam__spark")).toBeInTheDocument();
+    expect(container.querySelector(".b4-border-beam__gradient--wake")).toBeInTheDocument();
+    const ring = container.querySelector(".b4-border-beam__ring") as HTMLElement;
+    expect(ring.style.getPropertyValue("--b4-border-beam-spark-size")).toBe("7px");
+  });
+
+  it("renders a soft ambient halo behind the card, blended from tokens in aurora mode", () => {
+    const { container, rerender } = render(
+      <BorderBeam tone="success">
+        <span>Card</span>
+      </BorderBeam>,
+    );
+    const halo = container.querySelector(".b4-border-beam__halo");
+    expect(halo).toBeInTheDocument();
+    expect(halo).not.toHaveClass("b4-border-beam__halo--aurora");
+
+    rerender(
+      <BorderBeam tone="aurora">
+        <span>Card</span>
+      </BorderBeam>,
+    );
+    expect(container.querySelector(".b4-border-beam__halo")).toHaveClass("b4-border-beam__halo--aurora");
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(
       <BorderBeam>

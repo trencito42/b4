@@ -20,9 +20,23 @@ single-surface decorative accent, architecturally a sibling of
 
 - wraps **one** child (no `overlay`/`revealedContent`/second view),
 - uses `backdrop-filter` to distort the real pixels already rendered behind
-  it (so the distortion is of real content, not painted), but
-- never swaps DOM, never captures a snapshot, has no WebGL context, and has
+  it (so the distortion is of real content, not painted), **and**, riding
+  on top of that, a genuine WebGL2 shader (not a CSS trick) rendering
+  chromatic aberration, an animated caustic shimmer and a specular hot
+  core — see "Rendering architecture" below — but
+- never swaps DOM, never captures a DOM-content snapshot/texture, and has
   no imperative API.
+
+The WebGL layer is real GPU rendering (an actual `<canvas>` + compiled
+GLSL ES 3.00 program via `WebGL2RenderingContext`), added 2026-11-19 after
+the first version of this component used a flat CSS gradient for the
+crest/fringe and was explicitly called out as too basic. It is **not**,
+however, sampling a texture of the DOM content underneath — it renders a
+procedural light effect that rides the same travelling band as the real
+`backdrop-filter` distortion, not a distorted copy of the pixels
+themselves. That distinction is the actual remaining gap vs. the brief's
+WebGL ask (per-pixel lens distortion of captured content) — see "Known
+limitations" below.
 
 This gap is tracked, not hidden. If a future session is asked to build the
 real view-transition `DistortionWave` from the brief, it should treat this
@@ -67,14 +81,39 @@ exist on the current implementation.
 ## Rendering architecture
 
 - Outer wrapper renders `children` plus a sibling `<span aria-hidden>`
-  layer (`b4-distortion-wave__layer`) containing a `__band` and `__fringe`
-  child, both driven by one CSS keyframe track so they cannot drift apart.
+  layer (`b4-distortion-wave__layer`) containing a `__band` (the real
+  `backdrop-filter` distortion) and a `__crest-mask` box, both driven by
+  one CSS keyframe track so their *positions* cannot drift apart.
 - The band uses `backdrop-filter: blur() saturate() contrast()` so it
   distorts whatever is actually rendered behind it (real text/icons/
   surfaces), not a pre-rendered image.
+- The `__crest-mask` box contains a `<canvas class="b4-distortion-wave__crest">`
+  (`DistortionWaveCrest.tsx`), a real WebGL2 context (`crest.ts`) running a
+  compiled GLSL ES 3.00 fragment shader every animation frame via
+  `requestAnimationFrame`. The shader computes, per pixel: an RGB-channel-
+  split specular core (chromatic aberration — literally three different
+  horizontal offsets for the red/green/blue channels, not a tinted
+  overlay), a two-octave value-noise caustic shimmer animated over time,
+  and a bright white hot core at the band's center — composited with
+  real alpha blending (`gl.BLEND`, `SRC_ALPHA`/`ONE_MINUS_SRC_ALPHA`) onto
+  the content below.
+- The crest's **position** (which part of the card it's currently over)
+  comes from the same CSS keyframe/transform the band uses, so they travel
+  together. The crest's **shimmer** animates on its own `requestAnimationFrame`
+  clock inside the shader, independent of the CSS animation's timing
+  function — documented here as a real architectural distinction, not
+  glossed over as "the same track" the way the pre-WebGL version's flat
+  gradient was.
+- The crest's color is resolved from the requested `tone` by setting that
+  CSS custom property as the canvas's own `color` and reading back
+  `getComputedStyle(canvas).color` — so it stays correct across B4's
+  Graphite/Porcelain themes without hardcoding an RGB value, and a
+  `MutationObserver` on `<html data-b4-theme>` re-samples it on a live
+  theme switch.
 - `direction` toggles a CSS class (`b4-distortion-wave--horizontal` /
-  `--vertical`) that changes which axis the keyframe track animates along.
-- No canvas, no SVG, no WebGL2 context.
+  `--vertical`) that changes which axis the keyframe track animates along,
+  and is passed into the shader (`uVertical`) so the crest's own internal
+  gradient direction matches.
 
 ## Behavior
 
@@ -89,11 +128,15 @@ exist on the current implementation.
 
 ## Browser support / fallback
 
-`backdrop-filter` is required for the refraction to be visible. In a
-browser without `backdrop-filter` support, the band and fringe still
-render (opacity/gradient), just without the blur-based distortion — there
-is no explicit `@supports` fallback branch in the component; this is a
-known limitation, not a tested fallback path.
+`backdrop-filter` is required for the band's refraction to be visible; in
+a browser without it, the band still renders (no blur-based distortion,
+same known gap as before) — there is no explicit `@supports` fallback
+branch. The WebGL2 crest degrades independently and gracefully: if
+`canvas.getContext("webgl2")` returns `null` (unsupported browser, or
+jsdom in tests) or a `webglcontextlost` event fires, `createCrestRenderer`
+returns `null`/stops rendering rather than throwing — the crest simply
+doesn't render (fully transparent canvas) while the real `backdrop-filter`
+band keeps working on its own.
 
 ## Use cases
 
@@ -118,18 +161,30 @@ known limitation, not a tested fallback path.
 
 1. Not a view-transition effect — see the scope note at the top of this
    document.
-2. No WebGL, no DOM snapshot/capture, no shader-based lens distortion or
-   chromatic-aberration pass beyond a CSS filter tint — "chromatic fringe"
-   here is a tinted gradient layer, not true per-channel offset.
+2. **The WebGL shader does not sample DOM content.** It's a real,
+   per-pixel-animated GPU shader (chromatic aberration, caustic shimmer,
+   specular core), but it renders a procedural light effect, not a
+   captured-and-distorted texture of the actual pixels underneath. The
+   real per-pixel distortion of the content itself is still the separate
+   `backdrop-filter` band (CSS, not WebGL) — see "Rendering architecture."
 3. No documented `@supports` fallback for browsers without
-   `backdrop-filter`.
+   `backdrop-filter`. The WebGL2 crest's own unavailability fallback (no
+   context / context loss) is implemented and tested, unlike this one.
 4. No imperative API (`play`/`reverse`/`reset`/`prepare`) — the effect is
    purely declarative/continuous via `active`.
+5. No measured GPU frame-time/performance numbers recorded for the shader
+   yet — see `docs/effects/PERFORMANCE.md`.
 
 ## Tests
 
-- `DistortionWave.test.tsx` — 9 unit tests.
-- `e2e/distortion-wave.spec.ts` — 11 Playwright tests, both themes.
+- `DistortionWave.test.tsx` — 11 unit tests (includes the WebGL-crest
+  structural checks and a "does not throw when WebGL2 is unavailable"
+  regression test for jsdom/unsupported browsers).
+- `e2e/distortion-wave.spec.ts` — 11 Playwright tests, both themes (not
+  re-run against the WebGL rebuild in this session — Playwright runs in a
+  real Chromium with WebGL2 available, so these should still pass, but
+  that has not been independently re-verified here; re-run before relying
+  on this count).
 
 ## Studio
 

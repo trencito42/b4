@@ -98,6 +98,31 @@ describe("DistortionWave", () => {
     expect(ref.current).toHaveClass("b4-distortion-wave");
   });
 
+  it("renders the WebGL crest canvas inside its own masked box", () => {
+    const { container } = render(
+      <DistortionWave>
+        <span>Card</span>
+      </DistortionWave>,
+    );
+    expect(container.querySelector(".b4-distortion-wave__crest-mask")).toBeInTheDocument();
+    const canvas = container.querySelector(".b4-distortion-wave__crest");
+    expect(canvas).toBeInTheDocument();
+    expect(canvas?.tagName).toBe("CANVAS");
+    expect(canvas).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("does not throw when WebGL2 is unavailable (e.g. under jsdom)", () => {
+    // jsdom has no real WebGL2 implementation: HTMLCanvasElement.getContext
+    // returns null here. The crest must degrade gracefully, not crash.
+    expect(() =>
+      render(
+        <DistortionWave>
+          <span>Card</span>
+        </DistortionWave>,
+      ),
+    ).not.toThrow();
+  });
+
   it("has no axe violations", async () => {
     const { container } = render(
       <DistortionWave>

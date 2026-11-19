@@ -7,10 +7,14 @@
   saturates and re-contrasts them. So the content genuinely bends while
   the wave crosses it and resolves again once the wave has moved on.
 
-  The chromatic fringe and the specular crest are separate elements that
-  share the band's exact geometry and the exact same keyframe track, so
-  they can never drift out of alignment with the refraction they belong
-  to. Both travel the same distance in the same time.
+  Riding on top is a real WebGL2-rendered crest (a <canvas>, driven by
+  DistortionWaveCrest.tsx / crest.ts) — chromatic aberration, a caustic
+  shimmer and a specular hot core, actually rendered by a GPU shader, not
+  a flat CSS gradient standing in for one. The crest's own box (.b4-
+  distortion-wave__crest-mask) shares the band's exact geometry and the
+  exact same CSS keyframe track, so it can never drift out of alignment
+  with the refraction it rides on — only the shimmer *inside* the canvas
+  animates on its own clock.
 */
 
 .b4-distortion-wave {
@@ -49,22 +53,20 @@
   will-change: transform;
 }
 
-/* ---- the chromatic fringe riding with the band ---- */
+/* ---- the WebGL-rendered crest riding with the band ---- */
 
-.b4-distortion-wave__fringe {
+/* This mask box is positioned/sized/animated exactly the way the old flat
+   CSS "fringe" gradient used to be (same width, same travel keyframes,
+   same soft-edge mask) — only its content changed, from a static
+   gradient to a <canvas> that DistortionWaveCrest drives with a real
+   WebGL2 shader. Keeping the outer box's geometry identical is what
+   keeps the crest welded to the backdrop-filter band below it. */
+.b4-distortion-wave__crest-mask {
   position: absolute;
   top: 0;
   left: 0;
   width: var(--b4-distortion-wave-band-size, 40%);
   height: 100%;
-  opacity: 0.85;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--b4-distortion-wave-tone) 16%, transparent) 42%,
-    color-mix(in srgb, var(--b4-distortion-wave-tone) 46%, transparent) 90%,
-    transparent 100%
-  );
   /* b4-audit-allow: mask alpha stops, not a theme color */
   mask-image: linear-gradient(90deg, transparent 0%, #000 34%, #000 74%, transparent 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 34%, #000 74%, transparent 100%);
@@ -75,26 +77,22 @@
   will-change: transform;
 }
 
+.b4-distortion-wave__crest {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* ---- vertical variant: swap the travel axis and the gradient axis ---- */
 
 .b4-distortion-wave--vertical .b4-distortion-wave__band,
-.b4-distortion-wave--vertical .b4-distortion-wave__fringe {
+.b4-distortion-wave--vertical .b4-distortion-wave__crest-mask {
   width: 100%;
   height: var(--b4-distortion-wave-band-size, 40%);
 }
 
-.b4-distortion-wave--vertical .b4-distortion-wave__fringe {
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    color-mix(in srgb, var(--b4-distortion-wave-tone) 16%, transparent) 42%,
-    color-mix(in srgb, var(--b4-distortion-wave-tone) 46%, transparent) 90%,
-    transparent 100%
-  );
-}
-
 .b4-distortion-wave--vertical .b4-distortion-wave__band,
-.b4-distortion-wave--vertical .b4-distortion-wave__fringe {
+.b4-distortion-wave--vertical .b4-distortion-wave__crest-mask {
   /* b4-audit-allow: mask alpha stops, not a theme color */
   mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
@@ -103,21 +101,24 @@
 /* ---- motion ---- */
 
 /* Both layers run the same animation with the same duration and the same
-   timing function, which is what keeps the fringe welded to the band. */
+   timing function, which is what keeps the crest welded to the band —
+   the WebGL shader inside the crest canvas animates its own shimmer
+   independently (see DistortionWaveCrest.tsx), but the canvas's own box
+   travels on this exact same CSS keyframe track as the band. */
 .b4-distortion-wave__layer--moving .b4-distortion-wave__band,
-.b4-distortion-wave__layer--moving .b4-distortion-wave__fringe {
+.b4-distortion-wave__layer--moving .b4-distortion-wave__crest-mask {
   animation-duration: var(--b4-distortion-wave-duration, 6s);
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 
 .b4-distortion-wave--horizontal .b4-distortion-wave__layer--moving .b4-distortion-wave__band,
-.b4-distortion-wave--horizontal .b4-distortion-wave__layer--moving .b4-distortion-wave__fringe {
+.b4-distortion-wave--horizontal .b4-distortion-wave__layer--moving .b4-distortion-wave__crest-mask {
   animation-name: b4-distortion-wave-sweep-x;
 }
 
 .b4-distortion-wave--vertical .b4-distortion-wave__layer--moving .b4-distortion-wave__band,
-.b4-distortion-wave--vertical .b4-distortion-wave__layer--moving .b4-distortion-wave__fringe {
+.b4-distortion-wave--vertical .b4-distortion-wave__layer--moving .b4-distortion-wave__crest-mask {
   animation-name: b4-distortion-wave-sweep-y;
 }
 
@@ -147,9 +148,9 @@
 /* Reduced motion (or scrolled out of view): the band stops travelling and
    holds a centred position. Critically, the refraction is dropped as well:
    text must never be left sitting behind frosted glass that will not move
-   away, so only the tinted fringe remains — a static sheen that still
-   communicates the effect's presence without distorting or animating
-   anything. */
+   away, so only a single still frame of the crest shader remains — a calm
+   sheen that still communicates the effect's presence without distorting
+   or animating anything. */
 .b4-distortion-wave__layer--static .b4-distortion-wave__band {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -157,16 +158,16 @@
 }
 
 .b4-distortion-wave--horizontal .b4-distortion-wave__layer--static .b4-distortion-wave__band,
-.b4-distortion-wave--horizontal .b4-distortion-wave__layer--static .b4-distortion-wave__fringe {
+.b4-distortion-wave--horizontal .b4-distortion-wave__layer--static .b4-distortion-wave__crest-mask {
   transform: translateX(30%);
 }
 
 .b4-distortion-wave--vertical .b4-distortion-wave__layer--static .b4-distortion-wave__band,
-.b4-distortion-wave--vertical .b4-distortion-wave__layer--static .b4-distortion-wave__fringe {
+.b4-distortion-wave--vertical .b4-distortion-wave__layer--static .b4-distortion-wave__crest-mask {
   transform: translateY(30%);
 }
 
-.b4-distortion-wave__layer--static .b4-distortion-wave__fringe {
-  opacity: 0.4;
+.b4-distortion-wave__layer--static .b4-distortion-wave__crest-mask {
+  opacity: 0.6;
   will-change: auto;
 }

@@ -94,6 +94,7 @@ export function EffectsLabPage() {
                   { value: "warning", label: "warning" },
                   { value: "danger", label: "danger" },
                   { value: "info", label: "info" },
+                  { value: "aurora", label: "aurora" },
                 ]}
                 value={beamTone}
                 onValueChange={(value) => setBeamTone(value as BorderBeamTone)}

@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useReducedMotion } from "@b4/motion";
+import { DistortionWaveCrest } from "./DistortionWaveCrest.js";
 
 export type DistortionWaveAmplitude = "sm" | "md" | "lg";
 export type DistortionWaveDirection = "horizontal" | "vertical";
@@ -51,9 +52,12 @@ const toneToVar: Record<DistortionWaveTone, string> = {
  * `backdrop-filter` to blur, saturate and re-contrast the pixels
  * *actually rendered behind it* (the child's own text, icons and
  * surfaces), so the content genuinely refracts where the wave passes and
- * resolves again once it has moved on. A soft chromatic fringe and a
- * specular crest ride along with the same band, sharing one keyframe
- * track so they can never drift apart.
+ * resolves again once it has moved on. Riding on top of that band is a
+ * real WebGL2-rendered crest (`DistortionWaveCrest`/`crest.ts`) — a GPU
+ * shader doing RGB-channel-split chromatic aberration, an animated
+ * caustic-noise shimmer and a specular hot core — not a flat CSS
+ * gradient standing in for one. See docs/effects/DISTORTION_WAVE.md for
+ * exactly what is and is not genuinely sampled/rendered.
  *
  * Purely decorative: `aria-hidden`, `pointer-events: none`, never shifts
  * layout, never captures focus. Pauses itself via `IntersectionObserver`
@@ -128,7 +132,15 @@ export const DistortionWave = forwardRef<HTMLDivElement, DistortionWaveProps>(fu
           }
         >
           <span className="b4-distortion-wave__band" />
-          <span className="b4-distortion-wave__fringe" />
+          <span className="b4-distortion-wave__crest-mask">
+            <DistortionWaveCrest
+              moving={moving}
+              vertical={direction === "vertical"}
+              duration={duration}
+              amplitude={amplitude}
+              toneVar={toneToVar[tone]}
+            />
+          </span>
         </span>
       )}
     </div>
