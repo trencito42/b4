@@ -200,16 +200,36 @@ run in this session (`pnpm install`/`vite build` not executed here) —
 they exist for a different purpose (real external consumption, §11-
 adjacent) than the in-Studio showcase requirement.
 
-**This session's contribution:** added `ShowcaseCheckoutPage.tsx` to
-Studio's "Showcases" section — a mobile-first confirmation flow (review →
-confirm → async pending → success) composing `Card`, `Button`,
-`TextMorph`, `NumberTransition`, `BorderBeam`, `DistortionWave`, `Progress`
-and `Toast`, with working reverse/reset. This is real public-API usage,
-not a mockup, and is the first page in the repo to compose all three
-advanced effects together — closing part of the §10 gap too. It does not
-by itself satisfy §12, which still needs a real Settings-style form page
-and a richer Ops Dashboard with working filter/sort/search/drawer/dialog
-interactions.
+**This session's contribution (verified live, not just typechecked):**
+added `ShowcaseCheckoutPage.tsx` (review → confirm → async pending →
+success, composing `Card`, `Button`, `TextMorph`, `NumberTransition`,
+`BorderBeam`, `DistortionWave`, `Progress`, `Toast`) and
+`ShowcaseSettingsPage.tsx` (Profile/Preferences/Security/Notifications
+tabs covering `TextField`, `Textarea`, `PasswordField`, `FileUpload`,
+`Select`, `ColorPicker`, `RadioGroup`, `Slider`, `Switch`, `MultiSelect`,
+`NumberField`, `TimePicker`, `DatePicker`, `Checkbox`, with real
+dirty-state tracking, a sticky save/discard bar, async save via `onAction`,
+and a controlled `AlertDialog` for discard). Both were run in a real
+browser (an isolated `vite` instance on a spare port, not the stale/
+unreachable processes found earlier) in Graphite and Porcelain: Confirm →
+pending (BorderBeam ring + indeterminate Progress) → success (TextMorph
+"Sent", DistortionWave sweep, reset) all observed working; Settings'
+dirty-bar/save/toast/discard-dialog flow observed working. A real
+pre-existing defect was found this way and fixed: `Switch` logged a Base
+UI console error (`nativeButton` not set despite rendering a real
+`<button>`) — fixed in `packages/react/src/components/Switch/Switch.tsx`,
+re-verified both via the full `@b4/react` suite (526/526 passing) and
+live in-browser (error gone). One thing observed but **not fixed** (out
+of scope, and `Sidebar.tsx` was mid-edit by the concurrent session at the
+time): at 375px the Studio shell's mobile hamburger trigger did not open
+the sidebar drawer on the Overview page — this may already be addressed
+by the concurrent session's in-flight `Sidebar.tsx` changes; re-check
+before assuming it's still broken.
+
+Neither new page by itself fully satisfies §12, which still wants a
+richer Ops Dashboard with working filter/sort/search/drawer/dialog
+interactions (today's `ShowcaseInfrastructurePage`/`ShowcaseAnalyticsPage`
+are closer to read-only panels).
 
 ## §13 — Visual review of the complete library
 
