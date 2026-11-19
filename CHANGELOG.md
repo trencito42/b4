@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Sidebar added — Family F, 2/10 (2026-11-19)
+
+- Added `Sidebar`: content for `AppShell`'s `sidebar` slot — real
+  `<a>`/`<button>` items in normal tab order, grouped sections. Active
+  item gets a real surface, reusing the same selection tokens
+  SegmentedControl/ToggleButton already use.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (416/416), `pnpm build`, Storybook build, `npx playwright test`
+  (330/330, run twice). **VERIFIED**.
+
 ### AppShell added — Family F started, 1/10 (2026-11-19)
 
 - Added `AppShell`: the page-level layout scaffold — real

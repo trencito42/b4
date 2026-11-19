@@ -221,3 +221,5 @@ export { Calendar } from "./components/Calendar/Calendar.js";
 export type { CalendarProps, CalendarEvent, CalendarEventTone } from "./components/Calendar/Calendar.js";
 export { AppShell } from "./components/AppShell/AppShell.js";
 export type { AppShellProps } from "./components/AppShell/AppShell.js";
+export { Sidebar } from "./components/Sidebar/Sidebar.js";
+export type { SidebarProps, SidebarSection, SidebarItem } from "./components/Sidebar/Sidebar.js";

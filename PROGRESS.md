@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## Sidebar — Family F's 2nd component (2026-11-19)
+
+Content for AppShell's `sidebar` slot — real `<a>`/`<button>` items in
+normal tab order, grouped sections, active item gets a real surface
+(`--b4-control-bg-selected`, same tokens SegmentedControl/ToggleButton
+already use). No new gotchas. Full gate: typecheck, @b4/react tests
+416/416, build, Storybook build, playwright 330/330 (run twice).
+**VERIFIED**. Family F now: 2/10.
+
 ## AppShell — Family F's first component (2026-11-19)
 
 Page-level layout scaffold — real `<header>`/`<nav>`/`<main>`

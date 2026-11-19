@@ -537,6 +537,18 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## Sidebar — Family F's 2nd component (2026-11-19)
+
+**VERIFIED**. The content that typically fills `AppShell`'s `sidebar`
+slot — real `<a>`/`<button>` items in normal tab order (not a
+composite ARIA widget; this is ordinary page navigation), grouped into
+optional-label sections. Active item gets a real surface
+(`--b4-control-bg-selected`/`--b4-control-fg-selected`), reusing the
+same selection tokens SegmentedControl/ToggleButton/Tabs already use,
+not a one-off color. No new gotchas. Full gate: typecheck, @b4/react
+tests 416/416, build, Storybook build, playwright 330/330 (run twice).
+Family F now: 2/10.
+
 ## AppShell — Family F's first component (2026-11-19)
 
 **VERIFIED**. The page-level layout scaffold the rest of Family F (and
@@ -895,15 +907,15 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: continue Family F — Sidebar, PageHeader, Toolbar next
-(simpler, self-contained pieces that compose inside AppShell); then
-FilterBar, InspectorPanel, ResizablePanels, ResourceMeter; FileExplorer
-and QueryEditor last (the two that need real, non-mockup functionality).
+## Next action: continue Family F — PageHeader, Toolbar next (simpler,
+self-contained pieces that compose inside AppShell); then FilterBar,
+InspectorPanel, ResizablePanels, ResourceMeter; FileExplorer and
+QueryEditor last (the two that need real, non-mockup functionality).
 
 Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
-all fully VERIFIED. Family F is now started (1/10: AppShell VERIFIED),
-and it's explicitly the most "layout composition of other components"
-family — a natural last family, since it's
+all fully VERIFIED. Family F is now at 2/10 (AppShell, Sidebar
+VERIFIED), and it's explicitly the most "layout composition of other
+components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled

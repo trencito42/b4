@@ -1392,6 +1392,26 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (411/411), `pnpm build`, Storybook build, `npx playwright test`
 (326/326, run twice for stability).
 
+## Sidebar — Family F's 2nd component (2026-11-19)
+
+**VERIFIED**. The content that typically fills `AppShell`'s `sidebar`
+slot — real, independently focusable `<a>`/`<button>` items in normal
+tab order (not a composite ARIA widget; this is ordinary page
+navigation, so it gets ordinary navigation semantics), grouped into
+sections with an optional visible label. The active item gets a real
+surface (`--b4-control-bg-selected`/`--b4-control-fg-selected`, the
+same tokens `SegmentedControl`/`ToggleButton`/`Tabs` already use for
+selection), not just a color swap — DESIGN_PRINCIPLES.md's "selection
+is a surface, not a checkmark" rule. Items render as `<a href>` when
+`href` is given, `<button>` otherwise — never a `<div onClick>`.
+
+No new gotchas. Visually spot-checked in both themes before writing
+e2e.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(416/416), `pnpm build`, Storybook build, `npx playwright test`
+(330/330, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
