@@ -11,6 +11,11 @@ test-results/
 storybook-static/
 .turbo/
 
+# Stray nested clone/worktree left behind by another session at the repo
+# root. It is not part of this repository — it must never be committed
+# (as a gitlink it would drag another repo's history into this one).
+/b4/
+
 # env
 .env
 .env.*
