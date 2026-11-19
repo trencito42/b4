@@ -1412,6 +1412,25 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (416/416), `pnpm build`, Storybook build, `npx playwright test`
 (330/330, run twice for stability).
 
+## PageHeader — Family F's 3rd component (2026-11-19)
+
+**VERIFIED**. The title block at the top of a page's content area —
+composes `Breadcrumbs` and `Button`/`ButtonGroup` (passed in as
+`breadcrumbs`/`actions` slots) rather than reimplementing either.
+Renders `title` as a real `<h1>` by default (`headingLevel` overrides
+it for a nested context where `<h1>` would be wrong) — a genuine
+heading, not a styled `<div>`/`<p>` standing in for one, since this is
+usually the page's one true top-level heading. Distinct from
+`AppShell`'s `header` slot: that one is persistent app chrome (a top
+bar); this one is page content and scrolls with it.
+
+No new gotchas. Visually spot-checked in both themes before writing
+e2e.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(422/422), `pnpm build`, Storybook build, `npx playwright test`
+(333/333, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

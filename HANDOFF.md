@@ -537,6 +537,19 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## PageHeader — Family F's 3rd component (2026-11-19)
+
+**VERIFIED**. The title block at the top of a page's content area —
+composes `Breadcrumbs` and `Button`/`ButtonGroup` (`breadcrumbs`/
+`actions` slots) rather than reimplementing either. Renders `title` as
+a real `<h1>` by default, since this is usually the page's one true
+top-level heading; `headingLevel` overrides it for a nested context
+where `<h1>` would be wrong. Distinct from `AppShell`'s `header` slot
+— that one is persistent app chrome (a top bar), this one is page
+content and scrolls with it. No new gotchas. Full gate: typecheck,
+@b4/react tests 422/422, build, Storybook build, playwright 333/333
+(run twice). Family F now: 3/10.
+
 ## Sidebar — Family F's 2nd component (2026-11-19)
 
 **VERIFIED**. The content that typically fills `AppShell`'s `sidebar`
@@ -907,15 +920,15 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: continue Family F — PageHeader, Toolbar next (simpler,
-self-contained pieces that compose inside AppShell); then FilterBar,
-InspectorPanel, ResizablePanels, ResourceMeter; FileExplorer and
-QueryEditor last (the two that need real, non-mockup functionality).
+## Next action: continue Family F — Toolbar next (simpler,
+self-contained; then FilterBar, InspectorPanel, ResizablePanels,
+ResourceMeter; FileExplorer and QueryEditor last (the two that need
+real, non-mockup functionality).
 
 Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
-all fully VERIFIED. Family F is now at 2/10 (AppShell, Sidebar
-VERIFIED), and it's explicitly the most "layout composition of other
-components" family — a natural last family, since it's
+all fully VERIFIED. Family F is now at 3/10 (AppShell, Sidebar,
+PageHeader VERIFIED), and it's explicitly the most "layout composition
+of other components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled

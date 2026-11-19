@@ -223,3 +223,5 @@ export { AppShell } from "./components/AppShell/AppShell.js";
 export type { AppShellProps } from "./components/AppShell/AppShell.js";
 export { Sidebar } from "./components/Sidebar/Sidebar.js";
 export type { SidebarProps, SidebarSection, SidebarItem } from "./components/Sidebar/Sidebar.js";
+export { PageHeader } from "./components/PageHeader/PageHeader.js";
+export type { PageHeaderProps } from "./components/PageHeader/PageHeader.js";

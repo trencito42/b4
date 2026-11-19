@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## PageHeader — Family F's 3rd component (2026-11-19)
+
+Page content-area title block — composes Breadcrumbs/Button rather
+than reimplementing, real `<h1>` by default (`headingLevel`
+overridable). Distinct from AppShell's `header` (persistent chrome vs.
+scrolling page content). No new gotchas. Full gate: typecheck,
+@b4/react tests 422/422, build, Storybook build, playwright 333/333
+(run twice). **VERIFIED**. Family F now: 3/10.
+
 ## Sidebar — Family F's 2nd component (2026-11-19)
 
 Content for AppShell's `sidebar` slot — real `<a>`/`<button>` items in

@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### PageHeader added — Family F, 3/10 (2026-11-19)
+
+- Added `PageHeader`: page content-area title block, composes
+  `Breadcrumbs`/`Button`/`ButtonGroup` rather than reimplementing
+  them. Renders `title` as a real `<h1>` by default (`headingLevel`
+  overridable).
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (422/422), `pnpm build`, Storybook build, `npx playwright test`
+  (333/333, run twice). **VERIFIED**.
+
 ### Sidebar added — Family F, 2/10 (2026-11-19)
 
 - Added `Sidebar`: content for `AppShell`'s `sidebar` slot — real
