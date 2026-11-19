@@ -1,0 +1,21 @@
+.b4-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-6);
+  padding: var(--b4-space-4);
+  border-radius: var(--b4-surface-radius);
+  background-color: var(--b4-surface-1);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+}
+
+.b4-toolbar__separator {
+  align-self: stretch;
+  width: 1px;
+  background-color: var(--b4-border-subtle);
+}

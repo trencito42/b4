@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## Toolbar — Family F's 4th component (2026-11-19)
+
+Real ARIA toolbar on Base UI's `Toolbar.Root` — real roving-tabindex
+arrow-key navigation, not Tab-order-only. `ToolbarButton`/
+`ToolbarIconButton` wrap Base UI's `Toolbar.Button` via the `render`
+prop, delegating visuals to B4's `Button`/`IconButton` (same pattern
+Checkbox already uses). Had to give these items plain-HTML prop types
+instead of extending Button/IconButton's Motion-flavored ones (type
+conflict: `MotionStyle` vs. a plain `<button>` shape). Confirmed arrow
+navigation three ways: unit test, e2e test, live browser check. Full
+gate: typecheck, @b4/react tests 426/426, build, Storybook build,
+playwright 337/337 (run twice). **VERIFIED**. Family F now: 4/10.
+
 ## PageHeader — Family F's 3rd component (2026-11-19)
 
 Page content-area title block — composes Breadcrumbs/Button rather

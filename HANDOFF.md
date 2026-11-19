@@ -537,6 +537,48 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## Toolbar — Family F's 4th component (2026-11-19)
+
+**VERIFIED**. A real ARIA toolbar built on Base UI's `Toolbar.Root` —
+genuine APG toolbar keyboard behavior (roving tabindex, arrow keys
+move focus between items, Home/End to first/last), not a styled flex
+row of buttons that only Tabs through in document order.
+`ToolbarButton`/`ToolbarIconButton` wrap Base UI's `Toolbar.Button`
+(for the roving-tabindex registration) via the `render` prop,
+delegating all visual rendering to B4's existing `Button`/
+`IconButton` — reusing the exact composition pattern `Checkbox`
+already uses for a Base UI primitive with a custom look, rather than
+hand-rolling focus management.
+
+**New gotcha, worth remembering for any future `render`-prop wrapper
+around a Motion-based B4 component**: `ToolbarButton`/
+`ToolbarIconButton`'s own prop types could NOT simply extend `Button`/
+`IconButton`'s full prop types — those are Motion-flavored
+(`HTMLMotionProps<"button">`, with `style` typed as Motion's
+`MotionStyle`), and Base UI's `Toolbar.Button` expects a plain
+`<button>`-shaped prop set (`style?: CSSProperties`), so spreading the
+Motion-typed rest props onto it failed to typecheck (`style`/
+`accentColor` mismatches surfaced first, since those are where the
+two type shapes diverge most visibly). Fixed by giving the Toolbar
+item components their own plain-HTML prop interfaces
+(`ComponentPropsWithoutRef<"button">`-based) instead of inheriting
+`Button`/`IconButton`'s prop types directly — the underlying
+`Button`/`IconButton` still gets its own Motion press feedback
+internally via its own component code; only the *public* prop surface
+of the Toolbar wrapper is plain. `ToolbarIconButton` also needed
+`aria-label` to stay genuinely required at the type level, so it's
+explicitly destructured from the wrapper's own props and threaded to
+both `Toolbar.Button` and the underlying `IconButton` by hand, rather
+than relying on it flowing through an untyped spread.
+
+Real arrow-key roving-tabindex navigation confirmed three separate
+ways before calling it done: a unit test, a real-browser e2e test, and
+a live manual check in the browser pane (clicked Bold, pressed
+ArrowRight twice, confirmed focus actually landed on "Insert link").
+
+Full gate: typecheck, @b4/react tests 426/426, build, Storybook build,
+playwright 337/337 (run twice). Family F now: 4/10.
+
 ## PageHeader — Family F's 3rd component (2026-11-19)
 
 **VERIFIED**. The title block at the top of a page's content area —
@@ -920,15 +962,15 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: continue Family F — Toolbar next (simpler,
-self-contained; then FilterBar, InspectorPanel, ResizablePanels,
-ResourceMeter; FileExplorer and QueryEditor last (the two that need
-real, non-mockup functionality).
+## Next action: continue Family F — FilterBar next (simpler,
+self-contained; then InspectorPanel, ResizablePanels, ResourceMeter;
+FileExplorer and QueryEditor last (the two that need real, non-mockup
+functionality).
 
 Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
-all fully VERIFIED. Family F is now at 3/10 (AppShell, Sidebar,
-PageHeader VERIFIED), and it's explicitly the most "layout composition
-of other components" family — a natural last family, since it's
+all fully VERIFIED. Family F is now at 4/10 (AppShell, Sidebar,
+PageHeader, Toolbar VERIFIED), and it's explicitly the most "layout
+composition of other components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled

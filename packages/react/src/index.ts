@@ -225,3 +225,5 @@ export { Sidebar } from "./components/Sidebar/Sidebar.js";
 export type { SidebarProps, SidebarSection, SidebarItem } from "./components/Sidebar/Sidebar.js";
 export { PageHeader } from "./components/PageHeader/PageHeader.js";
 export type { PageHeaderProps } from "./components/PageHeader/PageHeader.js";
+export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarIconButton } from "./components/Toolbar/Toolbar.js";
+export type { ToolbarProps, ToolbarGroupProps } from "./components/Toolbar/Toolbar.js";

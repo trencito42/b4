@@ -1431,6 +1431,44 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (422/422), `pnpm build`, Storybook build, `npx playwright test`
 (333/333, run twice for stability).
 
+## Toolbar — Family F's 4th component (2026-11-19)
+
+**VERIFIED**. A real ARIA toolbar, built on Base UI's `Toolbar.Root` —
+the APG toolbar keyboard pattern (roving tabindex; arrow keys move
+focus between items; Home/End jump to the first/last), not a styled
+flex row of buttons that only happens to Tab through in document
+order. `ToolbarButton`/`ToolbarIconButton` wrap Base UI's
+`Toolbar.Button` (for the roving-tabindex registration) via the
+`render` prop, delegating all visual rendering to B4's existing
+`Button`/`IconButton` — the same composition pattern `Checkbox`
+already uses for a Base UI primitive with a custom look, reused here
+rather than hand-rolling roving-tabindex focus management from
+scratch.
+
+Real engineering snag along the way: `ToolbarButton`/
+`ToolbarIconButton`'s own public prop types could NOT extend
+`Button`/`IconButton`'s full prop types directly — those are
+Motion-flavored (`HTMLMotionProps<"button">`, including `style` typed
+as `MotionStyle`), and Base UI's `Toolbar.Button` expects a plain
+`<button>`-shaped prop set, so spreading the Motion-typed `...rest`
+onto it failed to typecheck (`style`/`accentColor` mismatches). Fixed
+by giving the Toolbar item components their own plain-HTML prop
+interfaces (`ComponentPropsWithoutRef<"button">`-based) instead — the
+underlying `Button`/`IconButton` still gets its own Motion press
+feedback internally; only the public prop surface here is plain.
+`ToolbarIconButton` also required `aria-label` as a genuinely required
+prop at the type level (not inherited optionally through a spread),
+explicitly destructured and threaded through to both `Toolbar.Button`
+and the underlying `IconButton`.
+
+Real arrow-key roving-tabindex navigation confirmed three ways: a unit
+test, a real-browser e2e test, and a live manual check in the browser
+pane before either was written.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(426/426), `pnpm build`, Storybook build, `npx playwright test`
+(337/337, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

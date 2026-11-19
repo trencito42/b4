@@ -5,6 +5,22 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Toolbar added — Family F, 4/10 (2026-11-19)
+
+- Added `Toolbar`/`ToolbarGroup`/`ToolbarSeparator`/`ToolbarButton`/
+  `ToolbarIconButton`: a real ARIA toolbar on Base UI's `Toolbar.Root`
+  — genuine roving-tabindex arrow-key navigation between items, not
+  Tab-order-only. Items wrap Base UI's `Toolbar.Button` via the
+  `render` prop, delegating visuals to `Button`/`IconButton` (same
+  pattern `Checkbox` already uses).
+- Toolbar item components use plain-HTML prop types rather than
+  extending `Button`/`IconButton`'s Motion-flavored ones, to avoid a
+  type conflict (Motion's `style: MotionStyle` vs. Base UI's plain
+  `style?: CSSProperties`) between the two.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (426/426), `pnpm build`, Storybook build, `npx playwright test`
+  (337/337, run twice). **VERIFIED**.
+
 ### PageHeader added — Family F, 3/10 (2026-11-19)
 
 - Added `PageHeader`: page content-area title block, composes
