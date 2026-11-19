@@ -114,7 +114,7 @@ DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 | Sidebar | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | PageHeader | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | Toolbar | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
-| FilterBar | PLANNED |
+| FilterBar | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | InspectorPanel | PLANNED |
 | ResizablePanels | PLANNED |
 | ResourceMeter | PLANNED |

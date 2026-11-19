@@ -1,5 +1,19 @@
 # B4 — Progress
 
+## FilterBar — Family F's 5th component (2026-11-19)
+
+Filter controls row (composes Select/SearchField/Combobox as
+children) + removable applied-filter chip trail, reusing Badge for
+the chip. Two real bugs caught before VERIFIED: (1) nesting IconButton
+(32px min) inside a ~22px Badge chip would have badly overflowed it —
+caught by checking token values before rendering, fixed with a
+chip-scaled bare button; (2) "Clear all" as a direct child of
+`role="list"` alongside the listitems was a real
+`aria-required-children` axe violation — fixed by moving it outside
+the list as a sibling. Full gate: typecheck, @b4/react tests 432/432,
+build, Storybook build, playwright 341/341 (run twice). **VERIFIED**.
+Family F now: 5/10.
+
 ## Toolbar — Family F's 4th component (2026-11-19)
 
 Real ARIA toolbar on Base UI's `Toolbar.Root` — real roving-tabindex

@@ -5,6 +5,21 @@ a per-npm-release history.
 
 ## Unreleased
 
+### FilterBar added — Family F, 5/10 (2026-11-19)
+
+- Added `FilterBar`: a row of filter controls (`Select`/`SearchField`/
+  `Combobox` composed as `children`) plus a removable applied-filter
+  chip trail, reusing `Badge` for the chip.
+- Fixed a sizing bug: `IconButton`'s smallest size (32px) would have
+  overflowed a `Badge` chip's ~22px height — replaced with a
+  chip-scaled bare button instead.
+- Fixed a real `aria-required-children` violation: "Clear all" was a
+  direct child of `role="list"` alongside the `role="listitem"` chips
+  — moved it outside the list as a sibling.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (432/432), `pnpm build`, Storybook build, `npx playwright test`
+  (341/341, run twice). **VERIFIED**.
+
 ### Toolbar added — Family F, 4/10 (2026-11-19)
 
 - Added `Toolbar`/`ToolbarGroup`/`ToolbarSeparator`/`ToolbarButton`/

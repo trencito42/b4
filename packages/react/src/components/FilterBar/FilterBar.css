@@ -1,0 +1,60 @@
+.b4-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-5);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-filter-bar__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--b4-space-5);
+}
+
+.b4-filter-bar__active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--b4-space-4);
+}
+
+.b4-filter-bar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--b4-space-3);
+}
+
+.b4-filter-bar__chip .b4-badge {
+  gap: var(--b4-space-3);
+  padding-right: var(--b4-space-3);
+}
+
+.b4-filter-bar__chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
+  border-radius: var(--b4-radius-full);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.b4-filter-bar__chip-remove svg {
+  width: 10px;
+  height: 10px;
+}
+
+.b4-filter-bar__chip-remove:hover {
+  background-color: var(--b4-control-bg-hover);
+}
+
+.b4-filter-bar__chip-remove:focus-visible {
+  outline: 2px solid var(--b4-accent-500);
+  outline-offset: 1px;
+}

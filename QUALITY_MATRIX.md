@@ -1469,6 +1469,36 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (426/426), `pnpm build`, Storybook build, `npx playwright test`
 (337/337, run twice for stability).
 
+## FilterBar — Family F's 5th component (2026-11-19)
+
+**VERIFIED**. A row of filter controls (`Select`/`SearchField`/
+`Combobox` passed as `children` — this component provides the layout
+and the applied-filter chip trail, not another set of dropdown/input
+primitives) plus a trail of removable chips showing what's currently
+applied, reusing `Badge` for the chip rather than a new label
+component.
+
+Two real bugs found and fixed before VERIFIED:
+
+1. **Wrong-sized control, caught before it ever reached the browser.**
+   The first version nested an `IconButton` inside each chip for the
+   remove affordance — but `IconButton`'s smallest size
+   (`--b4-control-height-sm`, 32px) is built for standalone controls
+   and would have badly overflowed a `Badge` chip's own ~22px height.
+   Caught by checking the actual token values before rendering
+   anything, not after. Fixed with a bare, chip-scaled `<button>`
+   styled specifically for this context instead of reusing a control
+   sized for a different job.
+2. **A real `aria-required-children` violation, caught by the unit
+   axe check.** The "Clear all" button was a direct child of the
+   `role="list"` container alongside the `role="listitem"` chips — a
+   list may only contain list items. Fixed by moving "Clear all"
+   outside the list as a sibling, not a list member.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(432/432), `pnpm build`, Storybook build, `npx playwright test`
+(341/341, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit
