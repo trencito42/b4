@@ -1,10 +1,11 @@
-import { useId, useState, type ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { springs, useReducedMotion } from "@b4/motion";
 import { AnimatedIndicator } from "../AnimatedIndicator/AnimatedIndicator.js";
 import { motionCompatibleProps } from "../../internal/motionCompatibleProps.js";
 import { RadioGroup as BaseRadioGroup } from "@base-ui/react/radio-group";
 import { Radio } from "@base-ui/react/radio";
+import { useControllableState } from "../../hooks/useControllableState.js";
 
 export interface RadioGroupItem<Value extends string> {
   value: Value;
@@ -43,14 +44,17 @@ export function RadioGroup<Value extends string>({
 }: RadioGroupProps<Value>) {
   const indicatorId = useId();
   const reducedMotion = useReducedMotion();
-  const [internalValue, setInternalValue] = useState<Value | null>(defaultValue ?? null);
-  const selected = value ?? internalValue;
+  const [selected, setSelected] = useControllableState<Value | undefined>({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
+
   return (
     <BaseRadioGroup
-      value={selected}
+      {...(value !== undefined ? { value } : defaultValue !== undefined ? { defaultValue } : {})}
       onValueChange={(next) => {
-        if (value === undefined) setInternalValue(next as Value);
-        onValueChange?.(next as Value);
+        setSelected(next as Value);
       }}
       disabled={disabled}
       className={["b4-radio-group", className ?? ""].filter(Boolean).join(" ")}
