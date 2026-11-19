@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FileUpload } from "./FileUpload";
 
 const meta: Meta<typeof FileUpload> = {
-  title: "Family B — Inputs & Forms/FileUpload",
+  title: "Family B — Forms & Inputs/FileUpload",
   component: FileUpload,
   tags: ["autodocs"],
   args: { label: "Attachments" },

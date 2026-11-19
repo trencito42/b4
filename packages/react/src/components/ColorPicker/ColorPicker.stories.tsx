@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ColorPicker } from "./ColorPicker";
 
 const meta: Meta<typeof ColorPicker> = {
-  title: "Family B — Inputs & Forms/ColorPicker",
+  title: "Family B — Forms & Inputs/ColorPicker",
   component: ColorPicker,
   tags: ["autodocs"],
   args: { label: "Brand color" },

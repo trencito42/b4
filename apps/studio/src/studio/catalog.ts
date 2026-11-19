@@ -1,8 +1,10 @@
 export interface StudioComponent {
   name: string;
   status: "VERIFIED";
-  /** Storybook story path segment after the family slug, kebab-case. */
+  /** Storybook story path segment after the family slug. */
   storySlug: string;
+  /** Effects ship from their own export subpath and are labelled separately in the catalog. */
+  kind?: "component" | "effect";
 }
 
 export interface StudioFamily {
@@ -12,12 +14,28 @@ export interface StudioFamily {
   components: StudioComponent[];
 }
 
+/**
+ * Storybook's own slugification (storybook/internal/csf) lowercases the
+ * title and turns spaces/punctuation into "-", but it does NOT split
+ * camelCase: "IconButton" becomes "iconbutton", never "icon-button".
+ *
+ * The previous helper here inserted the hyphen itself, which produced a
+ * dead deep link for every multi-word component name — 62 of the 83
+ * catalog links pointed at a story that does not exist. `scripts/
+ * craftsmanship-audit.mjs` now re-derives every link from the real story
+ * titles and fails the build if one drifts again.
+ */
 function slug(name: string): string {
-  return name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+  return name.toLowerCase();
 }
 
 function c(name: string): StudioComponent {
   return { name, status: "VERIFIED", storySlug: slug(name) };
+}
+
+/** An effect — exported from `@b4/react/effects`, not the core entry point. */
+function e(name: string): StudioComponent {
+  return { name, status: "VERIFIED", storySlug: slug(name), kind: "effect" };
 }
 
 export const STUDIO_FAMILIES: StudioFamily[] = [
@@ -118,6 +136,7 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
     components: [
       c("TextTransition"),
       c("NumberTransition"),
+      c("TextMorph"),
       c("AnimatedIndicator"),
       c("Toast"),
       c("InlineAlert"),
@@ -146,9 +165,24 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
       c("QueryEditor"),
     ],
   },
+  {
+    id: "g",
+    title: "Effects",
+    storybookFamilySlug: "effects",
+    components: [e("BorderBeam"), e("DistortionWave")],
+  },
 ];
 
-export const STUDIO_COMPONENT_COUNT = STUDIO_FAMILIES.reduce((sum, family) => sum + family.components.length, 0);
+export const STUDIO_COMPONENT_COUNT = STUDIO_FAMILIES.reduce(
+  (sum, family) => sum + family.components.filter((component) => component.kind !== "effect").length,
+  0,
+);
+
+/** Effects are public API too, but they ship from `@b4/react/effects` — counted apart. */
+export const STUDIO_EFFECT_COUNT = STUDIO_FAMILIES.reduce(
+  (sum, family) => sum + family.components.filter((component) => component.kind === "effect").length,
+  0,
+);
 
 export function findComponents(query: string): Array<StudioComponent & { family: StudioFamily }> {
   const needle = query.trim().toLowerCase();

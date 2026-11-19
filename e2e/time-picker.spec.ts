@@ -6,7 +6,7 @@ const themes = ["graphite", "porcelain"] as const;
 
 for (const theme of themes) {
   test(`TimePicker is axe-clean on ${theme}`, async ({ page }) => {
-    await page.goto(`/iframe.html?id=family-b-inputs-forms-timepicker--default&globals=b4Theme:${theme}`);
+    await page.goto(`/iframe.html?id=family-b-forms-inputs-timepicker--default&globals=b4Theme:${theme}`);
     await expect(page.getByRole("textbox", { name: "Hours" })).toBeVisible();
     await page.waitForTimeout(300);
 
@@ -16,7 +16,7 @@ for (const theme of themes) {
 }
 
 test("TimePicker shows the hour/minute/AM-PM for the current value", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-timepicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-timepicker--default");
 
   await expect(page.getByRole("textbox", { name: "Hours" })).toHaveValue("02");
   await expect(page.getByRole("textbox", { name: "Minutes" })).toHaveValue("30");
@@ -24,7 +24,7 @@ test("TimePicker shows the hour/minute/AM-PM for the current value", async ({ pa
 });
 
 test("TimePicker steps hours/minutes with the stepper buttons", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-timepicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-timepicker--default");
 
   await page.getByRole("button", { name: "Increase minutes" }).click();
   await expect(page.getByRole("textbox", { name: "Minutes" })).toHaveValue("31");
@@ -34,7 +34,7 @@ test("TimePicker steps hours/minutes with the stepper buttons", async ({ page })
 });
 
 test("TimePicker switches AM/PM", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-timepicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-timepicker--default");
 
   await expect(page.getByRole("button", { name: "PM" })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "AM" }).click();
@@ -43,14 +43,14 @@ test("TimePicker switches AM/PM", async ({ page }) => {
 });
 
 test("TimePicker's 24-hour story has no AM/PM control and shows raw 24-hour values", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-timepicker--twenty-four-hour");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-timepicker--twenty-four-hour");
 
   await expect(page.getByRole("textbox", { name: "Hours" })).toHaveValue("14");
   await expect(page.getByRole("button", { name: "AM" })).toHaveCount(0);
 });
 
 test("TimePicker supports keyboard arrow-key stepping on the hour/minute inputs", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-timepicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-timepicker--default");
 
   const minutes = page.getByRole("textbox", { name: "Minutes" });
   await minutes.focus();

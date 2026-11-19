@@ -38,6 +38,28 @@ test("B4 Studio Text Morph Lab renders and exercises morphing", async ({ page })
   await expect(page.getByRole("heading", { name: "Word Replacement & Reordering" })).toBeVisible();
 });
 
+test("B4 Studio Effects Lab renders both effects and drives them", async ({ page }) => {
+  await page.goto(studioOrigin);
+  await page.getByRole("button", { name: "Effects Lab" }).click();
+  await expect(page.getByRole("heading", { name: "Effects Lab" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "BorderBeam" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "DistortionWave" })).toBeVisible();
+
+  // The DistortionWave's own wave layer must actually be in the DOM and
+  // moving — a lab page that renders an empty preview is not a lab.
+  await expect(page.locator(".b4-distortion-wave__band").first()).toBeVisible();
+  const transform1 = await page
+    .locator(".b4-distortion-wave__band")
+    .first()
+    .evaluate((el) => getComputedStyle(el).transform);
+  await page.waitForTimeout(700);
+  const transform2 = await page
+    .locator(".b4-distortion-wave__band")
+    .first()
+    .evaluate((el) => getComputedStyle(el).transform);
+  expect(transform1).not.toBe(transform2);
+});
+
 for (const theme of ["graphite", "porcelain"] as const) {
   test(`B4 Studio home is axe-clean on ${theme}`, async ({ page }) => {
     await page.goto(studioOrigin);

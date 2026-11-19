@@ -14,9 +14,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./css": "./dist/b4-tokens.css",
-    "./css/graphite": "./dist/theme-graphite.css",
-    "./css/porcelain": "./dist/theme-porcelain.css"
+    "./css": {
+      "types": "./dist/css.d.ts",
+      "import": "./dist/b4-tokens.css"
+    },
+    "./css/graphite": {
+      "types": "./dist/css.d.ts",
+      "import": "./dist/theme-graphite.css"
+    },
+    "./css/porcelain": {
+      "types": "./dist/css.d.ts",
+      "import": "./dist/theme-porcelain.css"
+    }
   },
   "files": [
     "dist"

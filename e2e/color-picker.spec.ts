@@ -6,7 +6,7 @@ const themes = ["graphite", "porcelain"] as const;
 
 for (const theme of themes) {
   test(`ColorPicker is axe-clean when open on ${theme}`, async ({ page }) => {
-    await page.goto(`/iframe.html?id=family-b-inputs-forms-colorpicker--default&globals=b4Theme:${theme}`);
+    await page.goto(`/iframe.html?id=family-b-forms-inputs-colorpicker--default&globals=b4Theme:${theme}`);
     await page.getByRole("button", { name: "#3366cc" }).click();
     await expect(page.getByRole("slider", { name: "Hue" })).toBeVisible();
     await page.waitForTimeout(300);
@@ -17,7 +17,7 @@ for (const theme of themes) {
 }
 
 test("ColorPicker opens the panel with the area, hue slider, and hex field", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-colorpicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
   await expect(page.getByRole("slider", { name: "Hue" })).toHaveCount(0);
   await page.getByRole("button", { name: "#3366cc" }).click();
@@ -27,7 +27,7 @@ test("ColorPicker opens the panel with the area, hue slider, and hex field", asy
 });
 
 test("ColorPicker updates the swatch and trigger when a hex value is typed", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-colorpicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
   await page.getByRole("button", { name: "#3366cc" }).click();
   const hexInput = page.getByRole("textbox", { name: "Hex color" });
@@ -37,7 +37,7 @@ test("ColorPicker updates the swatch and trigger when a hex value is typed", asy
 });
 
 test("ColorPicker supports a real pointer drag on the saturation/brightness area", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-colorpicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
   await page.getByRole("button", { name: "#3366cc" }).click();
   const area = page.getByRole("slider", { name: "Saturation and brightness" }).locator("..");
@@ -54,7 +54,7 @@ test("ColorPicker supports a real pointer drag on the saturation/brightness area
 });
 
 test("ColorPicker supports a real pointer drag on the hue slider", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-colorpicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
   await page.getByRole("button", { name: "#3366cc" }).click();
   const hueTrack = page.locator(".b4-color-picker__hue-track");
@@ -68,7 +68,7 @@ test("ColorPicker supports a real pointer drag on the hue slider", async ({ page
 });
 
 test("ColorPicker nudges saturation/brightness with arrow keys", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-colorpicker--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
   await page.getByRole("button", { name: "#3366cc" }).click();
   const area = page.getByRole("slider", { name: "Saturation and brightness" });

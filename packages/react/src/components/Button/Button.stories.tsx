@@ -103,3 +103,11 @@ export const InteractiveAsyncAction: Story = {
     </Button>
   ),
 };
+
+/**
+ * The Studio catalog deep-links every component to its `--default`
+ * story, so each component must publish one under that exact name.
+ * This is an alias of the primary example above — the same story under
+ * a stable name the catalog (and any external link) can rely on.
+ */
+export const Default = Primary;

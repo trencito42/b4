@@ -7,7 +7,7 @@ const themes = ["graphite", "porcelain"] as const;
 for (const theme of themes) {
   test(`DatePicker is axe-clean when open on ${theme}`, async ({ page }) => {
     await page.goto(
-      `/iframe.html?id=family-b-inputs-forms-datepicker--with-default-value&globals=b4Theme:${theme}`,
+      `/iframe.html?id=family-b-forms-inputs-datepicker--with-default-value&globals=b4Theme:${theme}`,
     );
     await page.getByRole("button", { name: /Nov 18, 2026/ }).click();
     await expect(page.getByRole("grid")).toBeVisible();
@@ -19,7 +19,7 @@ for (const theme of themes) {
 }
 
 test("DatePicker opens the calendar and selects a day on click, updating the trigger", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-datepicker--with-default-value");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-datepicker--with-default-value");
 
   await expect(page.getByRole("grid")).toHaveCount(0);
   await page.getByRole("button", { name: /Nov 18, 2026/ }).click();
@@ -33,7 +33,7 @@ test("DatePicker opens the calendar and selects a day on click, updating the tri
 });
 
 test("DatePicker navigates months with the header buttons", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-datepicker--with-default-value");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-datepicker--with-default-value");
 
   await page.getByRole("button", { name: /Nov 18, 2026/ }).click();
   await expect(page.getByText("November 2026")).toBeVisible();
@@ -46,7 +46,7 @@ test("DatePicker navigates months with the header buttons", async ({ page }) => 
 });
 
 test("DatePicker supports keyboard navigation and Enter to select", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-datepicker--with-default-value");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-datepicker--with-default-value");
 
   await page.getByRole("button", { name: /Nov 18, 2026/ }).click();
   const grid = page.getByRole("grid");
@@ -63,7 +63,7 @@ test("DatePicker supports keyboard navigation and Enter to select", async ({ pag
 });
 
 test("DatePicker closes on Escape without changing the selected date", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-datepicker--with-default-value");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-datepicker--with-default-value");
 
   await page.getByRole("button", { name: /Nov 18, 2026/ }).click();
   await expect(page.getByRole("grid")).toBeVisible();

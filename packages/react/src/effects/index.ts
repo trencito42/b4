@@ -6,3 +6,11 @@
  */
 export { BorderBeam } from "./BorderBeam/BorderBeam.js";
 export type { BorderBeamProps, BorderBeamSize, BorderBeamTone } from "./BorderBeam/BorderBeam.js";
+
+export { DistortionWave } from "./DistortionWave/DistortionWave.js";
+export type {
+  DistortionWaveProps,
+  DistortionWaveAmplitude,
+  DistortionWaveDirection,
+  DistortionWaveTone,
+} from "./DistortionWave/DistortionWave.js";

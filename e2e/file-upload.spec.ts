@@ -16,7 +16,7 @@ function makeTempFile(name: string, sizeBytes: number) {
 
 for (const theme of themes) {
   test(`FileUpload is axe-clean on ${theme}`, async ({ page }) => {
-    await page.goto(`/iframe.html?id=family-b-inputs-forms-fileupload--default&globals=b4Theme:${theme}`);
+    await page.goto(`/iframe.html?id=family-b-forms-inputs-fileupload--default&globals=b4Theme:${theme}`);
     await expect(page.getByLabel("Attachments")).toBeAttached();
     await page.waitForTimeout(300);
 
@@ -26,7 +26,7 @@ for (const theme of themes) {
 }
 
 test("FileUpload selects a real file and shows it in the list", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-fileupload--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-fileupload--default");
 
   const filePath = makeTempFile("report.pdf", 2048);
   await page.getByLabel("Attachments").setInputFiles(filePath);
@@ -36,7 +36,7 @@ test("FileUpload selects a real file and shows it in the list", async ({ page })
 });
 
 test("FileUpload removes a file via its remove button", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-fileupload--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-fileupload--default");
 
   const filePath = makeTempFile("notes.txt", 100);
   await page.getByLabel("Attachments").setInputFiles(filePath);
@@ -47,7 +47,7 @@ test("FileUpload removes a file via its remove button", async ({ page }) => {
 });
 
 test("FileUpload rejects a file exceeding the size limit", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-fileupload--with-size-and-count-limits");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-fileupload--with-size-and-count-limits");
 
   const tooBig = makeTempFile("huge.bin", 2 * 1024 * 1024);
   await page.getByLabel("Attachments").setInputFiles(tooBig);
@@ -59,7 +59,7 @@ test("FileUpload rejects a file exceeding the size limit", async ({ page }) => {
 });
 
 test("FileUpload enforces maxFiles across multiple selections", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-fileupload--with-size-and-count-limits");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-fileupload--with-size-and-count-limits");
 
   const files = [makeTempFile("a.txt", 100), makeTempFile("b.txt", 100), makeTempFile("c.txt", 100), makeTempFile("d.txt", 100)];
   await page.getByLabel("Attachments").setInputFiles(files);
@@ -71,7 +71,7 @@ test("FileUpload enforces maxFiles across multiple selections", async ({ page })
 });
 
 test("FileUpload supports a real drag-and-drop onto the dropzone", async ({ page }) => {
-  await page.goto("/iframe.html?id=family-b-inputs-forms-fileupload--default");
+  await page.goto("/iframe.html?id=family-b-forms-inputs-fileupload--default");
 
   const dropzone = page.locator(".b4-file-upload__dropzone");
   await expect(dropzone).toBeVisible();

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TimePicker, type TimeValue } from "./TimePicker";
 
 const meta: Meta<typeof TimePicker> = {
-  title: "Family B — Inputs & Forms/TimePicker",
+  title: "Family B — Forms & Inputs/TimePicker",
   component: TimePicker,
   tags: ["autodocs"],
   args: { label: "Reminder time" },

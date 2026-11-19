@@ -1,0 +1,171 @@
+/*
+  B4 DistortionWave — a travelling band of refraction.
+
+  The band does not paint a fake "distorted" copy of the content: it uses
+  `backdrop-filter`, which samples the pixels actually rendered *behind*
+  the element — the child's own text, icons and surfaces — and blurs,
+  saturates and re-contrasts them. So the content genuinely bends while
+  the wave crosses it and resolves again once the wave has moved on.
+
+  The chromatic fringe and the specular crest are separate elements that
+  share the band's exact geometry and the exact same keyframe track, so
+  they can never drift out of alignment with the refraction they belong
+  to. Both travel the same distance in the same time.
+*/
+
+.b4-distortion-wave {
+  position: relative;
+}
+
+.b4-distortion-wave__layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ---- the refraction band ---- */
+
+.b4-distortion-wave__band {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--b4-distortion-wave-band-size, 40%);
+  height: 100%;
+  backdrop-filter: blur(var(--b4-distortion-wave-blur)) saturate(var(--b4-distortion-wave-saturate))
+    contrast(var(--b4-distortion-wave-contrast));
+  -webkit-backdrop-filter: blur(var(--b4-distortion-wave-blur)) saturate(var(--b4-distortion-wave-saturate))
+    contrast(var(--b4-distortion-wave-contrast));
+  /* Soft edges. The black stops are mask ALPHA values (fully opaque =
+     visible), not theme colors — they carry no color information at all. */
+  /* b4-audit-allow: mask alpha stops, not a theme color */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  will-change: transform;
+}
+
+/* ---- the chromatic fringe riding with the band ---- */
+
+.b4-distortion-wave__fringe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--b4-distortion-wave-band-size, 40%);
+  height: 100%;
+  opacity: 0.85;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--b4-distortion-wave-tone) 16%, transparent) 42%,
+    color-mix(in srgb, var(--b4-distortion-wave-tone) 46%, transparent) 90%,
+    transparent 100%
+  );
+  /* b4-audit-allow: mask alpha stops, not a theme color */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 34%, #000 74%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 34%, #000 74%, transparent 100%);
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  will-change: transform;
+}
+
+/* ---- vertical variant: swap the travel axis and the gradient axis ---- */
+
+.b4-distortion-wave--vertical .b4-distortion-wave__band,
+.b4-distortion-wave--vertical .b4-distortion-wave__fringe {
+  width: 100%;
+  height: var(--b4-distortion-wave-band-size, 40%);
+}
+
+.b4-distortion-wave--vertical .b4-distortion-wave__fringe {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--b4-distortion-wave-tone) 16%, transparent) 42%,
+    color-mix(in srgb, var(--b4-distortion-wave-tone) 46%, transparent) 90%,
+    transparent 100%
+  );
+}
+
+.b4-distortion-wave--vertical .b4-distortion-wave__band,
+.b4-distortion-wave--vertical .b4-distortion-wave__fringe {
+  mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+}
+
+/* ---- motion ---- */
+
+/* Both layers run the same animation with the same duration and the same
+   timing function, which is what keeps the fringe welded to the band. */
+.b4-distortion-wave__layer--moving .b4-distortion-wave__band,
+.b4-distortion-wave__layer--moving .b4-distortion-wave__fringe {
+  animation-duration: var(--b4-distortion-wave-duration, 6s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.b4-distortion-wave--horizontal .b4-distortion-wave__layer--moving .b4-distortion-wave__band,
+.b4-distortion-wave--horizontal .b4-distortion-wave__layer--moving .b4-distortion-wave__fringe {
+  animation-name: b4-distortion-wave-sweep-x;
+}
+
+.b4-distortion-wave--vertical .b4-distortion-wave__layer--moving .b4-distortion-wave__band,
+.b4-distortion-wave--vertical .b4-distortion-wave__layer--moving .b4-distortion-wave__fringe {
+  animation-name: b4-distortion-wave-sweep-y;
+}
+
+/* The band is 40% of the surface wide, so it travels from fully off the
+   left edge (-100% of its own width) to fully off the right edge (250% of
+   its own width) — the full surface plus the band itself. */
+@keyframes b4-distortion-wave-sweep-x {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes b4-distortion-wave-sweep-y {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(250%);
+  }
+}
+
+/* ---- the still state ---- */
+
+/* Reduced motion (or scrolled out of view): the band stops travelling and
+   holds a centred position. Critically, the refraction is dropped as well:
+   text must never be left sitting behind frosted glass that will not move
+   away, so only the tinted fringe remains — a static sheen that still
+   communicates the effect's presence without distorting or animating
+   anything. */
+.b4-distortion-wave__layer--static .b4-distortion-wave__band {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  will-change: auto;
+}
+
+.b4-distortion-wave--horizontal .b4-distortion-wave__layer--static .b4-distortion-wave__band,
+.b4-distortion-wave--horizontal .b4-distortion-wave__layer--static .b4-distortion-wave__fringe {
+  transform: translateX(30%);
+}
+
+.b4-distortion-wave--vertical .b4-distortion-wave__layer--static .b4-distortion-wave__band,
+.b4-distortion-wave--vertical .b4-distortion-wave__layer--static .b4-distortion-wave__fringe {
+  transform: translateY(30%);
+}
+
+.b4-distortion-wave__layer--static .b4-distortion-wave__fringe {
+  opacity: 0.4;
+  will-change: auto;
+}

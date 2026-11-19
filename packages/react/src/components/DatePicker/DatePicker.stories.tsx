@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { DatePicker } from "./DatePicker";
 
 const meta: Meta<typeof DatePicker> = {
-  title: "Family B — Inputs & Forms/DatePicker",
+  title: "Family B — Forms & Inputs/DatePicker",
   component: DatePicker,
   tags: ["autodocs"],
   args: { label: "Appointment date" },

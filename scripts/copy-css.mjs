@@ -32,7 +32,11 @@ function copyAllCss(dir) {
     const srcPath = join(dir, entry.name);
     if (entry.isDirectory()) {
       copyAllCss(srcPath);
-    } else if (entry.name.endsWith(".css")) {
+    } else if (entry.name.endsWith(".css") || entry.name.endsWith(".d.ts")) {
+      // .d.ts files are copied alongside the stylesheets because the
+      // packages' CSS subpath exports declare a "types" condition that
+      // points at them — without them, `import "@b4/tokens/css"` fails
+      // to typecheck in any consumer (TS2882).
       const relative = srcPath.slice(srcDir.length);
       const destPath = join(distDir, relative);
       mkdirSync(dirname(destPath), { recursive: true });

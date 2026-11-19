@@ -34,3 +34,11 @@ export const ManySelected: Story = {
 export const WithHint: Story = { args: { hint: "Pick the ones your team uses." } };
 export const WithError: Story = { args: { error: "Select at least one framework." } };
 export const Disabled: Story = { args: { disabled: true, defaultValue: ["react"] } };
+
+/**
+ * The Studio catalog deep-links every component to its `--default`
+ * story, so each component must publish one under that exact name.
+ * This is an alias of the primary example above — the same story under
+ * a stable name the catalog (and any external link) can rely on.
+ */
+export const Default = Empty;
