@@ -20,11 +20,12 @@
   font-family: var(--b4-font-sans);
   font-size: var(--b4-text-base);
   font-weight: var(--b4-weight-medium);
-  color: var(--b4-control-fg);
+  color: var(--b4-text-secondary);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
-  transition: color var(--b4-duration-fast) var(--b4-ease-standard);
+  /* Do not transition `color` — theme token swaps on <html> would otherwise
+     leave mid-animation contrast (caught by Studio porcelain axe after theme click). */
 }
 
 .b4-segmented-control--sm .b4-segmented-control__item {
@@ -51,7 +52,8 @@
   opacity: 0.5;
 }
 
-.b4-segmented-control__item[data-pressed] {
+.b4-segmented-control__item[data-pressed],
+.b4-segmented-control__item[data-pressed]:hover:not([data-disabled]) {
   color: var(--b4-control-fg-selected);
 }
 

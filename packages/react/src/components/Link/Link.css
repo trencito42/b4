@@ -6,9 +6,8 @@
   text-decoration-line: underline;
   text-decoration-color: transparent;
   text-underline-offset: 2px;
-  transition:
-    color var(--b4-duration-fast) var(--b4-ease-standard),
-    text-decoration-color var(--b4-duration-fast) var(--b4-ease-standard);
+  /* Omit `color` — instant token swap when Studio changes `data-b4-theme`. */
+  transition: text-decoration-color var(--b4-duration-fast) var(--b4-ease-standard);
 }
 
 .b4-link:focus-visible {

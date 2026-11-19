@@ -18,7 +18,10 @@
     "test": "pnpm -r --if-present run test",
     "test:watch": "pnpm --filter @b4/react run test -- --watch",
     "test:e2e": "playwright test",
-    "consumer-smoke": "node scripts/consumer-smoke.mjs"
+    "consumer-smoke": "node scripts/consumer-smoke.mjs",
+    "ssr-smoke": "node scripts/ssr-smoke.mjs",
+    "treeshake-check": "node scripts/treeshake-check.mjs",
+    "release:verify": "pnpm typecheck && pnpm build && pnpm --filter @b4/react run test && pnpm --filter @b4/motion run test && pnpm --filter @b4/studio run build && pnpm --filter @b4/studio run build-storybook && pnpm consumer-smoke && pnpm ssr-smoke && pnpm treeshake-check"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

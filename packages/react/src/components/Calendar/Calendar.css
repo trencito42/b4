@@ -108,7 +108,7 @@
   height: 20px;
   border-radius: var(--b4-radius-full);
   background-color: var(--b4-accent-500);
-  color: #fff;
+  color: var(--b4-text-on-accent);
 }
 
 .b4-calendar__events {

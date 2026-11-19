@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Phase 7 & 8 — Audit, packaging, Studio e2e, visuals (2026-11-19)
+
+- `PHASE7_AUDIT.md`, `pnpm release:verify` (typecheck, build, unit tests,
+  Storybook build, consumer/ssr/treeshake smokes).
+- Studio Playwright (`e2e/studio.spec.ts`) + visual baselines
+  (`e2e/visual-regression.spec.ts`); full suite **368** tests (twice).
+- A11y: Porcelain Studio axe clean after token-swap contrast fixes
+  (`SegmentedControl`, `Link`); Studio links use neutral tone.
+- Not published — user must authorize npm release.
+
 ### Phase 6 — B4 Studio app (2026-11-19)
 
 - Replaced the Phase 0 Vite placeholder with a full Studio shell: navigation,

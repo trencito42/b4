@@ -133,9 +133,9 @@ export function StudioApp() {
         </AppShell>
         <p className="b4-studio__muted" style={{ textAlign: "center", padding: "var(--b4-space-8)" }}>
           {STUDIO_COMPONENT_COUNT} verified public components ·{" "}
-          <Link href={storybookHomeUrl()} external>
-            Open Storybook
-          </Link>
+        <Link href={storybookHomeUrl()} external tone="neutral">
+          Open Storybook
+        </Link>
         </p>
       </div>
     </ToastProvider>
@@ -169,7 +169,11 @@ function Configurator({
         <SegmentedControl<B4Density>
           aria-label="Density"
           size="sm"
-          items={b4Densities.map((density) => ({ value: density, label: density.slice(0, 3) }))}
+          items={[
+            { value: "compact", label: "Compact" },
+            { value: "comfortable", label: "Comfort" },
+            { value: "spacious", label: "Spacious" },
+          ]}
           value={settings.density}
           onValueChange={(density) => onChange({ ...settings, density })}
         />

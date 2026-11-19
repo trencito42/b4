@@ -1,28 +1,23 @@
 # HANDOFF — read this first on any resume
 
-## Current state (2026-11-19) — Phase 6 Studio shipped
+## Current state (2026-11-19) — Phases 6–8 complete in-repo
 
-Branch `main`. Families A–F: all components VERIFIED. **Phase 6 done:**
-`apps/studio` is the real B4 Studio Vite app (`pnpm dev:studio` → port
-5173): catalog, configurator, three showcases. Storybook (`pnpm storybook`
-→ 6106) stays the per-component reference.
+Branch `main`. Families A–F: **83/83 VERIFIED**. Studio Vite app (`pnpm
+dev:studio` → 5173), Storybook (6106), Phase 7 audit (`PHASE7_AUDIT.md`),
+Phase 8 packaging smokes + CI, Studio e2e, and visual-regression baselines
+are all in place.
 
-**Next tasks (in order):**
+**Only open mission item:** `npm publish` under the real scope — **requires
+explicit user authorization** (`RELEASE_CHECKLIST.md`).
 
-1. **Phase 7** — Horizontal quality audit (re-verify early components
-   against the bar set by later ones; both themes; document in
-   `QUALITY_MATRIX.md`).
-2. **Phase 8** — Packaging/release per `RELEASE_CHECKLIST.md` (consumer
-   install smoke test, export maps, SSR smoke — no publish without user OK).
-3. **Visual regression** — still not implemented (optional follow-up).
-4. **Studio e2e** — no Playwright suite for the Vite app yet (Storybook
-   e2e remains the automated gate: 359 tests).
+**Latest gate:** `pnpm release:verify`, then `npx playwright test`
+**368/368** (run twice, stable on 2026-11-19). Playwright starts Storybook
+`:6106` and Studio `vite preview` `:5173` (rebuild `apps/studio` before
+preview if Studio UI changed).
 
-Latest gate for the Family F close: `@b4/react` 463/463, `@b4/motion`
-5/5, typecheck, `pnpm build`, playwright 359/359 twice. After that,
-QueryEditor was given `width: 40rem; max-width: 100%` and
-`white-space: pre` so the gutter stays aligned and lines are not
-clipped. Re-run `e2e/query-editor.spec.ts` if you touch that CSS.
+**Gotcha:** do not animate `color` on token-driven components when Studio
+changes `data-b4-theme` — axe catches mid-transition contrast failures
+(`SegmentedControl`, `Link` fixed).
 
 `pnpm` is not on this machine's PATH. Use `npm exec --yes pnpm@12.21.0`
 or `node_modules\.bin`. Playwright's `webServer` command calls `pnpm`

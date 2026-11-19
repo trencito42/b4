@@ -17,7 +17,7 @@ import "@b4/react/styles.css";`}
       </Card>
       <p className="b4-studio__muted">
         Component API reference and isolated previews live in{" "}
-        <Link href={storybookHomeUrl()} external>
+        <Link href={storybookHomeUrl()} external tone="neutral">
           Storybook
         </Link>
         . This app is the product-level shell and integration demos.

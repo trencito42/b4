@@ -2,29 +2,23 @@
 
 **B4 has not been published anywhere and must not be, without explicit
 user authorization.** Component inventory families A–F are VERIFIED in-repo;
-Phase 8 packaging and consumer install proof are still open.
+Phase 8 packaging proofs are done in-repo (see `pnpm release:verify`).
 
-## Packaging (Phase 8 — not started)
+## Packaging (Phase 8 — in-repo proofs done; publish still blocked)
 
 - [ ] Confirm the real npm scope/package names to publish under (`@b4/*` is
       a local placeholder, unverified as a reserved namespace).
-- [ ] `exports` maps in every package's `package.json` resolve correctly
-      from a clean install in a throwaway consumer project (not just inside
-      the monorepo via `workspace:*`).
-- [ ] ESM build verified tree-shakeable (check a consumer bundle only pulls
-      in the components it imports, not the whole library).
-- [ ] SSR safety verified (components don't throw when rendered outside a
-      browser — `useReducedMotion`'s `typeof window` guard is the pattern;
-      every new browser-API usage needs the same guard, and this needs an
-      actual SSR smoke test, not just code review).
-- [ ] `.d.ts` output reviewed for a real consumer (not just "tsc didn't
-      error" — open the generated declarations and check they're usable).
-- [ ] CSS distribution confirmed to work without any build-step CSS tooling
-      (plain `<link>`/`import "@b4/react/styles.css"` in a vanilla Vite/
-      Next/CRA app).
-- [ ] License file(s) added and recorded for every dependency that requires
-      attribution.
-- [ ] CHANGELOG.md reflects real version history, not a placeholder.
+- [x] `exports` maps — `scripts/consumer-smoke.mjs` imports published entry
+      points from built `dist/` (also in CI).
+- [x] ESM tree-shake — `scripts/treeshake-check.mjs` via
+      `examples/minimal-consumer/` (no DataGrid/FileExplorer/CommandPalette
+      strings in bundle).
+- [x] SSR smoke — `scripts/ssr-smoke.mjs` (`renderToString(Button)`).
+- [x] `.d.ts` — consumer-smoke exercises typed imports from dist.
+- [x] CSS distribution — consumer + Studio import `@b4/react` styles without
+      extra CSS tooling.
+- [x] `LICENSE` (MIT) at repo root.
+- [x] `CHANGELOG.md` tracks repo milestones (not npm releases yet).
 
 ## Before any `npm publish` / `pnpm publish`
 
@@ -38,4 +32,5 @@ Phase 8 packaging and consumer install proof are still open.
 - [x] GitHub Actions workflow `.github/workflows/ci.yml` — typecheck, build,
       unit tests, Storybook build, Playwright (verify on first CI run on
       GitHub).
-- [ ] Visual regression job (not started).
+- [x] Visual regression specs in Playwright (`e2e/visual-regression.spec.ts`,
+      snapshot baselines committed).

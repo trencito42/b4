@@ -1,5 +1,23 @@
 # B4 — Progress
 
+## Phase 7 & 8 — Audit, packaging, Studio e2e, visual baselines (2026-11-19)
+
+- **Phase 7** horizontal audit recorded in `PHASE7_AUDIT.md` (token/CSS spot
+  checks, both themes, inventory unchanged at 83 VERIFIED).
+- **Phase 8** packaging proofs: `consumer-smoke`, `ssr-smoke`, `treeshake-check`
+  wired into `pnpm release:verify` and `.github/workflows/ci.yml`; `LICENSE`
+  added; minimal consumer under `examples/minimal-consumer/`.
+- **Studio Playwright** (`e2e/studio.spec.ts`) against Vite preview `:5173`
+  (landmarks, catalog, showcases, axe on Graphite + Porcelain).
+- **Visual regression** (`e2e/visual-regression.spec.ts`) — Storybook iframe
+  shots + Studio home baseline (snapshots committed).
+- A11y fixes: `SegmentedControl` unselected labels use `--b4-text-secondary`;
+  no `color` transition on theme token swaps (`SegmentedControl`, `Link`);
+  Studio Storybook links use `Link` `tone="neutral"`.
+- Gate (this session): `pnpm release:verify`, `npx playwright test`
+  **368/368** (run twice). **Not published** — needs explicit user OK per
+  `RELEASE_CHECKLIST.md`.
+
 ## Phase 6 — B4 Studio Vite app (2026-11-19)
 
 Built the real `apps/studio` product shell (replacing the Phase 0 placeholder):
