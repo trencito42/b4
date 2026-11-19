@@ -47,8 +47,8 @@ import { TextMorph } from "@b4/react";
 
 ## Matching behavior
 
-Each render computes `tokenizeText(value, mode, locale)` and diffs it
-against the previous token list (`diffTokens`) to classify every token as
+When the value, mode, or locale changes, `tokenizeText(value, mode, locale)`
+and `diffTokens` compare the new tokens with the previous list to classify each token as
 surviving (same id, possibly moved), entering, or exiting — an
 identity/affinity match, not a naive index comparison, so reordering,
 duplicate words, insertions and deletions each get the animation that
@@ -62,26 +62,21 @@ matches what actually changed rather than a full crossfade.
   readers (`b4-text-morph__sr-only`) — the per-token spans are all
   `aria-hidden`, so assistive tech reads one coherent value, never
   per-token fragments mid-animation.
-- On value change, a `useLayoutEffect`-driven FLIP pass:
-  1. animates the container's width/height between old and new measured
-     rect (fluid layout adaptation — the box doesn't jump-cut size),
-  2. for each surviving token, inverts its position delta and animates it
-     back to `(0,0)` via the chosen spring,
-  3. for each entering token, fades/scales/blurs it in,
-  4. for each exiting token, renders it in an absolutely-positioned overlay
-     at its last measured rect and fades/scales/blurs it out, then unmounts
-     it once its animation resolves.
-- All animations for a given update share one spring config and run via
-  `motion/react`'s `animate()`, tracked in a `Set` so a new value arriving
-  mid-animation cleanly stops every in-flight animation before starting
-  the next diff (interruption-safe, not "animations pile up").
+- The layout pass snapshots the outgoing frame before updating its tokens,
+  measures the incoming frame at its natural size, and then starts motion.
+- An inner sizing box interpolates width and height. The incoming text
+  keeps its measured line layout during that interpolation.
+- Surviving tokens follow the selected spring from their rendered position.
+  Words that exchange places on the same line pass on opposite sides of
+  the baseline. Entering and exiting tokens use short opacity and vertical
+  position tweens. The outgoing layer clears when its tween ends while the
+  surviving tokens continue settling.
 
 ## Behavior
 
-- **Rapid updates / interruption**: a new `value` during an in-flight
-  morph stops all active animations for the previous diff before
-  re-diffing against the latest committed token list — no visible fighting
-  between two overlapping morphs.
+- **Rapid updates / interruption**: a new value starts from the positions
+  and opacity of the current painted frame. Cleanup stops the old animations
+  and removes their inline styles before measuring the new target layout.
 - **Reduced motion**: `useReducedMotion()` skips the animated path
   entirely and snaps token/container rects to their final measured state
   with zero duration; exiting tokens are cleared immediately rather than
@@ -130,7 +125,14 @@ matches what actually changed rather than a full crossfade.
 
 - `engine.test.ts` — 13 engine unit tests (segmentation, diffing, matching).
 - `TextMorph.test.tsx` — 6 component unit tests.
-- `e2e` — 4 Playwright tests.
+- `e2e/text-morph.spec.ts` — 7 browser tests, including frame-by-frame
+  checks for line stability and word crossings, and a rapid-interruption
+  check for the character story.
+
+The line stability and word crossing checks reproduced the defects in the
+previous Storybook build. After the fix, the release gate and the full
+Playwright suite passed (453 tests). Reduced motion was checked at 390 px in
+Graphite and Porcelain.
 
 ## Studio
 

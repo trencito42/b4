@@ -1,14 +1,20 @@
 import {
   forwardRef,
+  useCallback,
   useRef,
   useState,
   useEffect,
   useLayoutEffect,
   type CSSProperties,
-  type ReactElement,
 } from "react";
-import { animate } from "motion/react";
-import { springs, durations, easings, type SpringToken, useReducedMotion } from "@b4/motion";
+import { animate, type Transition } from "motion/react";
+import {
+  springs,
+  durations,
+  easings,
+  type SpringToken,
+  useReducedMotion,
+} from "@b4/motion";
 import {
   tokenizeText,
   diffTokens,
@@ -16,7 +22,8 @@ import {
   type TextMorphMode,
 } from "./engine.js";
 
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export interface TextMorphProps {
   /** The text or number to morph between */
@@ -41,21 +48,63 @@ export interface TextMorphProps {
   "aria-label"?: string;
 }
 
-interface ExitingItem {
-  id: string;
-  token: MorphToken;
+interface TokenPosition {
   left: number;
   top: number;
   width: number;
   height: number;
+  opacity: number;
 }
 
-/**
- * B4 First-Party Intelligent Text Morphing Engine
- *
- * Provides character, word, and digit-place-value text morphing with
- * physical spring continuity, FLIP spatial projection, and accessible DOM semantics.
- */
+interface Geometry {
+  width: number;
+  height: number;
+  positions: Map<string, TokenPosition>;
+}
+
+interface Frame {
+  value: TextMorphProps["value"];
+  mode: TextMorphMode;
+  locale?: string;
+  tokens: MorphToken[];
+  previous?: Geometry;
+}
+
+interface ExitingItem extends TokenPosition {
+  token: MorphToken;
+}
+
+interface StyleUpdate {
+  draw: (progress: number) => void;
+  clear?: () => void;
+}
+
+const mix = (from: number, to: number, progress: number) => from + (to - from) * progress;
+
+function measure(
+  sizer: HTMLElement,
+  elements: Map<string, HTMLElement>,
+  readOpacity = false,
+): Geometry {
+  const origin = sizer.getBoundingClientRect();
+  const positions = new Map<string, TokenPosition>();
+  for (const [id, element] of elements) {
+    const rect = element.getBoundingClientRect();
+    positions.set(id, {
+      left: rect.left - origin.left,
+      top: rect.top - origin.top,
+      width: rect.width,
+      height: rect.height,
+      opacity: readOpacity ? Number(getComputedStyle(element).opacity) : 1,
+    });
+  }
+  return { width: origin.width, height: origin.height, positions };
+}
+
+const centerX = (position: TokenPosition) => position.left + position.width / 2;
+const sameLine = (a: TokenPosition, b: TokenPosition) =>
+  Math.abs(a.top - b.top) < Math.min(a.height, b.height) / 2;
+
 export const TextMorph = forwardRef<HTMLElement, TextMorphProps>(function TextMorph(
   {
     value,
@@ -70,300 +119,256 @@ export const TextMorph = forwardRef<HTMLElement, TextMorphProps>(function TextMo
   forwardedRef,
 ) {
   const reducedMotion = useReducedMotion();
-  const Component = as as any;
+  const Component = as;
+  const setRootRef = useCallback(
+    (node: HTMLElement | null) => {
+      if (typeof forwardedRef === "function") return forwardedRef(node);
+      if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
 
-  const containerRef = useRef<HTMLElement | null>(null);
-  const tokenElsRef = useRef<Map<string, HTMLElement>>(new Map());
-  const exitingElsRef = useRef<Map<string, HTMLElement>>(new Map());
+  const sizerRef = useRef<HTMLSpanElement>(null);
+  const flowRef = useRef<HTMLSpanElement>(null);
+  const tokenEls = useRef(new Map<string, HTMLElement>());
+  const exitEls = useRef(new Map<string, HTMLElement>());
+  const playedFrame = useRef<Frame | null>(null);
+  const [frame, setFrame] = useState<Frame>(() => ({
+    value,
+    mode,
+    locale,
+    tokens: tokenizeText(value, mode, locale),
+  }));
+  const [exits, setExits] = useState<ExitingItem[]>([]);
 
-  // Keep track of measured rects across renders
-  const prevTokenRectsRef = useRef<Map<string, DOMRect>>(new Map());
-  const prevContainerRectRef = useRef<DOMRect | null>(null);
-  const isInitialMountRef = useRef(true);
-
-  // Active in-flight animations so we can cleanly stop/interrupt on rapid updates
-  const activeAnimationsRef = useRef<Set<{ stop: () => void }>>(new Set());
-
-  // Store tokens in state, updated on value or mode change
-  const [tokens, setTokens] = useState<MorphToken[]>(() => tokenizeText(value, mode, locale));
-  const [exitingItems, setExitingItems] = useState<ExitingItem[]>([]);
-  const prevValueRef = useRef(value);
-  const prevTokensRef = useRef<MorphToken[]>(tokens);
-
-  // Handle value change during render cycle
-  if (value !== prevValueRef.current) {
-    const newTokens = tokenizeText(value, mode, locale);
-    const diff = diffTokens(prevTokensRef.current, newTokens);
-
-    // Compute exiting items with their last known measured rects
-    const containerRect = containerRef.current?.getBoundingClientRect();
-    const newExiting: ExitingItem[] = [];
-
-    if (containerRect && diff.exitingTokens.length > 0) {
-      for (const exTok of diff.exitingTokens) {
-        const measured = prevTokenRectsRef.current.get(exTok.id);
-        if (measured) {
-          newExiting.push({
-            id: exTok.id,
-            token: exTok,
-            left: measured.left - containerRect.left,
-            top: measured.top - containerRect.top,
-            width: measured.width,
-            height: measured.height,
-          });
-        }
-      }
-    }
-
-    prevValueRef.current = value;
-    prevTokensRef.current = diff.newTokens;
-    setTokens(diff.newTokens);
-    if (newExiting.length > 0) {
-      setExitingItems(newExiting);
-    }
-  }
-
-  // FLIP spatial morphing effect
   useIsomorphicLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Initial mount: record initial rects without animating
-    if (isInitialMountRef.current) {
-      isInitialMountRef.current = false;
-      const initialContainerRect = container.getBoundingClientRect();
-      prevContainerRectRef.current = initialContainerRect;
-      const initialMap = new Map<string, DOMRect>();
-      for (const tok of tokens) {
-        const el = tokenElsRef.current.get(tok.id);
-        if (el) {
-          initialMap.set(tok.id, el.getBoundingClientRect());
-        }
-      }
-      prevTokenRectsRef.current = initialMap;
+    if (Object.is(value, frame.value) && mode === frame.mode && locale === frame.locale)
       return;
-    }
 
-    // Under reduced motion: snap immediately with zero duration
+    // The previous frame is still mounted here. Capture what is actually
+    // on screen, including any in-flight transforms, before updating it.
+    const previous =
+      !reducedMotion && sizerRef.current
+        ? measure(sizerRef.current, tokenEls.current, true)
+        : undefined;
+    const diff = diffTokens(frame.tokens, tokenizeText(value, mode, locale));
+    setExits(
+      diff.exitingTokens.flatMap((token) => {
+        const position = previous?.positions.get(token.id);
+        return position && token.type !== "whitespace" ? [{ token, ...position }] : [];
+      }),
+    );
+    setFrame({ value, mode, locale, tokens: diff.newTokens, previous });
+  }, [value, mode, locale, frame, reducedMotion]);
+
+  useIsomorphicLayoutEffect(() => {
+    const sizer = sizerRef.current;
+    const flow = flowRef.current;
     if (reducedMotion) {
-      if (exitingItems.length > 0) {
-        setExitingItems([]);
-      }
-      const map = new Map<string, DOMRect>();
-      for (const tok of tokens) {
-        const el = tokenElsRef.current.get(tok.id);
-        if (el) {
-          map.set(tok.id, el.getBoundingClientRect());
-        }
-      }
-      prevTokenRectsRef.current = map;
-      prevContainerRectRef.current = container.getBoundingClientRect();
+      setExits((items) => (items.length ? [] : items));
       return;
     }
+    if (!sizer || !flow || !frame.previous || playedFrame.current === frame) return;
+    playedFrame.current = frame;
 
-    // Stop previous in-flight animations to avoid stale conflicts
-    for (const anim of activeAnimationsRef.current) {
-      anim.stop();
+    // Measure every target at its natural size before applying any FLIP
+    // transform or interpolated width, which could reflow the new text.
+    const previous = frame.previous;
+    const next = measure(sizer, tokenEls.current);
+    const flowWidth = flow.getBoundingClientRect().width;
+    const travel: StyleUpdate[] = [];
+    const fades: StyleUpdate[] = [];
+    const cleanups: (() => void)[] = [];
+    let cancelled = false;
+
+    function play(
+      updates: StyleUpdate[],
+      transition: Transition,
+      onComplete?: () => void,
+    ) {
+      if (!updates.length) return;
+      const draw = (progress: number) => {
+        for (const update of updates) update.draw(progress);
+      };
+      const clear = () => {
+        for (const update of updates) update.clear?.();
+      };
+
+      // Animate a shared scalar for each phase. We own the inline styles,
+      // so Motion has no final DOM write that could outlive this cleanup.
+      draw(0);
+      const animation = animate(0, 1, { ...transition, onUpdate: draw });
+      animation.then(() => {
+        if (cancelled) return;
+        clear();
+        onComplete?.();
+      });
+      cleanups.push(() => {
+        animation.stop();
+        clear();
+      });
     }
-    activeAnimationsRef.current.clear();
 
-    const newContainerRect = container.getBoundingClientRect();
-    const prevContainerRect = prevContainerRectRef.current;
-    const prevTokenRects = prevTokenRectsRef.current;
-    const springConfig = springs[spring] ?? springs.travel;
+    if (
+      Math.abs(previous.width - next.width) > 1 ||
+      Math.abs(previous.height - next.height) > 1
+    ) {
+      flow.style.inlineSize = flowWidth + "px";
+      travel.push({
+        draw(progress) {
+          sizer.style.width =
+            Math.max(0, mix(previous.width, next.width, progress)) + "px";
+          sizer.style.height =
+            Math.max(0, mix(previous.height, next.height, progress)) + "px";
+        },
+        clear() {
+          sizer.style.width = "";
+          sizer.style.height = "";
+          flow.style.inlineSize = "";
+        },
+      });
+    }
 
-    // 1. Container fluid width and height adaptation
-    if (prevContainerRect) {
-      const dw = prevContainerRect.width - newContainerRect.width;
-      const dh = prevContainerRect.height - newContainerRect.height;
+    const moves = frame.tokens.flatMap((token) => {
+      const from = previous.positions.get(token.id);
+      const to = next.positions.get(token.id);
+      return token.type === "word" && from && to ? [{ id: token.id, from, to }] : [];
+    });
 
-      if (Math.abs(dw) > 1 || Math.abs(dh) > 1) {
-        const containerAnim = animate(
-          container,
-          {
-            width: [`${prevContainerRect.width}px`, `${newContainerRect.width}px`],
-            height: [`${prevContainerRect.height}px`, `${newContainerRect.height}px`],
+    for (const token of frame.tokens) {
+      const element = tokenEls.current.get(token.id);
+      const target = next.positions.get(token.id);
+      if (!element || !target || token.type === "whitespace") continue;
+
+      const from = previous.positions.get(token.id);
+      if (!from) {
+        fades.push({
+          draw(progress) {
+            element.style.opacity = String(progress);
+            element.style.transform = "translateY(" + 0.15 * (1 - progress) + "em)";
           },
-          springConfig,
-        );
-        activeAnimationsRef.current.add(containerAnim);
-        containerAnim.then(() => {
-          container.style.width = "";
-          container.style.height = "";
-          activeAnimationsRef.current.delete(containerAnim);
+          clear() {
+            element.style.opacity = "";
+            element.style.transform = "";
+          },
+        });
+        continue;
+      }
+
+      const dx = from.left - target.left;
+      const dy = from.top - target.top;
+      const moved = Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5;
+      if (from.opacity < 1) {
+        fades.push({
+          draw(progress) {
+            element.style.opacity = String(mix(from.opacity, 1, progress));
+          },
+          clear() {
+            element.style.opacity = "";
+          },
         });
       }
-    }
 
-    // 2. Animate surviving tokens (FLIP invert & play)
-    const nextTokenRects = new Map<string, DOMRect>();
-
-    for (const tok of tokens) {
-      const el = tokenElsRef.current.get(tok.id);
-      if (!el) continue;
-
-      const newRect = el.getBoundingClientRect();
-      nextTokenRects.set(tok.id, newRect);
-
-      const oldRect = prevTokenRects.get(tok.id);
-      if (oldRect) {
-        const dx = oldRect.left - newRect.left;
-        const dy = oldRect.top - newRect.top;
-
-        if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
-          const tokenAnim = animate(
-            el,
-            {
-              transform: [
-                `translate3d(${dx}px, ${dy}px, 0)`,
-                "translate3d(0px, 0px, 0)",
-              ],
-            },
-            springConfig,
-          );
-          activeAnimationsRef.current.add(tokenAnim);
-          tokenAnim.then(() => {
-            el.style.transform = "";
-            activeAnimationsRef.current.delete(tokenAnim);
-          });
-        }
-      } else {
-        // Entering token: a quick, fixed-duration fade + slide-up — no
-        // `scale()` and no lingering blur. An earlier version animated
-        // scale(0.85→1) + blur(3px→0) + translateY together on the same
-        // spring as everything else; because a spring's settle time isn't
-        // fixed, that read as the new character visibly squishing/melting
-        // for the whole transition and only "snapping" into its true shape
-        // at the very end — reported as ugly, not refined. A short
-        // `durations.fast` tween with the dedicated `easings.enter` curve
-        // (decelerating, no overshoot) resolves in ~140ms: the letter
-        // slides up and fades in without ever being a visibly distorted
-        // shape along the way.
-        const enterAnim = animate(
-          el,
-          {
-            opacity: [0, 1],
-            transform: ["translate3d(0px, 3px, 0)", "translate3d(0px, 0px, 0)"],
-          },
-          { duration: durations.fast, ease: easings.enter },
+      if (!moved) continue;
+      // Words exchanging order on one line pass on opposite sides of the
+      // baseline. Glyphs in character and number modes keep their line.
+      const crosses =
+        token.type === "word" &&
+        sameLine(from, target) &&
+        moves.some(
+          (other) =>
+            other.id !== token.id &&
+            sameLine(from, other.from) &&
+            sameLine(target, other.to) &&
+            (centerX(from) - centerX(other.from)) *
+              (centerX(target) - centerX(other.to)) <
+              0,
         );
-        activeAnimationsRef.current.add(enterAnim);
-        enterAnim.then(() => {
-          el.style.opacity = "";
-          el.style.transform = "";
-          activeAnimationsRef.current.delete(enterAnim);
-        });
-      }
+      const arc = crosses ? target.height * 0.65 * Math.sign(dx) : 0;
+      travel.push({
+        draw(progress) {
+          const lift = arc * Math.sin(Math.PI * Math.max(0, Math.min(1, progress)));
+          const x = dx * (1 - progress);
+          const y = dy * (1 - progress) + lift;
+          element.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
+        },
+        clear() {
+          element.style.transform = "";
+        },
+      });
     }
 
-    // 3. Animate exiting tokens (fade out + blur in absolute overlay)
-    if (exitingItems.length > 0) {
-      let remaining = exitingItems.length;
-      for (const item of exitingItems) {
-        const el = exitingElsRef.current.get(item.id);
-        if (el) {
-          const exitAnim = animate(
-            el,
-            {
-              opacity: [1, 0],
-              transform: ["scale(1) translate3d(0px, 0px, 0)", "scale(0.85) translate3d(0px, -4px, 0)"],
-              filter: ["blur(0px)", "blur(3px)"],
-            },
-            {
-              duration: durations.fast,
-              ease: easings.exit,
-            },
-          );
-          activeAnimationsRef.current.add(exitAnim);
-          exitAnim.then(() => {
-            activeAnimationsRef.current.delete(exitAnim);
-            remaining--;
-            if (remaining <= 0) {
-              setExitingItems([]);
-            }
-          });
-        }
-      }
+    // Removing the outgoing layer must not restart or stop the active FLIP.
+    const outgoing = Array.from(exitEls.current.values());
+    for (const element of outgoing) {
+      const opacity = Number(element.style.opacity);
+      fades.push({
+        draw(progress) {
+          element.style.opacity = String(opacity * (1 - progress));
+          element.style.transform = "translateY(" + -0.15 * progress + "em)";
+        },
+      });
     }
-
-    // Update refs for next diff
-    prevContainerRectRef.current = newContainerRect;
-    prevTokenRectsRef.current = nextTokenRects;
+    play(travel, springs[spring]);
+    play(fades, { duration: durations.fast, ease: easings.standard }, () => {
+      if (outgoing.length) setExits([]);
+    });
 
     return () => {
-      for (const anim of activeAnimationsRef.current) {
-        anim.stop();
-      }
-      activeAnimationsRef.current.clear();
+      cancelled = true;
+      for (const cleanup of cleanups) cleanup();
     };
-  }, [tokens, exitingItems, reducedMotion, spring]);
+  }, [frame, reducedMotion, spring]);
 
   const displayString = String(value ?? "");
 
   return (
     <Component
-      ref={(node: HTMLElement | null) => {
-        containerRef.current = node;
-        if (typeof forwardedRef === "function") {
-          forwardedRef(node);
-        } else if (forwardedRef) {
-          (forwardedRef as any).current = node;
-        }
-      }}
+      ref={setRootRef}
       className={["b4-text-morph", className ?? ""].filter(Boolean).join(" ")}
       style={style}
       aria-label={ariaLabel ?? displayString}
     >
-      {/* Screen-reader accessible value: single unbroken text */}
       <span className="b4-text-morph__sr-only">{displayString}</span>
-
-      {/* Visual tokens in flow */}
-      {tokens.map((tok) => {
-        const isSpace = tok.type === "whitespace";
-        return (
-          <span
-            key={tok.id}
-            ref={(node) => {
-              if (node) tokenElsRef.current.set(tok.id, node);
-              else tokenElsRef.current.delete(tok.id);
-            }}
-            className={[
-              "b4-text-morph__token",
-              isSpace && "b4-text-morph__token--space",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            aria-hidden="true"
-          >
-            {tok.text}
-          </span>
-        );
-      })}
-
-      {/* Exiting overlay tokens (absolutely positioned, unmounts on animation finish) */}
-      {exitingItems.length > 0 && (
-        <span className="b4-text-morph__exiting-overlay" aria-hidden="true">
-          {exitingItems.map((item) => (
+      <span className="b4-text-morph__sizer" ref={sizerRef} aria-hidden="true">
+        <span className="b4-text-morph__flow" ref={flowRef}>
+          {frame.tokens.map((token) => (
             <span
-              key={item.id}
+              key={token.id}
               ref={(node) => {
-                if (node) exitingElsRef.current.set(item.id, node);
-                else exitingElsRef.current.delete(item.id);
+                if (node) tokenEls.current.set(token.id, node);
+                else tokenEls.current.delete(token.id);
               }}
-              className="b4-text-morph__exiting-token"
-              style={{
-                left: `${item.left}px`,
-                top: `${item.top}px`,
-                width: `${item.width}px`,
-                height: `${item.height}px`,
-              }}
+              className={
+                token.type === "whitespace"
+                  ? "b4-text-morph__token b4-text-morph__token--space"
+                  : "b4-text-morph__token"
+              }
               aria-hidden="true"
             >
-              {item.token.text}
+              {token.text}
             </span>
           ))}
         </span>
-      )}
+        {exits.length > 0 && (
+          <span className="b4-text-morph__exiting-overlay" aria-hidden="true">
+            {exits.map(({ token, left, top, width, height, opacity }) => (
+              <span
+                key={token.id}
+                ref={(node) => {
+                  if (node) exitEls.current.set(token.id, node);
+                  else exitEls.current.delete(token.id);
+                }}
+                className="b4-text-morph__exiting-token"
+                style={{ left, top, width, height, opacity }}
+                aria-hidden="true"
+              >
+                {token.text}
+              </span>
+            ))}
+          </span>
+        )}
+      </span>
     </Component>
   );
 });

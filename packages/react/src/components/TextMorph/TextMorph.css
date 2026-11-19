@@ -19,6 +19,17 @@
   box-sizing: border-box;
 }
 
+.b4-text-morph__sizer {
+  display: inline-block;
+  position: relative;
+  max-inline-size: 100%;
+  vertical-align: baseline;
+}
+
+.b4-text-morph__flow {
+  display: block;
+}
+
 .b4-text-morph__token {
   display: inline-block;
   white-space: pre;
