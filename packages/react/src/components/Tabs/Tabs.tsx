@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
+import { useControllableState } from "../../hooks/useControllableState.js";
+import { useSwipeNavigation } from "../../hooks/useSwipeNavigation.js";
 
 export interface TabsItem {
   value: string;
@@ -13,6 +15,11 @@ export interface TabsProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  /**
+   * When true, swiping horizontally on the tab panel area navigates
+   * between enabled tab panels. Respects vertical page scrolling. Defaults to false.
+   */
+  swipeable?: boolean;
   /** Required — the tab list has no visible label of its own. */
   "aria-label": string;
   className?: string;
@@ -21,19 +28,39 @@ export interface TabsProps {
 /**
  * Built on Base UI's `Tabs` — real roving-tabindex arrow-key navigation,
  * ARIA tablist/tab/tabpanel semantics, and automatic content switching.
- * The traveling indicator is Base UI's own `Tabs.Indicator`, which
- * exposes its computed position as CSS custom properties
- * (`--active-tab-left`/`-width` etc.) — styled here with a plain CSS
- * `transition` rather than Motion, since Base UI (not this component)
- * owns the position calculation; the CSS token-driven `transition`
- * already respects the reduced-motion duration zeroing in `base.css`.
+ *
+ * Supports optional horizontal swipeable navigation between panels:
+ * swiping across panels smoothly navigates to adjacent tabs, skips disabled
+ * tabs, and distinguishes swipe intent from vertical page scrolling.
  */
-export function Tabs({ items, value, defaultValue, onValueChange, className, ...rest }: TabsProps) {
+export function Tabs({
+  items,
+  value,
+  defaultValue,
+  onValueChange,
+  swipeable = false,
+  className,
+  ...rest
+}: TabsProps) {
+  const [activeValue, setActiveValue] = useControllableState<string>({
+    value,
+    defaultValue: defaultValue ?? items[0]?.value ?? "",
+    onChange: onValueChange,
+  });
+
+  const { dragOffset, isSwiping, containerProps } = useSwipeNavigation({
+    items,
+    value: activeValue,
+    onNavigate: (next) => setActiveValue(next),
+    enabled: swipeable,
+  });
+
+  const { style: swipeStyle, ...swipeHandlers } = containerProps;
+
   return (
     <BaseTabs.Root
-      value={value}
-      defaultValue={defaultValue ?? items[0]?.value}
-      onValueChange={(next) => onValueChange?.(next as string)}
+      value={activeValue}
+      onValueChange={(next) => setActiveValue(next as string)}
       className={["b4-tabs", className ?? ""].filter(Boolean).join(" ")}
       {...rest}
     >
@@ -50,11 +77,37 @@ export function Tabs({ items, value, defaultValue, onValueChange, className, ...
         ))}
         <BaseTabs.Indicator className="b4-tabs__indicator" />
       </BaseTabs.List>
-      {items.map((item) => (
-        <BaseTabs.Panel key={item.value} value={item.value} className="b4-tabs__panel">
-          {item.content}
-        </BaseTabs.Panel>
-      ))}
+      <div
+        className="b4-tabs__panels-viewport"
+        style={swipeable ? swipeStyle : undefined}
+        {...(swipeable ? swipeHandlers : {})}
+      >
+        {items.map((item) => {
+          const isActive = item.value === activeValue;
+          return (
+            <BaseTabs.Panel
+              key={item.value}
+              value={item.value}
+              className={[
+                "b4-tabs__panel",
+                isSwiping && isActive ? "b4-tabs__panel--swiping" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              style={
+                isSwiping && isActive
+                  ? {
+                      transform: `translateX(${dragOffset}px)`,
+                      transition: "none",
+                    }
+                  : undefined
+              }
+            >
+              {item.content}
+            </BaseTabs.Panel>
+          );
+        })}
+      </div>
     </BaseTabs.Root>
   );
 }

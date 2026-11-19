@@ -61,10 +61,20 @@
   z-index: 0;
 }
 
+.b4-tabs__panels-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
 .b4-tabs__panel {
   padding-top: var(--b4-space-7);
   color: var(--b4-text-primary);
   font-family: var(--b4-font-sans);
+}
+
+.b4-tabs__panel--swiping {
+  will-change: transform;
 }
 
 .b4-tabs__panel:focus-visible {

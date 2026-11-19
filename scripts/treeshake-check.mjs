@@ -5,9 +5,9 @@ import { join } from "node:path";
 const root = process.cwd();
 const consumerRoot = join(root, "examples/minimal-consumer");
 const consumerDist = join(consumerRoot, "dist/assets");
-const viteBin = join(root, "node_modules", ".bin", process.platform === "win32" ? "vite.cmd" : "vite");
-
-const build = spawnSync(viteBin, ["build"], { cwd: consumerRoot, stdio: "inherit", shell: process.platform === "win32" });
+const cmd = process.platform === "win32" ? "npx" : "pnpm";
+const args = process.platform === "win32" ? ["pnpm", "--filter", "b4-minimal-consumer", "build"] : ["--filter", "b4-minimal-consumer", "build"];
+const build = spawnSync(cmd, args, { cwd: root, stdio: "inherit", shell: process.platform === "win32" });
 if (build.status !== 0) {
   throw new Error("treeshake-check: minimal consumer build failed.");
 }

@@ -1,0 +1,222 @@
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useGestureIntent } from "./useGestureIntent.js";
+
+export interface PointerSelectionItem<T extends string> {
+  value: T;
+  disabled?: boolean;
+}
+
+export interface UsePointerSelectionOptions<T extends string> {
+  items: readonly PointerSelectionItem<T>[];
+  value: T;
+  onCommit: (value: T) => void;
+  disabled?: boolean;
+  /** Whether scrubbing is enabled. Defaults to true. */
+  enabled?: boolean;
+  orientation?: "horizontal" | "vertical";
+}
+
+export interface UsePointerSelectionResult<T extends string> {
+  /** The value to visually display (active scrub preview or committed value). */
+  displayValue: T;
+  /** Whether user is actively scrubbing across items. */
+  isScrubbing: boolean;
+  /** Container props to spread onto the interactive container. */
+  containerProps: {
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => void;
+    onPointerMove: (e: React.PointerEvent<HTMLElement>) => void;
+    onPointerUp: (e: React.PointerEvent<HTMLElement>) => void;
+    onPointerCancel: (e: React.PointerEvent<HTMLElement>) => void;
+    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
+    style?: React.CSSProperties;
+  };
+}
+
+/**
+ * Reusable pointer scrubbing and drag-to-select interaction hook.
+ * Allows touching/clicking an item and sliding/scrubbing across adjacent items
+ * to preview and select options.
+ */
+export function usePointerSelection<T extends string>({
+  items,
+  value,
+  onCommit,
+  disabled = false,
+  enabled = true,
+  orientation = "horizontal",
+}: UsePointerSelectionOptions<T>): UsePointerSelectionResult<T> {
+  const [previewValue, setPreviewValue] = useState<T | null>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
+  const isScrubbingRef = useRef(false);
+  const [isScrubbingState, setIsScrubbingState] = useState(false);
+
+  // Synchronize preview value when value changes externally while not scrubbing
+  useEffect(() => {
+    if (!isScrubbingRef.current) {
+      setPreviewValue(null);
+    }
+  }, [value]);
+
+  const findItemFromPoint = useCallback(
+    (clientX: number, clientY: number): T | null => {
+      if (!containerRef.current) return null;
+      // Find all item elements inside container
+      const itemElements = Array.from(
+        containerRef.current.querySelectorAll<HTMLElement>("[data-b4-segment-value]"),
+      );
+
+      for (const el of itemElements) {
+        const rect = el.getBoundingClientRect();
+        if (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        ) {
+          const itemVal = el.getAttribute("data-b4-segment-value") as T;
+          const match = items.find((i) => i.value === itemVal);
+          if (match && !match.disabled) {
+            return itemVal;
+          }
+          return null;
+        }
+      }
+
+      // If between bounds horizontally (for horizontal orientation)
+      if (orientation === "horizontal") {
+        for (const el of itemElements) {
+          const rect = el.getBoundingClientRect();
+          if (clientX >= rect.left && clientX <= rect.right) {
+            const itemVal = el.getAttribute("data-b4-segment-value") as T;
+            const match = items.find((i) => i.value === itemVal);
+            if (match && !match.disabled) {
+              return itemVal;
+            }
+          }
+        }
+      }
+
+      return null;
+    },
+    [items, orientation],
+  );
+
+  const gesture = useGestureIntent({
+    threshold: 6,
+    targetAxis: orientation,
+    onGestureStart: (e) => {
+      if (disabled || !enabled) return;
+      const hit = findItemFromPoint(e.clientX, e.clientY);
+      if (hit) {
+        setPreviewValue(hit);
+      }
+    },
+    onGestureMove: (_dx, _dy, e) => {
+      if (disabled || !enabled) return;
+      if (!isScrubbingRef.current) {
+        isScrubbingRef.current = true;
+        setIsScrubbingState(true);
+      }
+      const hit = findItemFromPoint(e.clientX, e.clientY);
+      if (hit) {
+        setPreviewValue(hit);
+      }
+    },
+    onGestureEnd: () => {
+      if (disabled || !enabled) return;
+      const target = previewValue;
+      isScrubbingRef.current = false;
+      setIsScrubbingState(false);
+      setPreviewValue(null);
+      if (target && target !== value) {
+        onCommit(target);
+      }
+    },
+    onGestureCancel: () => {
+      isScrubbingRef.current = false;
+      setIsScrubbingState(false);
+      setPreviewValue(null);
+    },
+  });
+
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (disabled || !enabled) return;
+      containerRef.current = e.currentTarget;
+      // Capture pointer so scrubbing tracks even if pointer slides slightly outside
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+        // Fallback for non-supporting environments
+      }
+      gesture.handlePointerDown(e);
+    },
+    [disabled, enabled, gesture],
+  );
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      gesture.handlePointerMove(e);
+    },
+    [gesture],
+  );
+
+  const onPointerUp = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      try {
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // Safe fallback
+      }
+      gesture.handlePointerUp(e);
+    },
+    [gesture],
+  );
+
+  const onPointerCancel = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      try {
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // Safe fallback
+      }
+      gesture.handlePointerCancel(e);
+    },
+    [gesture],
+  );
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === "Escape" && isScrubbingRef.current) {
+        isScrubbingRef.current = false;
+        setIsScrubbingState(false);
+        setPreviewValue(null);
+        gesture.reset();
+      }
+    },
+    [gesture],
+  );
+
+  const displayValue = previewValue ?? value;
+
+  return {
+    displayValue,
+    isScrubbing: isScrubbingState,
+    containerProps: {
+      onPointerDown,
+      onPointerMove,
+      onPointerUp,
+      onPointerCancel,
+      onKeyDown,
+      style: {
+        touchAction: orientation === "horizontal" ? "pan-y" : "pan-x",
+        userSelect: isScrubbingState ? "none" : undefined,
+        WebkitUserSelect: isScrubbingState ? "none" : undefined,
+      },
+    },
+  };
+}

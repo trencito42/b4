@@ -72,3 +72,25 @@ export const AllSizes: Story = {
     </div>
   ),
 };
+
+export const PointerScrubbing: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <p style={{ margin: 0, fontSize: "var(--b4-text-sm)", color: "var(--b4-text-secondary)" }}>
+        Drag or scrub across segments horizontally with pointer/touch:
+      </p>
+      <SegmentedControl
+        aria-label="Multi-tier selection"
+        items={[
+          { value: "us-east", label: "US East" },
+          { value: "us-west", label: "US West" },
+          { value: "eu-central", label: "EU Central" },
+          { value: "ap-southeast", label: "AP Southeast" },
+        ]}
+        defaultValue="us-east"
+        scrub
+      />
+    </div>
+  ),
+};
+

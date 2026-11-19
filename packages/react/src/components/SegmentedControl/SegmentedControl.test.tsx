@@ -100,4 +100,18 @@ describe("SegmentedControl", () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+
+  it("exposes data-b4-segment-value on segment items for pointer hit-testing", () => {
+    render(
+      <SegmentedControl aria-label="Page" items={items} defaultValue="changelog" />,
+    );
+    expect(screen.getByRole("button", { name: "Changelog" })).toHaveAttribute(
+      "data-b4-segment-value",
+      "changelog",
+    );
+    expect(screen.getByRole("button", { name: "Login" })).toHaveAttribute(
+      "data-b4-segment-value",
+      "login",
+    );
+  });
 });

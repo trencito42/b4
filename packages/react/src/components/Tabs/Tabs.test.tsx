@@ -71,4 +71,10 @@ describe("Tabs", () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+
+  it("renders with swipeable viewport enabled without breaking panel display", () => {
+    render(<Tabs aria-label="Settings" items={items} defaultValue="general" swipeable />);
+    expect(screen.getByText("General content")).toBeVisible();
+    expect(screen.queryByText("Members content")).not.toBeInTheDocument();
+  });
 });

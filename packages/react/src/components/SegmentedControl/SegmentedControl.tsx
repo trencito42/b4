@@ -1,7 +1,9 @@
-import { useId, useState, type ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import { Toggle } from "@base-ui/react/toggle";
 import { AnimatedIndicator } from "../AnimatedIndicator/AnimatedIndicator.js";
+import { useControllableState } from "../../hooks/useControllableState.js";
+import { usePointerSelection } from "../../hooks/usePointerSelection.js";
 
 export interface SegmentedControlItem<Value extends string> {
   value: Value;
@@ -18,6 +20,8 @@ export interface SegmentedControlProps<Value extends string> {
   onValueChange?: (value: Value) => void;
   disabled?: boolean;
   size?: "sm" | "md" | "lg";
+  /** Whether drag-to-select pointer scrubbing is enabled. Defaults to true. */
+  scrub?: boolean;
   /** Required — the control has no visible label of its own. */
   "aria-label": string;
   className?: string;
@@ -26,17 +30,11 @@ export interface SegmentedControlProps<Value extends string> {
 /**
  * B4's reference motion component: a sculptural capsule that physically
  * travels to the selected segment (the "Changelog/Login" pattern named in
- * the mission brief). Single-select only — Base UI's ToggleGroup also
- * supports `multiple`, which SegmentedControl deliberately does not expose;
- * use a ButtonGroup of ToggleButtons for a multi-select row instead.
+ * the mission brief).
  *
- * Selection state is lifted into this component (not read back from Base
- * UI's internal Toggle state) specifically so the indicator's "which item
- * is it in right now" decision happens at the same render as everything
- * else. The indicator itself is `AnimatedIndicator` — the shared traveling-
- * surface primitive — conditionally rendered inside whichever Toggle
- * currently matches `selected` (never more than one at a time, by
- * construction).
+ * Supports fluid pointer scrubbing (drag-to-select) across segments:
+ * dragging tracks the indicator across candidate options, with live preview
+ * and natural settling on commit via B4's shared motion rules.
  */
 export function SegmentedControl<Value extends string>({
   items,
@@ -45,39 +43,57 @@ export function SegmentedControl<Value extends string>({
   onValueChange,
   disabled = false,
   size = "md",
+  scrub = true,
   className,
   ...rest
 }: SegmentedControlProps<Value>) {
   const indicatorId = useId();
-  const [internalValue, setInternalValue] = useState<Value | undefined>(
-    defaultValue ?? items[0]?.value,
-  );
-  const selected = value ?? internalValue;
 
-  function handleValueChange(next: readonly string[]) {
+  const [committedValue, setCommittedValue] = useControllableState<Value>({
+    value,
+    defaultValue: defaultValue ?? (items[0]?.value as Value),
+    onChange: onValueChange,
+  });
+
+  const { displayValue, isScrubbing, containerProps } = usePointerSelection<Value>({
+    items,
+    value: committedValue ?? (items[0]?.value as Value),
+    onCommit: (next) => setCommittedValue(next),
+    disabled,
+    enabled: scrub,
+    orientation: "horizontal",
+  });
+
+  function handleBaseUIValueChange(next: readonly string[]) {
+    // When scrubbing is active, commit is owned by pointer release
+    if (isScrubbing) return;
     const first = next[0] as Value | undefined;
     if (first === undefined) return;
-    if (value === undefined) setInternalValue(first);
-    onValueChange?.(first);
+    setCommittedValue(first);
   }
+
+  const { style: gestureStyle, ...gestureHandlers } = containerProps;
 
   return (
     <ToggleGroup
-      value={selected !== undefined ? [selected] : []}
-      onValueChange={handleValueChange}
+      value={displayValue !== undefined ? [displayValue] : []}
+      onValueChange={handleBaseUIValueChange}
       disabled={disabled}
       className={["b4-segmented-control", `b4-segmented-control--${size}`, className ?? ""]
         .filter(Boolean)
         .join(" ")}
+      style={gestureStyle}
+      {...gestureHandlers}
       {...rest}
     >
       {items.map((item) => {
-        const isSelected = item.value === selected;
+        const isSelected = item.value === displayValue;
         return (
           <Toggle
             key={item.value}
             value={item.value}
             disabled={item.disabled}
+            data-b4-segment-value={item.value}
             className="b4-segmented-control__item"
           >
             {isSelected && (

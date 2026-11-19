@@ -17,14 +17,10 @@
   align-items: flex-start;
   gap: var(--b4-space-3);
   padding: 12px 14px;
-  border-radius: var(--b4-radius-lg);
+  border-radius: var(--b4-surface-radius);
   border: 1px solid var(--b4-border-subtle);
   background: var(--b4-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow:
-    var(--b4-shadow-overlay),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: var(--b4-shadow-overlay);
   font-family: var(--b4-font-sans);
   pointer-events: auto;
   touch-action: none;
@@ -71,16 +67,6 @@
   transform: translateX(calc(var(--toast-swipe-movement-x, 0px) + 150%));
 }
 
-/* Subtle border tone highlights instead of clumsy solid left-borders */
-.b4-toast[data-type="success"] {
-  border-color: color-mix(in srgb, var(--b4-success) 28%, var(--b4-border-subtle));
-}
-.b4-toast[data-type="error"] {
-  border-color: color-mix(in srgb, var(--b4-danger) 28%, var(--b4-border-subtle));
-}
-.b4-toast[data-type="warning"] {
-  border-color: color-mix(in srgb, var(--b4-warning) 28%, var(--b4-border-subtle));
-}
 
 /* ---- Status Icon Badge ---- */
 .b4-toast__icon-wrapper {

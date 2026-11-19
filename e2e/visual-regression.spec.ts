@@ -10,6 +10,7 @@ const storybookShots = [
 for (const shot of storybookShots) {
   test(`visual baseline (Storybook): ${shot.name}`, async ({ page }) => {
     await page.goto(shot.path, { waitUntil: "networkidle" });
+    await page.evaluate(() => document.fonts.ready);
     const target = page.locator(shot.selector).first();
     await expect(target).toBeVisible();
     await expect(target).toHaveScreenshot(`storybook-${shot.name}.png`, {
@@ -21,6 +22,7 @@ for (const shot of storybookShots) {
 
 test("visual baseline (Studio): home graphite", async ({ page }) => {
   await page.goto("http://localhost:5173/");
+  await page.evaluate(() => document.fonts.ready);
   await expect(page.getByRole("heading", { name: /commercial-grade/i })).toBeVisible();
   await expect(page.locator(".b4-app-shell")).toHaveScreenshot("studio-home.png", {
     maxDiffPixelRatio: 0.05,

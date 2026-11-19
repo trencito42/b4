@@ -3,7 +3,22 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
-## CI Clean-Checkout Build Order & Cross-Platform Visual Baselines (2026-11-19)
+## Interaction Foundations & Gesture Language (2026-11-19)
+
+- **Behavioral Foundation Hooks**:
+  - `useControllableState` (`packages/react/src/hooks/useControllableState.ts`): Unified controlled/uncontrolled state arbiter.
+  - `useGestureIntent` (`packages/react/src/hooks/useGestureIntent.ts`): Touch-slop threshold (8px) and axis arbiter (horizontal vs vertical), eliminating gesture conflicts with native vertical page scrolling.
+  - `usePointerSelection` (`packages/react/src/hooks/usePointerSelection.ts`): Reusable pointer scrubbing / drag-to-select with element hit-testing, preview state, and pointer capture.
+  - `useSwipeNavigation` (`packages/react/src/hooks/useSwipeNavigation.ts`): Reusable horizontal swipe navigation with rubber-banding, velocity flick detection (>0.4px/ms), touch-action: pan-y, and disabled item skipping.
+- **Component Interaction Enhancements**:
+  - `SegmentedControl`: Integrated pointer scrubbing (`scrub?: boolean`) enabling fluid drag-to-select across segments, real-time indicator tracking, and cancellation recovery on Escape / vertical scroll.
+  - `Tabs`: Integrated optional horizontal swipe navigation (`swipeable?: boolean`) with real-time drag transforms, direction-aware settling, and accessible roving tab focus.
+  - `Toast`: Refined styling to strictly match B4 Design Principles (surface lightness elevation, neutral subtle border, status conveyed via icon badge, no non-token decorations).
+- **Cross-Platform Deterministic Font Metrics & CI Fix**:
+  - Investigated and resolved the root cause of the Linux CI Playwright snapshot mismatch: neither OS had `Inter` installed, causing Windows to fall back to `Segoe UI` (78px button, 180px segmented) and Linux CI to fall back to `DejaVu Sans` (82px button, 188px segmented).
+  - Explicitly loaded `Inter` across Storybook and Studio, added `document.fonts.ready` synchronization before screenshots in `e2e/visual-regression.spec.ts`, installed `fonts-inter` in Linux CI workflow, and updated snapshots to true Inter dimensions (80x40 Button, 184x40 SegmentedControl).
+- Gate: 474/474 `@b4/react` unit tests (86 suites), monorepo typecheck 0 errors, all 5 Playwright visual baselines passing.
+
 
 - **Clean checkout TS2307 fix**: Fixed build order in `.github/workflows/ci.yml` and `package.json` (`release:verify`) — `pnpm build` now runs before `pnpm typecheck`, generating fresh `.d.ts` outputs for `@b4/tokens` and `@b4/motion` in topological order rather than failing on absent dist directories.
 - **Cross-platform visual regression**: Committed Linux baseline snapshots (`*-chromium-linux.png`) alongside Windows snapshots (`*-chromium-win32.png`). Configured `maxDiffPixelRatio: 0.05` and `animations: "disabled"` across `playwright.config.ts` and `e2e/visual-regression.spec.ts` for deterministic font rasterization tolerance (FreeType vs DirectWrite) without masking real layout or visual defects.

@@ -156,13 +156,13 @@ export function MotionLabPage() {
         <Card variant="outlined" padding="lg">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h3 style={{ margin: 0, fontSize: "var(--b4-text-lg)", fontWeight: "var(--b4-weight-semibold)" }}>
-              Selection & Indicator Travel
+              Selection, Gestures & Indicator Travel
             </h3>
             <Badge tone="neutral">springs.travel</Badge>
           </div>
           <p style={{ color: "var(--b4-text-secondary)", fontSize: "var(--b4-text-sm)", marginBottom: 16 }}>
             The signature Changelog/Login reference interaction: capsule moves behind active label with
-            calibrated spring physics without layout shifts.
+            calibrated spring physics. Now features pointer scrubbing (drag-to-select) and swipeable tab panels.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -210,14 +210,48 @@ export function MotionLabPage() {
 
             <div>
               <div style={{ fontSize: "var(--b4-text-xs)", color: "var(--b4-text-muted)", marginBottom: 8 }}>
-                Tabs Indicator
+                Tabs with Swipeable Panels (swipe left / right)
               </div>
               <Tabs
                 aria-label="Environment tabs"
+                swipeable
                 items={[
-                  { value: "tab-1", label: "Build Configuration", content: <p>Build pipeline configuration.</p> },
-                  { value: "tab-2", label: "Environment Secrets", content: <p>Encrypted runtime secrets.</p> },
-                  { value: "tab-3", label: "Domains & SSL", content: <p>Custom edge domains and TLS certificates.</p> },
+                  {
+                    value: "tab-1",
+                    label: "Build Configuration",
+                    content: (
+                      <div style={{ padding: "12px 0" }}>
+                        <p style={{ margin: "0 0 6px 0" }}>Build pipeline configuration.</p>
+                        <span style={{ color: "var(--b4-text-tertiary)", fontSize: "var(--b4-text-xs)" }}>
+                          Touch/swipe or drag horizontally on this panel to switch tabs.
+                        </span>
+                      </div>
+                    ),
+                  },
+                  {
+                    value: "tab-2",
+                    label: "Environment Secrets",
+                    content: (
+                      <div style={{ padding: "12px 0" }}>
+                        <p style={{ margin: "0 0 6px 0" }}>Encrypted runtime secrets.</p>
+                        <span style={{ color: "var(--b4-text-tertiary)", fontSize: "var(--b4-text-xs)" }}>
+                          Touch/swipe or drag horizontally on this panel to switch tabs.
+                        </span>
+                      </div>
+                    ),
+                  },
+                  {
+                    value: "tab-3",
+                    label: "Domains & SSL",
+                    content: (
+                      <div style={{ padding: "12px 0" }}>
+                        <p style={{ margin: "0 0 6px 0" }}>Custom edge domains and TLS certificates.</p>
+                        <span style={{ color: "var(--b4-text-tertiary)", fontSize: "var(--b4-text-xs)" }}>
+                          Touch/swipe or drag horizontally on this panel to switch tabs.
+                        </span>
+                      </div>
+                    ),
+                  },
                 ]}
                 value={selectedTab}
                 onValueChange={(v) => setSelectedTab(v)}

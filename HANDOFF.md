@@ -24,12 +24,20 @@ components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
-Latest craftsmanship improvements:
-- **Clean checkout & CI build order fix**: CI (`.github/workflows/ci.yml`) and `release:verify` now build workspace packages (`pnpm build`) prior to typechecking (`pnpm typecheck`), ensuring that `@b4/motion` and `@b4/tokens` generate fresh declaration types without relying on stale dist files.
-- **Cross-platform Playwright visual regression**: committed Linux snapshot baselines (`*-chromium-linux.png`) alongside Windows baselines (`*-chromium-win32.png`), configured `maxDiffPixelRatio: 0.05` and `animations: "disabled"` to reliably account for cross-platform font antialiasing (FreeType on Linux CI vs DirectWrite on Windows) while strictly preserving layout and visual defect detection.
-- **Button async action choreography**: full lifecycle (`idle` -> `pending` -> `success` / `error`) with `status`, `statusLabels`, `statusIcons`, `onAction`, soft text blur/opacity transitions via `TextTransition`, icon transitions (spinner, checkmark, error), tone shifts, and stable width adaptation.
-- **B4 Studio Motion Lab**: interactive test benches for asynchronous action transformations, selection indicator travel & interruption stress tests, variable-width text transitions, rolling number transitions, and reduced motion inspection.
-- Unit tests expanded to **465 / 465 passed** across 83 suites in `@b4/react`. Studio Vite build clean (549ms). Monorepo typecheck 0 errors.
+Latest interaction & craftsmanship improvements:
+- **Behavioral & Gesture Foundations**:
+  - Added `useControllableState` (`packages/react/src/hooks/useControllableState.ts`) for canonical controlled/uncontrolled state synchronization.
+  - Added `useGestureIntent` (`packages/react/src/hooks/useGestureIntent.ts`) for axis locking and touch-slop thresholding (8px), preventing gesture conflict with native vertical page scrolling.
+  - Added `usePointerSelection` (`packages/react/src/hooks/usePointerSelection.ts`) for pointer scrubbing / drag-to-select across options with live element hit-testing, preview state, and pointer capture.
+  - Added `useSwipeNavigation` (`packages/react/src/hooks/useSwipeNavigation.ts`) for horizontal swipe navigation between panels with rubber-banding resistance, velocity flick detection, and disabled item skipping.
+- **Control Enhancements**:
+  - `SegmentedControl`: pointer scrubbing (`scrub?: boolean`) enables fluid drag-to-select across segments, live traveling capsule tracking, and cancellation recovery on Escape / vertical scroll.
+  - `Tabs`: optional horizontal swipe navigation (`swipeable?: boolean`) across tab panels with real-time drag transforms, direction-aware transitions, and accessible roving tab focus.
+  - `Toast`: pruned non-token declarations and ad-hoc colored borders to strictly adhere to B4 Design Principles (surface lightness elevation, neutral subtle border, status conveyed via icon badge).
+- **Cross-Platform Deterministic Font Metrics & CI Fix**:
+  - Resolved Linux CI screenshot dimension mismatch (expected 78x40, received 82x40) by root-causing OS fallback font divergence (Segoe UI on Windows vs DejaVu Sans on Linux).
+  - Explicitly loaded `Inter` across Storybook and Studio, added `document.fonts.ready` synchronization before Playwright screenshots, added `fonts-inter` to Ubuntu CI workflow, and updated snapshot baselines to true Inter dimensions (80x40 Button, 184x40 SegmentedControl).
+- Unit tests expanded to **474 / 474 passed** across 86 test suites in `@b4/react`. Typecheck 0 errors. All visual regression baselines passing.
 
 ### Current task
 

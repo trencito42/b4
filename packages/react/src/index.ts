@@ -244,3 +244,24 @@ export { FileExplorer } from "./components/FileExplorer/FileExplorer.js";
 export type { FileExplorerProps, FileExplorerNode } from "./components/FileExplorer/FileExplorer.js";
 export { QueryEditor } from "./components/QueryEditor/QueryEditor.js";
 export type { QueryEditorProps } from "./components/QueryEditor/QueryEditor.js";
+
+// Behavioral & interaction foundations
+export {
+  useControllableState,
+  useGestureIntent,
+  usePointerSelection,
+  useSwipeNavigation,
+} from "./hooks/index.js";
+export type {
+  UseControllableStateOptions,
+  GestureAxis,
+  UseGestureIntentOptions,
+  UseGestureIntentResult,
+  PointerSelectionItem,
+  UsePointerSelectionOptions,
+  UsePointerSelectionResult,
+  SwipeNavigationItem,
+  UseSwipeNavigationOptions,
+  UseSwipeNavigationResult,
+} from "./hooks/index.js";
+
