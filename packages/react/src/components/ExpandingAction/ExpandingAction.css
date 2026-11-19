@@ -1,17 +1,52 @@
 .b4-expanding-action {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: var(--b4-space-2);
+  justify-content: center;
+  gap: 0;
   height: var(--b4-control-height);
-  padding: 0 var(--b4-space-3);
+  width: var(--b4-control-height);
+  min-width: var(--b4-control-height);
+  aspect-ratio: 1 / 1;
+  padding: 0;
   border: none;
-  border-radius: var(--b4-radius-full);
+  border-radius: var(--b4-control-radius);
   background: var(--b4-accent);
   color: var(--b4-text-on-accent);
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
   font-family: var(--b4-font-sans);
+  touch-action: manipulation;
+}
+
+.b4-expanding-action--sm {
+  height: var(--b4-control-height-sm);
+  width: var(--b4-control-height-sm);
+  min-width: var(--b4-control-height-sm);
+}
+
+.b4-expanding-action--lg {
+  height: var(--b4-control-height-lg);
+  width: var(--b4-control-height-lg);
+  min-width: var(--b4-control-height-lg);
+}
+
+.b4-expanding-action--expanded {
+  width: auto;
+  aspect-ratio: auto;
+  justify-content: flex-start;
+  gap: var(--b4-space-2);
+  padding: 0 var(--b4-control-padding-x);
+}
+
+.b4-expanding-action:hover:not(:disabled) {
+  background: var(--b4-accent-hover, var(--b4-accent));
+}
+
+.b4-expanding-action:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
 }
 
 .b4-expanding-action:disabled {
@@ -26,6 +61,16 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+}
+
+.b4-expanding-action--sm .b4-expanding-action__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.b4-expanding-action--lg .b4-expanding-action__icon {
+  width: 20px;
+  height: 20px;
 }
 
 .b4-expanding-action__icon svg {
