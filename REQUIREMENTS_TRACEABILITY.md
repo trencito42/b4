@@ -134,14 +134,38 @@ lens distortion with chromatic aberration and particles, and an imperative
 `play()/reverse()/reset()/prepare()`.
 
 What's actually built is a smaller, different thing: a single-surface
-decorative `backdrop-filter` sweep, architecturally a sibling of
-`BorderBeam`. It has no second view, no snapshot pipeline, no WebGL
-context, and no imperative API. This is documented in full, including the
-explicit prop-by-prop gap list, in `docs/effects/DISTORTION_WAVE.md`
-(this session, `038ce2d`). §15 acceptance criterion 11 ("DistortionWave is
-genuinely implemented, not approximated by a CSS ripple") is **not met**
-by the current implementation — it is, by the brief's own definition, a
-CSS-based effect rather than a DOM-view transition.
+decorative sweep, architecturally a sibling of `BorderBeam`. It has no
+second view, no DOM-content snapshot pipeline, and no imperative API.
+
+**Updated 2026-11-19 (commit `209561d`), after explicit user feedback
+that both effects looked too basic and that DistortionWave specifically
+needed real WebGL:** the sweep is no longer CSS-only. The real
+`backdrop-filter` optical distortion band is unchanged (and was always
+real), but the flat CSS-gradient "fringe" riding on top of it has been
+replaced with an actual WebGL2 program (`crest.ts` — compiled GLSL ES
+3.00 shaders, a VAO, real alpha blending) rendering RGB-channel-split
+chromatic aberration, an animated caustic shimmer and a specular hot core,
+driven by `requestAnimationFrame` in a dedicated `DistortionWaveCrest.tsx`
+component with proper resize/context-loss/theme-aware color handling and
+a graceful no-WebGL fallback. `BorderBeam` was redesigned the same commit
+from a flat single-color ring into a comet-tail + counter-rotating wake +
+path-travelling spark + a large soft ambient halo (new `tone="aurora"`,
+blended from three existing tokens via `color-mix`, not a hardcoded
+rainbow) — matching a reference screenshot the user provided of a big,
+soft, multi-hue glow. Both were verified live in a real browser, both
+themes, reduced motion, zero console errors; 530/530 unit tests pass.
+
+**§15 acceptance criterion 11 ("DistortionWave is genuinely implemented,
+not approximated by a CSS ripple") is now PARTIALLY met, not fully.** It
+is no longer accurate to call the current implementation purely a "CSS
+ripple" — there is genuine, verified WebGL2 shader rendering in it now.
+It is still accurate that this WebGL layer does not sample or distort the
+actual DOM content underneath (that remains the separate `backdrop-filter`
+band, which is CSS) — the brief's harder ask, a DOM-snapshot-driven
+two-view transition with true per-pixel lens distortion of captured
+content, is still not implemented. See `docs/effects/DISTORTION_WAVE.md`
+for the precise, current line between what's real WebGL now and what
+still isn't.
 
 Whether the concurrent session's in-flight work addresses this is
 **unknown** — its uncommitted diff does not currently touch
@@ -280,10 +304,10 @@ Per-criterion read against this document's own findings above:
 | 7 | Mobile/desktop excellent | Claimed, device-level testing explicitly not done |
 | 8 | Interaction/motion bugs resolved | Claimed per HANDOFF.md log |
 | 9 | TextMorph refined + documented | **DONE** |
-| 10 | BorderBeam refined + documented | **DONE** |
-| 11 | DistortionWave genuinely implemented (not a CSS ripple) | **NOT MET** — see §9 |
-| 12 | Effects have browser demos + docs | Labs exist for BorderBeam/DistortionWave in Studio; docs done; no composed demo (§10) |
-| 13 | Three app pages implemented, fully interactive | **NOT MET** — see §12 |
+| 10 | BorderBeam refined + documented | **DONE**, redesigned 2026-11-19 per user feedback — see §9 |
+| 11 | DistortionWave genuinely implemented (not a CSS ripple) | **PARTIAL** — real WebGL2 shader added 2026-11-19, but it's procedural, not DOM-content sampling; see §9 |
+| 12 | Effects have browser demos + docs | Labs exist for BorderBeam/DistortionWave in Studio; docs done; a composed demo exists too (ShowcaseCheckoutPage, §10) |
+| 13 | Three app pages implemented, fully interactive | **PARTIAL** — see §12 |
 | 14 | Pages use B4 public components, not lookalikes | N/A — pages don't exist as specified |
 | 15 | Screenshots reviewed at representative widths | **NOT MET** |
 | 16 | Motion reviewed in video/frames | **NOT MET** |
@@ -291,9 +315,14 @@ Per-criterion read against this document's own findings above:
 | 18 | Remaining limitations explicitly listed | This document + per-effect docs |
 | 19 | Concise accurate handoff for next session | `HANDOFF.md` exists but is being actively rewritten by the concurrent session as of this writing — re-read it fresh before trusting it |
 
-**Overall: the milestone is not finished.** The two largest concrete gaps
-are §9 (DistortionWave is the wrong kind of effect) and §12 (no showcase
-pages exist as specified — only two unrelated standalone example apps).
+**Overall: the milestone is not finished.** The remaining largest gaps:
+§9 (DistortionWave's WebGL shader is procedural, not a DOM-content-
+sampling lens-distortion/view-transition system), §12 (the Studio
+showcase pages exist and two now have real interactivity, but none
+matches the brief's three specific pages in full richness), §4/§13 (no
+full visual-QA screenshot matrix), and the unresolved question of whether
+COMPONENT_INVENTORY.md's blanket VERIFIED claims hold up to a fresh,
+independent re-check.
 
 ## §16 — Execution rules / stage status
 
@@ -301,11 +330,14 @@ pages exist as specified — only two unrelated standalone example apps).
   partially done (§3, this file).
 - Stage B–C (foundations, component review): **in progress**, owned by
   the concurrent session right now.
-- Stage D (TextMorph/BorderBeam docs + labs): **done** for docs (this
-  session); labs pre-existed.
-- Stage E (DistortionWave real implementation): **not done** — current
-  implementation is the wrong shape (§9).
-- Stage F (three showcase apps): **not done** (§12).
+- Stage D (TextMorph/BorderBeam docs + labs): **done**; BorderBeam itself
+  was also substantively redesigned this session (§9), not just documented.
+- Stage E (DistortionWave real implementation): **partial** — real WebGL2
+  rendering added 2026-11-19, but it's procedural, not DOM-content
+  sampling/view-transition (§9).
+- Stage F (three showcase apps): **partial** — showcase pages exist with
+  growing real interactivity (§12), not yet matching the brief's three
+  pages in full.
 - Stage G (final visual QA + docs verification): **not done**.
 
 No `git push` was performed by this session.
