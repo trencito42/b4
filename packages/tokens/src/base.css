@@ -44,12 +44,18 @@
   --b4-radius-xl: 20px;
   --b4-radius-full: 999px;
 
-  /* ---- typography ---- */
+  /* ---- typography ----
+     System font stack only — no embedded/bundled typeface. A prior
+     session committed the commercial Graphik typeface (binary .woff2 +
+     base64-embedded) with no verifiable license for this repo's use;
+     reverted in favor of each platform's own native UI font, which
+     needs no license and never requires a network/font-load round trip. */
   --b4-font-sans:
-    "Graphik", "B4 Sans", -apple-system, "Segoe UI", system-ui,
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     sans-serif;
   --b4-font-mono:
-    "B4 Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    ui-monospace, "SF Mono", "Cascadia Code", "Segoe UI Mono", Menlo,
+    Consolas, monospace;
 
   --b4-text-2xs: 11px;
   --b4-text-xs: 12px;

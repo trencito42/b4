@@ -1,14 +1,18 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// cwd is set per-entry below (apps/studio), so these run as plain relative
+// commands there — no `cmd /c cd X && Y` chaining, which was intermittently
+// failing to resolve on Windows (flaky "not recognized"/"cannot find path"
+// errors depending on how the parent shell invoked it).
 const storybookCommand =
   process.platform === "win32"
-    ? "cmd /c cd apps\\studio && ..\\..\\node_modules\\.bin\\storybook.cmd dev -p 6106 --ci"
-    : "sh -c \"cd apps/studio && pnpm exec storybook dev -p 6106 --ci\"";
+    ? "node_modules\\.bin\\storybook.cmd dev -p 6106 --ci"
+    : "pnpm exec storybook dev -p 6106 --ci";
 
 const studioPreviewCommand =
   process.platform === "win32"
-    ? "cmd /c cd apps\\studio && node_modules\\.bin\\vite.cmd preview --port 5173 --strictPort"
-    : "pnpm --filter @b4/studio exec vite preview --port 5173 --strictPort";
+    ? "node_modules\\.bin\\vite.cmd preview --port 5173 --strictPort"
+    : "pnpm exec vite preview --port 5173 --strictPort";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -29,14 +33,14 @@ export default defineConfig({
   webServer: [
     {
       command: storybookCommand,
-      cwd: process.cwd(),
+      cwd: `${process.cwd()}/apps/studio`,
       url: "http://localhost:6106",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },
     {
       command: studioPreviewCommand,
-      cwd: process.cwd(),
+      cwd: `${process.cwd()}/apps/studio`,
       url: "http://localhost:5173",
       reuseExistingServer: !process.env.CI,
       timeout: 90_000,
