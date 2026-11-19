@@ -1,0 +1,40 @@
+.b4-transition-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+.b4-transition-group--vertical {
+  flex-direction: column;
+}
+
+.b4-transition-group--horizontal {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ---- gaps ---- */
+.b4-transition-group--gap-none {
+  gap: 0;
+}
+
+.b4-transition-group--gap-sm {
+  gap: var(--b4-space-1);
+}
+
+.b4-transition-group--gap-md {
+  gap: var(--b4-space-2);
+}
+
+.b4-transition-group--gap-lg {
+  gap: var(--b4-space-3);
+}
+
+/* ---- items ---- */
+.b4-transition-group__item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

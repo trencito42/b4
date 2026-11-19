@@ -3,7 +3,7 @@
   bottom: var(--b4-space-6);
   right: var(--b4-space-6);
   z-index: var(--b4-z-overlay);
-  width: min(360px, calc(100vw - var(--b4-space-6) * 2));
+  width: min(380px, calc(100vw - var(--b4-space-6) * 2));
   pointer-events: none;
 }
 
@@ -12,26 +12,32 @@
   bottom: 0;
   right: 0;
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: flex-start;
-  gap: var(--b4-space-2);
-  padding: var(--b4-space-4);
-  border-radius: var(--b4-surface-radius);
+  gap: var(--b4-space-3);
+  padding: 12px 14px;
+  border-radius: var(--b4-radius-lg);
   border: 1px solid var(--b4-border-subtle);
   background: var(--b4-surface-overlay);
-  box-shadow: var(--b4-shadow-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    var(--b4-shadow-overlay),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   font-family: var(--b4-font-sans);
   pointer-events: auto;
   touch-action: none;
   z-index: calc(1000 - var(--toast-index));
   height: var(--toast-frontmost-height, var(--toast-height));
-  transform: scale(calc(max(0, 1 - (var(--toast-index) * 0.1))))
+  transform: scale(calc(max(0, 1 - (var(--toast-index) * 0.08))))
     translateX(var(--toast-swipe-movement-x, 0px))
-    translateY(calc(var(--toast-swipe-movement-y, 0px) + (var(--toast-index) * -10px)));
+    translateY(calc(var(--toast-swipe-movement-y, 0px) + (var(--toast-index) * -8px)));
   transition:
     transform var(--b4-duration-base) var(--b4-ease-standard),
     opacity var(--b4-duration-base) var(--b4-ease-standard),
-    height var(--b4-duration-base) var(--b4-ease-standard);
+    height var(--b4-duration-base) var(--b4-ease-standard),
+    border-color var(--b4-duration-fast) var(--b4-ease-standard);
 }
 
 .b4-toast[data-swiping] {
@@ -44,11 +50,12 @@
 
 .b4-toast[data-starting-style] {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(16px) scale(0.96);
 }
 
 .b4-toast[data-ending-style] {
   opacity: 0;
+  transform: scale(0.94);
 }
 
 .b4-toast[data-ending-style][data-swipe-direction="up"] {
@@ -64,21 +71,78 @@
   transform: translateX(calc(var(--toast-swipe-movement-x, 0px) + 150%));
 }
 
+/* Subtle border tone highlights instead of clumsy solid left-borders */
 .b4-toast[data-type="success"] {
-  border-left: 3px solid var(--b4-success);
+  border-color: color-mix(in srgb, var(--b4-success) 28%, var(--b4-border-subtle));
 }
 .b4-toast[data-type="error"] {
-  border-left: 3px solid var(--b4-danger);
+  border-color: color-mix(in srgb, var(--b4-danger) 28%, var(--b4-border-subtle));
 }
 .b4-toast[data-type="warning"] {
-  border-left: 3px solid var(--b4-warning);
+  border-color: color-mix(in srgb, var(--b4-warning) 28%, var(--b4-border-subtle));
 }
 
+/* ---- Status Icon Badge ---- */
+.b4-toast__icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: var(--b4-radius-full);
+  margin-top: 1px;
+  background: var(--b4-control-bg);
+  color: var(--b4-text-secondary);
+}
+
+.b4-toast__icon-wrapper svg {
+  width: 14px;
+  height: 14px;
+}
+
+.b4-toast__icon-wrapper[data-type="success"] {
+  background: color-mix(in srgb, var(--b4-success) 14%, transparent);
+  color: var(--b4-success);
+}
+
+.b4-toast__icon-wrapper[data-type="error"] {
+  background: color-mix(in srgb, var(--b4-danger) 14%, transparent);
+  color: var(--b4-danger);
+}
+
+.b4-toast__icon-wrapper[data-type="warning"] {
+  background: color-mix(in srgb, var(--b4-warning) 14%, transparent);
+  color: var(--b4-warning);
+}
+
+.b4-toast__icon-wrapper[data-type="info"] {
+  background: color-mix(in srgb, var(--b4-accent) 14%, transparent);
+  color: var(--b4-accent);
+}
+
+/* ---- Spinner ---- */
+.b4-toast__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: b4-toast-spin 0.75s linear infinite;
+}
+
+@keyframes b4-toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- Content (Title, Description, Action) ---- */
 .b4-toast__content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--b4-space-1);
+  gap: 2px;
   min-width: 0;
   transition: opacity var(--b4-duration-fast) var(--b4-ease-standard);
 }
@@ -92,40 +156,57 @@
 
 .b4-toast__title {
   font-size: var(--b4-text-sm);
-  font-weight: var(--b4-weight-semibold);
+  font-weight: var(--b4-weight-medium);
+  line-height: 1.35;
   color: var(--b4-text-primary);
 }
 
 .b4-toast__description {
-  font-size: var(--b4-text-sm);
+  font-size: var(--b4-text-xs);
+  line-height: 1.45;
   color: var(--b4-text-secondary);
 }
 
+/* ---- Action Button ---- */
 .b4-toast__action {
   align-self: flex-start;
-  margin-top: var(--b4-space-1);
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--b4-accent-text);
-  font-size: var(--b4-text-sm);
-  font-weight: var(--b4-weight-medium);
+  margin-top: var(--b4-space-2);
+  padding: 4px 10px;
+  border: 1px solid var(--b4-border-subtle);
+  border-radius: var(--b4-radius-full);
+  background: var(--b4-control-bg);
+  color: var(--b4-text-primary);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-xs);
+  font-weight: var(--b4-weight-semibold);
   cursor: pointer;
+  transition:
+    background-color var(--b4-duration-fast) var(--b4-ease-standard),
+    border-color var(--b4-duration-fast) var(--b4-ease-standard);
 }
 
+.b4-toast__action:hover {
+  background: var(--b4-control-bg-hover);
+  border-color: var(--b4-border-default);
+}
+
+/* ---- Close Button ---- */
 .b4-toast__close {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: none;
   border-radius: var(--b4-radius-sm);
   background: transparent;
   color: var(--b4-text-tertiary);
   cursor: pointer;
+  transition:
+    background-color var(--b4-duration-fast) var(--b4-ease-standard),
+    color var(--b4-duration-fast) var(--b4-ease-standard);
 }
 
 .b4-toast__close:hover {

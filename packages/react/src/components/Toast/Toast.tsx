@@ -3,9 +3,39 @@ import { Toast as BaseToast } from "@base-ui/react/toast";
 
 export type { ToastObject, ToastManagerAddOptions as ToastAddOptions } from "@base-ui/react/toast";
 
+const SuccessIcon = (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="3.5 8.5 6.5 11.5 12.5 5" />
+  </svg>
+);
+
+const ErrorIcon = (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="8" cy="8" r="6" />
+    <line x1="8" y1="5" x2="8" y2="8.5" />
+    <circle cx="8" cy="11.5" r="0.5" fill="currentColor" />
+  </svg>
+);
+
+const WarningIcon = (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M8 2.5l6 10.5H2L8 2.5z" />
+    <line x1="8" y1="6.5" x2="8" y2="9.5" />
+    <circle cx="8" cy="11.5" r="0.5" fill="currentColor" />
+  </svg>
+);
+
+const InfoIcon = (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="8" cy="8" r="6" />
+    <line x1="8" y1="5" x2="8" y2="5" />
+    <line x1="8" y1="8" x2="8" y2="11" />
+  </svg>
+);
+
 const CloseIcon = (
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round" />
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 4l8 8M12 4l-8 8" />
   </svg>
 );
 
@@ -17,18 +47,8 @@ export interface ToastProviderProps {
   timeout?: number;
 }
 
-/** A single global manager, shared by every `ToastProvider` instance — lets `useToast()` (or anything holding a reference to this module) add a toast from outside React, the documented reason `Toast.createToastManager()` exists as a module-level call rather than something created per-component. */
 export const toastManager = BaseToast.createToastManager();
 
-/**
- * Wrap the app (or the relevant subtree) once. Real Base UI `Toast` —
- * a stacked, swipe-to-dismiss viewport (drag toward its dismiss edge
- * to close, genuinely, not a fade-out timer with no interaction), with
- * `low`/`high` announcement priority and a real `promise()` helper for
- * loading → success/error toasts tied to an actual async operation.
- * Call `useToast()` anywhere inside this provider to add/close/update
- * toasts.
- */
 export function ToastProvider({ children, limit = 3, timeout = 5000 }: ToastProviderProps) {
   return (
     <BaseToast.Provider toastManager={toastManager} limit={limit} timeout={timeout}>
@@ -42,25 +62,55 @@ export function ToastProvider({ children, limit = 3, timeout = 5000 }: ToastProv
   );
 }
 
+function getToastIcon(type: string | undefined) {
+  switch (type) {
+    case "success":
+      return SuccessIcon;
+    case "error":
+      return ErrorIcon;
+    case "warning":
+      return WarningIcon;
+    case "info":
+      return InfoIcon;
+    case "loading":
+      return <span className="b4-toast__spinner" aria-hidden="true" />;
+    default:
+      return null;
+  }
+}
+
 function ToastList() {
   const { toasts } = BaseToast.useToastManager();
   return (
     <>
-      {toasts.map((toast) => (
-        <BaseToast.Root key={toast.id} toast={toast} swipeDirection={["down", "right"]} className="b4-toast" data-type={toast.type}>
-          <div className="b4-toast__content">
-            {toast.title && <BaseToast.Title className="b4-toast__title" />}
-            {toast.description && <BaseToast.Description className="b4-toast__description" />}
-            {toast.actionProps && <BaseToast.Action className="b4-toast__action" />}
-          </div>
-          <BaseToast.Close className="b4-toast__close" aria-label="Dismiss">
-            {CloseIcon}
-          </BaseToast.Close>
-        </BaseToast.Root>
-      ))}
+      {toasts.map((toast) => {
+        const icon = getToastIcon(toast.type);
+        return (
+          <BaseToast.Root
+            key={toast.id}
+            toast={toast}
+            swipeDirection={["down", "right"]}
+            className="b4-toast"
+            data-type={toast.type}
+          >
+            {icon && (
+              <div className="b4-toast__icon-wrapper" data-type={toast.type} aria-hidden="true">
+                {icon}
+              </div>
+            )}
+            <div className="b4-toast__content">
+              {toast.title && <BaseToast.Title className="b4-toast__title" />}
+              {toast.description && <BaseToast.Description className="b4-toast__description" />}
+              {toast.actionProps && <BaseToast.Action className="b4-toast__action" />}
+            </div>
+            <BaseToast.Close className="b4-toast__close" aria-label="Dismiss">
+              {CloseIcon}
+            </BaseToast.Close>
+          </BaseToast.Root>
+        );
+      })}
     </>
   );
 }
 
-/** Add/close/update toasts, or run `promise()` for a loading → success/error sequence tied to a real async operation. Must be called inside `ToastProvider`. */
 export const useToast = BaseToast.useToastManager;

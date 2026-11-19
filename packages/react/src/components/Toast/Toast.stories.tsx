@@ -13,46 +13,66 @@ type Story = StoryObj<typeof ToastProvider>;
 function Demo() {
   const toast = useToast();
   return (
-    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
       <Button
+        variant="primary"
         onClick={() =>
-          toast.add({ title: "Changes saved", description: "Your draft is up to date.", type: "success" })
+          toast.add({
+            title: "Deployment complete",
+            description: "Production cluster us-east-1 is healthy and serving traffic.",
+            type: "success",
+          })
         }
       >
-        Save
+        Success toast
       </Button>
+
       <Button
         variant="secondary"
         onClick={() =>
           toast.add({
-            title: "Item deleted",
+            title: "Instance deleted",
+            description: "Worker node 'worker-88a' has been terminated.",
             type: "warning",
             actionProps: {
               children: "Undo",
-              onClick: () => toast.add({ title: "Delete undone" }),
+              onClick: () =>
+                toast.add({
+                  title: "Action reversed",
+                  description: "Worker node has been restored.",
+                  type: "info",
+                }),
             },
           })
         }
       >
-        Delete with undo
+        Warning with undo
       </Button>
+
       <Button
         variant="destructive"
-        onClick={() => toast.add({ title: "Upload failed", description: "Check your connection.", type: "error" })}
-      >
-        Fail
-      </Button>
-      <Button
-        variant="secondary"
         onClick={() =>
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
-            loading: "Uploading…",
-            success: "Upload complete",
-            error: "Upload failed",
+          toast.add({
+            title: "Connection timeout",
+            description: "Failed to establish SSL handshake with Redis cluster.",
+            type: "error",
           })
         }
       >
-        Async (promise)
+        Error toast
+      </Button>
+
+      <Button
+        variant="secondary"
+        onClick={() =>
+          toast.promise(new Promise((resolve) => setTimeout(resolve, 2200)), {
+            loading: "Provisioning database snapshot…",
+            success: "Snapshot created and encrypted",
+            error: "Snapshot generation failed",
+          })
+        }
+      >
+        Async promise sequence
       </Button>
     </div>
   );

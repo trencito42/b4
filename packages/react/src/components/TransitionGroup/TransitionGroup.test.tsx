@@ -70,4 +70,18 @@ describe("TransitionGroup", () => {
     expect(screen.getByTestId("item-a")).toBeInTheDocument();
     expect(screen.getByTestId("item-c")).toBeInTheDocument();
   });
+
+  it("applies standard b4 classes, horizontal direction and gap modifier", () => {
+    const { container } = render(
+      <TransitionGroup direction="horizontal" gap="lg" className="custom-group">
+        <span key="1">1</span>
+        <span key="2">2</span>
+      </TransitionGroup>,
+    );
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveClass("b4-transition-group");
+    expect(root).toHaveClass("b4-transition-group--horizontal");
+    expect(root).toHaveClass("b4-transition-group--gap-lg");
+    expect(root).toHaveClass("custom-group");
+  });
 });
