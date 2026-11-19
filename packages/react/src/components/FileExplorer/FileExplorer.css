@@ -1,0 +1,13 @@
+.b4-file-explorer__entry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-3);
+}
+
+.b4-file-explorer__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: var(--b4-text-tertiary);
+}
