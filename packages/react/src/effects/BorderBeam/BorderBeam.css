@@ -1,0 +1,63 @@
+.b4-border-beam {
+  position: relative;
+}
+
+/* The ring itself: a masked overlay clipped to a band around the real
+   border, following whatever border-radius is set. Two inset mask
+   layers (full box, and the content-box inset by the clip band)
+   composited with "exclude" leave only the band between them visible
+   — the standard CSS border-mask technique, not a rectangular clip.
+   The clip band (--b4-border-beam-clip) is intentionally wider than
+   the beam's visible light itself, so the blurred glow (see
+   --b4-border-beam-blur below) has room to spread inward/outward from
+   the actual border line instead of being cut off flush against it,
+   which read as a hard, solid edge rather than a soft light. */
+.b4-border-beam__ring {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: var(--b4-border-beam-clip);
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.b4-border-beam__gradient {
+  position: absolute;
+  /* Oversized and centered so a rotating conic gradient stays full
+     coverage regardless of the box's aspect ratio — a square gradient
+     layer rotated inside a non-square ring never leaves a gap. */
+  inset: -50%;
+  filter: blur(var(--b4-border-beam-blur));
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 2%,
+    var(--b4-border-beam-color) 10%,
+    transparent 22%,
+    transparent 100%
+  );
+}
+
+.b4-border-beam__ring--spinning .b4-border-beam__gradient {
+  animation: b4-border-beam-spin var(--b4-border-beam-duration) linear infinite;
+}
+
+/* Reduced motion / off-screen / inactive-but-rendered: a calm, static
+   ring instead of a frozen mid-spin bright arc — still a meaningful
+   indicator, just not moving. */
+.b4-border-beam__ring:not(.b4-border-beam__ring--spinning) .b4-border-beam__gradient {
+  inset: 0;
+  filter: none;
+  background: var(--b4-border-beam-color);
+  opacity: 0.4;
+}
+
+@keyframes b4-border-beam-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

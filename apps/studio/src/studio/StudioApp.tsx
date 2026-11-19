@@ -16,6 +16,7 @@ import { STUDIO_COMPONENT_COUNT } from "./catalog.js";
 import { CatalogPage } from "./pages/CatalogPage.js";
 import { HomePage } from "./pages/HomePage.js";
 import { MotionLabPage } from "./pages/MotionLabPage.js";
+import { TextMorphLabPage } from "./pages/TextMorphLabPage.js";
 import { ShowcaseAnalyticsPage } from "./pages/ShowcaseAnalyticsPage.js";
 import { ShowcaseBillingPage } from "./pages/ShowcaseBillingPage.js";
 import { ShowcaseInfrastructurePage } from "./pages/ShowcaseInfrastructurePage.js";
@@ -34,6 +35,7 @@ export type StudioRoute =
   | "home"
   | "catalog"
   | "motion-lab"
+  | "text-morph-lab"
   | "showcase-analytics"
   | "showcase-infrastructure"
   | "showcase-billing";
@@ -54,7 +56,9 @@ export function StudioApp() {
       ? "catalog"
       : route === "motion-lab"
         ? "motion-lab"
-        : route.startsWith("showcase")
+        : route === "text-morph-lab"
+          ? "text-morph-lab"
+          : route.startsWith("showcase")
           ? route
           : "home";
 
@@ -64,6 +68,8 @@ export function StudioApp() {
         return <CatalogPage initialQuery={catalogQuery} />;
       case "motion-lab":
         return <MotionLabPage />;
+      case "text-morph-lab":
+        return <TextMorphLabPage />;
       case "showcase-analytics":
         return <ShowcaseAnalyticsPage previewWidth={settings.previewWidth} />;
       case "showcase-infrastructure":
@@ -91,6 +97,7 @@ export function StudioApp() {
                     { id: "home", label: "Overview", onClick: () => setRoute("home") },
                     { id: "catalog", label: "Components", onClick: () => setRoute("catalog") },
                     { id: "motion-lab", label: "Motion Lab", onClick: () => setRoute("motion-lab") },
+                    { id: "text-morph-lab", label: "Text Morphing Lab", onClick: () => setRoute("text-morph-lab") },
                   ],
                 },
                 {

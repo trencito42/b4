@@ -76,3 +76,5 @@
 @import "./components/ResourceMeter/ResourceMeter.css";
 @import "./components/FileExplorer/FileExplorer.css";
 @import "./components/QueryEditor/QueryEditor.css";
+@import "./components/TextMorph/TextMorph.css";
+@import "./effects/BorderBeam/BorderBeam.css";

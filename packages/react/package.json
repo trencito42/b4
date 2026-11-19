@@ -14,13 +14,17 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./effects": {
+      "types": "./dist/effects/index.d.ts",
+      "import": "./dist/effects/index.js"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean --external react --external react-dom --external motion --external @base-ui/react && node ../../scripts/copy-css.mjs react",
+    "build": "tsup src/index.ts src/effects/index.ts --format esm --dts --clean --external react --external react-dom --external motion --external @base-ui/react && node ../../scripts/copy-css.mjs react",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },

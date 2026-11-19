@@ -192,6 +192,9 @@ export type {
 export { LoadingOverlay } from "./components/LoadingOverlay/LoadingOverlay.js";
 export type { LoadingOverlayProps } from "./components/LoadingOverlay/LoadingOverlay.js";
 
+export { TextMorph } from "./components/TextMorph/TextMorph.js";
+export type { TextMorphProps, TextMorphMode } from "./components/TextMorph/TextMorph.js";
+
 export { Progress } from "./components/Progress/Progress.js";
 export type { ProgressProps } from "./components/Progress/Progress.js";
 

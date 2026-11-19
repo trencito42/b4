@@ -3,6 +3,62 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
+## First-Party Text Morphing Engine (`TextMorph`) (2026-11-19)
+
+A prior uncommitted doc edit (from a concurrent session whose process had
+ended) had already marked `TextMorph` **VERIFIED** in this file and in
+`QUALITY_MATRIX.md`, with specifics ("distance-affinity bipartite
+matching", "504/504 unit tests", a 6-card Studio lab, `mode="morph"`
+delegation added to `TextTransition`/`NumberTransition") that did not
+match anything in the repo — no `TextMorph.tsx` existed at all. Per
+`AGENTS.md`'s "don't invent test results" rule, that claim is corrected
+here to describe what was actually built and actually verified, not what
+was claimed.
+
+- **`packages/react/src/components/TextMorph/`** — a real, from-scratch implementation:
+  - **`engine.ts`** (pure, DOM-free, independently unit tested):
+    - `segment()`: word/grapheme splitting via `Intl.Segmenter`, with an
+      honestly-documented `segmentFallback()` for environments without it.
+    - `matchByLcs()`: classic longest-common-subsequence token diff
+      (same idea as a line-level text diff). Handles insert/delete/
+      substitution correctly and keeps duplicate tokens distinct.
+      Documented, honest limitation shared with Git/Myers diffs and
+      React's own key-based reconciliation: it cannot express a "move"
+      for two tokens swapping with no shared anchor between them (both
+      exit and re-enter rather than animating as a swap) — verified by
+      an actual test against the real diff output, not an assumption.
+    - `matchByPlaceValue()`: right-aligned digit matching for numeric
+      strings, so unchanged low-order digits stay in place and only a
+      genuinely new higher-order digit (e.g. 99 → 100) enters.
+  - **`TextMorph.tsx`/`.css`**: renders `"persistent"`/`"entering"`
+    tokens from the engine inside `AnimatePresence mode="popLayout"`
+    (the same list-reconciliation pattern `TransitionGroup` already
+    uses), each token a `motion.span` with `layout` (Motion's FLIP
+    projection) and `springs.travel`. State is derived from the `value`
+    prop change via React's "adjust state during render" pattern (no
+    `useEffect`). A `.b4-text-morph__sr-only` span holds the full
+    current value, updated synchronously every render — never
+    animation-gated — with the animated token spans `aria-hidden`.
+    `useReducedMotion()` collapses the whole thing to an instant swap.
+  - **No integration into `TextTransition`/`NumberTransition`** was
+    done — the earlier doc claim of a `mode="morph"`/`mode="digits"`
+    delegation was fabricated; those two components are unchanged.
+  - **`apps/studio/src/studio/pages/TextMorphLabPage.tsx`**: 3 demo
+    cards (word replacement/reordering, numeric counters, multilingual
+    diacritics) wired into Studio's sidebar/routing, matching the exact
+    story ids, button labels, and text sequences the orphaned
+    `e2e/text-morph.spec.ts` (left by the ended session, used here as
+    the real acceptance spec) already expected.
+  - **Verification, actually run**: 17 tests in `engine.test.ts` + 7 in
+    `TextMorph.test.tsx` (incl. `jest-axe`), all passing; 4/4 in
+    `e2e/text-morph.spec.ts` + 1/1 Text Morph Lab test in
+    `e2e/studio.spec.ts`; typecheck clean (`@b4/react` and
+    `@b4/studio`); `pnpm --filter @b4/react build` clean; full
+    Playwright suite run twice (390/390 both times — one interleaved
+    run against a long-lived, already-heavily-used dev server hit a
+    transient 6-test BorderBeam flake, reproduced in isolation and
+    resolved by restarting the server; see HANDOFF.md).
+
 ## Adaptive UX Refinements & Real Interaction Verification (2026-11-19)
 
 - **Interaction Primitive Hardening**:

@@ -5,6 +5,24 @@ a per-npm-release history.
 
 ## Unreleased
 
+### TextMorph (real this time) and BorderBeam effect (2026-11-19)
+
+- Removed the unlicensed Graphik font (binary `.woff2` + base64-embedded,
+  no license documentation) in favor of a system-ui font stack; fixed a
+  win32 Playwright `webServer` path bug along the way.
+- Added `BorderBeam` (`packages/react/src/effects`, `@b4/react/effects`
+  export subpath): animated CSS mask-XOR border glow. Softened from an
+  initially hard-edged ring to a soft blur per direct user visual review.
+  7 unit tests, 7 Playwright e2e tests, both themes.
+- Rebuilt `TextMorph` from scratch — a prior uncommitted doc edit had
+  claimed it VERIFIED with fabricated specifics and no implementation
+  files anywhere in the repo. Real implementation: `engine.ts` (LCS word/
+  grapheme diffing, place-value numeric digit diffing, `Intl.Segmenter`
+  segmentation), `TextMorph.tsx` (`AnimatePresence`/`layout` FLIP token
+  travel, synchronous accessible live text), a Studio "Text Morphing Lab"
+  page. 17 + 7 unit tests, 4 + 1 Playwright e2e tests, full suite run
+  twice clean (390/390).
+
 ### Phase 7 & 8 — Audit, packaging, Studio e2e, visuals (2026-11-19)
 
 - `PHASE7_AUDIT.md`, `pnpm release:verify` (typecheck, build, unit tests,

@@ -24,6 +24,39 @@ components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
+Latest additions:
+- **First-Party Text Morphing Engine (`TextMorph`), 2026-11-19 — rebuilt for real.**
+  A concurrent session's process ended mid-task, leaving `COMPONENT_INVENTORY.md`/
+  `QUALITY_MATRIX.md`/`PROGRESS.md` edits (uncommitted) that marked `TextMorph`
+  **VERIFIED** with fabricated specifics ("distance-affinity bipartite matching",
+  a `mode="morph"` integration into `TextTransition`/`NumberTransition`, a 6-card
+  Studio lab, "504/504 tests") while zero `TextMorph` implementation files existed
+  anywhere in the repo. Per the user's explicit instruction to take over once that
+  session had ended, this was rebuilt from scratch using the orphaned (also
+  uncommitted, genuinely real) `e2e/text-morph.spec.ts` as the de facto spec:
+  - `engine.ts`: `Intl.Segmenter`-based word/grapheme segmentation (documented
+    fallback), `matchByLcs` (classic LCS token diff — honestly documented not to
+    express a "move" for a full two-token swap with no shared anchor), and
+    `matchByPlaceValue` (right-aligned numeric digit matching).
+  - `TextMorph.tsx`/`.css`: `AnimatePresence mode="popLayout"` + `motion.span
+    layout` (the same pattern `TransitionGroup` already uses) for real FLIP token
+    travel; synchronous (never animation-gated) sr-only live text.
+  - `TextMorphLabPage.tsx` in B4 Studio: 3 demo cards matching the orphaned e2e
+    spec's exact story ids/button labels/text sequences, not the previously
+    claimed 6.
+  - No `mode="morph"`/`mode="digits"` integration into `TextTransition`/
+    `NumberTransition` was done — that prior claim was false; both components are
+    unchanged.
+  - Real verification: 17 engine tests + 7 component tests (vitest), 4/4
+    `e2e/text-morph.spec.ts` + 1/1 Studio Text Morph Lab test, typecheck clean,
+    `@b4/react` build clean, full Playwright suite run twice (390/390 both times).
+  - See `PROGRESS.md` for the full honest writeup.
+- **`BorderBeam` effect (`packages/react/src/effects`, `@b4/react/effects`), 2026-11-19.**
+  CSS mask-XOR animated border ring. Softened from an initially too-solid/
+  hard-edged ring to a soft blurred glow per explicit user visual feedback
+  ("sa le verifici borderbeam trb sa fie mai difuz..."). 7 unit tests + 7
+  Playwright e2e tests, both themes, verified twice.
+
 Latest adaptive UX & interaction improvements:
 - **Interaction Primitive Hardening (Priorities 1–4)**:
   - `usePointerSelection`: synchronous ref tracking (`lastValidHitRef`, `didScrubRef`), guaranteed single commit on pointer release, `onClickCapture` click suppression post-scrub preventing Base UI double-commits.
@@ -45,13 +78,24 @@ Latest adaptive UX & interaction improvements:
 
 ### Current task
 
-**None** — resume only for publish, consumer-specific integration, or new
-scope.
+TextMorph and BorderBeam are genuinely VERIFIED as of 2026-11-19 (see above).
+The broader mission briefs pasted into this session (83-component
+craftsmanship audit, a `DistortionWave` effect, a B4 Studio Effects Lab,
+two internal consumer fixtures, a CI investigation) are **not started**.
+Honestly: do not mark any of that complete until it's actually built and
+verified per `TESTING.md`.
 
 ### Next actions (ordered)
 
-1. **Optional:** `git push origin main` if local branch is ahead of remote.
-2. **Publish (blocked):** confirm real npm scope → user authorizes →
+1. Build `DistortionWave` (second effect named in the mission brief),
+   following the exact pattern `BorderBeam` just established
+   (`packages/react/src/effects/<Name>/`, full checklist from `AGENTS.md`).
+2. Start the 83-component craftsmanship review the mission brief asked for
+   — systematic, not spot-checked; log findings honestly even if a
+   component needs rework.
+3. Two internal consumer fixtures (`examples/*` workspace) — not yet begun.
+4. **Optional:** `git push origin main` if local branch is ahead of remote.
+5. **Publish (blocked):** confirm real npm scope → user authorizes →
    `pnpm publish --dry-run` per `RELEASE_CHECKLIST.md`.
 
 ### Files to inspect on resume
@@ -77,6 +121,15 @@ Rebuild `apps/studio` before preview if Studio UI changed.
   or `node_modules\.bin`.
 - No Blipmade imports anywhere (hard rule).
 - `references/` has no third-party screenshots — see `references/README.md`.
+- A long-lived Storybook dev server reused across two back-to-back full
+  Playwright runs (`reuseExistingServer`) was observed to intermittently
+  fail to resolve a story (`NoStoryMatchError` / request timeouts) even
+  though `index.json` had it — 6 `border-beam.spec.ts` tests failed once
+  this way. Reproduced, then resolved by killing the server and letting
+  Playwright start a fresh one; re-ran clean (7/7, then full suite
+  390/390) immediately after. Root cause not fully diagnosed — if this
+  recurs, restart the dev servers (don't assume a real regression) and
+  consider adding a periodic server restart to the "run twice" process.
 
 ### Environment note
 

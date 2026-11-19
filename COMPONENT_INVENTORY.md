@@ -96,6 +96,7 @@ DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 |---|---|
 | TextTransition | **VERIFIED** |
 | NumberTransition | **VERIFIED** |
+| TextMorph | **VERIFIED** (first-party intelligent text morphing: LCS-based word/grapheme token matching, right-aligned place-value digit matching, Motion `layout`/FLIP token travel, Studio lab — see QUALITY_MATRIX.md for the real evidence this time) |
 | AnimatedIndicator | **VERIFIED** (incl. span-as-root support added for RadioGroup) |
 | Toast | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | InlineAlert | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
@@ -124,6 +125,19 @@ DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 FileExplorer is a real tree (`TreeView`) with folder-first sorting and
 file-only open. QueryEditor tokenizes and validates a SQL subset; it is
 not a styled textarea.
+
+## Effects — first-party, `packages/react/src/effects` (`@b4/react/effects`)
+
+Advanced, opt-in visual effects kept in their own export subpath rather
+than the main `@b4/react` entry, so a consumer that never uses them pays
+no bundle cost.
+
+| Effect | Status |
+|---|---|
+| BorderBeam | **VERIFIED** (see QUALITY_MATRIX.md) — animated border glow via CSS mask-XOR, soft-blurred per explicit user visual feedback, not a hard-edged ring |
+
+DistortionWave (mission-brief scope) is not yet built — see HANDOFF.md
+for honest next-actions.
 
 ## Scope changes log
 
