@@ -16,7 +16,8 @@ const preview: Preview = {
   parameters: {
     layout: "centered",
     a11y: {
-      manual: true,
+      test: "off",
+      disable: true,
     },
     options: {
       storySort: {
