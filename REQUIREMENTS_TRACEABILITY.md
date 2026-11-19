@@ -162,11 +162,30 @@ that document's opening line in a follow-up pass.
 
 ## §11 — Tailwind compatibility decision
 
-**PARTIAL.** `examples/minimal-consumer/` exists as a consumer fixture
-(pre-dates this session). Whether it specifically exercises Tailwind
-interop (style order, specificity, dynamic variants) was not verified in
-this session — read `examples/minimal-consumer/` directly before trusting
-either "it's covered" or "it's not."
+**DONE, this session.** `examples/minimal-consumer/` (pre-existing) has no
+Tailwind dependency at all — confirmed by reading its `package.json` — so
+the brief's explicit ask ("test actual consumption from a Tailwind-based
+React application") was genuinely not met before this session.
+
+Added `examples/tailwind-consumer/`: a real Vite + React + Tailwind v4
+app consuming `@b4/react`/`@b4/tokens`/`@b4/motion` as workspace deps,
+with a documented required import order (Tailwind, then `@b4/tokens/css`,
+then `@b4/react/styles.css` — see `src/styles.css`'s comment for why).
+Verified live in a real browser: B4's `Card`/`Badge`/`Switch`/`Button`
+render with full B4 styling next to Tailwind-utility-styled markup,
+Tailwind's Preflight reset does not strip any B4 component styling, and
+the Switch is fully interactive with zero console errors. `tsc --noEmit`
+clean. B4 remains usable without Tailwind as a hard dependency — this
+fixture only proves the "works well WITH Tailwind too" half of the brief's
+ask, which is what was missing.
+
+**Stated gap:** `pnpm-lock.yaml` was deliberately **not** updated/committed
+for this fixture, because the lockfile already had unrelated uncommitted
+changes from the concurrent session when this fixture was added — mixing
+them into one commit would misattribute work. `pnpm install
+--frozen-lockfile` will not yet succeed for a totally clean checkout that
+includes this fixture until the lockfile is regenerated once the
+concurrent session's changes land. This is recorded, not hidden.
 
 ## §12 — Three complete showcase pages
 
