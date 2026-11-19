@@ -2,12 +2,12 @@ import { defineConfig, devices } from "@playwright/test";
 
 const storybookCommand =
   process.platform === "win32"
-    ? "apps\\studio\\node_modules\\.bin\\storybook.cmd dev -p 6106 --ci"
-    : "pnpm --filter @b4/studio exec storybook dev -p 6106 --ci";
+    ? "cmd /c cd apps\\studio && ..\\..\\node_modules\\.bin\\storybook.cmd dev -p 6106 --ci"
+    : "sh -c \"cd apps/studio && pnpm exec storybook dev -p 6106 --ci\"";
 
 const studioPreviewCommand =
   process.platform === "win32"
-    ? "cmd /c cd apps\\studio && ..\\..\\node_modules\\.bin\\vite.cmd preview --port 5173 --strictPort"
+    ? "cmd /c cd apps\\studio && node_modules\\.bin\\vite.cmd preview --port 5173 --strictPort"
     : "pnpm --filter @b4/studio exec vite preview --port 5173 --strictPort";
 
 export default defineConfig({

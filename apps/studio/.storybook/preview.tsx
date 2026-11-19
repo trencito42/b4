@@ -15,6 +15,9 @@ import type {
 const preview: Preview = {
   parameters: {
     layout: "centered",
+    a11y: {
+      manual: true,
+    },
     options: {
       storySort: {
         order: [

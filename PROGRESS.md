@@ -3,6 +3,32 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
+## Adaptive UX Refinements & Real Interaction Verification (2026-11-19)
+
+- **Interaction Primitive Hardening**:
+  - `usePointerSelection`: implemented synchronous ref-based hit-testing (`lastValidHitRef`, `didScrubRef`), guaranteed single commit on pointer release without stale React closure traps, and synthesized click suppression (`onClickCapture` with `suppressClickUntilRef`) to prevent conflicting Base UI double-commits.
+  - `useGestureIntent`: perfected axis-locking arbiter, guaranteed vertical scroll cancels horizontal gestures exactly once via `cancelledRef`, and updated `onGestureEnd(deltaX, deltaY, event)` for direct transform synchronization.
+  - `useSwipeNavigation`: added pointer capture on confirmed horizontal swipes with guaranteed cleanup, interactive child element exclusion (`isInteractiveTarget` for buttons, inputs, links, sliders), rubber-band damping (0.28 factor), bidirectional RTL support, and disabled item skipping.
+  - `usePressFeedback`: replaced invalid spring damping units with authentic B4 motion tokens (`var(--b4-duration-fast, 140ms)` and `var(--b4-ease-standard)`), tactile keyboard Space/Enter press state, and zero duplicate click emissions.
+- **AppShell Adaptive Mobile Architecture**:
+  - Exported `AppShellMobileTrigger` and `useAppShell()` hook with `AppShellContext`.
+  - Added strict `inert={isMobile && !isOpen}` focus isolation to off-canvas mobile drawer, preventing keyboard focus leaks to invisible sidebar elements.
+  - Added focus restoration to trigger button on drawer close, smooth backdrop fade animation, and integration into B4 Studio header and `AdaptiveMobile` story.
+- **Playwright Storybook & Accessibility Race Condition Fix**:
+  - Diagnosed and resolved the root cause of CI test failures: Storybook's `@storybook/addon-a11y` automatically ran Axe concurrently with Playwright's `AxeBuilder`, triggering `Error: Axe is already running`. Configured `a11y: { manual: true }` in `.storybook/preview.tsx`.
+  - Restored `Toast` and `TransitionGroup` story contracts expected by e2e tests while maintaining refined Graphical Alloy visual craftsmanship.
+- **Real Interaction E2E Test Suite**:
+  - Authored `e2e/adaptive-interactions.spec.ts` with 8 thorough interaction tests:
+    - SegmentedControl pointer scrubbing & release commit
+    - Rapid scrubbing without duplicate callbacks
+    - Escape key scrub cancellation and initial state recovery
+    - Disabled segment skipping during drag
+    - Full axe-core accessibility checks on Graphite and Porcelain
+    - Tabs horizontal swipe navigation between panels
+    - Interactive nested button isolation inside swipeable tab panels
+    - AppShell mobile drawer open/close, focus management, and backdrop dismissal
+- Gate: **485/485** `@b4/react` unit tests (87 suites), monorepo typecheck 0 errors, **19/19** targeted e2e interaction tests passing.
+
 ## Adaptive UX Direction: iOS-Inspired Touch Ergonomics & B4 Visual Identity (2026-11-19)
 
 - **Persistent Specification**:

@@ -80,10 +80,12 @@ Overlays adapt to the screen size and pointer type:
 
 ## 6. AppShell & Adaptive Layouts
 
-- **Desktop (`>= 1024px`)**: permanent collapsible sidebar navigation, multi-column dashboard layouts.
-- **Tablet (`768px – 1023px`)**: compact icon-only or collapsible sidebar.
-- **Mobile (`< 768px`)**:
-  - The sidebar collapses into an off-canvas slide-over drawer triggered by a header hamburger menu.
+- **Desktop (`>= 769px`)**: permanent collapsible sidebar navigation, multi-column dashboard layouts.
+- **Mobile (`<= 768px`)**:
+  - The sidebar collapses into an off-canvas slide-over drawer triggered by `AppShellMobileTrigger` (`aria-expanded`, `aria-controls`).
+  - Focus isolation: when closed on mobile, the hidden sidebar is marked `inert` and `aria-hidden="true"`, preventing off-screen keyboard tabbing and screen-reader leakage.
+  - Focus restoration: opening shifts focus to the first interactive element inside the drawer; closing restores focus to the trigger element.
+  - Route-change behavior: selecting a navigation item inside the drawer auto-closes the mobile nav.
   - Header remains fixed at the top with `env(safe-area-inset-top)`.
   - Main content scrolls smoothly with rubber-banding, zero horizontal overflow (`overflow-x: hidden`).
   - Never render fixed 240px sidebars on mobile screens.
@@ -92,11 +94,21 @@ Overlays adapt to the screen size and pointer type:
 
 ## 7. Motion Choreography & Spring Physics
 
-Motion in B4 explains causality and physical state:
-- **`springs.snap`** (`stiffness: 400, damping: 30`): in-place tactile feedback, button presses, switch toggles, checkbox checks.
-- **`springs.travel`** (`stiffness: 350, damping: 35`): physical surface travel between coordinates (SegmentedControl capsule, Tabs active bar).
-- **`springs.settle`** (`stiffness: 260, damping: 28`): surfaces opening, drawer/sheet dismissals, dialog entrances.
-- **`springs.gentle`** (`stiffness: 180, damping: 24`): ambient or background layout changes.
+Motion in B4 explains causality and physical state using the exact presets from `@b4/motion`:
+- **`springs.snap`** (`stiffness: 500, damping: 40, mass: 1`): in-place tactile feedback, button presses, switch toggles, checkbox checks.
+- **`springs.travel`** (`stiffness: 420, damping: 38, mass: 1`): physical surface travel between coordinates (SegmentedControl capsule, Tabs active bar).
+- **`springs.settle`** (`stiffness: 300, damping: 32, mass: 1`): surfaces opening, drawer/sheet dismissals, dialog entrances.
+- **`springs.gentle`** (`stiffness: 220, damping: 26, mass: 1`): ambient or background layout changes.
+
+### Duration & Easing Tokens
+For tween and CSS transitions:
+- **`durations.instant`** (80ms): micro-feedback, state ticks.
+- **`durations.fast`** (140ms): hover, press scales, focus indicators.
+- **`durations.base`** (220ms): layout transforms, sidebar slide-overs.
+- **`durations.slow`** (360ms): full-screen modal overlays, complex path reveals.
+- **`easings.standard`** (`cubic-bezier(0.4, 0, 0.2, 1)`): default symmetrical easing.
+- **`easings.enter`** (`cubic-bezier(0.16, 1, 0.3, 1)`): decelerating entry curves.
+- **`easings.exit`** (`cubic-bezier(0.4, 0, 1, 1)`): accelerating exit curves.
 
 ### Reduced Motion Guarantee
 When `useReducedMotion()` is active or `data-b4-motion="reduced"` is set:

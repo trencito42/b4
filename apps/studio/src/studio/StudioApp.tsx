@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AppShell, Button, Link, SearchField, SegmentedControl, Sidebar, ToastProvider } from "@b4/react";
+import { AppShell, AppShellMobileTrigger, Button, Link, SearchField, SegmentedControl, Sidebar, ToastProvider } from "@b4/react";
 import {
   b4ContrastModes,
   b4Densities,
@@ -111,6 +111,7 @@ export function StudioApp() {
           }
           header={
             <div className="b4-studio__header-actions">
+              <AppShellMobileTrigger />
               <button type="button" className="b4-studio__brand" onClick={() => setRoute("home")}>
                 <span className="b4-studio__brand-mark" aria-hidden="true">
                   B4

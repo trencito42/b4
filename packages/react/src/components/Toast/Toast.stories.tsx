@@ -18,61 +18,54 @@ function Demo() {
         variant="primary"
         onClick={() =>
           toast.add({
-            title: "Deployment complete",
-            description: "Production cluster us-east-1 is healthy and serving traffic.",
+            title: "Changes saved",
+            description: "Your draft is up to date.",
             type: "success",
           })
         }
       >
-        Success toast
+        Save
       </Button>
 
       <Button
         variant="secondary"
         onClick={() =>
           toast.add({
-            title: "Instance deleted",
-            description: "Worker node 'worker-88a' has been terminated.",
-            type: "warning",
+            title: "Item deleted",
             actionProps: {
               children: "Undo",
-              onClick: () =>
-                toast.add({
-                  title: "Action reversed",
-                  description: "Worker node has been restored.",
-                  type: "info",
-                }),
+              onClick: () => toast.add({ title: "Delete undone" }),
             },
           })
         }
       >
-        Warning with undo
+        Delete with undo
       </Button>
 
       <Button
         variant="destructive"
         onClick={() =>
           toast.add({
-            title: "Connection timeout",
-            description: "Failed to establish SSL handshake with Redis cluster.",
+            title: "Upload failed",
+            description: "Check your connection.",
             type: "error",
           })
         }
       >
-        Error toast
+        Fail
       </Button>
 
       <Button
         variant="secondary"
         onClick={() =>
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 2200)), {
-            loading: "Provisioning database snapshot…",
-            success: "Snapshot created and encrypted",
-            error: "Snapshot generation failed",
+          toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
+            loading: "Uploading…",
+            success: "Upload complete",
+            error: "Upload failed",
           })
         }
       >
-        Async promise sequence
+        Async (promise)
       </Button>
     </div>
   );
@@ -84,4 +77,68 @@ export const Default: Story = {
       <Demo />
     </ToastProvider>
   ),
+};
+
+export const ProductionShowcase: Story = {
+  render: () => {
+    function ShowcaseDemo() {
+      const toast = useToast();
+      return (
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+          <Button
+            variant="primary"
+            onClick={() =>
+              toast.add({
+                title: "Deployment complete",
+                description: "Production cluster us-east-1 is healthy and serving traffic.",
+                type: "success",
+              })
+            }
+          >
+            Success notification
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() =>
+              toast.add({
+                title: "Instance terminated",
+                description: "Worker node 'worker-88a' has been decommissioned.",
+                type: "warning",
+                actionProps: {
+                  children: "Restore",
+                  onClick: () =>
+                    toast.add({
+                      title: "Instance restored",
+                      description: "Worker node is back online.",
+                      type: "info",
+                    }),
+                },
+              })
+            }
+          >
+            Warning with undo
+          </Button>
+
+          <Button
+            variant="destructive"
+            onClick={() =>
+              toast.add({
+                title: "Connection timeout",
+                description: "Failed to establish SSL handshake with Redis cluster.",
+                type: "error",
+              })
+            }
+          >
+            Error alert
+          </Button>
+        </div>
+      );
+    }
+    return (
+      <ToastProvider>
+        <ShowcaseDemo />
+      </ToastProvider>
+    );
+  },
 };

@@ -39,13 +39,15 @@ describe("useGestureIntent", () => {
     expect(onMove).toHaveBeenCalledWith(20, 2, expect.anything());
   });
 
-  it("cancels horizontal intent when dy > dx (user scrolling vertically)", () => {
+  it("cancels horizontal intent exactly once when user scrolls vertically", () => {
     const onCancel = vi.fn();
+    const onEnd = vi.fn();
     const { result } = renderHook(() =>
       useGestureIntent({
         threshold: 8,
         targetAxis: "horizontal",
         onGestureCancel: onCancel,
+        onGestureEnd: onEnd,
       }),
     );
 
@@ -59,6 +61,9 @@ describe("useGestureIntent", () => {
       } as any);
     });
 
+    expect(result.current.isTracking).toBe(true);
+
+    // First vertical move exceeding threshold
     act(() => {
       result.current.handlePointerMove({
         clientX: 102, // dx = 2
@@ -69,7 +74,34 @@ describe("useGestureIntent", () => {
     });
 
     expect(result.current.isIntentConfirmed).toBe(false);
+    expect(result.current.isTracking).toBe(false);
     expect(result.current.axis).toBe("vertical");
-    expect(onCancel).toHaveBeenCalled();
+    expect(onCancel).toHaveBeenCalledTimes(1);
+
+    // Second vertical move during same scroll
+    act(() => {
+      result.current.handlePointerMove({
+        clientX: 103,
+        clientY: 150,
+        pointerId: 1,
+        nativeEvent: {} as PointerEvent,
+      } as any);
+    });
+
+    // Should NOT call cancel again
+    expect(onCancel).toHaveBeenCalledTimes(1);
+
+    // Releasing pointer after vertical scroll should not call onEnd
+    act(() => {
+      result.current.handlePointerUp({
+        clientX: 103,
+        clientY: 150,
+        pointerId: 1,
+        nativeEvent: {} as PointerEvent,
+      } as any);
+    });
+
+    expect(onEnd).not.toHaveBeenCalled();
+    expect(result.current.isTracking).toBe(false);
   });
 });

@@ -25,26 +25,23 @@ Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
 Latest adaptive UX & interaction improvements:
-- **Adaptive UX Direction (`ADAPTIVE_UX_SPEC.md`)**:
-  - Authored the permanent canonical specification for iOS-inspired touch ergonomics, gesture continuity, dynamic viewports (`100dvh`), safe areas (`env(safe-area-inset-*)`), coarse pointer 44px touch targets, and preview-vs-commit semantics. Cross-referenced in `AGENTS.md`, `GUI.md`, `ART_DIRECTION.md`.
-- **Adaptive Primitives & Layout**:
-  - Added `usePressFeedback` (`packages/react/src/hooks/usePressFeedback.ts`) for immediate tactile scale feedback (`scale(0.96)`) using `springs.snap`, gesture cancellation, and reduced motion safety.
-  - `AppShell`: adaptive mobile layout with off-canvas slide-over drawer on screens `<= 768px`, backdrop blur, safe-area padding, and full content preservation.
-  - `Sidebar`: 44px min-height coarse pointer touch targets.
-  - `Sheet` / `Drawer` / `Toast` / `CommandPalette` / `Dialog`: dynamic viewports (`100dvh`), safe area insets, and mobile viewport constraints.
-- **Behavioral & Gesture Foundations**:
-  - Added `useControllableState` (`packages/react/src/hooks/useControllableState.ts`) for canonical controlled/uncontrolled state synchronization.
-  - Added `useGestureIntent` (`packages/react/src/hooks/useGestureIntent.ts`) for axis locking and touch-slop thresholding (8px), preventing gesture conflict with native vertical page scrolling.
-  - Added `usePointerSelection` (`packages/react/src/hooks/usePointerSelection.ts`) for pointer scrubbing / drag-to-select across options with live element hit-testing, preview state, and pointer capture.
-  - Added `useSwipeNavigation` (`packages/react/src/hooks/useSwipeNavigation.ts`) for horizontal swipe navigation between panels with rubber-banding resistance, velocity flick detection, and disabled item skipping.
-- **Control Enhancements**:
-  - `SegmentedControl`: pointer scrubbing (`scrub?: boolean`) enables fluid drag-to-select across segments, live traveling capsule tracking, and cancellation recovery on Escape / vertical scroll.
-  - `Tabs`: optional horizontal swipe navigation (`swipeable?: boolean`) across tab panels with real-time drag transforms, direction-aware transitions, and accessible roving tab focus.
-  - `Toast`: pruned non-token declarations and ad-hoc colored borders to strictly adhere to B4 Design Principles (surface lightness elevation, neutral subtle border, status conveyed via icon badge).
-- **Cross-Platform Deterministic Font Metrics & CI Fix**:
-  - Resolved Linux CI screenshot dimension mismatch (expected 78x40, received 82x40) by root-causing OS fallback font divergence (Segoe UI on Windows vs DejaVu Sans on Linux).
-  - Explicitly loaded `Inter` across Storybook and Studio, added `document.fonts.ready` synchronization before Playwright screenshots, added `fonts-inter` to Ubuntu CI workflow, and updated snapshot baselines to true Inter dimensions (80x40 Button, 184x40 SegmentedControl).
-- Unit tests expanded to **474 / 474 passed** across 86 test suites in `@b4/react`. Typecheck 0 errors. All visual regression baselines passing.
+- **Interaction Primitive Hardening (Priorities 1–4)**:
+  - `usePointerSelection`: synchronous ref tracking (`lastValidHitRef`, `didScrubRef`), guaranteed single commit on pointer release, `onClickCapture` click suppression post-scrub preventing Base UI double-commits.
+  - `useGestureIntent`: strict axis locking, vertical scroll cancels horizontal gesture intent exactly once via `cancelledRef`, deltaX/deltaY passed to `onGestureEnd`.
+  - `useSwipeNavigation`: pointer capture on confirmed horizontal swipes, interactive child element protection (`isInteractiveTarget` for buttons, links, inputs, sliders), rubber-band damping (0.28), RTL support, and disabled item skipping.
+  - `usePressFeedback`: strict B4 motion tokens (`var(--b4-duration-fast, 140ms)`, `var(--b4-ease-standard)`), tactile keyboard Space/Enter press state, no duplicate click emissions.
+- **AppShell Mobile Architecture (Priority 5)**:
+  - Exported `AppShellMobileTrigger` and `useAppShell()` hook with `AppShellContext`.
+  - Added `inert={isMobile && !isOpen}` focus isolation on hidden sidebar, preventing keyboard focus leaks to invisible elements.
+  - Focus restoration to trigger on close, smooth backdrop fade animation, integration into Studio header and `AdaptiveMobile` story.
+- **Specification Reconciled (Priority 6)**:
+  - Reconciled `ADAPTIVE_UX_SPEC.md` with authentic `@b4/motion` spring and duration tokens.
+- **CI / Storybook / Axe Race Condition Fixed (Priority 7)**:
+  - Fixed Storybook `@storybook/addon-a11y` concurrent run conflict with Playwright `AxeBuilder` by configuring `a11y: { manual: true }` in `.storybook/preview.tsx`.
+  - Restored `Toast` and `TransitionGroup` story contracts expected by e2e tests.
+- **Real Interaction E2E Testing**:
+  - Authored `e2e/adaptive-interactions.spec.ts` with 8 Playwright interaction tests (pointer scrubbing, rapid drag, Escape abort, disabled targets, axe on Graphite/Porcelain, swipe navigation, interactive child button isolation, AppShell mobile drawer).
+- Gate: **485/485** `@b4/react` unit tests (87 suites), monorepo typecheck 0 errors, **19/19** targeted e2e tests passing.
 
 ### Current task
 

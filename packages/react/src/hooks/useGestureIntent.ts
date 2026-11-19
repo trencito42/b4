@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState } from "react";
 
-export type GestureAxis = "horizontal" | "vertical" | "locked" | null;
+export type GestureAxis = "horizontal" | "vertical" | null;
 
 export interface UseGestureIntentOptions {
   /** Touch slop threshold in pixels before determining direction. Defaults to 8px. */
@@ -9,7 +9,7 @@ export interface UseGestureIntentOptions {
   targetAxis?: "horizontal" | "vertical";
   onGestureStart?: (event: PointerEvent) => void;
   onGestureMove?: (deltaX: number, deltaY: number, event: PointerEvent) => void;
-  onGestureEnd?: (event: PointerEvent) => void;
+  onGestureEnd?: (deltaX: number, deltaY: number, event: PointerEvent) => void;
   onGestureCancel?: (event: PointerEvent) => void;
 }
 
@@ -29,8 +29,8 @@ export interface UseGestureIntentResult {
 /**
  * Reusable gesture intent arbiter.
  * Distinguishes horizontal gestures (scrub, swipe) from native vertical scrolling
- * using touch-slop thresholding. Never hijacks vertical scrolling when horizontal intent
- * is not clearly demonstrated.
+ * using touch-slop thresholding. Vertical scrolling cancels horizontal intent
+ * exactly once and never leaves stale tracking state.
  */
 export function useGestureIntent({
   threshold = 8,
@@ -48,11 +48,13 @@ export function useGestureIntent({
   const startRef = useRef<{ x: number; y: number; id: number } | null>(null);
   const axisRef = useRef<GestureAxis>(null);
   const confirmedRef = useRef(false);
+  const cancelledRef = useRef(false);
 
   const reset = useCallback(() => {
     startRef.current = null;
     axisRef.current = null;
     confirmedRef.current = false;
+    cancelledRef.current = false;
     setIsTracking(false);
     setIsIntentConfirmed(false);
     setAxis(null);
@@ -61,12 +63,13 @@ export function useGestureIntent({
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
-      // Only primary mouse button or touch
+      // Only track primary pointer interaction
       if (e.button !== 0) return;
 
       startRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
       axisRef.current = null;
       confirmedRef.current = false;
+      cancelledRef.current = false;
       setIsTracking(true);
       setIsIntentConfirmed(false);
       setAxis(null);
@@ -79,7 +82,9 @@ export function useGestureIntent({
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!startRef.current || e.pointerId !== startRef.current.id) return;
+      if (!startRef.current || e.pointerId !== startRef.current.id || cancelledRef.current) {
+        return;
+      }
 
       const dx = e.clientX - startRef.current.x;
       const dy = e.clientY - startRef.current.y;
@@ -97,9 +102,11 @@ export function useGestureIntent({
               setIsIntentConfirmed(true);
               setAxis("horizontal");
             } else {
-              // User is scrolling vertically: cancel gesture and release control
-              axisRef.current = "vertical";
+              // User is scrolling vertically: cancel horizontal gesture exactly once
+              cancelledRef.current = true;
               confirmedRef.current = false;
+              setIsTracking(false);
+              setIsIntentConfirmed(false);
               setAxis("vertical");
               onGestureCancel?.(e.nativeEvent);
               return;
@@ -111,8 +118,11 @@ export function useGestureIntent({
               setIsIntentConfirmed(true);
               setAxis("vertical");
             } else {
-              axisRef.current = "horizontal";
+              // User is scrolling horizontally: cancel vertical gesture exactly once
+              cancelledRef.current = true;
               confirmedRef.current = false;
+              setIsTracking(false);
+              setIsIntentConfirmed(false);
               setAxis("horizontal");
               onGestureCancel?.(e.nativeEvent);
               return;
@@ -132,8 +142,10 @@ export function useGestureIntent({
     (e: React.PointerEvent) => {
       if (!startRef.current || e.pointerId !== startRef.current.id) return;
 
-      if (confirmedRef.current) {
-        onGestureEnd?.(e.nativeEvent);
+      if (confirmedRef.current && !cancelledRef.current) {
+        const dx = e.clientX - startRef.current.x;
+        const dy = e.clientY - startRef.current.y;
+        onGestureEnd?.(dx, dy, e.nativeEvent);
       }
       reset();
     },
@@ -143,7 +155,9 @@ export function useGestureIntent({
   const handlePointerCancel = useCallback(
     (e: React.PointerEvent) => {
       if (!startRef.current || e.pointerId !== startRef.current.id) return;
-      onGestureCancel?.(e.nativeEvent);
+      if (!cancelledRef.current) {
+        onGestureCancel?.(e.nativeEvent);
+      }
       reset();
     },
     [onGestureCancel, reset],

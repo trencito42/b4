@@ -1,5 +1,7 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Tabs } from "./Tabs";
+import { Button } from "../Button/Button";
 
 const meta: Meta<typeof Tabs> = {
   title: "Family C — Navigation & Overlays/Tabs",
@@ -80,3 +82,40 @@ export const Swipeable: Story = {
   },
 };
 
+export const SwipeableWithInteractiveControl: Story = {
+  render: () => {
+    function InteractiveSwipeDemo() {
+      const [count, setCount] = useState(0);
+      return (
+        <Tabs
+          aria-label="Interactive panels"
+          swipeable
+          defaultValue="actions"
+          items={[
+            {
+              value: "actions",
+              label: "Actions",
+              content: (
+                <div style={{ padding: "20px", background: "var(--b4-surface-2)", borderRadius: "var(--b4-surface-radius)" }}>
+                  <Button variant="primary" onClick={() => setCount((c) => c + 1)}>
+                    Clicked {count} times
+                  </Button>
+                </div>
+              ),
+            },
+            {
+              value: "details",
+              label: "Details",
+              content: (
+                <div style={{ padding: "20px", background: "var(--b4-surface-2)", borderRadius: "var(--b4-surface-radius)" }}>
+                  <p>Details panel content</p>
+                </div>
+              ),
+            },
+          ]}
+        />
+      );
+    }
+    return <InteractiveSwipeDemo />;
+  },
+};

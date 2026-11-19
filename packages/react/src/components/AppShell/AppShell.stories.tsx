@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { AppShell } from "./AppShell";
+import { AppShell, AppShellMobileTrigger } from "./AppShell";
 
 const meta: Meta<typeof AppShell> = {
   title: "Family F — Application Patterns/AppShell",
@@ -17,6 +17,29 @@ export const Default: Story = {
   render: () => (
     <AppShell
       header={<div style={{ padding: "12px 16px", fontWeight: 600 }}>B4 Studio</div>}
+      sidebar={
+        <div style={placeholderStyle}>
+          <p>Projects</p>
+          <p>Settings</p>
+        </div>
+      }
+    >
+      <div style={placeholderStyle}>
+        <p>Main content area.</p>
+      </div>
+    </AppShell>
+  ),
+};
+
+export const AdaptiveMobile: Story = {
+  render: () => (
+    <AppShell
+      header={
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px" }}>
+          <AppShellMobileTrigger />
+          <span style={{ fontWeight: 600 }}>B4 Studio</span>
+        </div>
+      }
       sidebar={
         <div style={placeholderStyle}>
           <p>Projects</p>

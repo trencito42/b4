@@ -3,10 +3,11 @@ import { renderHook, act } from "@testing-library/react";
 import { usePressFeedback } from "./usePressFeedback.js";
 
 describe("usePressFeedback", () => {
-  it("initializes in unpressed state", () => {
+  it("initializes in unpressed state with B4 duration-fast transition token", () => {
     const { result } = renderHook(() => usePressFeedback());
     expect(result.current.isPressed).toBe(false);
     expect(result.current.pressProps.style.transform).toBeUndefined();
+    expect(result.current.pressProps.style.transition).toContain("var(--b4-duration-fast");
   });
 
   it("becomes pressed on pointerDown and scales element", () => {
@@ -21,6 +22,29 @@ describe("usePressFeedback", () => {
 
     expect(result.current.isPressed).toBe(true);
     expect(result.current.pressProps.style.transform).toBe("scale(0.95)");
+  });
+
+  it("becomes pressed on keyboard Space/Enter and releases on keyUp", () => {
+    const { result } = renderHook(() => usePressFeedback({ scale: 0.95 }));
+
+    act(() => {
+      result.current.pressProps.onKeyDown({
+        key: " ",
+        repeat: false,
+      } as any);
+    });
+
+    expect(result.current.isPressed).toBe(true);
+    expect(result.current.pressProps.style.transform).toBe("scale(0.95)");
+
+    act(() => {
+      result.current.pressProps.onKeyUp({
+        key: " ",
+      } as any);
+    });
+
+    expect(result.current.isPressed).toBe(false);
+    expect(result.current.pressProps.style.transform).toBeUndefined();
   });
 
   it("releases and calls onPress on pointerUp", () => {

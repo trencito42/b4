@@ -27,6 +27,7 @@ export interface UsePointerSelectionResult<T extends string> {
     onPointerMove: (e: React.PointerEvent<HTMLElement>) => void;
     onPointerUp: (e: React.PointerEvent<HTMLElement>) => void;
     onPointerCancel: (e: React.PointerEvent<HTMLElement>) => void;
+    onClickCapture?: (e: React.MouseEvent<HTMLElement>) => void;
     onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
     style?: React.CSSProperties;
   };
@@ -36,6 +37,12 @@ export interface UsePointerSelectionResult<T extends string> {
  * Reusable pointer scrubbing and drag-to-select interaction hook.
  * Allows touching/clicking an item and sliding/scrubbing across adjacent items
  * to preview and select options.
+ *
+ * Guaranteed contract:
+ * - Synchronously tracks current and last-valid hovered segment (no stale state).
+ * - Commits the actual last-valid segment on pointer release.
+ * - Suppresses subsequent synthetic click events after scrubbing to prevent
+ *   duplicate callbacks or accidental Base UI click commits.
  */
 export function usePointerSelection<T extends string>({
   items,
@@ -50,9 +57,18 @@ export function usePointerSelection<T extends string>({
   const isScrubbingRef = useRef(false);
   const [isScrubbingState, setIsScrubbingState] = useState(false);
 
-  // Synchronize preview value when value changes externally while not scrubbing
+  // Synchronous refs to prevent stale state issues during rapid movement/release
+  const valueRef = useRef<T>(value);
+  valueRef.current = value;
+
+  const lastValidHitRef = useRef<T>(value);
+  const didScrubRef = useRef(false);
+  const suppressClickUntilRef = useRef<number>(0);
+
+  // Keep lastValidHitRef in sync with value when not scrubbing
   useEffect(() => {
     if (!isScrubbingRef.current) {
+      lastValidHitRef.current = value;
       setPreviewValue(null);
     }
   }, [value]);
@@ -60,7 +76,6 @@ export function usePointerSelection<T extends string>({
   const findItemFromPoint = useCallback(
     (clientX: number, clientY: number): T | null => {
       if (!containerRef.current) return null;
-      // Find all item elements inside container
       const itemElements = Array.from(
         containerRef.current.querySelectorAll<HTMLElement>("[data-b4-segment-value]"),
       );
@@ -82,7 +97,7 @@ export function usePointerSelection<T extends string>({
         }
       }
 
-      // If between bounds horizontally (for horizontal orientation)
+      // If within horizontal container bounds, find segment by X column
       if (orientation === "horizontal") {
         for (const el of itemElements) {
           const rect = el.getBoundingClientRect();
@@ -106,29 +121,45 @@ export function usePointerSelection<T extends string>({
     targetAxis: orientation,
     onGestureStart: (e) => {
       if (disabled || !enabled) return;
+      didScrubRef.current = false;
       const hit = findItemFromPoint(e.clientX, e.clientY);
       if (hit) {
+        lastValidHitRef.current = hit;
         setPreviewValue(hit);
       }
     },
     onGestureMove: (_dx, _dy, e) => {
       if (disabled || !enabled) return;
+      didScrubRef.current = true;
       if (!isScrubbingRef.current) {
         isScrubbingRef.current = true;
         setIsScrubbingState(true);
       }
       const hit = findItemFromPoint(e.clientX, e.clientY);
       if (hit) {
+        lastValidHitRef.current = hit;
         setPreviewValue(hit);
       }
     },
-    onGestureEnd: () => {
+    onGestureEnd: (_dx, _dy, e) => {
       if (disabled || !enabled) return;
-      const target = previewValue;
+
+      const wasScrubbing = didScrubRef.current;
+      if (wasScrubbing) {
+        // Suppress any following click event to prevent duplicate commits
+        suppressClickUntilRef.current = Date.now() + 250;
+      }
+
+      // Read release target immediately from point or fallback to last synchronously recorded valid hit
+      const releaseHit = findItemFromPoint(e.clientX, e.clientY);
+      const target = releaseHit ?? lastValidHitRef.current;
+
       isScrubbingRef.current = false;
       setIsScrubbingState(false);
       setPreviewValue(null);
-      if (target && target !== value) {
+      didScrubRef.current = false;
+
+      if (wasScrubbing && target && target !== valueRef.current) {
         onCommit(target);
       }
     },
@@ -136,6 +167,7 @@ export function usePointerSelection<T extends string>({
       isScrubbingRef.current = false;
       setIsScrubbingState(false);
       setPreviewValue(null);
+      didScrubRef.current = false;
     },
   });
 
@@ -143,7 +175,6 @@ export function usePointerSelection<T extends string>({
     (e: React.PointerEvent<HTMLElement>) => {
       if (disabled || !enabled) return;
       containerRef.current = e.currentTarget;
-      // Capture pointer so scrubbing tracks even if pointer slides slightly outside
       try {
         e.currentTarget.setPointerCapture(e.pointerId);
       } catch {
@@ -189,12 +220,21 @@ export function usePointerSelection<T extends string>({
     [gesture],
   );
 
+  const onClickCapture = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    // If a scrub gesture just committed, suppress the synthetic click
+    if (Date.now() < suppressClickUntilRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, []);
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === "Escape" && isScrubbingRef.current) {
         isScrubbingRef.current = false;
         setIsScrubbingState(false);
         setPreviewValue(null);
+        didScrubRef.current = false;
         gesture.reset();
       }
     },
@@ -211,6 +251,7 @@ export function usePointerSelection<T extends string>({
       onPointerMove,
       onPointerUp,
       onPointerCancel,
+      onClickCapture,
       onKeyDown,
       style: {
         touchAction: orientation === "horizontal" ? "pan-y" : "pan-x",

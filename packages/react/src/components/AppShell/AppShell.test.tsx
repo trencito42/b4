@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { axe } from "jest-axe";
-import { AppShell } from "./AppShell";
+import { AppShell, AppShellMobileTrigger } from "./AppShell";
 
 describe("AppShell", () => {
   it("renders header, sidebar and main content as real landmarks", () => {
@@ -41,9 +41,9 @@ describe("AppShell", () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it("supports adaptive mobileNavOpen and dismisses via backdrop click or Escape", () => {
+  it("supports adaptive mobileNavOpen and dismisses via backdrop click", () => {
     const onMobileNavOpenChange = vi.fn();
-    const { container, rerender } = render(
+    const { container } = render(
       <AppShell
         sidebar={<span>Sidebar</span>}
         mobileNavOpen={true}
@@ -61,5 +61,26 @@ describe("AppShell", () => {
 
     backdrop.click();
     expect(onMobileNavOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it("renders and toggles mobile navigation via AppShellMobileTrigger", () => {
+    const onOpenChange = vi.fn();
+    render(
+      <AppShell
+        header={<AppShellMobileTrigger />}
+        sidebar={<span>Sidebar</span>}
+        onMobileNavOpenChange={onOpenChange}
+      >
+        Content
+      </AppShell>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Toggle navigation menu" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+    act(() => {
+      trigger.click();
+    });
+    expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 });

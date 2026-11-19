@@ -12,6 +12,10 @@
   background-color: var(--b4-surface-1);
 }
 
+.b4-app-shell__mobile-trigger {
+  display: none;
+}
+
 .b4-app-shell__body {
   flex: 1;
   display: flex;
@@ -43,6 +47,35 @@
     padding-top: env(safe-area-inset-top);
   }
 
+  .b4-app-shell__mobile-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--b4-hit-target-min, 44px);
+    min-height: var(--b4-hit-target-min, 44px);
+    padding: var(--b4-space-2);
+    border: none;
+    border-radius: var(--b4-radius-md);
+    background: transparent;
+    color: var(--b4-text-primary);
+    cursor: pointer;
+    transition: background-color var(--b4-duration-fast) var(--b4-ease-standard);
+  }
+
+  .b4-app-shell__mobile-trigger:hover {
+    background-color: var(--b4-control-bg-hover);
+  }
+
+  .b4-app-shell__mobile-trigger:focus-visible {
+    outline: var(--b4-focus-ring-width) solid var(--b4-accent);
+    outline-offset: var(--b4-focus-ring-offset);
+  }
+
+  .b4-app-shell__mobile-trigger-icon {
+    width: 20px;
+    height: 20px;
+  }
+
   .b4-app-shell__sidebar {
     position: fixed;
     top: 0;
@@ -68,7 +101,17 @@
     inset: 0;
     z-index: calc(var(--b4-z-overlay) - 1);
     background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: b4-backdrop-fade var(--b4-duration-fast) var(--b4-ease-standard);
+  }
+}
+
+@keyframes b4-backdrop-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

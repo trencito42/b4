@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TransitionGroup } from "./TransitionGroup";
 import { Button } from "../Button/Button";
@@ -18,6 +18,78 @@ const TrashIcon = (
     <path d="M3 4h10M6 4V2.5A1.5 1.5 0 0 1 7.5 1h1A1.5 1.5 0 0 1 10 2.5V4M5 4v9a1.5 1.5 0 0 0 1.5 1.5h3A1.5 1.5 0 0 0 11 13V4" strokeLinecap="round" />
   </svg>
 );
+
+const itemStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "10px 14px",
+  background: "var(--b4-surface-overlay)",
+  border: "1px solid var(--b4-border-subtle)",
+  borderRadius: "var(--b4-radius-md)",
+  color: "var(--b4-text-primary)",
+  listStyle: "none",
+};
+
+export const ManagedList: Story = {
+  render: () => {
+    function Demo() {
+      const [items, setItems] = useState(["Write report", "Review PR", "Reply to Ada"]);
+      const [counter, setCounter] = useState(3);
+
+      return (
+        <div style={{ maxWidth: 360 }}>
+          <div style={{ marginBottom: 12 }}>
+            <Button
+              size="sm"
+              onClick={() => {
+                setItems((prev) => [...prev, `New task ${counter}`]);
+                setCounter((c) => c + 1);
+              }}
+            >
+              Add item
+            </Button>
+          </div>
+          <TransitionGroup as="ul" itemClassName="transition-group-demo-item" gap="sm">
+            {items.map((item) => (
+              <div key={item} style={itemStyle}>
+                <span style={{ fontSize: "var(--b4-text-sm)", fontWeight: "var(--b4-weight-medium)" }}>{item}</span>
+                <button
+                  type="button"
+                  aria-label={`Remove ${item}`}
+                  onClick={() => setItems((prev) => prev.filter((i) => i !== item))}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 24,
+                    height: 24,
+                    border: "none",
+                    borderRadius: "var(--b4-radius-sm)",
+                    background: "transparent",
+                    color: "var(--b4-text-tertiary)",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--b4-danger)";
+                    e.currentTarget.style.background = "var(--b4-control-bg-hover)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "var(--b4-text-tertiary)";
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  {TrashIcon}
+                </button>
+              </div>
+            ))}
+          </TransitionGroup>
+        </div>
+      );
+    }
+    return <Demo />;
+  },
+};
 
 export const VerticalTaskList: Story = {
   render: () => {
@@ -59,10 +131,10 @@ export const VerticalTaskList: Story = {
                   alignItems: "center",
                   justifyContent: "space-between",
                   padding: "12px 16px",
-                  background: "var(--b4-surface-raised)",
+                  background: "var(--b4-surface-overlay)",
                   border: "1px solid var(--b4-border-subtle)",
                   borderRadius: "var(--b4-radius-md)",
-                  boxShadow: "var(--b4-shadow-card)",
+                  backdropFilter: "blur(12px)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
