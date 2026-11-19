@@ -1,0 +1,160 @@
+.b4-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-5);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.b4-calendar__month-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--b4-text-primary);
+}
+
+.b4-calendar__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-1);
+}
+
+.b4-calendar__weekday-row,
+.b4-calendar__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--b4-space-1);
+}
+
+.b4-calendar__weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--b4-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.b4-calendar__cell {
+  display: flex;
+  min-width: 0;
+}
+
+.b4-calendar__day {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--b4-space-2);
+  min-width: 0;
+  min-height: 88px;
+  padding: var(--b4-space-3);
+  border: none;
+  border-radius: var(--b4-radius-md);
+  background-color: var(--b4-surface-1);
+  cursor: pointer;
+  text-align: left;
+}
+
+.b4-calendar__day:hover {
+  background-color: var(--b4-surface-2);
+}
+
+.b4-calendar__day:focus-visible {
+  outline: 2px solid var(--b4-accent-500);
+  outline-offset: -2px;
+}
+
+/* --b4-text-tertiary, not opacity: a washed-out opacity dims whatever
+   is underneath unpredictably against its real surface (here it failed
+   WCAG AA on Porcelain, 3.53:1 against the required 4.5:1) — DatePicker
+   already solved "de-emphasized day" the right way with a contrast-
+   checked token, so this reuses that instead of re-deriving it. */
+.b4-calendar__day--outside {
+  background-color: transparent;
+}
+
+.b4-calendar__day--outside .b4-calendar__day-number {
+  color: var(--b4-text-tertiary);
+}
+
+.b4-calendar__day-context {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.b4-calendar__day-number {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--b4-text-primary);
+}
+
+.b4-calendar__day[aria-current="date"] .b4-calendar__day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--b4-radius-full);
+  background-color: var(--b4-accent-500);
+  color: #fff;
+}
+
+.b4-calendar__events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-1);
+  width: 100%;
+  min-width: 0;
+}
+
+.b4-calendar__event {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 1px var(--b4-space-3);
+  border-radius: var(--b4-radius-xs);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.b4-calendar__event--neutral {
+  background-color: var(--b4-surface-3);
+  color: var(--b4-text-secondary);
+}
+
+.b4-calendar__event--success {
+  background-color: var(--b4-success-bg);
+  color: var(--b4-success);
+}
+
+.b4-calendar__event--warning {
+  background-color: var(--b4-warning-bg);
+  color: var(--b4-warning);
+}
+
+.b4-calendar__event--danger {
+  background-color: var(--b4-danger-bg);
+  color: var(--b4-danger-text);
+}
+
+.b4-calendar__event--info {
+  background-color: var(--b4-info-bg);
+  color: var(--b4-info);
+}
+
+.b4-calendar__event-overflow {
+  font-size: 0.6875rem;
+  color: var(--b4-text-tertiary);
+}

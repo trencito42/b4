@@ -1312,6 +1312,65 @@ time. This recurring pattern (full-suite-only, never the isolated
 file, never DataGrid) is itself worth a dedicated investigation — see
 the follow-up note in HANDOFF.md.
 
+## Calendar — Family D's 15th and final component (2026-11-19)
+
+**VERIFIED. Family D — Data & Content is now complete: all 15/15
+components VERIFIED.** A real read/display month calendar — events
+laid out on a day grid for browsing a schedule, distinct from
+`DatePicker`'s input-picker grid (that one lives in a popover and
+exists to produce a single chosen date for a form field; this one is
+page content and shows events). Reuses `DatePicker`'s month-grid date
+math via a new shared module, `internal/monthGrid.ts` — extracted from
+`DatePicker.tsx` (which was refactored to import from it too, verified
+with no regression) rather than re-derived, per the mission brief's
+"reuse, don't recreate" rule. Same ARIA APG grid pattern as
+`DatePicker` (`role="grid"`/`"row"`/`"gridcell"`, roving tabindex,
+arrow-key/PageUp/PageDown/Home/End navigation) — the keyboard-handling
+glue itself stays local to each component (different open/close and
+selection semantics), following the same pattern by convention rather
+than forcing a shared hook onto two genuinely different interaction
+models.
+
+**Two real accessibility bugs found and fixed before this ever reached
+VERIFIED, both caught by the real e2e axe pass, not assumed clean from
+the unit tests**:
+
+1. **WCAG 2.5.3 "Label in Name" violation.** The first implementation
+   put a full description (`aria-label="Saturday, November 21, 2026, 4
+   events"`) on each day button while separately rendering real,
+   visible event-label text ("Standup", "Launch review", …) inside it.
+   An `aria-label` replaces the ENTIRE computed accessible name, so
+   that visible text silently dropped out of it — a sighted
+   voice-control user who sees "Standup" printed on the day couldn't
+   invoke it by saying "Standup". axe-core's
+   `label-content-name-mismatch` rule caught this immediately in the
+   real browser (serious impact). Fixed by removing the `aria-label`
+   entirely and instead adding a visually-hidden (not `aria-hidden`)
+   span with the full weekday/month/day/year context as actual content
+   inside the button, so the accessible name is computed naturally from
+   everything that's genuinely on screen — nothing visible is excluded
+   from it anymore.
+2. **A real WCAG AA contrast failure, caused by reaching for `opacity`
+   instead of a token.** Outside-month days were styled with
+   `opacity: 0.5` on the whole button to "look dimmer" — this washes
+   out whatever color is underneath unpredictably against the real
+   surface behind it, and on Porcelain it landed at 3.53:1 against the
+   required 4.5:1 (caught by axe, serious impact). `DatePicker` had
+   already solved "de-emphasized day" the right way, with
+   `--b4-text-tertiary` (a token already tuned and contrast-verified
+   for exactly this), so Calendar was fixed to reuse that instead of
+   re-deriving its own (wrong) answer to an already-solved problem.
+
+Both fixes were confirmed with a real e2e re-run (not just reasoning
+about it) before being called done.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(407/407, including `DatePicker`'s unchanged 7/7 after its refactor),
+`pnpm build`, Storybook build, `npx playwright test` (two clean full
+passes, 322/322 each — no flakes this time).
+
+**Family D — Data & Content: 15/15 VERIFIED. Complete.**
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

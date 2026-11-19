@@ -3,6 +3,16 @@ import { Field } from "../Field/Field.js";
 import { Popover } from "../Popover/Popover.js";
 import { Button } from "../Button/Button.js";
 import { IconButton } from "../IconButton/IconButton.js";
+import {
+  WEEKDAY_LABELS,
+  monthYearFormatter,
+  dateFormatter,
+  sameDay,
+  startOfMonth,
+  addMonths,
+  addDays,
+  buildMonthGrid,
+} from "../../internal/monthGrid.js";
 
 export interface DatePickerProps {
   label: string;
@@ -20,41 +30,11 @@ export interface DatePickerProps {
   className?: string;
 }
 
-const WEEKDAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
-function sameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-}
-
-function startOfMonth(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-function addMonths(date: Date, count: number) {
-  return new Date(date.getFullYear(), date.getMonth() + count, 1);
-}
-
-function addDays(date: Date, count: number) {
-  const next = new Date(date);
-  next.setDate(next.getDate() + count);
-  return next;
-}
-
 function isOutOfRange(date: Date, minDate?: Date, maxDate?: Date) {
   if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
   if (maxDate && date > new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate())) return true;
   return false;
 }
-
-/** The 6x7 day grid for the month containing `anchor`, including the trailing/leading days of neighboring months that fill out the first/last weeks. */
-function buildMonthGrid(anchor: Date): Date[] {
-  const firstOfMonth = startOfMonth(anchor);
-  const gridStart = addDays(firstOfMonth, -firstOfMonth.getDay());
-  return Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
-}
-
-const monthYearFormatter = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" });
-const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
 /**
  * A real calendar — the ARIA APG "Date Picker Dialog" grid pattern

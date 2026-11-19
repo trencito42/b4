@@ -537,6 +537,79 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## Calendar — Family D's 15th and final component (2026-11-19)
+
+**VERIFIED. Family D — Data & Content is now complete: all 15/15
+components VERIFIED.** A real read/display month calendar for browsing
+a schedule, events laid out on a day grid — distinct from `DatePicker`
+(a popover-based input picker for a single form value, not page
+content). Reuses `DatePicker`'s month-grid date math: extracted into a
+new shared module, `packages/react/src/internal/monthGrid.ts`
+(`sameDay`, `startOfMonth`, `addMonths`, `addDays`, `buildMonthGrid`,
+`WEEKDAY_LABELS`, `monthYearFormatter`, `dateFormatter`), and
+`DatePicker.tsx` was refactored to import from it too — confirmed with
+no regression (`DatePicker.test.tsx` still 7/7). Same ARIA APG grid
+pattern as DatePicker (`role="grid"`/`"row"`/`"gridcell"`, roving
+tabindex, arrow-key/PageUp/PageDown/Home/End). The keyboard-handling
+*glue* itself (not the date math) stays duplicated between the two
+components on purpose — DatePicker closes a popover and respects a
+min/max range on commit, Calendar does neither, so forcing a shared
+hook onto two different interaction models would have been the wrong
+kind of reuse; copying ~25 lines of arrow-key-delta logic by the same
+established pattern is the honest trade-off here.
+
+**Two real accessibility bugs found by the actual e2e axe pass, not
+assumed away by the unit tests, both worth internalizing**:
+
+1. **WCAG 2.5.3 "Label in Name".** The first version put a full
+   `aria-label` (e.g. `"Saturday, November 21, 2026, 4 events"`) on
+   each day button while that same button also rendered real, visible
+   event-label text ("Standup", "Launch review", …) as actual content.
+   An `aria-label` REPLACES the whole computed accessible name — it
+   doesn't add to it — so the visible event text silently dropped out
+   of what a screen reader or voice-control tool exposes. A sighted
+   voice-control user who sees "Standup" printed on the day has no way
+   to say "Standup" and have it invoked, because the name no longer
+   contains those words. `axe-core`'s `label-content-name-mismatch`
+   rule flagged it immediately (serious impact) the moment the real
+   browser e2e check ran. **Fixed** by dropping the `aria-label`
+   entirely and instead placing a visually-hidden (CSS-clipped, NOT
+   `aria-hidden`) span with the full weekday/month/day/year context as
+   genuine content inside the button, ahead of the visible day number
+   and event labels — the accessible name now computes naturally from
+   everything actually on screen (plus the hidden context), so nothing
+   visible is ever excluded from it. **Lesson for future components**:
+   `aria-label` on an element that also has meaningful visible child
+   content is a trap — it silently discards that content from the
+   accessible name. Prefer letting the name compute naturally from
+   visible content, supplementing with visually-hidden (not
+   `aria-hidden`) text for extra context, or `aria-describedby` for
+   genuinely separate supplementary information.
+2. **A real WCAG AA contrast failure from reaching for `opacity`
+   instead of a token.** Outside-month days were dimmed with
+   `opacity: 0.5` on the whole button. Opacity washes out whatever's
+   underneath unpredictably depending on the real surface behind it —
+   on Porcelain this measured 3.53:1 against the required 4.5:1,
+   caught by axe (serious impact). `DatePicker` had already solved
+   "de-emphasized day" correctly, with `--b4-text-tertiary` (a token
+   already tuned and contrast-verified for exactly this purpose) — so
+   this was a `[[reuse, don't recreate]]` miss, not a genuinely new
+   problem. Fixed by applying `--b4-text-tertiary` to the day-number
+   text directly instead of dimming the whole button.
+
+Both fixes were confirmed by actually re-running the real e2e axe
+check afterward, not just reasoned about and assumed fixed.
+
+Full gate: typecheck, @b4/react tests 407/407 (including DatePicker's
+unchanged 7/7 post-refactor), build, Storybook build, playwright (2
+clean full passes, 322/322 each — no flakes this run, unlike the
+previous few components).
+
+**Family D — Data & Content: 15/15 VERIFIED. Complete.** Next up:
+Family F (`AppShell`, `Sidebar`, `PageHeader`, `Toolbar`, `FilterBar`,
+`InspectorPanel`, `ResizablePanels`, `ResourceMeter`, `FileExplorer`,
+`QueryEditor`) — see the dedicated "Next action" note below.
+
 ## DataGrid — Family D's 14th component, the hardest in the family (2026-11-19)
 
 **VERIFIED** as a genuinely real virtualized/sortable/filterable grid
@@ -809,27 +882,15 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: Family D's final component — Calendar. Then Family F.
+## Next action: start Family F — the last family of core components.
 
-Family E is now complete (11/11 VERIFIED) — see the dedicated update
-above. Family D is now at 14/15 (everything except Calendar VERIFIED);
-Family F remains fully PLANNED.
-
-`Calendar` is the last PLANNED Family D component — treat it with the
-same scrutiny Family B's DatePicker/ColorPicker/FileUpload (and now
-DataGrid) got: no Base UI primitive, real interaction, real tests,
-rather than the lighter touch a `Card`/`Stat`/`Skeleton` can get away
-with. `Calendar` here is presumably a read/display calendar
-(events/activity view), distinct from `DatePicker`'s input-picker grid
-— confirm the distinction before building, and reuse `DatePicker`'s
-month-grid math (`buildMonthGrid`/`addMonths`/`addDays` in
-`DatePicker.tsx`) rather than re-deriving it if the two turn out to
-need the same date arithmetic.
-
-Family F (`AppShell`, `Sidebar`, `PageHeader`, `Toolbar`, `FilterBar`,
+Family D is now complete (15/15 VERIFIED) — see the dedicated update
+above. Families A, B, C, D, E are all fully VERIFIED. Family F is the
+only family left — all 10 of its components
+(`AppShell`, `Sidebar`, `PageHeader`, `Toolbar`, `FilterBar`,
 `InspectorPanel`, `ResizablePanels`, `ResourceMeter`, `FileExplorer`,
-`QueryEditor`) is all PLANNED and explicitly the most "layout
-composition of other components" family — build it last, since it's
+`QueryEditor`) are fully PLANNED, and it's explicitly the most "layout
+composition of other components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled

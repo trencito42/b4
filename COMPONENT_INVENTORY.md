@@ -80,7 +80,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | Stat | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | Timeline | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ActivityFeed | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
-| Calendar | PLANNED |
+| Calendar | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | CodeBlock | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | EmptyState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |
 | ErrorState | **VERIFIED** (full CLI regression gate closed 2026-11-18, see QUALITY_MATRIX.md) |

@@ -217,3 +217,5 @@ export { DataTable } from "./components/DataTable/DataTable.js";
 export type { DataTableProps, DataTableColumn, DataTableSort, SortDirection } from "./components/DataTable/DataTable.js";
 export { DataGrid } from "./components/DataGrid/DataGrid.js";
 export type { DataGridProps, DataGridColumn, DataGridSort } from "./components/DataGrid/DataGrid.js";
+export { Calendar } from "./components/Calendar/Calendar.js";
+export type { CalendarProps, CalendarEvent, CalendarEventTone } from "./components/Calendar/Calendar.js";

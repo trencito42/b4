@@ -1,5 +1,23 @@
 # B4 — Progress
 
+## Calendar — Family D's 15th and final component (2026-11-19)
+
+**Family D — Data & Content is now complete: all 15/15 components
+VERIFIED.** Read/display month calendar, events on a day grid, reuses
+`DatePicker`'s month-grid math via a new shared `internal/monthGrid.ts`
+(DatePicker refactored to use it too, no regression — 7/7 still pass).
+Same ARIA grid pattern as DatePicker, local keyboard glue. Two real
+accessibility bugs caught by the e2e axe pass before VERIFIED: a WCAG
+2.5.3 "label in name" violation (an `aria-label` was silently dropping
+visible event text from the accessible name — fixed with a
+visually-hidden context span instead, letting the name compute
+naturally from real visible content) and a WCAG AA contrast failure
+from using `opacity: 0.5` for outside-month days instead of
+DatePicker's already-tuned `--b4-text-tertiary` token (3.53:1 vs. the
+required 4.5:1 on Porcelain). Full gate: typecheck, @b4/react tests
+407/407, build, Storybook build, playwright (2 clean full passes,
+322/322 each, no flakes). **VERIFIED.**
+
 ## DataGrid — Family D's 14th component, hardest in the family (2026-11-19)
 
 Real virtualized/sortable/filterable grid per the mission brief's
@@ -447,7 +465,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 1 — Motion foundation components (TextTransition, NumberTransition, AnimatedIndicator, SegmentedControl reference component) | **DONE** | All four built (earlier verification below; corrective recheck pending for SegmentedControl), plus a `useAsyncStatus` race-safe async-state hook in `@b4/motion`. SegmentedControl refactored onto the shared `AnimatedIndicator` primitive (no more duplicated layoutId logic). |
 | 2 — Family A + B to full quality gate | **DONE** | Family A: all 12 components VERIFIED. Family B: all 19/19 VERIFIED (including DatePicker, TimePicker, ColorPicker, FileUpload). See QUALITY_MATRIX.md and COMPONENT_INVENTORY.md — this row was stale (said "Family B mostly done") until 2026-11-18; Family B finished the same day as the FileUpload checkpoint below. |
 | 3 — Family C | **DONE** | All 17/17 VERIFIED. See QUALITY_MATRIX.md. |
-| 4 — Family D | **STARTED (10/15)** | Progress, CircularProgress, Skeleton, Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline, ActivityFeed VERIFIED. CodeBlock in progress; DataTable, DataGrid, Calendar, ChartContainer remain PLANNED. See QUALITY_MATRIX.md. |
+| 4 — Family D | **DONE** | All 15/15 components VERIFIED (Progress, CircularProgress, Skeleton, Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline, ActivityFeed, CodeBlock, ChartContainer, DataTable, DataGrid, Calendar). See QUALITY_MATRIX.md. |
 | 5 — Family E/F advanced + specialized components | **Family E DONE (11/11), Family F NOT STARTED** | |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
 | 7 — Independent audit against quality gate | NOT STARTED | |

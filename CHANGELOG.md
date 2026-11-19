@@ -5,6 +5,27 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Calendar added — Family D complete, 15/15 (2026-11-19)
+
+- Added `Calendar`: a real read/display month calendar with events on
+  a day grid, reusing `DatePicker`'s month-grid date math via a new
+  shared `internal/monthGrid.ts` module (`DatePicker` refactored to
+  use it too, no regression). Same ARIA grid pattern as `DatePicker`.
+- Fixed a real WCAG 2.5.3 "label in name" violation found by the e2e
+  axe pass: an `aria-label` was silently dropping visible event text
+  from the accessible name. Fixed with a visually-hidden context span
+  instead, letting the name compute naturally from visible content.
+- Fixed a real WCAG AA contrast failure from using `opacity: 0.5` for
+  outside-month days instead of `DatePicker`'s already-tuned
+  `--b4-text-tertiary` token (3.53:1 vs. the required 4.5:1 on
+  Porcelain).
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (407/407), `pnpm build`, Storybook build, `npx playwright test` (2
+  clean full passes, 322/322 each). **VERIFIED.**
+
+**Family D — Data & Content is now complete: all 15/15 components
+VERIFIED.**
+
 ### DataGrid added — Family D, 14/15, hardest component in the family (2026-11-19)
 
 - Added `DataGrid`: a real virtualized/sortable/filterable grid per
