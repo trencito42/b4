@@ -18,6 +18,31 @@ const sections = [
   },
 ];
 
+const richSections = [
+  {
+    label: "Platform",
+    columns: 2 as const,
+    items: [
+      {
+        label: "Tokens",
+        href: "/tokens",
+        description: "Color and spacing tokens",
+        badge: "New",
+        icon: <span data-testid="token-icon">🎨</span>,
+      },
+      {
+        label: "Motion",
+        href: "/motion",
+        description: "Spring physics presets",
+      },
+    ],
+    footer: {
+      label: "All Guides",
+      href: "/guides",
+    },
+  },
+];
+
 describe("NavigationMenu", () => {
   it("renders a trigger for each section, closed by default", () => {
     render(<NavigationMenu aria-label="Main" sections={sections} />);
@@ -35,18 +60,22 @@ describe("NavigationMenu", () => {
     expect(screen.getByRole("link", { name: /Tokens/ })).toHaveAttribute("href", "/products/tokens");
   });
 
-  // Switching sections once the menu is open happens via hover, not a
-  // second click (Base UI's Trigger opens "when hovered or clicked"; a
-  // click on a trigger that's already the open one toggles it closed
-  // instead). `userEvent.click` can't express "move the pointer across
-  // sibling triggers" the way a real mouse does, so this is covered with
-  // real pointer movement in e2e/navigation-menu.spec.ts instead.
+  it("renders badges, icons, and footer links in rich mega-menus", async () => {
+    const user = userEvent.setup();
+    render(<NavigationMenu aria-label="Main" sections={richSections} />);
+
+    await user.click(screen.getByRole("button", { name: "Platform" }));
+    expect(await screen.findByRole("link", { name: /Tokens/ })).toBeInTheDocument();
+    expect(screen.getByTestId("token-icon")).toBeInTheDocument();
+    expect(screen.getByText("New")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /All Guides/ })).toHaveAttribute("href", "/guides");
+  });
 
   it("has no axe violations while a section is open", async () => {
     const user = userEvent.setup();
-    const { container } = render(<NavigationMenu aria-label="Main" sections={sections} />);
-    await user.click(screen.getByRole("button", { name: "Products" }));
-    await screen.findByRole("link", { name: /Overview/ });
+    const { container } = render(<NavigationMenu aria-label="Main" sections={richSections} />);
+    await user.click(screen.getByRole("button", { name: "Platform" }));
+    await screen.findByRole("link", { name: /Tokens/ });
 
     const results = await axe(container.ownerDocument.body, {
       rules: { region: { enabled: false } },
