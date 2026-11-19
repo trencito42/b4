@@ -1,9 +1,8 @@
 # B4 — Release Checklist
 
 **B4 has not been published anywhere and must not be, without explicit
-user authorization.** This checklist is for when that authorization is
-given — it is not a statement that B4 is ready today (it is not: see
-`PROGRESS.md`, almost the entire component inventory is PLANNED).
+user authorization.** Component inventory families A–F are VERIFIED in-repo;
+Phase 8 packaging and consumer install proof are still open.
 
 ## Packaging (Phase 8 — not started)
 
@@ -34,8 +33,9 @@ given — it is not a statement that B4 is ready today (it is not: see
       the placeholder).
 - [ ] Dry run (`pnpm publish --dry-run`) reviewed file-by-file.
 
-## CI (not started)
+## CI
 
-- [ ] A CI workflow running `pnpm typecheck`, `pnpm --filter @b4/react run
-      test`, `pnpm build`, `npx playwright test` on every push — currently
-      all of this is run locally by hand (see `TESTING.md`).
+- [x] GitHub Actions workflow `.github/workflows/ci.yml` — typecheck, build,
+      unit tests, Storybook build, Playwright (verify on first CI run on
+      GitHub).
+- [ ] Visual regression job (not started).

@@ -6,8 +6,10 @@ sculptural) and **B4 Porcelain** (light, refined) — share one component and
 motion system. Built for SaaS apps, dashboards, developer tools, and hosting
 panels; has no dependency on any particular consumer's APIs or branding.
 
-**Status: Phase 2, corrective verification in progress.** Twenty public components exist; most of the full inventory is still planned. See
-`PROGRESS.md` for exactly what exists and `HANDOFF.md` for what's next.
+**Status: component inventory complete (families A–F, all VERIFIED).** B4 Studio
+Vite app (`pnpm dev:studio`, port 5173) is the product shell with theme
+configurator and three integration showcases; Storybook remains the per-component
+reference. See `PROGRESS.md` and `HANDOFF.md`.
 
 ## Packages
 
@@ -29,7 +31,7 @@ pnpm --filter @b4/tokens run build
 pnpm --filter @b4/motion run build
 pnpm --filter @b4/react run build
 pnpm storybook        # interactive component docs, http://localhost:6106
-pnpm dev:studio        # minimal Vite app shell
+pnpm dev:studio        # B4 Studio app, http://localhost:5173
 ```
 
 See `TESTING.md` for the full verification sequence (typecheck, unit
@@ -41,7 +43,9 @@ rationale.
 | File | What it's for |
 |---|---|
 | `ARCHITECTURE.md` | Tooling/version choices and why. |
+| `ART_DIRECTION.md` | Graphite/Porcelain identity — follow on every new UI. |
 | `DESIGN_PRINCIPLES.md` | The visual/interaction rules behind B4. |
+| `DECISIONS.md` | Architectural decision log. |
 | `MOTION_SPEC.md` | Motion tokens and the semantic-motion contract. |
 | `COMPONENT_INVENTORY.md` | Full component scope and status. |
 | `QUALITY_MATRIX.md` | Per-component quality-gate status with evidence. |

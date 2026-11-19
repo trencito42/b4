@@ -1,5 +1,23 @@
 # B4 — Progress
 
+## Phase 6 — B4 Studio Vite app (2026-11-19)
+
+Built the real `apps/studio` product shell (replacing the Phase 0 placeholder):
+
+- Navigation via `AppShell` + `Sidebar` (Overview, Components, three showcases).
+- Component catalog with search and Storybook deep links for all 83 public entries.
+- Live theme configurator (theme, density, radius, contrast, motion) persisted in
+  `localStorage`, same `applyB4ThemeSettings` contract as Storybook.
+- Responsive preview widths on showcase routes (390 / 768 / 1440 / full).
+- Integration showcases using only public `@b4/react` APIs and sample data:
+  **Analytics**, **Infrastructure**, **Billing**.
+- Added `ART_DIRECTION.md`, `DECISIONS.md`, and GitHub Actions CI
+  (`.github/workflows/ci.yml`).
+- Verified: `tsc` on `@b4/studio`, `vite build` clean.
+
+Storybook remains the per-component API surface. Phase 7 audit and Phase 8
+packaging are still open — see phase table below.
+
 ## FileExplorer and QueryEditor — Family F complete, 10/10 (2026-11-19)
 
 **Family F — Application Patterns is complete: all 10/10 VERIFIED.**
@@ -577,8 +595,8 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 2 — Family A + B to full quality gate | **DONE** | Family A: all 12 components VERIFIED. Family B: all 19/19 VERIFIED (including DatePicker, TimePicker, ColorPicker, FileUpload). See QUALITY_MATRIX.md and COMPONENT_INVENTORY.md — this row was stale (said "Family B mostly done") until 2026-11-18; Family B finished the same day as the FileUpload checkpoint below. |
 | 3 — Family C | **DONE** | All 17/17 VERIFIED. See QUALITY_MATRIX.md. |
 | 4 — Family D | **DONE** | All 15/15 components VERIFIED (Progress, CircularProgress, Skeleton, Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline, ActivityFeed, CodeBlock, ChartContainer, DataTable, DataGrid, Calendar). See QUALITY_MATRIX.md. |
-| 5 — Family E/F advanced + specialized components | **Family E DONE (11/11), Family F NOT STARTED** | |
-| 6 — Studio finish, full docs, theme configurator, 3 showcases | NOT STARTED (beyond the Phase-0 Storybook shell) | |
+| 5 — Family E/F advanced + specialized components | **DONE** | Family E 11/11, Family F 10/10 VERIFIED. |
+| 6 — Studio finish, full docs, theme configurator, 3 showcases | **DONE** (2026-11-19) | Vite Studio app + CI workflow. Storybook unchanged as component reference. |
 | 7 — Independent audit against quality gate | NOT STARTED | |
 | 8 — Packaging/release readiness | NOT STARTED | See `RELEASE_CHECKLIST.md`. |
 

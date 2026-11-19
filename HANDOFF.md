@@ -1,16 +1,22 @@
 # HANDOFF — read this first on any resume
 
-## Current state (2026-11-19) — Family F is complete
+## Current state (2026-11-19) — Phase 6 Studio shipped
 
-Branch `main`. Component inventory families A–F are all VERIFIED
-(FileExplorer and QueryEditor closed Family F). Do not rebuild them.
+Branch `main`. Families A–F: all components VERIFIED. **Phase 6 done:**
+`apps/studio` is the real B4 Studio Vite app (`pnpm dev:studio` → port
+5173): catalog, configurator, three showcases. Storybook (`pnpm storybook`
+→ 6106) stays the per-component reference.
 
-**Next task: Phase 6 — B4 Studio.** `apps/studio/src/App.tsx` is still
-the Phase 0 placeholder. Build the real Studio shell (navigation,
-search, theme/density/radius/contrast/motion controls, code samples)
-and the three integration showcases (analytics, infrastructure,
-billing) from public B4 components. Also still open, and not blockers
-for Studio: no CI workflow, no visual-regression suite.
+**Next tasks (in order):**
+
+1. **Phase 7** — Horizontal quality audit (re-verify early components
+   against the bar set by later ones; both themes; document in
+   `QUALITY_MATRIX.md`).
+2. **Phase 8** — Packaging/release per `RELEASE_CHECKLIST.md` (consumer
+   install smoke test, export maps, SSR smoke — no publish without user OK).
+3. **Visual regression** — still not implemented (optional follow-up).
+4. **Studio e2e** — no Playwright suite for the Vite app yet (Storybook
+   e2e remains the automated gate: 359 tests).
 
 Latest gate for the Family F close: `@b4/react` 463/463, `@b4/motion`
 5/5, typecheck, `pnpm build`, playwright 359/359 twice. After that,

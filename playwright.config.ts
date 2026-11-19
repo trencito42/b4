@@ -14,7 +14,11 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "pnpm --filter @b4/studio exec storybook dev -p 6106 --ci",
+    command:
+      process.platform === "win32"
+        ? "apps\\studio\\node_modules\\.bin\\storybook.cmd dev -p 6106 --ci"
+        : "pnpm --filter @b4/studio exec storybook dev -p 6106 --ci",
+    cwd: process.cwd(),
     url: "http://localhost:6106",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

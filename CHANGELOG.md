@@ -5,6 +5,14 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Phase 6 — B4 Studio app (2026-11-19)
+
+- Replaced the Phase 0 Vite placeholder with a full Studio shell: navigation,
+  searchable component catalog (links to Storybook), live theme configurator,
+  and Analytics / Infrastructure / Billing integration showcases.
+- Added `ART_DIRECTION.md`, `DECISIONS.md`, and CI workflow.
+- `playwright.config.ts` webServer uses local `storybook.cmd` (no `pnpm` on PATH).
+
 ### FileExplorer and QueryEditor added — Family F complete, 10/10 (2026-11-19)
 
 - Added `FileExplorer`: a real file/folder tree on `TreeView`, folders

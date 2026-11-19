@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "test": "pnpm -r --if-present run test",
     "test:watch": "pnpm --filter @b4/react run test -- --watch",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "consumer-smoke": "node scripts/consumer-smoke.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
