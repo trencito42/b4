@@ -30,6 +30,77 @@ a colour literal can only be excused by a written, in-file justification
 | 75 components had no Storybook controls and 61 no overview story | `argTypes` controls and "all variants" overview stories added for every component that has a variant prop |
 | The runtime's automatic commit added the stray nested clone at the repo root as a **gitlink**, pulling another repository's history into this one | Untracked and ignored (`/b4/`); the directory itself was left in place, as intended |
 
+## SegmentedControl — a plain mouse click did nothing (found 2026-11-19 evening)
+
+**Fixed and re-verified.** The component looked right, was axe-clean, passed
+its unit suite, and still did not respond to the most basic interaction a
+mouse user can perform: clicking a segment. It was found only when a real
+consumer app (`examples/ops-console`) tried to use it.
+
+**Two causes, stacked:**
+
+1. `usePointerSelection` called `setPointerCapture` on the container at
+   `pointerdown`. Pointer capture retargets the browser's `click` to the
+   capture element, so the `click` landed on the container and Base UI's
+   `Toggle` never received it.
+2. The press-down preview set the group's selected value to the pressed
+   segment *before* the click arrived. Base UI's `Toggle` computes
+   `nextPressed = !pressed` from the group value, so by the time the click
+   landed the segment already read as selected — the click was interpreted
+   as "deselect it" and discarded.
+
+The hook's own commit path only runs once the 6px scrub threshold is
+exceeded, so a plain tap fell through both paths and changed nothing. The
+component still *looked* right, because the press-down preview had already
+moved the capsule and the label colour.
+
+**Why the tests missed it:** jsdom has no layout. Every element's
+`getBoundingClientRect()` is a 0×0 dot at the origin, so `user.click`
+always reports the pointer at (0,0) and the hook's hit-testing always
+resolved to the *first* segment — never the one that was clicked. The
+pre-existing "moves selection on click" test therefore exercised a
+different code path than a real click.
+
+**Fix** (`packages/react/src/hooks/usePointerSelection.ts`): capture the
+pointer only once the scrub intent is confirmed, and start the preview
+with the scrub rather than with the press. The capsule now travels to the
+segment on commit; the live scrub preview begins once the drag is
+genuinely under way.
+
+**Three regression tests, each verified to fail against the old code
+before the fix was accepted:**
+
+| Test | What it proves |
+|---|---|
+| `e2e/segmented-control.spec.ts` — "commits a plain mouse click", both themes | A real browser mouse click moves the selection. This is the path that was broken. |
+| `SegmentedControl.test.tsx` — "commits the segment the pointer actually landed on" | Gives the segments real rects and presses at a point inside the second one, so the hit-testing and the click agree. Fails against the old code with 0 commits instead of 1. |
+| `usePointerSelection.test.ts` — "does not capture the pointer on pointerdown" | The capture happens on a confirmed scrub, never on press-down. |
+
+Full gate after the fix: typecheck clean across 7 projects, `@b4/react`
+**526/526**, `@b4/motion` 5/5, package + Studio + Storybook builds clean,
+consumer/ssr/treeshake smokes clean, craftsmanship audit 0 blockers /
+0 warnings, full Playwright suite green twice.
+
+**Note on the behaviour change:** the press-down preview is gone by design.
+It was the thing that made the click a no-op. The scrub preview — the
+signature interaction — is unaffected and still follows the pointer once
+the drag crosses the intent threshold.
+
+## Ref forwarding — 33 leaf components (2026-11-19 evening)
+
+`Badge`, `ActivityFeed`, `Avatar` and 32 others rendered a root element
+but accepted no `ref`, so a consumer could not measure, focus or scroll to
+them. All 33 now forward a ref to their real root element via
+`forwardRef` with a named function expression, so the display name
+survives in React DevTools. Rendered markup is unchanged.
+
+Five were deliberately skipped, with the reason recorded in the source:
+`ColorPicker`, `FileUpload` and `TimePicker` render through `Field`, and
+`FileExplorer` and `NotificationPanel` render through `TreeView` and
+`Popover` — none of which forwards a ref, and each is a compound component
+where a single ref target would be ambiguous. Those five are the honest
+remainder, not an oversight.
+
 ## FileExplorer — Family F's 9th component (2026-11-19)
 
 **VERIFIED**. Real tree navigation on `TreeView`, not a static outline.
@@ -135,7 +206,10 @@ is only set when the checks below actually ran and passed — not on
 | **NumberTransition** | **VERIFIED** | ✅ static/counting/currency-format/up-down stories, Graphite | ✅ custom formatter supported; direction auto-derived from increase/decrease; rapid-click stress test in e2e | ✅ Storybook stories, autodocs | same suite |
 | **TextMorph** | **VERIFIED** | ✅ word/character/number/auto modes, Graphite and Porcelain, fluid FLIP container, tabular-nums | ✅ distance-affinity bipartite matching, numeric place-value tracking, Unicode grapheme segmentation, rapid ticker interruption safety, reduced-motion instant snap | ✅ Storybook stories + Studio Text Morph Lab page | vitest (6 tests in TextMorph.test.tsx + 13 tests in engine.test.ts) + Playwright (4 tests in text-morph.spec.ts + 1 in studio.spec.ts); re-verified independently in a clean worktree off this commit: typecheck clean, `@b4/react` build clean, Studio build clean, full `@b4/react` suite 504/504, `e2e/text-morph.spec.ts` + `e2e/studio.spec.ts` 11/11 |
 | **BorderBeam** (`@b4/react/effects`) | **VERIFIED** | ✅ sm/md/lg sizes × 5 tones, Graphite and Porcelain, soft blurred glow (not a hard-edged ring) per explicit user visual feedback | ✅ CSS mask-XOR ring never intercepts pointer events, genuinely animates (`conic-gradient` rotation verified via real transform comparison over time), collapses to a static ring under reduced motion, causes no layout shift, `IntersectionObserver`-paused off-screen | ✅ Storybook stories (Default/Tones/Inactive) | vitest (7/7) + Playwright (`e2e/border-beam.spec.ts`, 7/7, verified twice) |
-| **DistortionWave** (`@b4/react/effects`) | **VERIFIED** | ✅ sm/md/lg amplitudes × 5 tones × horizontal/vertical, Graphite and Porcelain, inspected from screenshots in both themes | ✅ the band really refracts: `backdrop-filter` is verified to be applied, and a pixel-diff test proves the rendered content differs from the un-effected render; the wave layer never intercepts pointer events; genuinely animates (transform compared over time); under reduced motion the band holds still **and the refraction is dropped entirely**, so text is never left behind frosted glass; causes no layout shift; clipped to the wrapper | ✅ Storybook stories (Default/AllVariants/Tones/Directions/Inactive) + B4 Studio Effects Lab | vitest (9/9) + Playwright (`e2e/distortion-wave.spec.ts`, 11/11) |
+| **RefractionSweep** (`@b4/react/effects`) | **VERIFIED** | ✅ sm/md/lg amplitudes × 5 tones × horizontal/vertical, Graphite and Porcelain, inspected from screenshots in both themes | ✅ the band really refracts: `backdrop-filter` is verified to be applied, and a pixel-diff test proves the rendered content differs from the un-effected render; the wave layer never intercepts pointer events; genuinely animates (transform compared over time); under reduced motion the band holds still **and the refraction is dropped entirely**, so text is never left behind frosted glass; causes no layout shift; clipped to the wrapper | ✅ Storybook stories (Default/AllVariants/Tones/Directions/Inactive) + B4 Studio Effects Lab | vitest (9/9) + Playwright (`e2e/refraction-sweep.spec.ts`, 11/11) — this file used to be `e2e/distortion-wave.spec.ts`, misnamed after the real `DistortionWave` engine was built and this effect was renamed; see the `DistortionWave` row below for how that was found and fixed |
+| **DistortionWave** (`@b4/react/effects`) | **VERIFIED 2026-11-19 (real fix, not the initial build)** | ✅ vertical/horizontal/center geometries, Graphite and Porcelain, inspected live in-browser at a mid-transition frame: real geometric text displacement and chromatic separation visible near the wavefront, clear content away from it (the brief's own acceptance-gate bar) | ✅ real WebGL2 pipeline: both React views captured to Canvas2D and uploaded as GPU textures, fragment shader displaces UV sampling coordinates along the wavefront; overlay (e.g. the Confirm button) stays outside the capture and always interactive; inactive view is `inert`+`aria-hidden` immediately, not animation-gated; falls back to an instant DOM swap with no GPU wave when WebGL2 is unavailable; reduced motion takes the same instant-swap path | ✅ Storybook stories (Default/PaymentConfirmation/Geometries/ReducedMotion) + a real payment-confirmation demo in B4 Studio Effects Lab (Confirm → wave → success, geometry selector) | vitest (8/8) + Playwright (`e2e/distortion-wave.spec.ts`, 8/8, incl. a regression test for the bug below) |
+
+**The real bug this engine had, start to finish:** the first build (committed earlier the same day) captured each view by serializing it as XHTML inside an SVG `foreignObject`, rasterizing via an `<img>`, and drawing that image to a `<canvas>`. In Chromium, a canvas painted from an SVG containing `foreignObject` is permanently marked "tainted" — it still *displays* correctly (which is all a visual check catches), but `texImage2D`/`getImageData` on it throws `SecurityError: Tainted canvases may not be loaded` the instant it's used as a WebGL texture. The result: the effect was invisible everywhere — no story, no Studio demo, and the one page that did exercise it (a raw "DistortionWave Debug" page, explicitly labeled development-only) threw an uncaught promise rejection on every attempt, with nothing on screen to show it. Found by the user ("dar eu nu vad efect") and reproduced live via that debug page's own Gate 1/Gate 2. Fixed by replacing `DomCapture.ts`'s SVG-`foreignObject` pipeline with a direct Canvas2D painter (walks the DOM, draws backgrounds/borders/box-shadow/text runs with `fillRect`/`strokeRect`/`fillText`, using `Range.getClientRects()` for real per-line text positions) — painting never loads a raster image into the canvas, so there is nothing to taint. Verified by instrumenting `texImage2D` live in the browser (confirmed zero throws, zero tainted canvases) and visually, at progress 0.45, exactly the geometric displacement + chromatic separation the mission brief's "Second Acceptance Gate" asked for. A regression test (`e2e/distortion-wave.spec.ts`, "never throws a tainted-canvas SecurityError") guards against this exact failure mode recurring.
 | **IconButton** | **VERIFIED** | ✅ 4 variants × 3 sizes, Graphite | ✅ required `aria-label`, blocks clicks while loading/disabled | ✅ Storybook stories, autodocs | same suite |
 | **ToggleButton** | **VERIFIED** | ✅ pressed/unpressed/disabled, Graphite | ✅ Base UI `Toggle` gives real `data-pressed`/keyboard (Space) for free; click + keyboard tested | ✅ Storybook stories, autodocs | same suite |
 | **Badge** | **VERIFIED** | ✅ 6 tones, **both themes e2e'd with real axe color-contrast**, not just Graphite | ✅ static/presentational, no interaction states needed | ✅ Storybook stories (incl. all-tones overview), autodocs | `e2e/badge.spec.ts` runs axe against both the Graphite *and* Porcelain toolbar states — the first component in this repo to get that, after Button/SegmentedControl only ever checked Graphite |

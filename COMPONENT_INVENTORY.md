@@ -135,9 +135,10 @@ no bundle cost.
 | Effect | Status |
 |---|---|
 | BorderBeam | **VERIFIED** (see QUALITY_MATRIX.md) — animated border glow via CSS mask-XOR, soft-blurred per explicit user visual feedback, not a hard-edged ring |
-| DistortionWave | **VERIFIED** (see QUALITY_MATRIX.md) — a travelling band of refraction that bends the content beneath it via `backdrop-filter`, with a chromatic fringe and specular crest riding the same keyframe track; reduced-motion safe |
+| RefractionSweep | **VERIFIED** (see QUALITY_MATRIX.md) — a travelling band of refraction that bends the content beneath it via `backdrop-filter`, with a chromatic fringe and specular crest riding the same keyframe track; reduced-motion safe. This is the component that used to be *named* `DistortionWave`; it kept its real implementation and got the honest name once the actual DistortionWave (below) was built |
+| DistortionWave | **VERIFIED** (see QUALITY_MATRIX.md) — a real dual-React-view WebGL2 transition: both views are captured to canvas, uploaded as GPU textures, and a fragment shader displaces the UV coordinates it samples them through along a travelling wavefront (vertical/horizontal/center geometries) |
 
-The effect count is separate from the component count: the two effects
+The effect count is separate from the component count: the three effects
 ship from `@b4/react/effects`, not the core `@b4/react` entry point, so a
 consumer that never uses them pays no bundle cost.
 

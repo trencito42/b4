@@ -169,7 +169,7 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
     id: "g",
     title: "Effects",
     storybookFamilySlug: "effects",
-    components: [e("BorderBeam"), e("DistortionWave")],
+    components: [e("BorderBeam"), e("DistortionWave"), e("RefractionSweep")],
   },
 ];
 

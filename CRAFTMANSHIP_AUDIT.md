@@ -10,13 +10,13 @@ non-zero on any BLOCKER, so it can gate CI.
 | Metric | Count |
 |---|---|
 | Components audited | 84 |
-| Effects audited | 2 |
-| Stories files audited | 86 |
-| Studio catalog entries | 86 |
+| Effects audited | 3 |
+| Stories files audited | 87 |
+| Studio catalog entries | 87 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
 | Components with zero findings | 62 |
-| Components not forwarding a ref | 65 |
+| Components not forwarding a ref | 32 |
 | Blipmade references in code | 0 |
 
 ## Checks performed
@@ -74,14 +74,14 @@ audit considered rather than assuming it did not look.
 
 ## Systemic observation — ref forwarding
 
-65 of 84 components do not forward a ref to their root
+32 of 84 components do not forward a ref to their root
 element (`AGENTS.md`'s checklist asks for `forwardRef`). Most of the remainder are
 compound components whose individual parts are Base UI primitives that forward their
 own refs, or components that deliberately reuse another component's markup. This is
 recorded rather than silently passed, because a consumer that wants to measure or
 scroll to a `Badge` or a `StatusBadge` currently cannot.
 
-Not forwarding a ref: Accordion, ActivityFeed, AlertDialog, AnimatedIndicator, AppShell, Avatar, AvatarGroup, Badge, Breadcrumbs, ButtonGroup, Calendar, ChartContainer, CircularProgress, CodeBlock, ColorPicker, CommandPalette, ContextMenu, DataGrid, DataTable, DatePicker, Dialog, Drawer, DropdownMenu, EmptyState, ErrorState, ExpandingAction, Field, FileExplorer, FileUpload, FilterBar, HoverCard, InlineAlert, InputGroup, InspectorPanel, KeyboardShortcut, LoadingOverlay, MorphingSurface, NavigationMenu, NotificationPanel, NumberTransition, PageHeader, Pagination, Popover, Progress, RadioGroup, ResizablePanels, ResourceMeter, SegmentedControl, Sheet, Sidebar, Skeleton, Spinner, SplitButton, Stat, StatusBadge, Stepper, Tabs, TextTransition, Timeline, TimePicker, Toast, ToggleButton, Tooltip, TransitionGroup, TreeView
+Not forwarding a ref: Accordion, AlertDialog, AnimatedIndicator, AppShell, ColorPicker, CommandPalette, ContextMenu, DataGrid, DataTable, DatePicker, Dialog, Drawer, DropdownMenu, Field, FileExplorer, FileUpload, HoverCard, InputGroup, MorphingSurface, NavigationMenu, NotificationPanel, Popover, RadioGroup, ResizablePanels, SegmentedControl, Sheet, SplitButton, Tabs, TimePicker, Toast, Tooltip, TreeView
 
 ## Declared colour exemptions (11)
 
@@ -97,32 +97,32 @@ listed here rather than hidden, so a reader can challenge any of them.
 | ColorPicker.css | 115 | the hue spectrum is the picker's own data, not a theme color |
 | ColorPicker.css | 132 | the thumb's ring must stay visible against any picked colour |
 | ColorPicker.css | 140 | the thumb's ring must stay visible against any picked colour |
-| effects/BorderBeam.css | 24 | mask alpha stops, not a theme color |
-| effects/DistortionWave.css | 42 | mask alpha stops, not a theme color |
-| effects/DistortionWave.css | 68 | mask alpha stops, not a theme color |
-| effects/DistortionWave.css | 98 | mask alpha stops, not a theme color |
+| effects/BorderBeam.css | 93 | mask alpha stops, not a theme color |
+| effects/RefractionSweep.css | 46 | mask alpha stops, not a theme color |
+| effects/RefractionSweep.css | 70 | mask alpha stops, not a theme color |
+| effects/RefractionSweep.css | 96 | mask alpha stops, not a theme color |
 
 ## Per-component detail
 
 | Component | CSS | Ref | Blockers | Warnings |
 |---|---|---|---|---|
 | Accordion | own | no | 0 | 0 |
-| ActivityFeed | own | no | 0 | 0 |
+| ActivityFeed | own | yes | 0 | 0 |
 | AlertDialog | own | no | 0 | 0 |
 | AnimatedIndicator | none | no | 0 | 0 |
 | AppShell | own | no | 0 | 0 |
-| Avatar | own | no | 0 | 0 |
-| AvatarGroup | own | no | 0 | 0 |
-| Badge | own | no | 0 | 0 |
-| Breadcrumbs | own | no | 0 | 0 |
+| Avatar | own | yes | 0 | 0 |
+| AvatarGroup | own | yes | 0 | 0 |
+| Badge | own | yes | 0 | 0 |
+| Breadcrumbs | own | yes | 0 | 0 |
 | Button | own | yes | 0 | 0 |
-| ButtonGroup | own | no | 0 | 0 |
-| Calendar | own | no | 0 | 0 |
+| ButtonGroup | own | yes | 0 | 0 |
+| Calendar | own | yes | 0 | 0 |
 | Card | own | yes | 0 | 0 |
-| ChartContainer | own | no | 0 | 0 |
+| ChartContainer | own | yes | 0 | 0 |
 | Checkbox | own | yes | 0 | 0 |
-| CircularProgress | own | no | 0 | 0 |
-| CodeBlock | own | no | 0 | 0 |
+| CircularProgress | own | yes | 0 | 0 |
+| CodeBlock | own | yes | 0 | 0 |
 | ColorPicker | own | no | 0 | 0 |
 | Combobox | own | yes | 0 | 0 |
 | CommandPalette | own | no | 0 | 0 |
@@ -133,60 +133,60 @@ listed here rather than hidden, so a reader can challenge any of them.
 | Dialog | own | no | 0 | 0 |
 | Drawer | own | no | 0 | 0 |
 | DropdownMenu | own | no | 0 | 0 |
-| EmptyState | own | no | 0 | 0 |
-| ErrorState | own | no | 0 | 0 |
-| ExpandingAction | own | no | 0 | 0 |
+| EmptyState | own | yes | 0 | 0 |
+| ErrorState | own | yes | 0 | 0 |
+| ExpandingAction | own | yes | 0 | 0 |
 | Field | shared:TextField | no | 0 | 0 |
 | FileExplorer | own | no | 0 | 0 |
 | FileUpload | own | no | 0 | 0 |
-| FilterBar | own | no | 0 | 0 |
+| FilterBar | own | yes | 0 | 0 |
 | HoverCard | own | no | 0 | 0 |
 | IconButton | own | yes | 0 | 0 |
-| InlineAlert | own | no | 0 | 0 |
+| InlineAlert | own | yes | 0 | 0 |
 | InputGroup | shared:TextField | no | 0 | 0 |
-| InspectorPanel | own | no | 0 | 0 |
+| InspectorPanel | own | yes | 0 | 0 |
 | InteractiveCard | own | yes | 0 | 0 |
-| KeyboardShortcut | own | no | 0 | 0 |
+| KeyboardShortcut | own | yes | 0 | 0 |
 | Link | own | yes | 0 | 0 |
-| LoadingOverlay | own | no | 0 | 0 |
+| LoadingOverlay | own | yes | 0 | 0 |
 | MorphingSurface | none | no | 0 | 0 |
 | MultiSelect | shared:Select | yes | 0 | 0 |
 | NavigationMenu | own | no | 0 | 0 |
 | NotificationPanel | own | no | 0 | 0 |
 | NumberField | shared:TextField | yes | 0 | 0 |
-| NumberTransition | shared:TextTransition | no | 0 | 0 |
-| PageHeader | own | no | 0 | 0 |
-| Pagination | own | no | 0 | 0 |
+| NumberTransition | shared:TextTransition | yes | 0 | 0 |
+| PageHeader | own | yes | 0 | 0 |
+| Pagination | own | yes | 0 | 0 |
 | PasswordField | shared:TextField | yes | 0 | 0 |
 | Popover | own | no | 0 | 0 |
-| Progress | own | no | 0 | 0 |
+| Progress | own | yes | 0 | 0 |
 | QueryEditor | own | yes | 0 | 0 |
 | RadioGroup | own | no | 0 | 0 |
 | ResizablePanels | own | no | 0 | 0 |
-| ResourceMeter | own | no | 0 | 0 |
+| ResourceMeter | own | yes | 0 | 0 |
 | SearchField | shared:TextField | yes | 0 | 0 |
 | SegmentedControl | own | no | 0 | 0 |
 | Select | own | yes | 0 | 0 |
 | Sheet | own | no | 0 | 0 |
-| Sidebar | own | no | 0 | 0 |
-| Skeleton | own | no | 0 | 0 |
+| Sidebar | own | yes | 0 | 0 |
+| Skeleton | own | yes | 0 | 0 |
 | Slider | own | yes | 0 | 0 |
-| Spinner | own | no | 0 | 0 |
+| Spinner | own | yes | 0 | 0 |
 | SplitButton | shared:Button | no | 0 | 0 |
-| Stat | own | no | 0 | 0 |
-| StatusBadge | own | no | 0 | 0 |
-| Stepper | own | no | 0 | 0 |
+| Stat | own | yes | 0 | 0 |
+| StatusBadge | own | yes | 0 | 0 |
+| Stepper | own | yes | 0 | 0 |
 | Switch | own | yes | 0 | 0 |
 | Tabs | own | no | 0 | 0 |
 | Textarea | shared:TextField | yes | 0 | 0 |
 | TextField | own | yes | 0 | 0 |
 | TextMorph | own | yes | 0 | 0 |
-| TextTransition | own | no | 0 | 0 |
-| Timeline | own | no | 0 | 0 |
+| TextTransition | own | yes | 0 | 0 |
+| Timeline | own | yes | 0 | 0 |
 | TimePicker | own | no | 0 | 0 |
 | Toast | own | no | 0 | 0 |
-| ToggleButton | own | no | 0 | 0 |
+| ToggleButton | own | yes | 0 | 0 |
 | Toolbar | own | yes | 0 | 0 |
 | Tooltip | own | no | 0 | 0 |
-| TransitionGroup | own | no | 0 | 0 |
+| TransitionGroup | own | yes | 0 | 0 |
 | TreeView | own | no | 0 | 0 |

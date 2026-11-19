@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from "react";
-import { Badge, Card, SegmentedControl, Switch } from "@b4/react";
-import { BorderBeam, RefractionSweep } from "@b4/react/effects";
+import { useRef, useState, type ReactNode } from "react";
+import { Badge, Button, Card, SegmentedControl, Switch } from "@b4/react";
+import { BorderBeam, DistortionWave, RefractionSweep } from "@b4/react/effects";
 import type { BorderBeamSize, BorderBeamTone } from "@b4/react/effects";
 import type { RefractionSweepAmplitude, RefractionSweepDirection, RefractionSweepTone } from "@b4/react/effects";
+import type { DistortionWaveType } from "@b4/react/effects";
 import { useReducedMotion } from "@b4/motion";
 
 /**
@@ -27,6 +28,10 @@ export function EffectsLabPage() {
   const [waveDirection, setWaveDirection] = useState<RefractionSweepDirection>("horizontal");
   const [waveTone, setWaveTone] = useState<RefractionSweepTone>("accent");
   const [waveDuration, setWaveDuration] = useState(6);
+
+  const [distortionSent, setDistortionSent] = useState(false);
+  const [distortionType, setDistortionType] = useState<DistortionWaveType>("vertical");
+  const distortionConfirmRef = useRef<HTMLButtonElement>(null);
 
   const panel = (
     <>
@@ -205,7 +210,86 @@ export function EffectsLabPage() {
           </div>
         </Card>
 
-        {/* Lab 3 — both together */}
+        {/* Lab 3 — DistortionWave */}
+        <Card variant="outlined" padding="lg">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <h3 style={{ margin: 0, fontSize: "var(--b4-text-lg)", fontWeight: "var(--b4-weight-semibold)" }}>
+              DistortionWave
+            </h3>
+            <Badge tone="neutral">@b4/react/effects</Badge>
+          </div>
+          <p style={{ color: "var(--b4-text-secondary)", fontSize: "var(--b4-text-sm)", marginBottom: 16 }}>
+            A real WebGL2 dual-view transition: both React states are captured to canvas, uploaded as GPU
+            textures, and a fragment shader displaces the UV coordinates it samples them through along a
+            travelling wavefront — genuine per-pixel geometric distortion, not a CSS filter.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
+            <LabControl label="Geometry">
+              <SegmentedControl
+                aria-label="DistortionWave geometry"
+                size="sm"
+                items={[
+                  { value: "vertical", label: "vertical" },
+                  { value: "horizontal", label: "horizontal" },
+                  { value: "center", label: "center" },
+                ]}
+                value={distortionType}
+                onValueChange={(value) => {
+                  if (value) setDistortionType(value as DistortionWaveType);
+                }}
+              />
+            </LabControl>
+          </div>
+
+          <div style={{ maxWidth: 320 }}>
+            <DistortionWave
+              key={distortionType}
+              revealed={distortionSent}
+              source={distortionConfirmRef}
+              type={distortionType}
+              palette="colorful"
+              cornerRadius="var(--b4-surface-radius)"
+              overlay={
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "flex-end",
+                    justifyContent: "flex-end",
+                    padding: 16,
+                  }}
+                >
+                  {distortionSent ? (
+                    <Button variant="secondary" size="sm" onClick={() => setDistortionSent(false)}>
+                      Reset
+                    </Button>
+                  ) : (
+                    <Button ref={distortionConfirmRef} variant="primary" size="sm" onClick={() => setDistortionSent(true)}>
+                      Confirm
+                    </Button>
+                  )}
+                </div>
+              }
+              revealedContent={
+                <Card variant="raised" padding="lg">
+                  <Badge tone="success">Sent</Badge>
+                  <h4 style={{ margin: "8px 0 4px", fontSize: "var(--b4-text-lg)" }}>$1,250.00</h4>
+                  <p style={{ margin: 0, color: "var(--b4-text-secondary)" }}>Payment complete</p>
+                </Card>
+              }
+            >
+              <Card variant="raised" padding="lg">
+                <Badge tone="accent">Review</Badge>
+                <h4 style={{ margin: "8px 0 4px", fontSize: "var(--b4-text-lg)" }}>$1,250.00</h4>
+                <p style={{ margin: 0, color: "var(--b4-text-secondary)" }}>To Maya Chen · Studio rent</p>
+              </Card>
+            </DistortionWave>
+          </div>
+        </Card>
+
+        {/* Lab 4 — both together */}
         <Card variant="outlined" padding="lg">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h3 style={{ margin: 0, fontSize: "var(--b4-text-lg)", fontWeight: "var(--b4-weight-semibold)" }}>

@@ -6,120 +6,83 @@ const themes = ["graphite", "porcelain"] as const;
 
 for (const theme of themes) {
   test(`DistortionWave is axe-clean on ${theme}`, async ({ page }) => {
-    await page.goto(`/iframe.html?id=effects-distortionwave--tones&globals=b4Theme:${theme}`);
-    await expect(page.locator(".b4-distortion-wave__band").first()).toBeVisible();
+    await page.goto(`/iframe.html?id=effects-distortionwave--payment-confirmation&globals=b4Theme:${theme}`);
+    await expect(page.getByRole("button", { name: "Confirm" })).toBeVisible();
 
     const results = await new AxeBuilder({ page }).disableRules(isolatedRules).analyze();
     expect(results.violations).toEqual([]);
   });
 }
 
-test("DistortionWave genuinely animates — the band's transform changes over time", async ({ page }) => {
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
+test("both views exist in the DOM, with only the active one reachable by the accessibility tree", async ({ page }) => {
+  await page.goto("/iframe.html?id=effects-distortionwave--payment-confirmation");
 
-  const band = page.locator(".b4-distortion-wave__band").first();
-  const transform1 = await band.evaluate((el) => getComputedStyle(el).transform);
-  await page.waitForTimeout(800);
-  const transform2 = await band.evaluate((el) => getComputedStyle(el).transform);
-
-  expect(transform1).not.toBe(transform2);
+  await expect(page.getByText("Studio rent")).toBeVisible();
+  await expect(page.getByText("Payment complete")).toBeHidden();
 });
 
-test("DistortionWave really refracts the content beneath it — the rendered pixels differ from the un-effected render", async ({
-  page,
-}) => {
-  // Freeze the band dead-centre over the content so the comparison is
-  // deterministic rather than a coin-flip on where the animation happens
-  // to be when the shutter opens.
-  const freeze = `.b4-distortion-wave__layer--moving .b4-distortion-wave__band {
-    animation: none !important;
-    transform: translateX(30%) !important;
-  }`;
+test("clicking Confirm swaps the real DOM state to the revealed view", async ({ page }) => {
+  await page.goto("/iframe.html?id=effects-distortionwave--payment-confirmation");
 
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
-  await page.addStyleTag({ content: freeze });
-  await page.waitForTimeout(200);
-  const withWave = await page.locator(".b4-distortion-wave").first().screenshot();
-
-  await page.goto("/iframe.html?id=effects-distortionwave--inactive");
-  await page.waitForTimeout(200);
-  const withoutWave = await page.locator(".b4-distortion-wave").first().screenshot();
-
-  expect(Buffer.compare(withWave, withoutWave)).not.toBe(0);
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await expect(page.getByText("Payment complete")).toBeVisible();
+  await expect(page.getByText("Studio rent")).toBeHidden();
 });
 
-test("DistortionWave applies a real backdrop refraction to the band, not just a painted overlay", async ({ page }) => {
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
+test("the DOM-capture-to-WebGL pipeline never throws a tainted-canvas SecurityError (regression)", async ({ page }) => {
+  // This is the exact failure this engine had before: a canvas painted via
+  // an SVG `foreignObject` passes a purely visual check but throws
+  // `SecurityError: Tainted canvases may not be loaded` the instant it's
+  // uploaded to WebGL via texImage2D — invisibly breaking the whole
+  // effect with no on-screen sign anything is wrong. DomCapture now paints
+  // directly with Canvas2D primitives instead, which can never taint.
+  const pageErrors: string[] = [];
+  page.on("pageerror", (err) => pageErrors.push(err.message));
 
-  const backdropFilter = await page
-    .locator(".b4-distortion-wave__band")
-    .first()
-    .evaluate((el) => getComputedStyle(el).backdropFilter);
+  await page.goto("/iframe.html?id=effects-distortionwave--payment-confirmation");
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.waitForTimeout(600);
 
-  expect(backdropFilter).toContain("blur");
+  const tainted = pageErrors.filter((m) => m.includes("Tainted") || m.includes("SecurityError"));
+  expect(tainted).toEqual([]);
 });
 
-test("DistortionWave's wave layer never intercepts pointer events — clicking through it still works", async ({ page }) => {
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
+test("the GPU canvas overlay never intercepts pointer events", async ({ page }) => {
+  await page.goto("/iframe.html?id=effects-distortionwave--payment-confirmation");
 
   const pointerEvents = await page
-    .locator(".b4-distortion-wave__layer")
+    .locator(".b4-distortion-wave-engine__canvas")
     .first()
     .evaluate((el) => getComputedStyle(el).pointerEvents);
   expect(pointerEvents).toBe("none");
 });
 
-test("DistortionWave renders no wave layer at all when inactive", async ({ page }) => {
-  await page.goto("/iframe.html?id=effects-distortionwave--inactive");
-  await expect(page.locator(".b4-distortion-wave__layer")).toHaveCount(0);
-});
-
-test("DistortionWave holds still under reduced motion — the band stops travelling", async ({ page }) => {
+test("reduced motion collapses the transition to an instant swap with no GPU wave", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
+  await page.goto("/iframe.html?id=effects-distortionwave--reduced-motion");
 
-  const band = page.locator(".b4-distortion-wave__band").first();
-  const transform1 = await band.evaluate((el) => getComputedStyle(el).transform);
-  await page.waitForTimeout(800);
-  const transform2 = await band.evaluate((el) => getComputedStyle(el).transform);
+  const pageErrors: string[] = [];
+  page.on("pageerror", (err) => pageErrors.push(err.message));
 
-  expect(transform1).toBe(transform2);
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await page.waitForTimeout(300);
+  await expect(page.getByText("Payment complete")).toBeVisible();
+  expect(pageErrors).toEqual([]);
 });
 
-test("DistortionWave never blurs the content when it is not travelling — reduced motion drops the refraction entirely", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
+test("switching geometry (vertical/horizontal/center) still completes the transition without error", async ({ page }) => {
+  await page.goto("/iframe.html?id=effects-distortionwave--geometries");
 
-  const backdropFilter = await page
-    .locator(".b4-distortion-wave__band")
-    .first()
-    .evaluate((el) => getComputedStyle(el).backdropFilter);
+  const pageErrors: string[] = [];
+  page.on("pageerror", (err) => pageErrors.push(err.message));
 
-  expect(backdropFilter).toBe("none");
-});
+  for (const label of ["Vertical", "Horizontal", "Center"]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await page.getByRole("button", { name: "Confirm" }).click();
+    await expect(page.getByText("Payment complete")).toBeVisible();
+    await page.getByRole("button", { name: "Reset" }).click();
+    await expect(page.getByText("Studio rent")).toBeVisible();
+  }
 
-test("DistortionWave causes no layout shift — the wrapper's box exactly matches its child, despite the absolutely-positioned wave layer", async ({
-  page,
-}) => {
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
-
-  const wrapperBox = await page.locator(".b4-distortion-wave").first().boundingBox();
-  const childBox = await page.locator(".b4-distortion-wave > .b4-card").first().boundingBox();
-
-  expect(wrapperBox?.width).toBe(childBox?.width);
-  expect(wrapperBox?.height).toBe(childBox?.height);
-});
-
-test("DistortionWave clips the wave to the wrapper — the layer never lets the band spill outside the surface", async ({
-  page,
-}) => {
-  await page.goto("/iframe.html?id=effects-distortionwave--default");
-
-  const overflow = await page
-    .locator(".b4-distortion-wave__layer")
-    .first()
-    .evaluate((el) => getComputedStyle(el).overflow);
-  expect(overflow).toBe("hidden");
+  expect(pageErrors).toEqual([]);
 });

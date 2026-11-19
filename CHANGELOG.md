@@ -5,6 +5,25 @@ a per-npm-release history.
 
 ## Unreleased
 
+### DistortionWave: fixed the WebGL engine being invisible everywhere (2026-11-19)
+
+- Found and fixed the real cause of "the effect is done but I don't see
+  it": `DomCapture.ts` rasterized each view via an SVG `foreignObject`,
+  which Chromium permanently taints — the capture looked right on screen
+  but threw `SecurityError: Tainted canvases may not be loaded` the
+  instant WebGL tried to upload it as a texture, with no on-screen sign
+  anything was wrong. Rewrote `DomCapture.ts` as a direct Canvas2D painter
+  (no raster image ever loaded into the canvas, so nothing can taint it).
+- Added the `DistortionWave.stories.tsx`/`.test.tsx` that never existed,
+  fixed the orphaned e2e spec that was still testing the old, renamed
+  `RefractionSweep` effect by its old class names (`e2e/distortion-wave.spec.ts`
+  → `e2e/refraction-sweep.spec.ts`), and wrote a real new
+  `e2e/distortion-wave.spec.ts` for the actual engine, including a
+  regression test for the taint bug.
+- Wired a real payment-confirmation demo into B4 Studio's Effects Lab
+  (Confirm → wave → success, geometry selector) — previously the only way
+  to reach the new engine at all was a raw, development-only debug page.
+
 ### TextMorph (real this time) and BorderBeam effect (2026-11-19)
 
 - Removed the unlicensed Graphik font (binary `.woff2` + base64-embedded,

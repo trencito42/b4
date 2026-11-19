@@ -1,5 +1,63 @@
 # HANDOFF — read this first on any resume
 
+## DistortionWave: the real bug behind "I don't see the effect" (2026-11-19, read this first)
+
+The user reported the WebGL `DistortionWave` engine (built earlier the same
+day, commit `fd3a1ca`) was "cam gata" (supposedly done) but produced no
+visible effect anywhere. Investigated live in the browser via the
+project's own "DistortionWave Debug" page:
+
+- **Gate 1 (DOM capture) passed** — the captured canvas looked right.
+- **Gate 2 (feed that capture to the WebGL shader) threw immediately**:
+  `SecurityError: Failed to execute 'texImage2D' ... Tainted canvases may
+  not be loaded`.
+
+Root cause: `DomCapture.ts` rasterized each view via an SVG
+`foreignObject` → `<img>` → `drawImage`. In Chromium, a canvas painted
+this way is **permanently tainted**, even for a same-origin `blob:` URL
+with zero external resources — it can still be *displayed* (which is all
+a purely visual check like Gate 1 catches), but `texImage2D`/
+`getImageData` on it throws the instant anything tries to read its pixels
+for real. So the shader never got a texture, with no on-screen sign
+anything was wrong. Separately, the new `DistortionWave` also had no
+Storybook story and wasn't wired into any real Studio page — only that
+raw, explicitly-labeled-development-only debug page could reach it at
+all, which is the other half of why the user never saw it.
+
+**Fixed**: `DomCapture.ts` now paints directly with Canvas2D primitives
+(`fillRect`/`strokeRect`/`fillText`, `Range.getClientRects()` for real
+per-line text positions) instead of rasterizing an SVG image — painting
+never loads a raster image into the canvas, so nothing can taint it.
+Verified by instrumenting `texImage2D` live in the browser (zero throws)
+and visually at progress 0.45 (real geometric text displacement +
+chromatic separation near the wavefront, exactly the brief's own
+acceptance-gate bar). Also: added real `DistortionWave.stories.tsx` +
+`DistortionWave.test.tsx` (none existed before), fixed the orphaned
+`e2e/distortion-wave.spec.ts` (it was still testing the *old*,
+since-renamed `RefractionSweep` effect by its old class names — renamed
+to `e2e/refraction-sweep.spec.ts` and retargeted; a genuinely new
+`e2e/distortion-wave.spec.ts` now tests the real engine, including a
+regression test for the exact taint bug above), wired a real payment-
+confirmation demo into B4 Studio's Effects Lab (Confirm → wave → success,
+geometry selector — not just the debug page), and added `RefractionSweep`
+to the Studio catalog (the craftsmanship audit caught it was missing).
+Full gate re-run clean: typecheck, `@b4/react` 538/538 unit tests,
+`@b4/studio` typecheck, full Playwright suite 423/424 (the one remaining
+failure is a pre-existing `TextMorph` color-contrast issue, confirmed via
+`git stash` to fail identically with none of today's changes applied —
+unrelated, not touched). See `QUALITY_MATRIX.md`'s `DistortionWave`/
+`RefractionSweep` rows for the full detail.
+
+**Working-tree note**: a `git stash`/`stash apply` to compare against the
+pre-fix state hit a real conflict on `pnpm-lock.yaml` (a local lockfile
+change already present at session start, unrelated to this work, collided
+with the stash's own lockfile diff) — resolved by stashing the lockfile
+separately, applying the real work, then `pnpm install` to reconcile.
+`git stash list` still has two leftover entries from that
+(`stash@{0}`/`stash@{1}` as of this writing) — safe to drop once
+confirmed unneeded, left in place here since dropping a stash is a
+destructive action this session doesn't take without being asked.
+
 ## Mission status — **COMPLETE in-repo** (prompt phases 0–8, 2026-11-19)
 
 The B4 mission brief is fulfilled in this repository. **Not published to npm**
@@ -138,7 +196,62 @@ BorderBeam (edge) and DistortionWave (face) together.
 **Two internal consumer fixtures** — `examples/ops-console` (an internal
 operations console) and `examples/storefront` (a consumer storefront).
 Real application shapes, public `@b4/react` APIs only, both themes, with
-`scripts/consumer-fixtures-smoke.mjs` building them as a gate.
+`scripts/consumer-fixtures-smoke.mjs` building them as a gate. Their `dev`
+scripts are pinned to **:5174** and **:5175** with `--strictPort`, so they
+can never collide with the Studio preview on `:5173`.
+
+### What the fixtures caught that the gate did not (2026-11-19, after close)
+
+Building the fixtures put the library through a real consumer's hands for
+the first time, and that found a defect no amount of unit testing had:
+
+**`SegmentedControl` never committed a plain mouse click.** Two causes,
+stacked:
+1. `usePointerSelection` captured the pointer on `pointerdown`, so the
+   browser retargeted the `click` to the container and Base UI's `Toggle`
+   never received it.
+2. The press-down preview moved the group's selected value onto the
+   pressed segment *before* the click landed; Base UI computes
+   `nextPressed = !pressed` from the group value, so the click read as
+   "deselect the already-selected segment" and was discarded.
+
+The hook's own commit path only runs past the 6px scrub threshold, so a
+plain tap fell through every path and changed nothing — while the capsule
+and label colour *looked* right, because the press-down preview had
+already moved them.
+
+**Why the old tests missed it:** jsdom has no layout, so every
+`getBoundingClientRect()` is a 0×0 dot at the origin, `user.click` always
+reports the pointer at (0,0), and the hook's hit-testing always resolved
+to the *first* segment rather than the clicked one. The existing "moves
+selection on click" test was exercising a different path than a real
+click. **A jsdom test that stubs real rects is worth more than a click
+test that cannot fail.**
+
+**Fix:** capture the pointer only once a scrub is confirmed; start the
+preview with the scrub rather than with the press. The capsule now travels
+to the segment on commit.
+
+**Three regression tests, each verified to FAIL against the old code
+before the fix was accepted** — `e2e/segmented-control.spec.ts` (real
+mouse click, both themes), a jsdom test with real segment rects, and a
+hook test asserting no capture on `pointerdown`. If you change
+`usePointerSelection` again, run all three.
+
+### Ref forwarding — 33 leaf components (2026-11-19)
+
+`Badge`, `ActivityFeed`, `Avatar` and 30 more rendered a root element but
+accepted no `ref`. All 33 now forward a ref to their real root element
+via `forwardRef` with a named function expression. Rendered markup is
+unchanged.
+
+Five are deliberately still without a ref, and the reason is in each
+component's source: `ColorPicker`, `FileUpload`, `TimePicker` render
+through `Field`; `FileExplorer` renders through `TreeView`;
+`NotificationPanel` renders through `Popover`. None of those forwards a
+ref yet, and each is a compound component where one ref target would be
+ambiguous. That is the honest remainder — do not "fix" it by forwarding a
+ref to the wrong element.
 
 **Storybook serves a stale index — restart it before a full Playwright
 run.** This cost more time than any real defect above. A long-lived
@@ -159,10 +272,13 @@ as intended.
 
 ### Current task
 
-**The full mission-brief scope is now built and verified (2026-11-19 evening).**
+**The full mission-brief scope is built and verified (2026-11-19 evening).**
 See the section below — *DistortionWave, the Studio Effects Lab, the
 systematic craftsmanship audit, and two internal consumer fixtures* — for
-what landed and what it cost in real defects.
+what landed and what it cost in real defects. Two further passes closed
+the remaining gaps the fixtures exposed: the **`SegmentedControl` plain-click
+defect** (fixed, with three regression tests each proven to fail against
+the old code) and **ref forwarding on 33 leaf components**.
 
 The one piece still open is **npm publish**, which needs an explicit
 decision from the user (real scope + authorization), per
@@ -177,11 +293,23 @@ decision from the user (real scope + authorization), per
    twice.
 3. **Kill any stray dev server before a Playwright run** — see the
    "Storybook serves a stale index" note below; it is the single most
-   common cause of a confusing failure in this repo.
-4. Optional polish: the audit's ref-forwarding observation
-   (`CRAFTMANSHIP_AUDIT.md` → *Systemic observation*) is the largest
-   remaining craft gap; compound components are still excluded by
-   design.
+   common cause of a confusing failure in this repo. The stray nested
+   clone at `b4/` has been observed restarting its own Storybook on
+   `:6106` more than once; if `6106` is occupied, check
+   `Get-CimInstance Win32_Process -Filter "ProcessId=<pid>"` and confirm
+   the command line points at `b4\b4\apps\studio` rather than
+   `apps\studio`.
+4. **The remaining ref-forwarding gap is the compound components**
+   (`Field`, `TreeView`, `Popover`, `Tabs`, `DataTable`, …). They are
+   excluded by design because a single ref target is ambiguous for a
+   compound component; if you close them, they need a deliberate API
+   decision (a `ref` on the *root* part, or a parts API), not a blanket
+   `forwardRef`.
+5. Optional polish: `SegmentedControl` no longer previews the pressed
+   segment on press-down — it was the cause of the swallowed click. If the
+   press-down affordance is wanted back, it has to be decoupled from the
+   group's selected value (a separate preview attribute), not restored to
+   the old behaviour.
 
 ### Files to inspect on resume
 
