@@ -1,16 +1,25 @@
 import {
   Children,
+  forwardRef,
   isValidElement,
   type CSSProperties,
+  type ForwardRefExoticComponent,
   type ReactElement,
   type ReactNode,
+  type RefAttributes,
 } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type HTMLMotionProps } from "motion/react";
 import { springs, useReducedMotion } from "@b4/motion";
 
 export type TransitionGroupDirection = "vertical" | "horizontal";
 export type TransitionGroupPreset = "slide-fade" | "scale-fade" | "fade";
 export type TransitionGroupGap = "none" | "sm" | "md" | "lg";
+
+/**
+ * The container's real element type follows the `as` prop, so the
+ * forwarded ref is the union of the three tags this component can render.
+ */
+type TransitionGroupElement = HTMLDivElement | HTMLOListElement | HTMLUListElement;
 
 export interface TransitionGroupProps {
   /**
@@ -77,19 +86,31 @@ function getVariants(preset: TransitionGroupPreset, direction: TransitionGroupDi
  * from ul/ol, wraps children in li) and supports vertical/horizontal directions,
  * scale/slide presets, and reduced-motion fallbacks.
  */
-export function TransitionGroup({
-  children,
-  as = "div",
-  direction = "vertical",
-  preset = "slide-fade",
-  gap = "md",
-  stagger = 0,
-  className,
-  style,
-  itemClassName,
-}: TransitionGroupProps) {
+export const TransitionGroup = forwardRef<
+  HTMLDivElement | HTMLOListElement | HTMLUListElement,
+  TransitionGroupProps
+>(function TransitionGroup(
+  {
+    children,
+    as = "div",
+    direction = "vertical",
+    preset = "slide-fade",
+    gap = "md",
+    stagger = 0,
+    className,
+    style,
+    itemClassName,
+  },
+  ref,
+) {
   const reducedMotion = useReducedMotion();
-  const Container = as === "ul" ? motion.ul : as === "ol" ? motion.ol : motion.div;
+  // `motion.ul`/`motion.ol`/`motion.div` are three distinct component
+  // types, and a JSX union of them intersects their prop types — an
+  // intersection no single ref can satisfy. Pin the container to one
+  // shape and widen the ref to the union of the three real element types.
+  const Container = (as === "ul" ? motion.ul : as === "ol" ? motion.ol : motion.div) as unknown as ForwardRefExoticComponent<
+    Omit<HTMLMotionProps<"div">, "ref"> & RefAttributes<TransitionGroupElement>
+  >;
   const Item = as === "div" ? motion.div : motion.li;
   const items = Children.toArray(children).filter(isValidElement) as ReactElement[];
   const variants = getVariants(preset, direction);
@@ -111,7 +132,7 @@ export function TransitionGroup({
     .join(" ");
 
   return (
-    <Container className={containerClasses} style={style}>
+    <Container ref={ref} className={containerClasses} style={style}>
       <AnimatePresence mode="popLayout" initial={false}>
         {items.map((child, index) => (
           <Item
@@ -136,4 +157,4 @@ export function TransitionGroup({
       </AnimatePresence>
     </Container>
   );
-}
+});

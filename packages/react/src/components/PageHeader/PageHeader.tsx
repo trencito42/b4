@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from "react";
+import { forwardRef, type ElementType, type ReactNode } from "react";
 
 export interface PageHeaderProps {
   title: ReactNode;
@@ -19,11 +19,14 @@ export interface PageHeaderProps {
  * persistent app chrome — a top bar — this one is page content, and
  * scrolls with it).
  */
-export function PageHeader({ title, description, breadcrumbs, actions, headingLevel = 1, className }: PageHeaderProps) {
+export const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(function PageHeader(
+  { title, description, breadcrumbs, actions, headingLevel = 1, className },
+  ref,
+) {
   const Heading = `h${headingLevel}` as ElementType;
 
   return (
-    <div className={["b4-page-header", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-page-header", className ?? ""].filter(Boolean).join(" ")}>
       {breadcrumbs && <div className="b4-page-header__breadcrumbs">{breadcrumbs}</div>}
       <div className="b4-page-header__row">
         <div className="b4-page-header__heading">
@@ -34,4 +37,4 @@ export function PageHeader({ title, description, breadcrumbs, actions, headingLe
       </div>
     </div>
   );
-}
+});

@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { IconButton } from "../IconButton/IconButton.js";
 
 export interface PaginationProps {
@@ -41,11 +42,14 @@ function getVisiblePages(page: number, totalPages: number): (number | "ellipsis"
  * plain buttons with `aria-current="page"` — no Base UI primitive
  * exists for pagination specifically.
  */
-export function Pagination({ page, totalPages, onPageChange, className, ...rest }: PaginationProps) {
+export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagination(
+  { page, totalPages, onPageChange, className, ...rest },
+  ref,
+) {
   const visiblePages = getVisiblePages(page, totalPages);
 
   return (
-    <nav className={["b4-pagination", className ?? ""].filter(Boolean).join(" ")} {...rest}>
+    <nav ref={ref} className={["b4-pagination", className ?? ""].filter(Boolean).join(" ")} {...rest}>
       <IconButton
         variant="ghost"
         size="sm"
@@ -81,4 +85,4 @@ export function Pagination({ page, totalPages, onPageChange, className, ...rest 
       />
     </nav>
   );
-}
+});

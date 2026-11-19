@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 export type SpinnerSize = "sm" | "md" | "lg";
 
 export interface SpinnerProps {
@@ -16,9 +18,13 @@ export interface SpinnerProps {
  * should — not a wall of repeated "Loading" announcements on every
  * animation frame.
  */
-export function Spinner({ size = "md", label = "Loading", className }: SpinnerProps) {
+export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
+  { size = "md", label = "Loading", className },
+  ref,
+) {
   return (
     <span
+      ref={ref}
       role="status"
       aria-label={label}
       className={["b4-spinner", `b4-spinner--${size}`, className ?? ""].filter(Boolean).join(" ")}
@@ -26,4 +32,4 @@ export function Spinner({ size = "md", label = "Loading", className }: SpinnerPr
       <span className="b4-spinner__circle" aria-hidden="true" />
     </span>
   );
-}
+});

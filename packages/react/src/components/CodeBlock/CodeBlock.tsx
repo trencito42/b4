@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { forwardRef, useEffect, useRef, useState, type ReactNode } from "react";
 import { IconButton } from "../IconButton/IconButton.js";
 
 export interface CodeBlockProps {
@@ -59,7 +59,10 @@ const announcementByState: Record<CopyState, string> = {
  * clipboard permission, e.g. in a cross-origin iframe or an insecure
  * context.
  */
-export function CodeBlock({ code, language, showLineNumbers = false, className }: CodeBlockProps) {
+export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function CodeBlock(
+  { code, language, showLineNumbers = false, className },
+  ref,
+) {
   const [state, setState] = useState<CopyState>("idle");
   const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -79,7 +82,7 @@ export function CodeBlock({ code, language, showLineNumbers = false, className }
   const lines = code.split("\n");
 
   return (
-    <div className={["b4-code-block", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-code-block", className ?? ""].filter(Boolean).join(" ")}>
       <div className="b4-code-block__header">
         <span className="b4-code-block__language">{language ?? "code"}</span>
         <IconButton
@@ -112,4 +115,4 @@ export function CodeBlock({ code, language, showLineNumbers = false, className }
       </span>
     </div>
   );
-}
+});

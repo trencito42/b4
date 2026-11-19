@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export type StatTrendDirection = "up" | "down" | "neutral";
 
@@ -37,9 +37,12 @@ const TrendIcon = ({ direction }: { direction: StatTrendDirection }) => {
  * `Card` for a dashboard tile; doesn't render its own surface so it can
  * also sit directly in a denser stat grid.
  */
-export function Stat({ label, value, description, trend, className }: StatProps) {
+export const Stat = forwardRef<HTMLDivElement, StatProps>(function Stat(
+  { label, value, description, trend, className },
+  ref,
+) {
   return (
-    <div className={["b4-stat", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-stat", className ?? ""].filter(Boolean).join(" ")}>
       <span className="b4-stat__label">{label}</span>
       <div className="b4-stat__value-row">
         <span className="b4-stat__value">{value}</span>
@@ -55,4 +58,4 @@ export function Stat({ label, value, description, trend, className }: StatProps)
       {description && <span className="b4-stat__description">{description}</span>}
     </div>
   );
-}
+});

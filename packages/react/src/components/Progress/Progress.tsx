@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { Progress as BaseProgress } from "@base-ui/react/progress";
 
 export interface ProgressProps {
@@ -20,9 +20,13 @@ export interface ProgressProps {
  * frozen at a fake percentage) — not a styled `<div>` with a width
  * percentage and no ARIA semantics.
  */
-export function Progress({ label, hideLabel = false, value, min = 0, max = 100, showValue = true, className }: ProgressProps) {
+export const Progress = forwardRef<HTMLDivElement, ProgressProps>(function Progress(
+  { label, hideLabel = false, value, min = 0, max = 100, showValue = true, className },
+  ref,
+) {
   return (
     <BaseProgress.Root
+      ref={ref}
       value={value}
       min={min}
       max={max}
@@ -39,4 +43,4 @@ export function Progress({ label, hideLabel = false, value, min = 0, max = 100, 
       </BaseProgress.Track>
     </BaseProgress.Root>
   );
-}
+});

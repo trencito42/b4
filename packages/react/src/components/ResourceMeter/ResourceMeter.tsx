@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from "react";
+import { forwardRef, useId, type ReactNode } from "react";
 
 export type ResourceMeterTone = "neutral" | "warning" | "danger";
 
@@ -28,7 +28,10 @@ function autoTone(percentage: number): ResourceMeterTone {
  * `aria-valuenow`/`min`/`max`/`valuetext`, not just a colored bar with
  * no machine-readable value.
  */
-export function ResourceMeter({ label, value, max = 100, unit, tone, className }: ResourceMeterProps) {
+export const ResourceMeter = forwardRef<HTMLDivElement, ResourceMeterProps>(function ResourceMeter(
+  { label, value, max = 100, unit, tone, className },
+  ref,
+) {
   const percentage = Math.min(100, Math.max(0, (value / max) * 100));
   const resolvedTone = tone ?? autoTone(percentage);
   const formattedValue = unit ? `${value} ${unit}` : String(value);
@@ -36,7 +39,7 @@ export function ResourceMeter({ label, value, max = 100, unit, tone, className }
   const labelId = useId();
 
   return (
-    <div className={["b4-resource-meter", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-resource-meter", className ?? ""].filter(Boolean).join(" ")}>
       <div className="b4-resource-meter__header">
         <span id={labelId} className="b4-resource-meter__label">
           {label}
@@ -61,4 +64,4 @@ export function ResourceMeter({ label, value, max = 100, unit, tone, className }
       </div>
     </div>
   );
-}
+});

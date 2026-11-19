@@ -68,6 +68,56 @@ describe("usePointerSelection", () => {
     expect(clickEvent.stopPropagation).toHaveBeenCalled();
   });
 
+  it("does not capture the pointer on pointerdown, so a plain click still reaches the pressed item", () => {
+    const onCommit = vi.fn();
+    const items = [{ value: "tab1" }, { value: "tab2" }] as const;
+    const { result } = renderHook(() =>
+      usePointerSelection({
+        items,
+        value: "tab1",
+        onCommit,
+      }),
+    );
+
+    const container = document.createElement("div");
+    const setPointerCapture = vi.fn();
+    const hasPointerCapture = vi.fn().mockReturnValue(false);
+    (container as unknown as { setPointerCapture: typeof setPointerCapture }).setPointerCapture =
+      setPointerCapture;
+    (
+      container as unknown as { hasPointerCapture: typeof hasPointerCapture }
+    ).hasPointerCapture = hasPointerCapture;
+
+    act(() => {
+      result.current.containerProps.onPointerDown({
+        button: 0,
+        clientX: 10,
+        clientY: 10,
+        pointerId: 1,
+        currentTarget: container,
+        nativeEvent: {} as PointerEvent,
+      } as any);
+    });
+
+    // Capturing at pointerdown retargets the browser's `click` to the
+    // container instead of the pressed item, so the item's own click handler
+    // would never run and the tap would do nothing.
+    expect(setPointerCapture).not.toHaveBeenCalled();
+
+    // Once the scrub intent is confirmed the capture IS taken, so a drag
+    // keeps tracking even when the pointer leaves the item.
+    act(() => {
+      result.current.containerProps.onPointerMove({
+        clientX: 60,
+        clientY: 10,
+        pointerId: 1,
+        nativeEvent: { pointerId: 1 } as PointerEvent,
+      } as any);
+    });
+
+    expect(setPointerCapture).toHaveBeenCalledWith(1);
+  });
+
   it("cancels scrubbing on Escape key without committing", () => {
     const onCommit = vi.fn();
     const items = [{ value: "tab1" }, { value: "tab2" }] as const;

@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 export interface KeyboardShortcutProps {
   /** Keys in press order, e.g. `["⌘", "K"]` or `["Ctrl", "Shift", "P"]`. */
   keys: readonly string[];
@@ -11,9 +13,12 @@ export interface KeyboardShortcutProps {
  * (Mac vs. Windows modifier symbols) — pass the right symbols for the
  * current platform from the call site.
  */
-export function KeyboardShortcut({ keys, className }: KeyboardShortcutProps) {
+export const KeyboardShortcut = forwardRef<HTMLSpanElement, KeyboardShortcutProps>(function KeyboardShortcut(
+  { keys, className },
+  ref,
+) {
   return (
-    <span className={["b4-keyboard-shortcut", className ?? ""].filter(Boolean).join(" ")}>
+    <span ref={ref} className={["b4-keyboard-shortcut", className ?? ""].filter(Boolean).join(" ")}>
       {keys.map((key, i) => (
         <kbd className="b4-keyboard-shortcut__key" key={`${key}-${i}`}>
           {key}
@@ -21,4 +26,4 @@ export function KeyboardShortcut({ keys, className }: KeyboardShortcutProps) {
       ))}
     </span>
   );
-}
+});

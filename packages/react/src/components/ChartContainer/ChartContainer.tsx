@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export interface ChartLegendItem {
   label: string;
@@ -23,9 +23,12 @@ export interface ChartContainerProps {
  * accessible legend, and an actions slot — not a charting engine.
  * Composes with `Card` for a dashboard tile, or stands alone.
  */
-export function ChartContainer({ title, description, legend, actions, children, className }: ChartContainerProps) {
+export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function ChartContainer(
+  { title, description, legend, actions, children, className },
+  ref,
+) {
   return (
-    <div className={["b4-chart-container", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-chart-container", className ?? ""].filter(Boolean).join(" ")}>
       <div className="b4-chart-container__header">
         <div className="b4-chart-container__heading">
           <p className="b4-chart-container__title">{title}</p>
@@ -50,4 +53,4 @@ export function ChartContainer({ title, description, legend, actions, children, 
       )}
     </div>
   );
-}
+});

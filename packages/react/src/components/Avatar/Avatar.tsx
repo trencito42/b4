@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 
 export type AvatarSize = "sm" | "md" | "lg";
 
@@ -26,12 +26,16 @@ function getInitials(name: string): string {
  * never render an Avatar for an unnamed entity without at least a
  * placeholder name like "Unknown user".
  */
-export function Avatar({ name, src, size = "md", className }: AvatarProps) {
+export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
+  { name, src, size = "md", className },
+  ref,
+) {
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = Boolean(src) && !imageFailed;
 
   return (
     <span
+      ref={ref}
       role="img"
       aria-label={name}
       className={["b4-avatar", `b4-avatar--${size}`, className ?? ""].filter(Boolean).join(" ")}
@@ -50,4 +54,4 @@ export function Avatar({ name, src, size = "md", className }: AvatarProps) {
       )}
     </span>
   );
-}
+});

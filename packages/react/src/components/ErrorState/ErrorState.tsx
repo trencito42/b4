@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export interface ErrorStateProps {
   /** Illustration or icon. Rendered `aria-hidden` — the title carries the meaning. */
@@ -24,9 +24,16 @@ const DefaultIcon = (
  * tech should announce proactively. Composes inside `Card` or stands
  * alone in a page body.
  */
-export function ErrorState({ icon = DefaultIcon, title, description, action, className }: ErrorStateProps) {
+export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function ErrorState(
+  { icon = DefaultIcon, title, description, action, className },
+  ref,
+) {
   return (
-    <div role="alert" className={["b4-error-state", className ?? ""].filter(Boolean).join(" ")}>
+    <div
+      ref={ref}
+      role="alert"
+      className={["b4-error-state", className ?? ""].filter(Boolean).join(" ")}
+    >
       <span className="b4-error-state__icon" aria-hidden="true">
         {icon}
       </span>
@@ -35,4 +42,4 @@ export function ErrorState({ icon = DefaultIcon, title, description, action, cla
       {action && <div className="b4-error-state__action">{action}</div>}
     </div>
   );
-}
+});

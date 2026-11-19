@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { forwardRef, type CSSProperties } from "react";
 
 export type SkeletonVariant = "text" | "circle" | "rect";
 
@@ -18,16 +18,20 @@ export interface SkeletonProps {
  * version of that pattern) rather than announcing each skeleton shape
  * individually.
  */
-export function Skeleton({ variant = "text", width, height, className }: SkeletonProps) {
+export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(function Skeleton(
+  { variant = "text", width, height, className },
+  ref,
+) {
   const style: CSSProperties = {};
   if (width !== undefined) style.width = width;
   if (height !== undefined) style.height = height;
 
   return (
     <span
+      ref={ref}
       aria-hidden="true"
       className={["b4-skeleton", `b4-skeleton--${variant}`, className ?? ""].filter(Boolean).join(" ")}
       style={style}
     />
   );
-}
+});

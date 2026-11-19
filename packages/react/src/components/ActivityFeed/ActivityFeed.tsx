@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { Avatar } from "../Avatar/Avatar";
 
 export interface ActivityFeedItem {
@@ -22,9 +22,12 @@ export interface ActivityFeedProps {
  * with no "who"). Reuses `Avatar` rather than reimplementing initials/
  * image-fallback logic.
  */
-export function ActivityFeed({ items, className }: ActivityFeedProps) {
+export const ActivityFeed = forwardRef<HTMLOListElement, ActivityFeedProps>(function ActivityFeed(
+  { items, className },
+  ref,
+) {
   return (
-    <ol className={["b4-activity-feed", className ?? ""].filter(Boolean).join(" ")}>
+    <ol ref={ref} className={["b4-activity-feed", className ?? ""].filter(Boolean).join(" ")}>
       {items.map((item) => (
         <li key={item.id} className="b4-activity-feed__item">
           <Avatar name={item.actorName} src={item.actorAvatarSrc} size="sm" className="b4-activity-feed__avatar" />
@@ -38,4 +41,4 @@ export function ActivityFeed({ items, className }: ActivityFeedProps) {
       ))}
     </ol>
   );
-}
+});

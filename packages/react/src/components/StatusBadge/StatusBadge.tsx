@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export type StatusBadgeStatus = "online" | "offline" | "degraded" | "idle";
 
@@ -23,9 +23,12 @@ const dotToneByStatus: Record<StatusBadgeStatus, string> = {
  * low-contrast display must still be able to tell the states apart from
  * the word alone.
  */
-export function StatusBadge({ status, children, className }: StatusBadgeProps) {
+export const StatusBadge = forwardRef<HTMLSpanElement, StatusBadgeProps>(function StatusBadge(
+  { status, children, className },
+  ref,
+) {
   return (
-    <span className={["b4-status-badge", className ?? ""].filter(Boolean).join(" ")}>
+    <span ref={ref} className={["b4-status-badge", className ?? ""].filter(Boolean).join(" ")}>
       <span
         className={`b4-status-badge__dot b4-status-badge__dot--${dotToneByStatus[status]}`}
         aria-hidden="true"
@@ -33,4 +36,4 @@ export function StatusBadge({ status, children, className }: StatusBadgeProps) {
       <span className="b4-status-badge__label">{children}</span>
     </span>
   );
-}
+});

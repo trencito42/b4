@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { Badge } from "../Badge/Badge.js";
 import { Button } from "../Button/Button.js";
 
@@ -30,9 +30,12 @@ const CloseIcon = (
  * removable chips showing what's currently applied, reusing `Badge`
  * for the chip itself rather than a new label component.
  */
-export function FilterBar({ children, activeFilters = [], onRemoveFilter, onClearAll, className }: FilterBarProps) {
+export const FilterBar = forwardRef<HTMLDivElement, FilterBarProps>(function FilterBar(
+  { children, activeFilters = [], onRemoveFilter, onClearAll, className },
+  ref,
+) {
   return (
-    <div className={["b4-filter-bar", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-filter-bar", className ?? ""].filter(Boolean).join(" ")}>
       <div className="b4-filter-bar__controls">{children}</div>
       {activeFilters.length > 0 && (
         <div className="b4-filter-bar__active">
@@ -69,4 +72,4 @@ export function FilterBar({ children, activeFilters = [], onRemoveFilter, onClea
       )}
     </div>
   );
-}
+});

@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 export interface StepperStep {
   label: string;
   description?: string;
@@ -27,9 +29,13 @@ const CheckIcon = (
  * one rather than color alone. Pure presentational — no Base UI primitive
  * exists for multi-step progress.
  */
-export function Stepper({ steps, activeStep, orientation = "horizontal", className, ...rest }: StepperProps) {
+export const Stepper = forwardRef<HTMLOListElement, StepperProps>(function Stepper(
+  { steps, activeStep, orientation = "horizontal", className, ...rest },
+  ref,
+) {
   return (
     <ol
+      ref={ref}
       className={[
         "b4-stepper",
         `b4-stepper--${orientation}`,
@@ -61,4 +67,4 @@ export function Stepper({ steps, activeStep, orientation = "horizontal", classNa
       })}
     </ol>
   );
-}
+});

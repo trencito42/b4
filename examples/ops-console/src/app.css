@@ -1,0 +1,245 @@
+/*
+ * Operations console fixture styles.
+ *
+ * Every colour, spacing step, radius, border width and type size below is
+ * read from a B4 token (`var(--b4-*)`), so the Graphite and Porcelain themes
+ * both resolve from these same rules. The only non-token lengths are viewport
+ * units used to size the two-pane workspace, which has to follow the window.
+ */
+
+.ops-header {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-7);
+  padding: var(--b4-space-5) var(--b4-space-7);
+  background-color: var(--b4-surface-1);
+  font-family: var(--b4-font-sans);
+}
+
+.ops-header__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-6);
+  min-width: 0;
+}
+
+.ops-header__brand {
+  font-size: var(--b4-text-md);
+  font-weight: var(--b4-weight-semibold);
+  color: var(--b4-text-primary);
+  white-space: nowrap;
+}
+
+.ops-header__search {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--b4-space-5);
+  max-width: calc(var(--b4-space-13) * 8);
+}
+
+.ops-header__shortcut {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.ops-header__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--b4-space-5);
+}
+
+.ops-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-8);
+  padding: var(--b4-space-9);
+  font-family: var(--b4-font-sans);
+}
+
+.ops-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--b4-space-13) * 4), 1fr));
+  gap: var(--b4-space-6);
+}
+
+.ops-meters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--b4-space-13) * 4), 1fr));
+  gap: var(--b4-space-7);
+  padding: var(--b4-space-7);
+  border: var(--b4-size-pixel) solid var(--b4-border-subtle);
+  border-radius: var(--b4-surface-radius);
+  background-color: var(--b4-surface-1);
+}
+
+.ops-workspace {
+  height: 60vh;
+}
+
+.ops-panels {
+  border: var(--b4-size-pixel) solid var(--b4-border-subtle);
+  border-radius: var(--b4-surface-radius);
+  overflow: hidden;
+}
+
+.ops-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-6);
+  padding: var(--b4-space-7);
+}
+
+.ops-pane--table {
+  background-color: var(--b4-surface-canvas);
+}
+
+.ops-pane--context {
+  background-color: var(--b4-surface-1);
+}
+
+.ops-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--b4-space-5);
+}
+
+.ops-table-toolbar__side {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-4);
+}
+
+.ops-table-wrap {
+  overflow-x: auto;
+}
+
+/* Keep the incident queue readable instead of crushing every column. */
+.ops-table {
+  min-width: calc(var(--b4-space-13) * 9);
+}
+
+.ops-incident-ref {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--b4-accent-text);
+  font: inherit;
+  font-weight: var(--b4-weight-semibold);
+  cursor: pointer;
+}
+
+.ops-incident-ref:hover {
+  text-decoration: underline;
+}
+
+.ops-incident-ref:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
+  border-radius: var(--b4-radius-xs);
+}
+
+.ops-incident-ref[aria-current="true"] {
+  text-decoration: underline;
+  text-underline-offset: var(--b4-space-2);
+}
+
+.ops-incident-title {
+  display: inline-block;
+  max-width: calc(var(--b4-space-13) * 3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  color: var(--b4-text-primary);
+}
+
+.ops-owner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-4);
+  white-space: nowrap;
+}
+
+.ops-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ops-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-5);
+}
+
+.ops-legend__text {
+  color: var(--b4-text-secondary);
+  font-size: var(--b4-text-sm);
+}
+
+.ops-menu-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-6);
+}
+
+.ops-runbook {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-5);
+  padding: var(--b4-space-6) 0;
+  color: var(--b4-text-secondary);
+}
+
+.ops-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-7);
+}
+
+.ops-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--b4-space-5);
+}
+
+.ops-handover {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-5);
+  margin: 0;
+  padding-left: var(--b4-space-8);
+  color: var(--b4-text-secondary);
+}
+
+.ops-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-7);
+  padding-top: var(--b4-space-5);
+}
+
+.ops-drawer__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-5);
+}
+
+@media (max-width: 900px) {
+  .ops-header {
+    flex-wrap: wrap;
+  }
+
+  .ops-header__search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+}

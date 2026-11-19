@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
 
@@ -15,10 +15,16 @@ export interface BadgeProps {
  * label rather than color alone (see DESIGN_PRINCIPLES.md's "color never
  * carries meaning alone" rule).
  */
-export function Badge({ tone = "neutral", children, className }: BadgeProps) {
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
+  { tone = "neutral", children, className },
+  ref,
+) {
   return (
-    <span className={["b4-badge", `b4-badge--${tone}`, className ?? ""].filter(Boolean).join(" ")}>
+    <span
+      ref={ref}
+      className={["b4-badge", `b4-badge--${tone}`, className ?? ""].filter(Boolean).join(" ")}
+    >
       {children}
     </span>
   );
-}
+});

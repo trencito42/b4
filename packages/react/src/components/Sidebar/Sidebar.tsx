@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export interface SidebarItem {
   id: string;
@@ -30,9 +30,12 @@ export interface SidebarProps {
  * "selection is a surface, not a checkmark" rule `SegmentedControl`
  * and `DropdownMenu` already follow.
  */
-export function Sidebar({ sections, activeItemId, className }: SidebarProps) {
+export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
+  { sections, activeItemId, className },
+  ref,
+) {
   return (
-    <div className={["b4-sidebar", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-sidebar", className ?? ""].filter(Boolean).join(" ")}>
       {sections.map((section) => (
         <div key={section.id} className="b4-sidebar__section">
           {section.label && <p className="b4-sidebar__section-label">{section.label}</p>}
@@ -78,4 +81,4 @@ export function Sidebar({ sections, activeItemId, className }: SidebarProps) {
       ))}
     </div>
   );
-}
+});

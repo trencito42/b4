@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { Toggle } from "@base-ui/react/toggle";
 
 export type ToggleButtonSize = "sm" | "md" | "lg";
@@ -20,17 +20,21 @@ export interface ToggleButtonProps {
  * (no `ToggleGroup` wrapper, since there's nothing to coordinate between
  * multiple items here).
  */
-export function ToggleButton({
-  pressed,
-  defaultPressed,
-  onPressedChange,
-  disabled = false,
-  size = "md",
-  children,
-  className,
-}: ToggleButtonProps) {
+export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(function ToggleButton(
+  {
+    pressed,
+    defaultPressed,
+    onPressedChange,
+    disabled = false,
+    size = "md",
+    children,
+    className,
+  },
+  ref,
+) {
   return (
     <Toggle
+      ref={ref}
       pressed={pressed}
       defaultPressed={defaultPressed}
       onPressedChange={onPressedChange}
@@ -42,4 +46,4 @@ export function ToggleButton({
       {children}
     </Toggle>
   );
-}
+});

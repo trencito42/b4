@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export interface ButtonGroupProps {
   /** `Button`/`IconButton`/`ToggleButton` elements to join visually. */
@@ -16,10 +16,18 @@ export interface ButtonGroupProps {
  * every button is an independent action; use `SegmentedControl` when
  * exactly one of several options should be selected at a time.
  */
-export function ButtonGroup({ children, className, ...rest }: ButtonGroupProps) {
+export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function ButtonGroup(
+  { children, className, ...rest },
+  ref,
+) {
   return (
-    <div role="group" className={["b4-button-group", className ?? ""].filter(Boolean).join(" ")} {...rest}>
+    <div
+      ref={ref}
+      role="group"
+      className={["b4-button-group", className ?? ""].filter(Boolean).join(" ")}
+      {...rest}
+    >
       {children}
     </div>
   );
-}
+});

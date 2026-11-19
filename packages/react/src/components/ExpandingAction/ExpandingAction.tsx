@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { forwardRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { springs, useReducedMotion } from "@b4/motion";
 
@@ -21,19 +21,23 @@ export interface ExpandingActionProps {
  * dimensions (`--b4-control-height`). When expanded, it fluidly widens into
  * a pill capsule.
  */
-export function ExpandingAction({
-  icon,
-  label,
-  onClick,
-  disabled = false,
-  size = "md",
-  className,
-}: ExpandingActionProps) {
+export const ExpandingAction = forwardRef<HTMLButtonElement, ExpandingActionProps>(function ExpandingAction(
+  {
+    icon,
+    label,
+    onClick,
+    disabled = false,
+    size = "md",
+    className,
+  },
+  ref,
+) {
   const [expanded, setExpanded] = useState(false);
   const reducedMotion = useReducedMotion();
 
   return (
     <motion.button
+      ref={ref}
       type="button"
       layout
       disabled={disabled}
@@ -75,4 +79,4 @@ export function ExpandingAction({
       </AnimatePresence>
     </motion.button>
   );
-}
+});

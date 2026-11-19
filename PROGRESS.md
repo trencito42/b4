@@ -57,6 +57,44 @@ sharing `Slider`'s implementation.
   not theme colours — and carry written, in-file exemptions that the
   audit lists rather than hides.
 
+### Real defects the consumer fixtures found, after the gate was already green
+
+Building the two consumer fixtures put the library through a real consumer's
+hands for the first time, and that found a defect the unit tests could not:
+
+- **`SegmentedControl` never committed a plain mouse click.** Two causes
+  stacked. (1) `usePointerSelection` captured the pointer on `pointerdown`,
+  so the browser retargeted the `click` to the container instead of the
+  pressed segment — Base UI's `Toggle` never saw the click at all. (2) The
+  press-down preview moved the group's selected value onto the pressed
+  segment *before* the click landed, and Base UI computes
+  `nextPressed = !pressed` from the group value, so the click then read as
+  "toggle the already-selected segment off" and was discarded. The hook's
+  own commit path only runs once the 6px scrub threshold is exceeded, so a
+  plain tap fell through every path and did nothing.
+  Fixed in `usePointerSelection`: the pointer is captured only once a scrub
+  is confirmed, and the preview starts with the scrub rather than with the
+  press. The capsule therefore travels to the segment on commit, and the
+  live scrub preview begins once the drag is genuinely under way.
+  Three regression tests, **each one verified to fail against the old
+  code** before the fix was accepted:
+  `e2e/segmented-control.spec.ts` (a real mouse click, both themes), a
+  jsdom test that gives the segments real rects — jsdom has no layout, so
+  `user.click` always reports the pointer at (0,0) and the hit-testing
+  always resolved to the first segment, which is precisely why the old
+  suite passed green — and a hook test asserting the pointer is not
+  captured on `pointerdown`.
+- **Ref forwarding was missing on 33 leaf components.** They rendered a
+  root element but never accepted a `ref`, so a consumer could not measure,
+  focus or scroll to them. All 33 now forward a ref to their real root
+  element (`forwardRef`, named function expression so the display name
+  survives). Five were deliberately left alone and the reason is recorded
+  in the component's own source: `ColorPicker`, `FileUpload` and
+  `TimePicker` render through `Field`, and `FileExplorer` and
+  `NotificationPanel` render through `TreeView` and `Popover` — none of
+  which forwards a ref yet, and each of those is a compound component
+  where a single ref target would be ambiguous.
+
 ## First-Party Intelligent Text Morphing Engine (`TextMorph`) (2026-11-19)
 
 **Note on how this landed (2026-11-19):** two sessions worked on

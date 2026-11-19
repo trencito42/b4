@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export interface EmptyStateProps {
   /** Illustration or icon. Rendered `aria-hidden` — the title carries the meaning. */
@@ -24,9 +24,12 @@ const DefaultIcon = (
  * data is still loading). Composes inside `Card` or stands alone in a
  * page body.
  */
-export function EmptyState({ icon = DefaultIcon, title, description, action, className }: EmptyStateProps) {
+export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(function EmptyState(
+  { icon = DefaultIcon, title, description, action, className },
+  ref,
+) {
   return (
-    <div className={["b4-empty-state", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-empty-state", className ?? ""].filter(Boolean).join(" ")}>
       <span className="b4-empty-state__icon" aria-hidden="true">
         {icon}
       </span>
@@ -35,4 +38,4 @@ export function EmptyState({ icon = DefaultIcon, title, description, action, cla
       {action && <div className="b4-empty-state__action">{action}</div>}
     </div>
   );
-}
+});

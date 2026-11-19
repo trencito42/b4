@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { IconButton } from "../IconButton/IconButton.js";
 
 export interface InspectorProperty {
@@ -33,9 +33,12 @@ const CloseIcon = (
  * `ResizablePanels`, inspecting whatever's selected in the main
  * content area.
  */
-export function InspectorPanel({ title, sections, onClose, className }: InspectorPanelProps) {
+export const InspectorPanel = forwardRef<HTMLElement, InspectorPanelProps>(function InspectorPanel(
+  { title, sections, onClose, className },
+  ref,
+) {
   return (
-    <aside className={["b4-inspector-panel", className ?? ""].filter(Boolean).join(" ")}>
+    <aside ref={ref} className={["b4-inspector-panel", className ?? ""].filter(Boolean).join(" ")}>
       <div className="b4-inspector-panel__header">
         <p className="b4-inspector-panel__title">{title}</p>
         {onClose && <IconButton variant="ghost" size="sm" aria-label="Close panel" icon={CloseIcon} onClick={onClose} />}
@@ -57,4 +60,4 @@ export function InspectorPanel({ title, sections, onClose, className }: Inspecto
       </div>
     </aside>
   );
-}
+});

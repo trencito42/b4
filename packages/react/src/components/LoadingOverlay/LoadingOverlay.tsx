@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useReducedMotion } from "@b4/motion";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner.js";
@@ -25,20 +25,24 @@ export interface LoadingOverlayProps {
  * needs its own positioning context, the same contract as any
  * `position: absolute` overlay.
  */
-export function LoadingOverlay({
-  visible,
-  label = "Loading",
-  message,
-  spinnerSize = "lg",
-  variant = "absolute",
-  className,
-}: LoadingOverlayProps) {
+export const LoadingOverlay = forwardRef<HTMLDivElement, LoadingOverlayProps>(function LoadingOverlay(
+  {
+    visible,
+    label = "Loading",
+    message,
+    spinnerSize = "lg",
+    variant = "absolute",
+    className,
+  },
+  ref,
+) {
   const reducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
+          ref={ref}
           className={[
             "b4-loading-overlay",
             `b4-loading-overlay--${variant}`,
@@ -59,4 +63,4 @@ export function LoadingOverlay({
       )}
     </AnimatePresence>
   );
-}
+});

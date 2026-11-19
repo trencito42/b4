@@ -1,6 +1,33 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+const themes = ["graphite", "porcelain"] as const;
+
+for (const theme of themes) {
+  test(`SegmentedControl commits a plain mouse click on ${theme}`, async ({ page }) => {
+    await page.goto(
+      `/iframe.html?id=family-a-actions-identity-segmentedcontrol--three-way&globals=b4Theme:${theme}`,
+    );
+
+    const day = page.getByRole("button", { name: "Day" });
+    const week = page.getByRole("button", { name: "Week" });
+    const month = page.getByRole("button", { name: "Month" });
+
+    await expect(week).toHaveAttribute("data-pressed", "");
+
+    // A real mouse click, not a keyboard activation: this is the path that
+    // used to do nothing, because the pointer was captured on pointerdown and
+    // the browser therefore retargeted the click to the container.
+    await month.click();
+    await expect(month).toHaveAttribute("data-pressed", "");
+    await expect(week).not.toHaveAttribute("data-pressed");
+
+    await day.click();
+    await expect(day).toHaveAttribute("data-pressed", "");
+    await expect(month).not.toHaveAttribute("data-pressed");
+  });
+}
+
 test("SegmentedControl Changelog/Login story renders, is axe-clean, and is keyboard operable", async ({
   page,
 }) => {

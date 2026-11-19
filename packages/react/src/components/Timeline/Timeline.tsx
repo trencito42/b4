@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 export type TimelineItemTone = "neutral" | "success" | "warning" | "danger" | "info";
 
@@ -23,9 +23,12 @@ export interface TimelineProps {
  * history). Renders as a real ordered list so screen readers announce
  * position/count per entry.
  */
-export function Timeline({ items, className }: TimelineProps) {
+export const Timeline = forwardRef<HTMLOListElement, TimelineProps>(function Timeline(
+  { items, className },
+  ref,
+) {
   return (
-    <ol className={["b4-timeline", className ?? ""].filter(Boolean).join(" ")}>
+    <ol ref={ref} className={["b4-timeline", className ?? ""].filter(Boolean).join(" ")}>
       {items.map((item) => (
         <li key={item.id} className="b4-timeline__item">
           <span
@@ -43,4 +46,4 @@ export function Timeline({ items, className }: TimelineProps) {
       ))}
     </ol>
   );
-}
+});

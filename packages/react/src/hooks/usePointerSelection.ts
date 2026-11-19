@@ -123,13 +123,31 @@ export function usePointerSelection<T extends string>({
       if (disabled || !enabled) return;
       didScrubRef.current = false;
       const hit = findItemFromPoint(e.clientX, e.clientY);
+      // Record the pressed item, but do NOT preview it yet. A preview here
+      // would move the group's selected value onto the pressed item before
+      // the click lands, and the click handler would then read it as "already
+      // selected" and toggle it back off — the tap would never commit. The
+      // preview starts once a scrub is genuinely under way.
       if (hit) {
         lastValidHitRef.current = hit;
-        setPreviewValue(hit);
       }
     },
     onGestureMove: (_dx, _dy, e) => {
       if (disabled || !enabled) return;
+      // Capture the pointer HERE, not at pointerdown. Capturing early
+      // retargets the browser's `click` to the container instead of the
+      // pressed item, so a plain click never reaches the item's own click
+      // handler — the tap silently does nothing. Taking the capture only
+      // once the scrub intent is confirmed keeps taps intact and still
+      // gives a drag the capture it needs to keep tracking.
+      const container = containerRef.current;
+      if (container && !container.hasPointerCapture?.(e.pointerId)) {
+        try {
+          container.setPointerCapture(e.pointerId);
+        } catch {
+          // Pointer already released — there is nothing left to capture.
+        }
+      }
       didScrubRef.current = true;
       if (!isScrubbingRef.current) {
         isScrubbingRef.current = true;
@@ -175,11 +193,6 @@ export function usePointerSelection<T extends string>({
     (e: React.PointerEvent<HTMLElement>) => {
       if (disabled || !enabled) return;
       containerRef.current = e.currentTarget;
-      try {
-        e.currentTarget.setPointerCapture(e.pointerId);
-      } catch {
-        // Fallback for non-supporting environments
-      }
       gesture.handlePointerDown(e);
     },
     [disabled, enabled, gesture],

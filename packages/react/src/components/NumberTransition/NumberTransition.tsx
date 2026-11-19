@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { forwardRef, useRef } from "react";
 import { TextTransition } from "../TextTransition/TextTransition.js";
 import { TextMorph } from "../TextMorph/TextMorph.js";
 
@@ -30,15 +30,19 @@ const defaultFormatter = new Intl.NumberFormat(undefined);
  * mission brief's "numeric changes" requirement. Formatting is pluggable
  * so this works for counts, currency, and percentages alike.
  */
-export function NumberTransition({
-  value,
-  format = (n) => defaultFormatter.format(n),
-  mode = "vertical",
-  className,
-}: NumberTransitionProps) {
+export const NumberTransition = forwardRef<HTMLSpanElement, NumberTransitionProps>(function NumberTransition(
+  {
+    value,
+    format = (n) => defaultFormatter.format(n),
+    mode = "vertical",
+    className,
+  },
+  ref,
+) {
   if (mode === "digits" || mode === "morph") {
     return (
       <TextMorph
+        ref={ref}
         value={format(value)}
         mode="numbers"
         className={["b4-number-transition", className ?? ""].filter(Boolean).join(" ")}
@@ -52,10 +56,11 @@ export function NumberTransition({
 
   return (
     <TextTransition
+      ref={ref}
       value={format(value)}
       mode="vertical"
       direction={direction}
       className={["b4-number-transition", className ?? ""].filter(Boolean).join(" ")}
     />
   );
-}
+});

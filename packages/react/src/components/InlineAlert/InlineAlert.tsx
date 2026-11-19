@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { IconButton } from "../IconButton/IconButton.js";
 
 export type InlineAlertTone = "info" | "success" | "warning" | "danger";
@@ -61,9 +61,16 @@ const toneLabel: Record<InlineAlertTone, string> = {
  * see `DESIGN_PRINCIPLES.md`'s "color never carries meaning alone"
  * rule, already established by `StatusBadge`.
  */
-export function InlineAlert({ tone = "info", title, children, dismissible = false, onDismiss, className }: InlineAlertProps) {
+export const InlineAlert = forwardRef<HTMLDivElement, InlineAlertProps>(function InlineAlert(
+  { tone = "info", title, children, dismissible = false, onDismiss, className },
+  ref,
+) {
   return (
-    <div role="alert" className={["b4-inline-alert", `b4-inline-alert--${tone}`, className ?? ""].filter(Boolean).join(" ")}>
+    <div
+      ref={ref}
+      role="alert"
+      className={["b4-inline-alert", `b4-inline-alert--${tone}`, className ?? ""].filter(Boolean).join(" ")}
+    >
       <span className="b4-inline-alert__icon" aria-hidden="true">
         {iconByTone[tone]}
       </span>
@@ -84,4 +91,4 @@ export function InlineAlert({ tone = "info", title, children, dismissible = fals
       )}
     </div>
   );
-}
+});

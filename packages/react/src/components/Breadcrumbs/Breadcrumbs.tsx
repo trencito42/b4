@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { Link } from "../Link/Link.js";
 
 export interface BreadcrumbItem {
@@ -27,9 +27,12 @@ const ChevronIcon = (
  * without one render as plain text (e.g. a non-navigable ellipsis-style
  * ancestor).
  */
-export function Breadcrumbs({ items, className, ...rest }: BreadcrumbsProps) {
+export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(function Breadcrumbs(
+  { items, className, ...rest },
+  ref,
+) {
   return (
-    <nav className={["b4-breadcrumbs", className ?? ""].filter(Boolean).join(" ")} {...rest}>
+    <nav ref={ref} className={["b4-breadcrumbs", className ?? ""].filter(Boolean).join(" ")} {...rest}>
       <ol className="b4-breadcrumbs__list">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
@@ -57,4 +60,4 @@ export function Breadcrumbs({ items, className, ...rest }: BreadcrumbsProps) {
       </ol>
     </nav>
   );
-}
+});

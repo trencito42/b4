@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Avatar, type AvatarSize } from "../Avatar/Avatar.js";
 
 export interface AvatarGroupPerson {
@@ -18,12 +19,16 @@ export interface AvatarGroupProps {
  * assignees on a ticket, participants in a thread. Overflow is a real
  * count derived from `people.length - max`, not a decorative cutoff.
  */
-export function AvatarGroup({ people, max = 4, size = "md", className }: AvatarGroupProps) {
+export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(function AvatarGroup(
+  { people, max = 4, size = "md", className },
+  ref,
+) {
   const visible = people.slice(0, max);
   const overflow = people.length - visible.length;
 
   return (
     <div
+      ref={ref}
       className={["b4-avatar-group", `b4-avatar-group--${size}`, className ?? ""]
         .filter(Boolean)
         .join(" ")}
@@ -44,4 +49,4 @@ export function AvatarGroup({ people, max = 4, size = "md", className }: AvatarG
       )}
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { Progress as BaseProgress } from "@base-ui/react/progress";
 
 export interface CircularProgressProps {
@@ -22,17 +22,20 @@ export interface CircularProgressProps {
  * genuine SVG `stroke-dashoffset` ring rather than a CSS `conic-
  * gradient` approximation or a rotating border trick.
  */
-export function CircularProgress({
-  label,
-  hideLabel = false,
-  value,
-  min = 0,
-  max = 100,
-  size = 48,
-  strokeWidth = 4,
-  showValue = false,
-  className,
-}: CircularProgressProps) {
+export const CircularProgress = forwardRef<HTMLDivElement, CircularProgressProps>(function CircularProgress(
+  {
+    label,
+    hideLabel = false,
+    value,
+    min = 0,
+    max = 100,
+    size = 48,
+    strokeWidth = 4,
+    showValue = false,
+    className,
+  },
+  ref,
+) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const percentage = value === null ? null : Math.min(1, Math.max(0, (value - min) / (max - min)));
@@ -40,6 +43,7 @@ export function CircularProgress({
 
   return (
     <BaseProgress.Root
+      ref={ref}
       value={value}
       min={min}
       max={max}
@@ -76,4 +80,4 @@ export function CircularProgress({
       </BaseProgress.Label>
     </BaseProgress.Root>
   );
-}
+});

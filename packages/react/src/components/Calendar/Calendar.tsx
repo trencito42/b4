@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { forwardRef, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { IconButton } from "../IconButton/IconButton.js";
 import { WEEKDAY_LABELS, monthYearFormatter, sameDay, startOfMonth, addMonths, addDays, buildMonthGrid } from "../../internal/monthGrid.js";
 
@@ -35,15 +35,18 @@ export interface CalendarProps {
  * PageDown pattern by convention, same ARIA APG grid pattern as
  * DatePicker (`role="grid"`/`"row"`/`"gridcell"`, roving tabindex).
  */
-export function Calendar({
-  events = [],
-  month: controlledMonth,
-  defaultMonth,
-  onMonthChange,
-  onDateSelect,
-  maxEventsPerDay = 3,
-  className,
-}: CalendarProps) {
+export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
+  {
+    events = [],
+    month: controlledMonth,
+    defaultMonth,
+    onMonthChange,
+    onDateSelect,
+    maxEventsPerDay = 3,
+    className,
+  },
+  ref,
+) {
   const [uncontrolledMonth, setUncontrolledMonth] = useState(() => startOfMonth(defaultMonth ?? new Date()));
   const visibleMonth = controlledMonth !== undefined ? startOfMonth(controlledMonth) : uncontrolledMonth;
   const [focusedDate, setFocusedDate] = useState(() => defaultMonth ?? controlledMonth ?? new Date());
@@ -114,7 +117,7 @@ export function Calendar({
   }
 
   return (
-    <div className={["b4-calendar", className ?? ""].filter(Boolean).join(" ")}>
+    <div ref={ref} className={["b4-calendar", className ?? ""].filter(Boolean).join(" ")}>
       <div className="b4-calendar__header">
         <IconButton
           variant="ghost"
@@ -195,7 +198,7 @@ export function Calendar({
       </div>
     </div>
   );
-}
+});
 
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   return (

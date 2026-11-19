@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { springs, tween, useReducedMotion } from "@b4/motion";
 import { TextMorph } from "../TextMorph/TextMorph.js";
 
@@ -77,16 +77,20 @@ function getVariants(mode: TextTransitionMode, direction: TextTransitionDirectio
  *   a spring's oscillation would look like an accidental blur pulse
  *   rather than physical motion, so it keeps a plain tween.
  */
-export function TextTransition({
-  value,
-  mode = "crossfade",
-  direction = "forward",
-  className,
-  children,
-}: TextTransitionProps) {
+export const TextTransition = forwardRef<HTMLSpanElement, TextTransitionProps>(function TextTransition(
+  {
+    value,
+    mode = "crossfade",
+    direction = "forward",
+    className,
+    children,
+  },
+  ref,
+) {
   if (mode === "morph") {
     return (
       <TextMorph
+        ref={ref}
         value={value}
         className={["b4-text-transition", className ?? ""].filter(Boolean).join(" ")}
       />
@@ -103,6 +107,7 @@ export function TextTransition({
 
   return (
     <motion.span
+      ref={ref}
       layout
       transition={reducedMotion ? { duration: 0 } : tween("base", "standard")}
       className={["b4-text-transition", className ?? ""].filter(Boolean).join(" ")}
@@ -121,4 +126,4 @@ export function TextTransition({
       </AnimatePresence>
     </motion.span>
   );
-}
+});
