@@ -56,6 +56,7 @@ export const Switch = forwardRef<
         name={name}
         id={id}
         className="b4-switch__track"
+        nativeButton
         render={(props, state) => (
           <motion.button
             {...motionCompatibleProps(props)}
