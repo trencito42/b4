@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## AppShell — Family F's first component (2026-11-19)
+
+Page-level layout scaffold — real `<header>`/`<nav>`/`<main>`
+landmarks, independently scrolling sidebar/content regions. Sidebar
+landmark omitted entirely when no `sidebar` prop given (no spurious
+empty nav). No new gotchas. Full gate: typecheck, @b4/react tests
+411/411, build, Storybook build, playwright 326/326 (run twice).
+**VERIFIED**. Family F now: 1/10.
+
 ## Calendar — Family D's 15th and final component (2026-11-19)
 
 **Family D — Data & Content is now complete: all 15/15 components

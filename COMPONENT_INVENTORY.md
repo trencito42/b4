@@ -108,8 +108,19 @@ DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 
 ## Family F — Application Patterns
 
-AppShell, Sidebar, PageHeader, Toolbar, FilterBar, InspectorPanel,
-ResizablePanels, ResourceMeter, FileExplorer, QueryEditor — all **PLANNED**.
+| Component | Status |
+|---|---|
+| AppShell | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
+| Sidebar | PLANNED |
+| PageHeader | PLANNED |
+| Toolbar | PLANNED |
+| FilterBar | PLANNED |
+| InspectorPanel | PLANNED |
+| ResizablePanels | PLANNED |
+| ResourceMeter | PLANNED |
+| FileExplorer | PLANNED |
+| QueryEditor | PLANNED |
+
 FileExplorer and QueryEditor must have real functionality (actual tree
 navigation / actual syntax-aware editing), not static mockups.
 

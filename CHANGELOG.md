@@ -5,6 +5,16 @@ a per-npm-release history.
 
 ## Unreleased
 
+### AppShell added — Family F started, 1/10 (2026-11-19)
+
+- Added `AppShell`: the page-level layout scaffold — real
+  `<header>`/`<nav>`/`<main>` landmarks, independently scrolling
+  sidebar/content regions. Sidebar landmark omitted entirely when no
+  `sidebar` prop is given.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (411/411), `pnpm build`, Storybook build, `npx playwright test`
+  (326/326, run twice). **VERIFIED**.
+
 ### Calendar added — Family D complete, 15/15 (2026-11-19)
 
 - Added `Calendar`: a real read/display month calendar with events on

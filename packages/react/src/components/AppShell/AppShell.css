@@ -1,0 +1,32 @@
+.b4-app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background-color: var(--b4-surface-canvas);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-app-shell__header {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--b4-border-subtle);
+  background-color: var(--b4-surface-1);
+}
+
+.b4-app-shell__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.b4-app-shell__sidebar {
+  flex: 0 0 auto;
+  overflow-y: auto;
+  border-right: 1px solid var(--b4-border-subtle);
+  background-color: var(--b4-surface-1);
+}
+
+.b4-app-shell__content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}

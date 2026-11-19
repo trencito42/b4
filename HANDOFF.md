@@ -537,6 +537,19 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## AppShell — Family F's first component (2026-11-19)
+
+**VERIFIED**. The page-level layout scaffold the rest of Family F (and
+real pages) compose inside — real `<header>`/`<nav>`/`<main>`
+landmarks, not `<div>`s. `header` is fixed-height and spans the full
+width; `sidebar` and the main content area each fill and scroll within
+the remaining viewport height independently. The sidebar landmark is
+omitted entirely (not rendered with an empty accessible name) when no
+`sidebar` prop is passed — a page using only `header`+`children`
+shouldn't get a spurious empty `<nav>` landmark. No new gotchas. Full
+gate: typecheck, @b4/react tests 411/411, build, Storybook build,
+playwright 326/326 (run twice). Family F now: 1/10.
+
 ## Calendar — Family D's 15th and final component (2026-11-19)
 
 **VERIFIED. Family D — Data & Content is now complete: all 15/15
@@ -882,15 +895,15 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: start Family F — the last family of core components.
+## Next action: continue Family F — Sidebar, PageHeader, Toolbar next
+(simpler, self-contained pieces that compose inside AppShell); then
+FilterBar, InspectorPanel, ResizablePanels, ResourceMeter; FileExplorer
+and QueryEditor last (the two that need real, non-mockup functionality).
 
-Family D is now complete (15/15 VERIFIED) — see the dedicated update
-above. Families A, B, C, D, E are all fully VERIFIED. Family F is the
-only family left — all 10 of its components
-(`AppShell`, `Sidebar`, `PageHeader`, `Toolbar`, `FilterBar`,
-`InspectorPanel`, `ResizablePanels`, `ResourceMeter`, `FileExplorer`,
-`QueryEditor`) are fully PLANNED, and it's explicitly the most "layout
-composition of other components" family — a natural last family, since it's
+Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
+all fully VERIFIED. Family F is now started (1/10: AppShell VERIFIED),
+and it's explicitly the most "layout composition of other components"
+family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled

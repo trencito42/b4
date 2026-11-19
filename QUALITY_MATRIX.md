@@ -1371,6 +1371,27 @@ passes, 322/322 each — no flakes this time).
 
 **Family D — Data & Content: 15/15 VERIFIED. Complete.**
 
+## AppShell — Family F's first component (2026-11-19)
+
+**VERIFIED**. The page-level layout scaffold the rest of Family F (and
+real pages) compose inside — real `<header>`/`<nav>`/`<main>`
+landmarks, not `<div>`s styled to look like regions. `header` spans
+the full width at a fixed height; `sidebar` and the main content area
+independently fill and scroll within the remaining viewport height,
+rather than the whole page scrolling as one block. The sidebar
+landmark is omitted entirely (not rendered with an empty label) when
+no `sidebar` prop is passed, so a page using only `header`+`children`
+doesn't get a spurious empty navigation landmark.
+
+No new gotchas — tokens and the established e2e page-isolation pattern
+both worked on the first attempt. Visually spot-checked in the browser
+pane in both themes before writing e2e, continuing the "verify by
+looking" practice from Family D.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(411/411), `pnpm build`, Storybook build, `npx playwright test`
+(326/326, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

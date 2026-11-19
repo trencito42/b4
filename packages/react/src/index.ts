@@ -219,3 +219,5 @@ export { DataGrid } from "./components/DataGrid/DataGrid.js";
 export type { DataGridProps, DataGridColumn, DataGridSort } from "./components/DataGrid/DataGrid.js";
 export { Calendar } from "./components/Calendar/Calendar.js";
 export type { CalendarProps, CalendarEvent, CalendarEventTone } from "./components/Calendar/Calendar.js";
+export { AppShell } from "./components/AppShell/AppShell.js";
+export type { AppShellProps } from "./components/AppShell/AppShell.js";
