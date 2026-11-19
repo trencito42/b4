@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### ResizablePanels added — Family F, 7/10 (2026-11-19)
+
+- Added `ResizablePanels`: a real two-pane split layout, built from
+  scratch (no Base UI primitive) on the WAI-ARIA interactive-separator
+  pattern. Resizable by pointer drag and keyboard (arrow keys,
+  Home/End).
+- Verification split across layers: keyboard resize tested directly
+  in the unit suite; pointer-drag resize covered by real-browser e2e
+  (jsdom has no real layout for `getBoundingClientRect()`).
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (443/443), `pnpm build`, Storybook build, `npx playwright test`
+  (348/348, run twice). **VERIFIED**.
+
 ### InspectorPanel added — Family F, 6/10 (2026-11-19)
 
 - Added `InspectorPanel`: properties panel for a selected item, real

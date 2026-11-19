@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## ResizablePanels — Family F's 7th component (2026-11-19)
+
+Real two-pane split layout, no Base UI primitive — built from scratch
+on the WAI-ARIA interactive-`separator` pattern. Genuinely resizable
+by pointer drag (real `getBoundingClientRect()` math,
+`setPointerCapture`) and keyboard (arrow keys + Home/End). Verified
+keyboard resize in the unit suite (geometry-independent); pointer drag
+only in real-browser e2e + a live manual check, since jsdom has no
+real layout. Divider's hit target is wider than its visible 1px line
+(checked visually). Full gate: typecheck, @b4/react tests 443/443,
+build, Storybook build, playwright 348/348 (run twice). **VERIFIED**.
+Family F now: 7/10.
+
 ## InspectorPanel — Family F's 6th component (2026-11-19)
 
 Properties panel for a selected item — real `<dl>`/`<dt>`/`<dd>`

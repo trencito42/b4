@@ -1514,6 +1514,37 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (437/437), `pnpm build`, Storybook build, `npx playwright test`
 (344/344, run twice for stability).
 
+## ResizablePanels — Family F's 7th component (2026-11-19)
+
+**VERIFIED**. A real two-pane split layout — no Base UI primitive
+exists for this, so it's built from scratch following the WAI-ARIA
+interactive-`separator` pattern (`role="separator"`,
+`aria-orientation`, `aria-valuenow`/`min`/`max`, focusable), genuinely
+resizable both by pointer drag (tracked via `pointermove`/`pointerup`
+on `window` after `setPointerCapture`, computing the new split from
+the container's real `getBoundingClientRect()`) and by keyboard
+(arrow keys adjust by a fixed step; `Home`/`End` jump to the
+configured min/max) — not a fixed-width layout with a decorative line
+between panels.
+
+Verification split deliberately across two layers, matched to what
+each layer can actually exercise: keyboard-driven resizing is tested
+directly in the unit suite (geometry-independent — it only needs
+component state logic, which jsdom can exercise fine); pointer-drag
+resizing needs real layout (`getBoundingClientRect()` returns zeroes
+in jsdom) so it's covered only by the real-browser e2e test, plus a
+live manual drag confirmed in the browser pane before either was
+written.
+
+The divider's actual drag/click hit target is wider than its 1px
+visible line (a `::before` pseudo-element extends it ±4px without
+affecting panel layout — a 1px pointer target is unusable) — checked
+visually, not assumed.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(443/443), `pnpm build`, Storybook build, `npx playwright test`
+(348/348, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

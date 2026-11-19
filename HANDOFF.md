@@ -537,6 +537,40 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## ResizablePanels — Family F's 7th component (2026-11-19)
+
+**VERIFIED**. No Base UI primitive for this — built from scratch on
+the WAI-ARIA interactive-`separator` pattern (`role="separator"`,
+`aria-orientation`, `aria-valuenow`/`min`/`max`, focusable). Genuinely
+resizable two ways: pointer drag (tracked via `pointermove`/
+`pointerup` listeners on `window` after `setPointerCapture` on the
+divider, computing the new split from the container's real
+`getBoundingClientRect()`) and keyboard (arrow keys step the split;
+`Home`/`End` jump to the configured min/max) — not a fixed-width
+layout with a decorative line between panels.
+
+**Verification deliberately split across layers to match what each
+can actually exercise**: keyboard-driven resizing is geometry-
+independent (pure component state logic), so it's tested directly in
+the unit suite, which jsdom handles fine. Pointer-drag resizing needs
+real layout — jsdom's `getBoundingClientRect()` always returns zeroes
+— so that path is covered only by the real-browser e2e test (a
+genuine `page.mouse.down()`/`move()`/`up()` sequence asserting the
+resulting `aria-valuenow`), plus a live manual drag confirmed in the
+browser pane before either was written. **Lesson**: don't try to force
+pointer-geometry interactions into jsdom unit tests — recognize which
+layer can actually prove the behavior and put the test there instead
+of writing a unit test that would pass vacuously.
+
+Also worth noting: the divider's actual drag/click hit target is wider
+than its 1px visible line — a `::before` pseudo-element extends it ±4px
+without affecting panel layout math, since a literal 1px pointer
+target would be unusable. Checked this visually in the browser, not
+just assumed it from the CSS.
+
+Full gate: typecheck, @b4/react tests 443/443, build, Storybook build,
+playwright 348/348 (run twice). Family F now: 7/10.
+
 ## InspectorPanel — Family F's 6th component (2026-11-19)
 
 **VERIFIED**. A properties panel for a selected item — real
@@ -1007,14 +1041,15 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: continue Family F — ResizablePanels next (simpler,
-self-contained; then ResourceMeter; FileExplorer and QueryEditor last
-(the two that need real, non-mockup functionality).
+## Next action: continue Family F — ResourceMeter next (simpler,
+self-contained); then FileExplorer and QueryEditor last (the two that
+need real, non-mockup functionality).
 
 Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
-all fully VERIFIED. Family F is now at 6/10 (AppShell, Sidebar,
-PageHeader, Toolbar, FilterBar, InspectorPanel VERIFIED), and it's
-explicitly the most "layout composition of other components" family — a natural last family, since it's
+all fully VERIFIED. Family F is now at 7/10 (AppShell, Sidebar,
+PageHeader, Toolbar, FilterBar, InspectorPanel, ResizablePanels
+VERIFIED), and it's explicitly the most "layout composition of other
+components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled
