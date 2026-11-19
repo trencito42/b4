@@ -47,7 +47,11 @@ export function RadioGroup<Value extends string>({
   const [selected, setSelected] = useControllableState<Value | undefined>({
     value,
     defaultValue,
-    onChange: onValueChange,
+    onChange: (val) => {
+      if (val !== undefined) {
+        onValueChange?.(val);
+      }
+    },
   });
 
   return (
