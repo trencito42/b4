@@ -20,6 +20,7 @@ import { MotionLabPage } from "./pages/MotionLabPage.js";
 import { TextMorphLabPage } from "./pages/TextMorphLabPage.js";
 import { ShowcaseAnalyticsPage } from "./pages/ShowcaseAnalyticsPage.js";
 import { ShowcaseBillingPage } from "./pages/ShowcaseBillingPage.js";
+import { ShowcaseCheckoutPage } from "./pages/ShowcaseCheckoutPage.js";
 import { ShowcaseInfrastructurePage } from "./pages/ShowcaseInfrastructurePage.js";
 import {
   applyStudioSettings,
@@ -40,7 +41,8 @@ export type StudioRoute =
   | "effects-lab"
   | "showcase-analytics"
   | "showcase-infrastructure"
-  | "showcase-billing";
+  | "showcase-billing"
+  | "showcase-checkout";
 
 export function StudioApp() {
   const [route, setRoute] = useState<StudioRoute>("home");
@@ -82,6 +84,8 @@ export function StudioApp() {
         return <ShowcaseInfrastructurePage previewWidth={settings.previewWidth} />;
       case "showcase-billing":
         return <ShowcaseBillingPage previewWidth={settings.previewWidth} />;
+      case "showcase-checkout":
+        return <ShowcaseCheckoutPage previewWidth={settings.previewWidth} />;
       default:
         return <HomePage />;
     }
@@ -118,6 +122,7 @@ export function StudioApp() {
                       onClick: () => setRoute("showcase-infrastructure"),
                     },
                     { id: "showcase-billing", label: "Billing", onClick: () => setRoute("showcase-billing") },
+                    { id: "showcase-checkout", label: "Confirmation", onClick: () => setRoute("showcase-checkout") },
                   ],
                 },
               ]}

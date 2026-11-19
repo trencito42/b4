@@ -179,3 +179,71 @@
   gap: var(--b4-space-8);
   min-height: 28rem;
 }
+
+.b4-showcase-checkout {
+  display: flex;
+  justify-content: center;
+  padding: var(--b4-space-6) 0 var(--b4-space-10);
+}
+
+.b4-showcase-checkout__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--b4-space-6);
+  width: 100%;
+  max-width: 24rem;
+  text-align: center;
+}
+
+.b4-showcase-checkout__status-text {
+  color: var(--b4-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.b4-showcase-checkout__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.1em;
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.b4-showcase-checkout__amount-prefix {
+  font-size: 1.5rem;
+  color: var(--b4-text-secondary);
+}
+
+.b4-showcase-checkout__details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+  padding: var(--b4-space-4) 0;
+  border-top: 1px solid var(--b4-border-subtle);
+  border-bottom: 1px solid var(--b4-border-subtle);
+}
+
+.b4-showcase-checkout__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--b4-space-4);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.b4-showcase-checkout__row dt {
+  color: var(--b4-text-secondary);
+}
+
+.b4-showcase-checkout__row dd {
+  margin: 0;
+  color: var(--b4-text-primary);
+  font-weight: 500;
+}
+
+.b4-showcase-checkout__card .b4-button,
+.b4-showcase-checkout__card .b4-progress {
+  width: 100%;
+}
