@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  AlertDialog,
+  Button,
   FileExplorer,
   InspectorPanel,
   PageHeader,
@@ -7,13 +9,26 @@ import {
   ResizablePanels,
   ResourceMeter,
   StatusBadge,
+  toastManager,
 } from "@b4/react";
 import { infraFiles } from "../sampleData.js";
 import type { StudioPreviewWidth } from "../settings.js";
 
+type NodeStatus = "online" | "restarting";
+
 export function ShowcaseInfrastructurePage({ previewWidth }: { previewWidth: StudioPreviewWidth }) {
   const [selectedId, setSelectedId] = useState<string | null>("n1");
   const [query, setQuery] = useState("select id, status\nfrom nodes\nwhere region = 'eu'");
+  const [nodeStatus, setNodeStatus] = useState<NodeStatus>("online");
+  const [restartOpen, setRestartOpen] = useState(false);
+
+  async function handleRestart() {
+    setRestartOpen(false);
+    setNodeStatus("restarting");
+    await new Promise((resolve) => setTimeout(resolve, 1600));
+    setNodeStatus("online");
+    toastManager.add({ title: "edge-01 restarted", type: "success" });
+  }
 
   const frameClass =
     previewWidth === "390"
@@ -49,7 +64,19 @@ export function ShowcaseInfrastructurePage({ previewWidth }: { previewWidth: Stu
         <ResizablePanels aria-label="Resize inspector and query" orientation="horizontal" defaultSplit={42}>
           <QueryEditor aria-label="Cluster query" value={query} onValueChange={setQuery} />
           <InspectorPanel
-            title="edge-01.yaml"
+            title={
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                <span>edge-01.yaml</span>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={nodeStatus === "restarting"}
+                  onClick={() => setRestartOpen(true)}
+                >
+                  Restart node
+                </Button>
+              </span>
+            }
             sections={[
               {
                 id: "general",
@@ -57,7 +84,16 @@ export function ShowcaseInfrastructurePage({ previewWidth }: { previewWidth: Stu
                 properties: [
                   { id: "region", label: "Region", value: "eu-west-1" },
                   { id: "role", label: "Role", value: "edge" },
-                  { id: "status", label: "Status", value: <StatusBadge status="online">Healthy</StatusBadge> },
+                  {
+                    id: "status",
+                    label: "Status",
+                    value:
+                      nodeStatus === "restarting" ? (
+                        <StatusBadge status="idle">Restarting…</StatusBadge>
+                      ) : (
+                        <StatusBadge status="online">Healthy</StatusBadge>
+                      ),
+                  },
                 ],
               },
               {
@@ -70,6 +106,14 @@ export function ShowcaseInfrastructurePage({ previewWidth }: { previewWidth: Stu
             ]}
           />
         </ResizablePanels>
+        <AlertDialog
+          title="Restart edge-01?"
+          description="The node will be briefly unreachable while it restarts. This is a sample action — no real node is affected."
+          confirmLabel="Restart node"
+          open={restartOpen}
+          onOpenChange={setRestartOpen}
+          onConfirm={handleRestart}
+        />
       </div>
     </div>
   );
