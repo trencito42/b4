@@ -6,6 +6,9 @@ const meta: Meta<typeof InlineAlert> = {
   title: "Family E — Feedback & Motion/InlineAlert",
   component: InlineAlert,
   tags: ["autodocs"],
+  argTypes: {
+    tone: { control: "inline-radio", options: ["info", "success", "warning", "danger"] },
+  },
 };
 
 export default meta;
@@ -55,4 +58,4 @@ export const WithoutTitle: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = AllTones;
+export const Default: Story = AllTones;

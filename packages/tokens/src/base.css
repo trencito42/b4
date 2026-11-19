@@ -11,6 +11,17 @@
      lifted above ordinary content; reused by future overlay components. */
   --b4-popup-max-height: 320px;
   --b4-z-popup: 1000;
+  /* ---- scrims ----
+     The dimming layer behind a modal or a drawer. It is deliberately
+     theme-independent: a scrim is not a surface, it is a translucent
+     black that darkens whatever it sits on, and it must read the same way
+     over Graphite's dark canvas and Porcelain's light one. Two strengths
+     exist because the two uses are different — a modal backdrop only has
+     to push the page back one step, while the app-shell's mobile drawer
+     also carries a blur and therefore needs more separation to keep the
+     content underneath legible. */
+  --b4-scrim: rgba(0, 0, 0, 0.4);
+  --b4-scrim-strong: rgba(0, 0, 0, 0.5);
   /* Keep precision controls touchable even when the visible handle is small. */
   --b4-hit-target-min: 44px;
   /* Shared control strokes and the one-pixel accessibility clipping box.
@@ -103,6 +114,12 @@
   --b4-duration-base: 220ms;
   --b4-duration-slow: 360ms;
   --b4-duration-slower: 520ms;
+  /* The rotation period of a loading spinner. It lives here, with the
+     other durations, precisely so that reduced motion can stop it: an
+     infinite rotation is the one animation that never settles on its
+     own, so leaving it on a raw literal would keep it spinning for
+     users who asked for it to stop. */
+  --b4-duration-spinner: 750ms;
 
   /* ---- motion: CSS easing curves (JS spring presets live in @b4/motion) ---- */
   --b4-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -163,6 +180,7 @@
   --b4-duration-base: 0ms;
   --b4-duration-slow: 0ms;
   --b4-duration-slower: 0ms;
+  --b4-duration-spinner: 0ms;
 }
 
 /* motion="full" forces motion on even if OS requests reduced (rare; explicit) */
@@ -183,5 +201,6 @@
     --b4-duration-base: 0ms;
     --b4-duration-slow: 0ms;
     --b4-duration-slower: 0ms;
+    --b4-duration-spinner: 0ms;
   }
 }

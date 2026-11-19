@@ -5,6 +5,9 @@ const meta: Meta<typeof Avatar> = {
   title: "Family A — Actions & Identity/Avatar",
   component: Avatar,
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+  },
   args: { name: "Ada Lovelace" },
 };
 
@@ -31,4 +34,4 @@ export const AllSizes: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = InitialsFallback;
+export const Default: Story = InitialsFallback;

@@ -53,6 +53,13 @@
   --b4-surface-3: var(--b4-gray-200);
   --b4-surface-overlay: var(--b4-gray-250);
 
+  /* ---- the "lit from above" edge ----
+     A one-pixel inner highlight along the top of a raised control. It is
+     a light source, not a colour, so its strength depends on what it is
+     laid over: on a dark surface a faint white edge reads as a soft
+     specular line, which is all the graphite palette needs. */
+  --b4-surface-highlight: rgba(255, 255, 255, 0.05);
+
   /* ---- text ---- */
   --b4-text-primary: var(--b4-gray-950);
   --b4-text-secondary: var(--b4-gray-800);

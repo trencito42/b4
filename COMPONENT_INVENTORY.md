@@ -135,9 +135,11 @@ no bundle cost.
 | Effect | Status |
 |---|---|
 | BorderBeam | **VERIFIED** (see QUALITY_MATRIX.md) — animated border glow via CSS mask-XOR, soft-blurred per explicit user visual feedback, not a hard-edged ring |
+| DistortionWave | **VERIFIED** (see QUALITY_MATRIX.md) — a travelling band of refraction that bends the content beneath it via `backdrop-filter`, with a chromatic fringe and specular crest riding the same keyframe track; reduced-motion safe |
 
-DistortionWave (mission-brief scope) is not yet built — see HANDOFF.md
-for honest next-actions.
+The effect count is separate from the component count: the two effects
+ship from `@b4/react/effects`, not the core `@b4/react` entry point, so a
+consumer that never uses them pays no bundle cost.
 
 ## Scope changes log
 

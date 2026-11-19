@@ -31,7 +31,7 @@ npx playwright test            — 368/368 (full suite + studio + visual, twice)
 
 ## Component inventory
 
-All **83** public components in `COMPONENT_INVENTORY.md` remain **VERIFIED**.
+All **84** public components in `COMPONENT_INVENTORY.md` remain **VERIFIED**.
 No scope dropped since audit start.
 
 ## Known non-blockers (tracked, not regressions)

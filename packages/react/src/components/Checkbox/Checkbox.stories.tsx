@@ -83,4 +83,4 @@ export const Selection: Story = { render: () => <SelectionExample /> };
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Unchecked;
+export const Default: Story = Unchecked;

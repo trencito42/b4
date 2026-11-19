@@ -8,6 +8,11 @@ const meta: Meta<typeof TransitionGroup> = {
   title: "Family E — Feedback & Motion/TransitionGroup",
   component: TransitionGroup,
   tags: ["autodocs"],
+  argTypes: {
+    direction: { control: "inline-radio", options: ["vertical", "horizontal"] },
+    preset: { control: "inline-radio", options: ["slide-fade", "scale-fade", "fade"] },
+    gap: { control: "inline-radio", options: ["none", "sm", "md", "lg"] },
+  },
 };
 
 export default meta;
@@ -246,10 +251,31 @@ export const HorizontalChipList: Story = {
   },
 };
 
+
+/**
+ * The "AllVariants" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllVariants: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      {(["vertical", "horizontal"] as const).map((direction) => (
+        <div key={direction}>
+          <code style={{ color: "var(--b4-text-tertiary)", fontSize: 12 }}>{direction}</code>
+          <TransitionGroup direction={direction} preset="slide-fade" gap="md">
+            {["Alpha", "Beta", "Gamma"].map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </TransitionGroup>
+        </div>
+      ))}
+    </div>
+  ),
+};
 /**
  * The Studio catalog deep-links every component to its `--default`
  * story, so each component must publish one under that exact name.
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = ManagedList;
+export const Default: Story = ManagedList;

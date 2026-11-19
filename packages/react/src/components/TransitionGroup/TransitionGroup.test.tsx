@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { TransitionGroup } from "./TransitionGroup";
+import { axe } from "jest-axe";
 
 function ListDemo() {
   const [items, setItems] = useState(["a", "b", "c"]);
@@ -83,5 +84,19 @@ describe("TransitionGroup", () => {
     expect(root).toHaveClass("b4-transition-group--horizontal");
     expect(root).toHaveClass("b4-transition-group--gap-lg");
     expect(root).toHaveClass("custom-group");
+  });
+  // Structural accessibility is asserted here. Colour-contrast cannot be:
+  // jsdom loads no stylesheet, so a colour-contrast rule would be testing
+  // nothing — the real contrast check runs in the Playwright suite against
+  // both themes with rendered CSS. See TESTING.md.
+  it("has no axe violations", async () => {
+    // TransitionGroup wraps each child in its own <li> when `as` is a
+    // list element, so the child itself must not already be one.
+    const { container } = render(
+      <TransitionGroup as="ul">
+        <span key="a">Item</span>
+      </TransitionGroup>,
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

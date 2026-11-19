@@ -5,6 +5,9 @@ const meta: Meta<typeof SegmentedControl> = {
   title: "Family A — Actions & Identity/SegmentedControl",
   component: SegmentedControl,
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm"] },
+  },
 };
 
 export default meta;
@@ -100,4 +103,4 @@ export const PointerScrubbing: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = ChangelogLogin;
+export const Default: Story = ChangelogLogin;

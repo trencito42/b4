@@ -19,6 +19,9 @@
   box-sizing: border-box;
   padding: var(--b4-border-beam-clip);
   pointer-events: none;
+  /* The black stops below are mask ALPHA values (fully opaque = visible),
+     not theme colors — a luminance mask carries no colour information. */
+  /* b4-audit-allow: mask alpha stops, not a theme color */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);

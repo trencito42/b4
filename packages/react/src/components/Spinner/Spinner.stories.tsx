@@ -5,6 +5,9 @@ const meta: Meta<typeof Spinner> = {
   title: "Family E — Feedback & Motion/Spinner",
   component: Spinner,
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+  },
 };
 
 export default meta;

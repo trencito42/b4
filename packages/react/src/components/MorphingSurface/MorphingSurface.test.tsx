@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { useState } from "react";
 import { MorphingSurface } from "./MorphingSurface";
+import { axe } from "jest-axe";
 
 describe("MorphingSurface", () => {
   it("renders as a div by default and forwards className/children", () => {
@@ -63,5 +64,13 @@ describe("MorphingSurface", () => {
 
     expect(screen.getAllByTestId("surface")).toHaveLength(1);
     expect(screen.getByTestId("surface")).toHaveTextContent("Detail");
+  });
+  // Structural accessibility is asserted here. Colour-contrast cannot be:
+  // jsdom loads no stylesheet, so a colour-contrast rule would be testing
+  // nothing — the real contrast check runs in the Playwright suite against
+  // both themes with rendered CSS. See TESTING.md.
+  it("has no axe violations", async () => {
+    const { container } = render(<MorphingSurface>Content</MorphingSurface>);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

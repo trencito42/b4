@@ -100,7 +100,7 @@
     position: fixed;
     inset: 0;
     z-index: calc(var(--b4-z-overlay) - 1);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--b4-scrim-strong);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     animation: b4-backdrop-fade var(--b4-duration-fast) var(--b4-ease-standard);

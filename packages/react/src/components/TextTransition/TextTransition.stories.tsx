@@ -6,6 +6,10 @@ const meta: Meta<typeof TextTransition> = {
   title: "Family E — Feedback & Motion/TextTransition",
   component: TextTransition,
   tags: ["autodocs"],
+  argTypes: {
+    mode: { control: "inline-radio", options: ["crossfade", "vertical", "horizontal", "morph"] },
+    direction: { control: "inline-radio", options: ["forward", "backward"] },
+  },
 };
 
 export default meta;
@@ -70,10 +74,27 @@ export const ManualControl: Story = {
   },
 };
 
+
+/**
+ * The "AllModes" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllModes: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {(["crossfade", "vertical", "horizontal", "morph"] as const).map((mode) => (
+        <span key={mode} style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
+          <code style={{ color: "var(--b4-text-tertiary)", fontSize: 12 }}>{mode}</code>
+          <TextTransition mode={mode} value="Deploying changes" />
+        </span>
+      ))}
+    </div>
+  ),
+};
 /**
  * The Studio catalog deep-links every component to its `--default`
  * story, so each component must publish one under that exact name.
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Crossfade;
+export const Default: Story = Crossfade;

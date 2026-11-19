@@ -6,6 +6,9 @@ const meta: Meta<typeof NumberTransition> = {
   title: "Family E — Feedback & Motion/NumberTransition",
   component: NumberTransition,
   tags: ["autodocs"],
+  argTypes: {
+    mode: { control: "inline-radio", options: ["vertical"] },
+  },
 };
 
 export default meta;
@@ -58,10 +61,26 @@ export const UpAndDown: Story = {
   },
 };
 
+
+/**
+ * The "AllModes" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllModes: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: 24, fontVariantNumeric: "tabular-nums" }}>
+      {(["vertical", "morph", "digits"] as const).map((mode) => (
+        <span key={mode}>
+          <NumberTransition mode={mode} value={1234} />
+        </span>
+      ))}
+    </div>
+  ),
+};
 /**
  * The Studio catalog deep-links every component to its `--default`
  * story, so each component must publish one under that exact name.
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Static;
+export const Default: Story = Static;

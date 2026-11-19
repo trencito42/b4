@@ -21,6 +21,10 @@ const meta: Meta<typeof IconButton> = {
   title: "Family A — Actions & Identity/IconButton",
   component: IconButton,
   tags: ["autodocs"],
+  argTypes: {
+    variant: { control: "inline-radio", options: ["primary", "secondary", "ghost", "destructive"] },
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+  },
   args: { icon: PlusIcon, "aria-label": "Add item", variant: "primary", size: "md" },
 };
 
@@ -52,4 +56,4 @@ export const AllSizes: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Primary;
+export const Default: Story = Primary;

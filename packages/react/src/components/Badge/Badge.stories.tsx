@@ -5,6 +5,9 @@ const meta: Meta<typeof Badge> = {
   title: "Family A — Actions & Identity/Badge",
   component: Badge,
   tags: ["autodocs"],
+  argTypes: {
+    tone: { control: "select", options: ["neutral", "accent", "success", "warning", "danger", "info"] },
+  },
   args: { children: "Beta" },
 };
 
@@ -42,4 +45,4 @@ export const AllTones: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Neutral;
+export const Default: Story = Neutral;

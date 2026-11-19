@@ -5,6 +5,9 @@ const meta: Meta<typeof Link> = {
   title: "Family A — Actions & Identity/Link",
   component: Link,
   tags: ["autodocs"],
+  argTypes: {
+    tone: { control: "inline-radio", options: ["accent", "neutral"] },
+  },
   args: { href: "#", children: "View documentation" },
 };
 
@@ -24,10 +27,26 @@ export const InBodyCopy: Story = {
   ),
 };
 
+
+/**
+ * The "AllTones" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllTones: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: 20 }}>
+      {(["accent", "neutral"] as const).map((tone) => (
+        <Link key={tone} href="#" tone={tone}>
+          A {tone} link
+        </Link>
+      ))}
+    </div>
+  ),
+};
 /**
  * The Studio catalog deep-links every component to its `--default`
  * story, so each component must publish one under that exact name.
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Accent;
+export const Default: Story = Accent;

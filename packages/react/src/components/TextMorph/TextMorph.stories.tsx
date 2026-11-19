@@ -155,3 +155,20 @@ export const MultilingualDiacritics: Story = {
     );
   },
 };
+/**
+ * The "AllModes" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllModes: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {(["auto", "words", "characters", "numbers"] as const).map((mode) => (
+        <span key={mode} style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
+          <code style={{ color: "var(--b4-text-tertiary)", fontSize: 12 }}>{mode}</code>
+          <TextMorph mode={mode} value={mode === "numbers" ? 1234 : "B4 design system"} />
+        </span>
+      ))}
+    </div>
+  ),
+};
+

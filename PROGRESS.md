@@ -3,6 +3,60 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
+## Mission brief completed: DistortionWave, Studio Effects Lab, systematic craftsmanship audit, consumer fixtures (2026-11-19 evening)
+
+The scope the earlier session listed as "not started" is now built and
+verified. The component count is **84**, not the brief's 83: `TextMorph`
+landed after that brief was written, and `RangeSlider` is documented as
+sharing `Slider`'s implementation.
+
+- **`DistortionWave` (`packages/react/src/effects/DistortionWave/`)** — a
+  travelling band of *refraction*. It uses `backdrop-filter` against the
+  pixels actually rendered behind it, so the content genuinely bends as
+  the wave crosses it and resolves again behind it; a chromatic fringe
+  and a specular crest ride the same keyframe track as the band. Under
+  reduced motion the band holds still **and drops the refraction** —
+  text must never be left sitting behind frosted glass that will not
+  move away. 9 unit tests, 11 Playwright tests (both themes), including
+  a pixel-diff test proving the wave really changes the rendering of the
+  content beneath it.
+- **B4 Studio Effects Lab** (`apps/studio/src/studio/pages/EffectsLabPage.tsx`)
+  — live controls for both effects and a composed card showing the edge
+  effect and the face effect together.
+- **Systematic craftsmanship audit** (`scripts/craftsmanship-audit.mjs`,
+  report `CRAFTMANSHIP_AUDIT.md`) — 14 mechanical invariants over all 84
+  components, both effects, all 86 story files and the Studio catalog.
+  Re-runnable, exits non-zero on a BLOCKER, wired into
+  `pnpm release:verify` and CI. Current state: **0 blockers, 0 warnings**.
+- **Two internal consumer fixtures** — `examples/ops-console` and
+  `examples/storefront`, with `scripts/consumer-fixtures-smoke.mjs`.
+
+### Real defects the audit found in already-VERIFIED code
+
+- **62 of 83 Studio catalog deep links were dead** — the catalog split
+  camelCase names (`IconButton` → `icon-button`); Storybook does not
+  (`iconbutton`). All 86 links now resolve, gated by
+  `e2e/studio-catalog-links.spec.ts`, which compares the rendered hrefs
+  against Storybook's published story index.
+- **27 components published no `Default` story**, so the catalog's
+  `--default` deep-link contract had no target for them.
+- **Four Family B stories** used a different family title than their
+  fourteen siblings, splitting one family across two slugs.
+- **`@b4/tokens/css` and `@b4/react/styles.css` had no `types`
+  condition**, so the documented one-line CSS import failed to typecheck
+  in any consumer (TS2882). The consumer fixtures caught this.
+- **Four components had no axe assertion** (`Badge`,
+  `AnimatedIndicator`, `MorphingSurface`, `TransitionGroup`) and **three
+  had no browser coverage** (`ButtonGroup`, `KeyboardShortcut`,
+  `StatusBadge`).
+- **Hardcoded colours replaced with tokens**: modal/drawer scrims →
+  `--b4-scrim` / `--b4-scrim-strong`; NavigationMenu's inner highlight →
+  per-theme `--b4-surface-highlight`; the Toast spinner's hand-written
+  `0.75s` → `--b4-duration-spinner`. ColorPicker's hue spectrum and
+  axes are kept as literals *on purpose* — they are the picker's data,
+  not theme colours — and carry written, in-file exemptions that the
+  audit lists rather than hides.
+
 ## First-Party Intelligent Text Morphing Engine (`TextMorph`) (2026-11-19)
 
 **Note on how this landed (2026-11-19):** two sessions worked on
@@ -128,7 +182,7 @@ and `QUALITY_MATRIX.md`.
 ## Phase 7 & 8 — Audit, packaging, Studio e2e, visual baselines (2026-11-19)
 
 - **Phase 7** horizontal audit recorded in `PHASE7_AUDIT.md` (token/CSS spot
-  checks, both themes, inventory unchanged at 83 VERIFIED).
+  checks, both themes, inventory unchanged at 84 VERIFIED).
 - **Phase 8** packaging proofs: `consumer-smoke`, `ssr-smoke`, `treeshake-check`
   wired into `pnpm release:verify` and `.github/workflows/ci.yml`; `LICENSE`
   added; minimal consumer under `examples/minimal-consumer/`.
@@ -148,7 +202,7 @@ and `QUALITY_MATRIX.md`.
 Built the real `apps/studio` product shell (replacing the Phase 0 placeholder):
 
 - Navigation via `AppShell` + `Sidebar` (Overview, Components, three showcases).
-- Component catalog with search and Storybook deep links for all 83 public entries.
+- Component catalog with search and Storybook deep links for all 84 public entries.
 - Live theme configurator (theme, density, radius, contrast, motion) persisted in
   `localStorage`, same `applyB4ThemeSettings` contract as Storybook.
 - Responsive preview widths on showcase routes (390 / 768 / 1440 / full).
@@ -738,7 +792,7 @@ on resume. Don't re-plan from scratch — continue from what's actually here.
 | 4 — Family D | **DONE** | All 15/15 components VERIFIED (Progress, CircularProgress, Skeleton, Card, InteractiveCard, Stat, EmptyState, ErrorState, Timeline, ActivityFeed, CodeBlock, ChartContainer, DataTable, DataGrid, Calendar). See QUALITY_MATRIX.md. |
 | 5 — Family E/F advanced + specialized components | **DONE** | Family E 11/11, Family F 10/10 VERIFIED. |
 | 6 — Studio finish, full docs, theme configurator, 3 showcases | **DONE** (2026-11-19) | Vite Studio app + CI workflow. Storybook unchanged as component reference. |
-| 7 — Independent audit against quality gate | **DONE** (2026-11-19) | `PHASE7_AUDIT.md`; inventory 83/83 unchanged. |
+| 7 — Independent audit against quality gate | **DONE** (2026-11-19) | `PHASE7_AUDIT.md`; inventory 84/84 unchanged. |
 | 8 — Packaging/release readiness | **DONE in-repo** (2026-11-19) | `release:verify`, smokes, CI, LICENSE, examples — **publish blocked** until user OK (`RELEASE_CHECKLIST.md`). |
 
 ## What Phase 0 actually did

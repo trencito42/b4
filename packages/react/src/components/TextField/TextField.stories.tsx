@@ -5,6 +5,9 @@ const meta: Meta<typeof TextField> = {
   title: "Family B — Forms & Inputs/TextField",
   component: TextField,
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+  },
   args: { label: "Email address", placeholder: "you@example.com" },
 };
 

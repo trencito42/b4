@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   z-index: var(--b4-z-modal);
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--b4-scrim);
 }
 
 /* Centered with fixed inset + margin:auto, not a CSS `transform:

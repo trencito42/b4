@@ -5,6 +5,9 @@ const meta: Meta<typeof ExpandingAction> = {
   title: "Family E — Feedback & Motion/ExpandingAction",
   component: ExpandingAction,
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm"] },
+  },
 };
 
 export default meta;
@@ -30,3 +33,26 @@ export const Disabled: Story = {
     disabled: true,
   },
 };
+/**
+ * The "AllSizes" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllSizes: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <ExpandingAction
+          key={size}
+          size={size}
+          icon={
+            <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>
+              +
+            </span>
+          }
+          label="Add item"
+        />
+      ))}
+    </div>
+  ),
+};
+

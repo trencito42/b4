@@ -14,6 +14,9 @@ const meta: Meta<typeof AvatarGroup> = {
   title: "Family A — Actions & Identity/AvatarGroup",
   component: AvatarGroup,
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md", "lg"] },
+  },
   args: { people },
 };
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { useState } from "react";
 import { AnimatedIndicator } from "./AnimatedIndicator";
+import { axe } from "jest-axe";
 
 function TwoTabDemo() {
   const [selected, setSelected] = useState<"a" | "b">("a");
@@ -44,5 +45,18 @@ describe("AnimatedIndicator", () => {
     }
 
     expect(screen.getAllByTestId("indicator")).toHaveLength(1);
+  });
+  // Structural accessibility is asserted here. Colour-contrast cannot be:
+  // jsdom loads no stylesheet, so a colour-contrast rule would be testing
+  // nothing — the real contrast check runs in the Playwright suite against
+  // both themes with rendered CSS. See TESTING.md.
+  it("has no axe violations", async () => {
+    const { container } = render(
+      <div>
+        <button type="button">A</button>
+        <button type="button">B</button>
+      </div>,
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

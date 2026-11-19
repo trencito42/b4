@@ -114,7 +114,7 @@
   border: 2px solid currentColor;
   border-right-color: transparent;
   border-radius: 50%;
-  animation: b4-toast-spin 0.75s linear infinite;
+  animation: b4-toast-spin var(--b4-duration-spinner) linear infinite;
 }
 
 @keyframes b4-toast-spin {

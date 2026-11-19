@@ -5,6 +5,9 @@ const meta: Meta<typeof Skeleton> = {
   title: "Family D — Data & Content/Skeleton",
   component: Skeleton,
   tags: ["autodocs"],
+  argTypes: {
+    variant: { control: "inline-radio", options: ["text", "circle", "rect"] },
+  },
 };
 
 export default meta;
@@ -41,4 +44,4 @@ export const CardPlaceholder: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = AllVariants;
+export const Default: Story = AllVariants;

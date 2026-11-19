@@ -29,6 +29,7 @@ jobs:
       - run: pnpm consumer-smoke
       - run: pnpm ssr-smoke
       - run: pnpm treeshake-check
+      - run: pnpm audit:craftsmanship
       - run: pnpm exec playwright test --workers=2
       - uses: actions/upload-artifact@v4
         if: always()

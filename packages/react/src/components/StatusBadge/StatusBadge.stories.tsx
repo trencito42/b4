@@ -5,6 +5,9 @@ const meta: Meta<typeof StatusBadge> = {
   title: "Family A — Actions & Identity/StatusBadge",
   component: StatusBadge,
   tags: ["autodocs"],
+  argTypes: {
+    status: { control: "inline-radio", options: ["online", "offline", "degraded", "idle"] },
+  },
 };
 
 export default meta;
@@ -37,4 +40,4 @@ export const AllStatuses: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Online;
+export const Default: Story = Online;

@@ -1,7 +1,7 @@
 .b4-drawer__backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--b4-scrim);
   z-index: var(--b4-z-overlay);
   transition: opacity var(--b4-duration-base) var(--b4-ease-standard);
 }

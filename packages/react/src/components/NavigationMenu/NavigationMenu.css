@@ -57,7 +57,7 @@
   background: var(--b4-control-bg);
   border-color: var(--b4-border-subtle);
   color: var(--b4-text-primary);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 var(--b4-surface-highlight);
 }
 
 .b4-navigation-menu__trigger-icon {

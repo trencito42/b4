@@ -7,8 +7,11 @@ without explicit user authorization and a confirmed package scope.
 
 ### Project identity
 
-B4 — commercial-grade React design system, Graphite + Porcelain, 83 public
+B4 — commercial-grade React design system, Graphite + Porcelain, 84 public
 components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
+The count is 84, not the 83 the mission brief used: `TextMorph` landed
+after that brief was written, and `RangeSlider` is documented as sharing
+`Slider`'s implementation rather than being a component of its own.
 
 ### Current Git state
 
@@ -66,27 +69,119 @@ Latest adaptive UX & interaction improvements:
   - Authored `e2e/adaptive-interactions.spec.ts` with 8 Playwright interaction tests (pointer scrubbing, rapid drag, Escape abort, disabled targets, axe on Graphite/Porcelain, swipe navigation, interactive child button isolation, AppShell mobile drawer).
 - Gate: **485/485** `@b4/react` unit tests (87 suites), monorepo typecheck 0 errors, **19/19** targeted e2e tests passing.
 
+### Mission brief completed: DistortionWave, Effects Lab, audit, fixtures (2026-11-19 evening)
+
+Everything the earlier session listed as "not started" is now built,
+verified per `TESTING.md`, and committed. The headline is not the new
+effect — it is that the **systematic audit found real defects in code
+that had already been marked VERIFIED**.
+
+**`DistortionWave` — `packages/react/src/effects/DistortionWave/`**
+- A travelling band of *refraction*: it uses `backdrop-filter` against
+  the pixels actually rendered behind it, so the content genuinely bends
+  as the wave crosses and resolves again behind it. It is not a painted
+  copy of the content.
+- A chromatic fringe and a specular crest ride the same keyframe track as
+  the band, so they can never drift out of alignment with it.
+- Reduced motion: the band holds still **and drops the refraction
+  entirely** — text must never be left sitting behind frosted glass that
+  will not move away.
+- 9 unit tests, 11 Playwright tests (both themes), incl. a pixel-diff
+  test that proves the wave really changes the rendering of the content
+  beneath it.
+
+**B4 Studio Effects Lab** (`apps/studio/src/studio/pages/EffectsLabPage.tsx`)
+— live controls for both effects, plus a "composed" card showing
+BorderBeam (edge) and DistortionWave (face) together.
+
+**The systematic craftsmanship audit — `scripts/craftsmanship-audit.mjs`**
+- 14 mechanical invariants over all 84 components, both effects, all 86
+  story files and the Studio catalog. Re-runnable, exits non-zero on a
+  BLOCKER, wired into `pnpm release:verify` and CI. Report:
+  `CRAFTMANSHIP_AUDIT.md`.
+- Its own first rule was *don't report false positives*: a component that
+  animates with tokenised durations is reduced-motion safe (the token
+  layer zeroes them), a component that shares another component's
+  stylesheet is allowed that component's class names, and a colour
+  literal can be excused only by a written, in-file justification
+  (`b4-audit-allow: <reason>`), which is listed in the report rather than
+  hidden.
+
+**Real defects the audit found in already-VERIFIED code**
+- **62 of 83 Studio catalog deep links were dead.** The catalog slugified
+  camelCase names by splitting them (`IconButton` → `icon-button`);
+  Storybook does not (`iconbutton`). Nothing caught it: the catalog
+  rendered perfectly, axe was clean, the stories existed. Now all 86
+  links resolve, gated by `e2e/studio-catalog-links.spec.ts`, which
+  compares the rendered hrefs against Storybook's *published* story index.
+- **27 components published no `Default` story**, so the catalog's
+  `--default` contract had no target for them.
+- **Four Family B stories** said "Inputs & Forms" while their fourteen
+  siblings said "Forms & Inputs" — one family split across two slugs.
+- **`@b4/tokens/css` and `@b4/react/styles.css` had no `types`
+  condition**, so the documented one-line CSS import failed to typecheck
+  in any consumer (TS2882). The consumer fixtures caught this — which is
+  exactly what they are for.
+- **Four components had no axe assertion** in their unit tests
+  (`Badge`, `AnimatedIndicator`, `MorphingSurface`, `TransitionGroup`)
+  and **three had no browser coverage at all** (`ButtonGroup`,
+  `KeyboardShortcut`, `StatusBadge`).
+- **Hardcoded colours**: modal/drawer scrims → new `--b4-scrim` /
+  `--b4-scrim-strong` tokens; NavigationMenu's inner highlight → new
+  per-theme `--b4-surface-highlight`; ColorPicker's hue spectrum and
+  axes → documented exemptions (they are the picker's *data*, not theme
+  colours); mask alphas in the effects → documented exemptions (a
+  luminance mask carries no colour). The Toast spinner's hand-written
+  `0.75s` → a `--b4-duration-spinner` token, so reduced motion can stop
+  it like every other duration.
+
+**Two internal consumer fixtures** — `examples/ops-console` (an internal
+operations console) and `examples/storefront` (a consumer storefront).
+Real application shapes, public `@b4/react` APIs only, both themes, with
+`scripts/consumer-fixtures-smoke.mjs` building them as a gate.
+
+**Storybook serves a stale index — restart it before a full Playwright
+run.** This cost more time than any real defect above. A long-lived
+`storybook dev` keeps an index that does not pick up new or renamed
+stories, so a story that was just added resolves in one run and not the
+next, and the failure looks exactly like a product bug ("the component
+is not rendered!"). Kill the Storybook process and let Playwright start a
+fresh one before any run that depends on a story id. Same class of
+problem: **a dev server on `:5173` silently replaces the Studio preview**
+— check `Get-NetTCPConnection -LocalPort 5173` before trusting a Studio
+failure.
+
+**The stray nested clone at the repo root (`b4/`) was auto-committed as a
+gitlink** by the runtime's automatic commit, which would have pulled
+another repository's history into this one. It is now untracked and
+ignored (`.gitignore` → `/b4/`); the directory itself was left in place,
+as intended.
+
 ### Current task
 
-TextMorph and BorderBeam are genuinely VERIFIED as of 2026-11-19 (see above).
-The broader mission briefs pasted into this session (83-component
-craftsmanship audit, a `DistortionWave` effect, a B4 Studio Effects Lab,
-two internal consumer fixtures, a CI investigation) are **not started**.
-Honestly: do not mark any of that complete until it's actually built and
-verified per `TESTING.md`.
+**The full mission-brief scope is now built and verified (2026-11-19 evening).**
+See the section below — *DistortionWave, the Studio Effects Lab, the
+systematic craftsmanship audit, and two internal consumer fixtures* — for
+what landed and what it cost in real defects.
+
+The one piece still open is **npm publish**, which needs an explicit
+decision from the user (real scope + authorization), per
+`RELEASE_CHECKLIST.md`.
 
 ### Next actions (ordered)
 
-1. Build `DistortionWave` (second effect named in the mission brief),
-   following the exact pattern `BorderBeam` just established
-   (`packages/react/src/effects/<Name>/`, full checklist from `AGENTS.md`).
-2. Start the 83-component craftsmanship review the mission brief asked for
-   — systematic, not spot-checked; log findings honestly even if a
-   component needs rework.
-3. Two internal consumer fixtures (`examples/*` workspace) — not yet begun.
-4. **Optional:** `git push origin main` if local branch is ahead of remote.
-5. **Publish (blocked):** confirm real npm scope → user authorizes →
-   `pnpm publish --dry-run` per `RELEASE_CHECKLIST.md`.
+1. **Publish (blocked on the user):** confirm the real npm scope →
+   user authorizes → `pnpm publish --dry-run` per `RELEASE_CHECKLIST.md`.
+2. **Re-run the gate before any release**: `pnpm release:verify` now also
+   runs `pnpm audit:craftsmanship`, and the Playwright suite must pass
+   twice.
+3. **Kill any stray dev server before a Playwright run** — see the
+   "Storybook serves a stale index" note below; it is the single most
+   common cause of a confusing failure in this repo.
+4. Optional polish: the audit's ref-forwarding observation
+   (`CRAFTMANSHIP_AUDIT.md` → *Systemic observation*) is the largest
+   remaining craft gap; compound components are still excluded by
+   design.
 
 ### Files to inspect on resume
 

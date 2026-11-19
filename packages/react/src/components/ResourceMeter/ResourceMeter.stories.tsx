@@ -5,6 +5,9 @@ const meta: Meta<typeof ResourceMeter> = {
   title: "Family F — Application Patterns/ResourceMeter",
   component: ResourceMeter,
   tags: ["autodocs"],
+  argTypes: {
+    tone: { control: "inline-radio", options: ["neutral", "warning", "danger"] },
+  },
 };
 
 export default meta;

@@ -7,6 +7,9 @@ const meta: Meta<typeof LoadingOverlay> = {
   title: "Family E — Feedback & Motion/LoadingOverlay",
   component: LoadingOverlay,
   tags: ["autodocs"],
+  argTypes: {
+    variant: { control: "inline-radio", options: ["absolute"] },
+  },
 };
 
 export default meta;
@@ -50,10 +53,48 @@ export const SpinnerOnly: Story = {
   args: { visible: true },
 };
 
+
+/**
+ * The "AllVariants" overview: every variant of this component, side by
+ * side, so they can be compared without clicking through the controls.
+ */
+export const AllVariants: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+      <div
+        style={{
+          position: "relative",
+          width: 220,
+          height: 140,
+          borderRadius: "var(--b4-radius-md)",
+          border: "1px solid var(--b4-border-subtle)",
+        }}
+      >
+        <LoadingOverlay visible variant="absolute" message="absolute" />
+      </div>
+      {/* A transformed ancestor becomes the containing block for a
+          position:fixed descendant, so the fixed variant can be shown
+          side by side with the absolute one instead of covering the
+          whole iframe. */}
+      <div
+        style={{
+          position: "relative",
+          transform: "translateZ(0)",
+          width: 220,
+          height: 140,
+          borderRadius: "var(--b4-radius-md)",
+          border: "1px solid var(--b4-border-subtle)",
+        }}
+      >
+        <LoadingOverlay visible variant="fixed" message="fixed" />
+      </div>
+    </div>
+  ),
+};
 /**
  * The Studio catalog deep-links every component to its `--default`
  * story, so each component must publish one under that exact name.
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = OverContent;
+export const Default: Story = OverContent;

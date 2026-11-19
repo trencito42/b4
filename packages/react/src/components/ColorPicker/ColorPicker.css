@@ -1,3 +1,21 @@
+/*
+  B4 ColorPicker.
+
+  This is the one component whose colours are NOT theme colours, and the
+  distinction matters: the saturation/value area and the hue track are
+  the *data* the user is picking from. They are calibrated physical
+  values — a hue track that started at "B4 accent blue" would not be a
+  colour picker, it would be a swatch list. So the literals below are
+  exempt from the token rule by an explicit, written exemption rather
+  than by an oversight.
+
+  What IS theme-driven stays theme-driven: the trigger, the panel, the
+  border and the focus ring all read real tokens, and the only other
+  literals are the thumb's own ring, which has to stay visible against
+  ANY colour the user picks — including pure white and pure black —
+  so it cannot follow the theme either.
+*/
+
 .b4-color-picker__trigger {
   display: inline-flex;
   align-items: center;
@@ -50,12 +68,14 @@
 .b4-color-picker__area-white {
   position: absolute;
   inset: 0;
+  /* b4-audit-allow: the saturation axis is the picker's own data, not a theme color */
   background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
 }
 
 .b4-color-picker__area-black {
   position: absolute;
   inset: 0;
+  /* b4-audit-allow: the value axis is the picker's own data, not a theme color */
   background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
 }
 
@@ -64,6 +84,7 @@
   width: 14px;
   height: 14px;
   border-radius: var(--b4-radius-full);
+  /* b4-audit-allow: the thumb's ring must stay visible against any picked colour */
   border: 2px solid white;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
   transform: translate(-50%, -50%);
@@ -72,6 +93,7 @@
 }
 
 .b4-color-picker__area-thumb:focus-visible {
+  /* b4-audit-allow: the thumb's ring must stay visible against any picked colour */
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.4),
     0 0 0 3px var(--b4-focus-ring-color);
@@ -90,6 +112,7 @@
   width: 100%;
   height: 10px;
   border-radius: var(--b4-radius-full);
+  /* b4-audit-allow: the hue spectrum is the picker's own data, not a theme color */
   background: linear-gradient(
     to right,
     #ff0000,
@@ -106,6 +129,7 @@
   width: 18px;
   height: 18px;
   border-radius: var(--b4-radius-full);
+  /* b4-audit-allow: the thumb's ring must stay visible against any picked colour */
   border: 2px solid white;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
   outline: none;
@@ -113,6 +137,7 @@
 }
 
 .b4-color-picker__hue-thumb:focus-visible {
+  /* b4-audit-allow: the thumb's ring must stay visible against any picked colour */
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.4),
     0 0 0 3px var(--b4-focus-ring-color);

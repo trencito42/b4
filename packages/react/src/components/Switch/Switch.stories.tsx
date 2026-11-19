@@ -54,4 +54,4 @@ export const RightToLeft: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Off;
+export const Default: Story = Off;

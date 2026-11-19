@@ -1,5 +1,35 @@
 ﻿# B4 — Quality Matrix
 
+## Systematic craftsmanship audit — and the real defects it found (2026-11-19 evening)
+
+**VERIFIED, and a permanent gate.** `scripts/craftsmanship-audit.mjs` sweeps
+all 84 components, both effects, all 86 story files and the Studio catalog
+against 14 mechanical invariants, writes `CRAFTMANSHIP_AUDIT.md`, and exits
+non-zero on any BLOCKER. It is wired into `pnpm release:verify` and CI
+(`pnpm audit:craftsmanship`). Current state: **0 blockers, 0 warnings.**
+
+The audit's own first rule was *do not report false positives*, because a
+gate that cries wolf gets ignored. Three refinements came out of that:
+a component animating with tokenised durations is reduced-motion safe (the
+token layer zeroes every `--b4-duration-*`); a component that shares
+another component's stylesheet may use that component's class names; and
+a colour literal can only be excused by a written, in-file justification
+(`b4-audit-allow: <reason>`), which the report lists rather than hides.
+
+**What it found in code that had already been marked VERIFIED:**
+
+| Defect | Fix |
+|---|---|
+| 62 of 83 Studio catalog deep links pointed at stories that do not exist — the catalog split camelCase names, Storybook does not | Catalog slug corrected; all 86 links resolve, gated by `e2e/studio-catalog-links.spec.ts` against Storybook's published story index |
+| 27 components published no `Default` story, so the catalog's `--default` contract had no target | Each now publishes one (an alias of its primary example) |
+| 4 Family B stories used a different family title than their 14 siblings, splitting one family across two slugs | Titles normalised; the 4 affected e2e story ids updated to match |
+| `@b4/tokens/css` and `@b4/react/styles.css` had no `types` condition, so the documented CSS import failed to typecheck in any consumer (TS2882) | `types` conditions added; `copy-css.mjs` now emits the declarations; found by the consumer fixtures |
+| 4 components had no axe assertion in their unit tests (`Badge`, `AnimatedIndicator`, `MorphingSurface`, `TransitionGroup`) | jest-axe assertions added |
+| 3 components had no browser coverage at all (`ButtonGroup`, `KeyboardShortcut`, `StatusBadge`) | `e2e/identity-group-shortcut-status.spec.ts` — 10 tests, both themes |
+| Modal/drawer scrims hardcoded `rgba(0,0,0,…)`; NavigationMenu hardcoded an inner highlight; the Toast spinner hardcoded `0.75s` | New `--b4-scrim` / `--b4-scrim-strong` (base), per-theme `--b4-surface-highlight`, and `--b4-duration-spinner` tokens |
+| 75 components had no Storybook controls and 61 no overview story | `argTypes` controls and "all variants" overview stories added for every component that has a variant prop |
+| The runtime's automatic commit added the stray nested clone at the repo root as a **gitlink**, pulling another repository's history into this one | Untracked and ignored (`/b4/`); the directory itself was left in place, as intended |
+
 ## FileExplorer — Family F's 9th component (2026-11-19)
 
 **VERIFIED**. Real tree navigation on `TreeView`, not a static outline.
@@ -105,6 +135,7 @@ is only set when the checks below actually ran and passed — not on
 | **NumberTransition** | **VERIFIED** | ✅ static/counting/currency-format/up-down stories, Graphite | ✅ custom formatter supported; direction auto-derived from increase/decrease; rapid-click stress test in e2e | ✅ Storybook stories, autodocs | same suite |
 | **TextMorph** | **VERIFIED** | ✅ word/character/number/auto modes, Graphite and Porcelain, fluid FLIP container, tabular-nums | ✅ distance-affinity bipartite matching, numeric place-value tracking, Unicode grapheme segmentation, rapid ticker interruption safety, reduced-motion instant snap | ✅ Storybook stories + Studio Text Morph Lab page | vitest (6 tests in TextMorph.test.tsx + 13 tests in engine.test.ts) + Playwright (4 tests in text-morph.spec.ts + 1 in studio.spec.ts); re-verified independently in a clean worktree off this commit: typecheck clean, `@b4/react` build clean, Studio build clean, full `@b4/react` suite 504/504, `e2e/text-morph.spec.ts` + `e2e/studio.spec.ts` 11/11 |
 | **BorderBeam** (`@b4/react/effects`) | **VERIFIED** | ✅ sm/md/lg sizes × 5 tones, Graphite and Porcelain, soft blurred glow (not a hard-edged ring) per explicit user visual feedback | ✅ CSS mask-XOR ring never intercepts pointer events, genuinely animates (`conic-gradient` rotation verified via real transform comparison over time), collapses to a static ring under reduced motion, causes no layout shift, `IntersectionObserver`-paused off-screen | ✅ Storybook stories (Default/Tones/Inactive) | vitest (7/7) + Playwright (`e2e/border-beam.spec.ts`, 7/7, verified twice) |
+| **DistortionWave** (`@b4/react/effects`) | **VERIFIED** | ✅ sm/md/lg amplitudes × 5 tones × horizontal/vertical, Graphite and Porcelain, inspected from screenshots in both themes | ✅ the band really refracts: `backdrop-filter` is verified to be applied, and a pixel-diff test proves the rendered content differs from the un-effected render; the wave layer never intercepts pointer events; genuinely animates (transform compared over time); under reduced motion the band holds still **and the refraction is dropped entirely**, so text is never left behind frosted glass; causes no layout shift; clipped to the wrapper | ✅ Storybook stories (Default/AllVariants/Tones/Directions/Inactive) + B4 Studio Effects Lab | vitest (9/9) + Playwright (`e2e/distortion-wave.spec.ts`, 11/11) |
 | **IconButton** | **VERIFIED** | ✅ 4 variants × 3 sizes, Graphite | ✅ required `aria-label`, blocks clicks while loading/disabled | ✅ Storybook stories, autodocs | same suite |
 | **ToggleButton** | **VERIFIED** | ✅ pressed/unpressed/disabled, Graphite | ✅ Base UI `Toggle` gives real `data-pressed`/keyboard (Space) for free; click + keyboard tested | ✅ Storybook stories, autodocs | same suite |
 | **Badge** | **VERIFIED** | ✅ 6 tones, **both themes e2e'd with real axe color-contrast**, not just Graphite | ✅ static/presentational, no interaction states needed | ✅ Storybook stories (incl. all-tones overview), autodocs | `e2e/badge.spec.ts` runs axe against both the Graphite *and* Porcelain toolbar states — the first component in this repo to get that, after Button/SegmentedControl only ever checked Graphite |

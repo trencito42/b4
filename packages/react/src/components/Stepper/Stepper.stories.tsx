@@ -5,6 +5,9 @@ const meta: Meta<typeof Stepper> = {
   title: "Family C — Navigation & Overlays/Stepper",
   component: Stepper,
   tags: ["autodocs"],
+  argTypes: {
+    orientation: { control: "inline-radio", options: ["horizontal", "vertical"] },
+  },
   args: {
     "aria-label": "Checkout progress",
     steps: [
@@ -41,4 +44,4 @@ export const NotStarted: Story = {
  * This is an alias of the primary example above — the same story under
  * a stable name the catalog (and any external link) can rely on.
  */
-export const Default = Horizontal;
+export const Default: Story = Horizontal;
