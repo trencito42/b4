@@ -1,5 +1,14 @@
 # B4 — Progress
 
+## InspectorPanel — Family F's 6th component (2026-11-19)
+
+Properties panel for a selected item — real `<dl>`/`<dt>`/`<dd>`
+markup per label/value pair, not a two-column div grid. Typically
+ResizablePanels' right-hand pane. No component gotchas (one test
+authoring mistake, fixed). Full gate: typecheck, @b4/react tests
+437/437, build, Storybook build, playwright 344/344 (run twice).
+**VERIFIED**. Family F now: 6/10.
+
 ## FilterBar — Family F's 5th component (2026-11-19)
 
 Filter controls row (composes Select/SearchField/Combobox as

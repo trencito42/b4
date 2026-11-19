@@ -537,6 +537,20 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## InspectorPanel — Family F's 6th component (2026-11-19)
+
+**VERIFIED**. A properties panel for a selected item — real
+`<dl>`/`<dt>`/`<dd>` markup for each label/value pair (each pair
+wrapped in its own `<div>`, which is valid per the HTML5 `<dl>`
+content model and confirmed clean by axe both in unit tests and the
+real browser), not a two-column `<div>` grid standing in for one.
+Typically the right-hand pane of `ResizablePanels`. No component
+gotchas this time — the only hiccup was a test-authoring mistake (a
+fixture reused the same string for the panel title and a property
+value, making `getByText` ambiguous), fixed by scoping the query.
+Full gate: typecheck, @b4/react tests 437/437, build, Storybook build,
+playwright 344/344 (run twice). Family F now: 6/10.
+
 ## FilterBar — Family F's 5th component (2026-11-19)
 
 **VERIFIED**. A row of filter controls (`Select`/`SearchField`/
@@ -993,14 +1007,14 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: continue Family F — InspectorPanel next (simpler,
-self-contained; then ResizablePanels, ResourceMeter; FileExplorer and
-QueryEditor last (the two that need real, non-mockup functionality).
+## Next action: continue Family F — ResizablePanels next (simpler,
+self-contained; then ResourceMeter; FileExplorer and QueryEditor last
+(the two that need real, non-mockup functionality).
 
 Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
-all fully VERIFIED. Family F is now at 5/10 (AppShell, Sidebar,
-PageHeader, Toolbar, FilterBar VERIFIED), and it's explicitly the most
-"layout composition of other components" family — a natural last family, since it's
+all fully VERIFIED. Family F is now at 6/10 (AppShell, Sidebar,
+PageHeader, Toolbar, FilterBar, InspectorPanel VERIFIED), and it's
+explicitly the most "layout composition of other components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled

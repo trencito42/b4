@@ -1499,6 +1499,21 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (432/432), `pnpm build`, Storybook build, `npx playwright test`
 (341/341, run twice for stability).
 
+## InspectorPanel — Family F's 6th component (2026-11-19)
+
+**VERIFIED**. A properties panel for a selected item — real
+`<dl>`/`<dt>`/`<dd>` markup for each label/value pair (each pair
+wrapped in a `<div>`, which is valid per the HTML5 `<dl>` content
+model), not a two-column `<div>` grid standing in for one. Typically
+the right-hand pane of `ResizablePanels`. No new gotchas — the only
+hiccup was a test authoring mistake (a fixture reused the same string
+for both the panel title and a property value, making `getByText`
+ambiguous), not a component defect.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(437/437), `pnpm build`, Storybook build, `npx playwright test`
+(344/344, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

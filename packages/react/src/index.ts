@@ -229,3 +229,5 @@ export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarIconButt
 export type { ToolbarProps, ToolbarGroupProps } from "./components/Toolbar/Toolbar.js";
 export { FilterBar } from "./components/FilterBar/FilterBar.js";
 export type { FilterBarProps, ActiveFilter } from "./components/FilterBar/FilterBar.js";
+export { InspectorPanel } from "./components/InspectorPanel/InspectorPanel.js";
+export type { InspectorPanelProps, InspectorSection, InspectorProperty } from "./components/InspectorPanel/InspectorPanel.js";

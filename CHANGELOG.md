@@ -5,6 +5,15 @@ a per-npm-release history.
 
 ## Unreleased
 
+### InspectorPanel added — Family F, 6/10 (2026-11-19)
+
+- Added `InspectorPanel`: properties panel for a selected item, real
+  `<dl>`/`<dt>`/`<dd>` markup per label/value pair, grouped into
+  sections. Typically `ResizablePanels`' right-hand pane.
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (437/437), `pnpm build`, Storybook build, `npx playwright test`
+  (344/344, run twice). **VERIFIED**.
+
 ### FilterBar added — Family F, 5/10 (2026-11-19)
 
 - Added `FilterBar`: a row of filter controls (`Select`/`SearchField`/
