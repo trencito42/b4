@@ -5,6 +5,28 @@ a per-npm-release history.
 
 ## Unreleased
 
+### Five missing layout primitives added (2026-11-19)
+
+Mission-brief batch 2 (component-gap audit): `Separator`, `VisuallyHidden`,
+`AspectRatio`, `Collapsible`, `ScrollArea` — real gaps in the standard
+component foundation, each built on Base UI where Base UI has the
+primitive (`Separator`, `Collapsible`, `ScrollArea`) and plain CSS where
+it doesn't need more (`AspectRatio`, `VisuallyHidden`). `Stack`/`Grid`/
+`Container` were deliberately not added — the brief's own layout section
+says plain CSS + spacing tokens is the right tool there, not a component.
+
+Found and fixed a real bug during verification, not just claimed it
+works: `ScrollArea`'s viewport had no `overflow` CSS property set at
+all, so nothing ever actually scrolled despite the component mounting
+and looking fine in a screenshot — caught by an e2e assertion on
+`scrollHeight > clientHeight`, not a visual check.
+
+Verified: typecheck clean, `@b4/react` unit suite 545/545 (24 new),
+Storybook build clean, Studio build clean, craftsmanship audit 0
+blockers/0 warnings, new `e2e/layout-primitives.spec.ts` 17/17, full
+Playwright suite 423/424 (the one pre-existing, unrelated `TextMorph`
+contrast failure — see earlier entries).
+
 ### `BorderBeam` and `DistortionWave` removed (2026-11-19)
 
 Explicit mission-brief decision: stop developing decorative advanced

@@ -1,0 +1,17 @@
+.b4-aspect-ratio {
+  position: relative;
+  width: 100%;
+}
+
+.b4-aspect-ratio__content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.b4-aspect-ratio__content > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

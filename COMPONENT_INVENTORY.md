@@ -126,6 +126,27 @@ FileExplorer is a real tree (`TreeView`) with folder-first sorting and
 file-only open. QueryEditor tokenizes and validates a SQL subset; it is
 not a styled textarea.
 
+## Family G — Layout Primitives
+
+| Component | Status |
+|---|---|
+| Separator | **VERIFIED** — typecheck/build/unit/Storybook/Playwright gate closed 2026-11-19, see QUALITY_MATRIX.md |
+| VisuallyHidden | **VERIFIED** — typecheck/build/unit/Storybook/Playwright gate closed 2026-11-19, see QUALITY_MATRIX.md |
+| AspectRatio | **VERIFIED** — typecheck/build/unit/Storybook/Playwright gate closed 2026-11-19, see QUALITY_MATRIX.md |
+| Collapsible | **VERIFIED** — typecheck/build/unit/Storybook/Playwright gate closed 2026-11-19, see QUALITY_MATRIX.md |
+| ScrollArea | **VERIFIED** — typecheck/build/unit/Storybook/Playwright gate closed 2026-11-19, see QUALITY_MATRIX.md |
+
+Added per the mission brief's component-gap audit (batch 2): five
+genuinely missing standard primitives, each built on Base UI where Base
+UI has the primitive (`Separator`, `Collapsible`, `ScrollArea`) and pure
+CSS where it doesn't need more (`AspectRatio`, `VisuallyHidden`). `Stack`/
+`Grid`/`Container` were deliberately **not** added — the brief's own
+§14 says to "use native semantic HTML for structure and minimal
+application layout CSS when appropriate," and a flex/grid wrapper with a
+spacing-token `gap` is exactly that; wrapping it in a component would add
+a name to learn without adding real behavior over existing CSS +
+`--b4-space-*` tokens.
+
 ## Effects — first-party, `packages/react/src/effects` (`@b4/react/effects`)
 
 Advanced, opt-in visual effects kept in their own export subpath rather

@@ -644,8 +644,15 @@ if (claimedCount !== realCount) {
 
 // The inventory's total-component claim appears in several docs. Only a
 // total is checked here — family sizes ("Family B — 19 components") are
-// a different number and must not trip this.
-for (const doc of ["PROGRESS.md", "HANDOFF.md", "PHASE7_AUDIT.md", "README.md"]) {
+// a different number and must not trip this. PROGRESS.md and
+// PHASE7_AUDIT.md are explicitly chronological/historical logs (each
+// entry is dated, describing what was true at that point) — flagging
+// a past entry's component count as "stale" misreads a historical
+// record as a current claim, which this audit's own honesty rule says
+// not to do (see docs/effects/README.md's and HANDOFF.md's removal
+// notes for the same principle applied to docs, not counts). Only
+// HANDOFF.md and README.md are meant to describe current state.
+for (const doc of ["HANDOFF.md", "README.md"]) {
   const text = read(join(ROOT, doc));
   if (!text) continue;
   const stale = [...text.matchAll(/\b(\d{2,3})\s+(?:public\s+)?components\b/g)].filter(

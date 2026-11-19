@@ -13,7 +13,7 @@ removal record. Do not resurrect either effect, under these names or new
 ones, without the user asking again.
 
 The new mission (per the same brief) is a large, multi-session effort:
-make all 84 components feel like one coherently designed system —
+make all components (89 as of this writing — see below) feel like one coherently designed system —
 real visual QA in a browser across both themes and six viewports, forms
 craftsmanship, closing genuine missing-primitive gaps, three realistic
 application showcases, and a proper Studio review environment. This is
@@ -37,6 +37,32 @@ canonical pipeline (`pnpm build`/`typecheck`/`test`/`build-storybook`/
 failure is environment-specific (Linux-only) or this commit already
 fixes whatever it was — the next CI run on this commit is the real
 answer, not a local reproduction.
+
+**Batch 2 (standard component gaps) done, same session, next commit.**
+Audited the 84 (now 89) components against the brief's full primitive
+list (actions/forms/navigation/overlays/data/feedback/application
+structure + the explicitly-named "may be missing" list: ScrollArea,
+Separator, AspectRatio, Stack, Grid, Container, Collapsible,
+VisuallyHidden). Five were genuine gaps and got built: `Separator`,
+`VisuallyHidden`, `AspectRatio`, `Collapsible`, `ScrollArea` — each on
+Base UI where Base UI has the primitive, plain CSS where it doesn't need
+more. `Stack`/`Grid`/`Container` were deliberately **not** built — the
+brief's own §14 says plain CSS + spacing tokens is the right tool for
+layout, not a named component; wrapping a flex/grid `gap` in a component
+adds a name to learn without adding behavior. Found and fixed a real bug
+during verification (not just claimed VERIFIED): `ScrollArea`'s viewport
+had no `overflow` CSS at all, so nothing scrolled despite the component
+rendering fine — caught by an e2e `scrollHeight > clientHeight`
+assertion, not a screenshot. Verified: typecheck clean, 545/545 unit
+tests, Storybook/Studio build clean, craftsmanship audit 0/0,
+`e2e/layout-primitives.spec.ts` 17/17, full suite 423/424 (same one
+pre-existing TextMorph contrast failure, still untouched/unrelated).
+
+Batches 3–8 (forms craftsmanship, navigation/overlays/layout polish,
+data/feedback polish, cross-family visual QA, three application
+showcases, final verification) are **still not started.** The `Calendar`/
+`NumberField`/`PasswordField` e2e failures noted above are still
+unexplained — they belong to batch 3/4's scope, not fixed here.
 
 ## DistortionWave: the real bug behind "I don't see the effect" (2026-11-19 — superseded by removal above; kept as history)
 
@@ -103,11 +129,13 @@ without explicit user authorization and a confirmed package scope.
 
 ### Project identity
 
-B4 — commercial-grade React design system, Graphite + Porcelain, 84 public
+B4 — commercial-grade React design system, Graphite + Porcelain, 89 public
 components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
-The count is 84, not the 83 the mission brief used: `TextMorph` landed
-after that brief was written, and `RangeSlider` is documented as sharing
-`Slider`'s implementation rather than being a component of its own.
+`RangeSlider` is documented as sharing `Slider`'s implementation rather
+than being a component of its own, so it's not counted separately. The
+count moves as work lands — `scripts/craftsmanship-audit.mjs` is the
+live source of truth (`Craftsmanship audit: N components`), not this
+number; re-run it rather than trusting a cached count here.
 
 ### Current Git state
 
@@ -191,8 +219,10 @@ that had already been marked VERIFIED**.
 BorderBeam (edge) and DistortionWave (face) together.
 
 **The systematic craftsmanship audit — `scripts/craftsmanship-audit.mjs`**
-- 14 mechanical invariants over all 84 components, both effects, all 86
-  story files and the Studio catalog. Re-runnable, exits non-zero on a
+- 14 mechanical invariants over every component (count grows as the
+  library does — see "Project identity" above, not this historical
+  number), every effect, every story file and the Studio catalog.
+  Re-runnable, exits non-zero on a
   BLOCKER, wired into `pnpm release:verify` and CI. Report:
   `CRAFTMANSHIP_AUDIT.md`.
 - Its own first rule was *don't report false positives*: a component that

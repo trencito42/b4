@@ -1,0 +1,67 @@
+.b4-collapsible {
+  display: flex;
+  flex-direction: column;
+}
+
+.b4-collapsible__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-5);
+  width: 100%;
+  height: var(--b4-control-height);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--b4-text-primary);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-base);
+  font-weight: var(--b4-weight-medium);
+  text-align: left;
+  cursor: pointer;
+}
+
+.b4-collapsible__trigger:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
+}
+
+.b4-collapsible__trigger[data-disabled] {
+  color: var(--b4-text-disabled);
+  cursor: not-allowed;
+}
+
+.b4-collapsible__chevron {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--b4-text-tertiary);
+  transition: transform var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-collapsible__trigger[data-panel-open] .b4-collapsible__chevron {
+  transform: rotate(180deg);
+}
+
+.b4-collapsible__panel {
+  overflow: hidden;
+  height: 0;
+  transition: height var(--b4-duration-base) var(--b4-ease-standard);
+}
+
+.b4-collapsible__panel[data-open] {
+  height: var(--collapsible-panel-height);
+}
+
+.b4-collapsible__panel[data-starting-style],
+.b4-collapsible__panel[data-ending-style] {
+  height: 0;
+}
+
+.b4-collapsible__content {
+  padding: 0 0 var(--b4-space-7);
+  color: var(--b4-text-secondary);
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-sm);
+  line-height: var(--b4-leading-normal);
+}

@@ -9,14 +9,14 @@ non-zero on any BLOCKER, so it can gate CI.
 
 | Metric | Count |
 |---|---|
-| Components audited | 84 |
+| Components audited | 89 |
 | Effects audited | 1 |
-| Stories files audited | 85 |
-| Studio catalog entries | 85 |
+| Stories files audited | 90 |
+| Studio catalog entries | 90 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
-| Components with zero findings | 62 |
-| Components not forwarding a ref | 32 |
+| Components with zero findings | 65 |
+| Components not forwarding a ref | 33 |
 | Blipmade references in code | 0 |
 
 ## Checks performed
@@ -42,7 +42,7 @@ non-zero on any BLOCKER, so it can gate CI.
 
 None.
 
-## Notes (22)
+## Notes (24)
 
 Informational — these are compliant, but recorded so a reader can see what the
 audit considered rather than assuming it did not look.
@@ -54,6 +54,7 @@ audit considered rather than assuming it did not look.
 | Button | motion | animates with a hand-written duration (0.7s) but overrides it under prefers-reduced-motion |
 | Checkbox | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | CircularProgress | motion | animates with a hand-written duration (1.2s) but overrides it under prefers-reduced-motion |
+| Collapsible | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Combobox | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Drawer | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | IconButton | motion | animates with a hand-written duration (0.7s) but overrides it under prefers-reduced-motion |
@@ -61,6 +62,7 @@ audit considered rather than assuming it did not look.
 | Progress | motion | animates with a hand-written duration (1.4s) but overrides it under prefers-reduced-motion |
 | RadioGroup | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | ResourceMeter | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
+| ScrollArea | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Select | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Sheet | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Skeleton | motion | animates with a hand-written duration (1.6s) but overrides it under prefers-reduced-motion |
@@ -74,14 +76,14 @@ audit considered rather than assuming it did not look.
 
 ## Systemic observation — ref forwarding
 
-32 of 84 components do not forward a ref to their root
+33 of 89 components do not forward a ref to their root
 element (`AGENTS.md`'s checklist asks for `forwardRef`). Most of the remainder are
 compound components whose individual parts are Base UI primitives that forward their
 own refs, or components that deliberately reuse another component's markup. This is
 recorded rather than silently passed, because a consumer that wants to measure or
 scroll to a `Badge` or a `StatusBadge` currently cannot.
 
-Not forwarding a ref: Accordion, AlertDialog, AnimatedIndicator, AppShell, ColorPicker, CommandPalette, ContextMenu, DataGrid, DataTable, DatePicker, Dialog, Drawer, DropdownMenu, Field, FileExplorer, FileUpload, HoverCard, InputGroup, MorphingSurface, NavigationMenu, NotificationPanel, Popover, RadioGroup, ResizablePanels, SegmentedControl, Sheet, SplitButton, Tabs, TimePicker, Toast, Tooltip, TreeView
+Not forwarding a ref: Accordion, AlertDialog, AnimatedIndicator, AppShell, Collapsible, ColorPicker, CommandPalette, ContextMenu, DataGrid, DataTable, DatePicker, Dialog, Drawer, DropdownMenu, Field, FileExplorer, FileUpload, HoverCard, InputGroup, MorphingSurface, NavigationMenu, NotificationPanel, Popover, RadioGroup, ResizablePanels, SegmentedControl, Sheet, SplitButton, Tabs, TimePicker, Toast, Tooltip, TreeView
 
 ## Declared colour exemptions (10)
 
@@ -110,6 +112,7 @@ listed here rather than hidden, so a reader can challenge any of them.
 | AlertDialog | own | no | 0 | 0 |
 | AnimatedIndicator | none | no | 0 | 0 |
 | AppShell | own | no | 0 | 0 |
+| AspectRatio | own | yes | 0 | 0 |
 | Avatar | own | yes | 0 | 0 |
 | AvatarGroup | own | yes | 0 | 0 |
 | Badge | own | yes | 0 | 0 |
@@ -122,6 +125,7 @@ listed here rather than hidden, so a reader can challenge any of them.
 | Checkbox | own | yes | 0 | 0 |
 | CircularProgress | own | yes | 0 | 0 |
 | CodeBlock | own | yes | 0 | 0 |
+| Collapsible | own | no | 0 | 0 |
 | ColorPicker | own | no | 0 | 0 |
 | Combobox | own | yes | 0 | 0 |
 | CommandPalette | own | no | 0 | 0 |
@@ -163,9 +167,11 @@ listed here rather than hidden, so a reader can challenge any of them.
 | RadioGroup | own | no | 0 | 0 |
 | ResizablePanels | own | no | 0 | 0 |
 | ResourceMeter | own | yes | 0 | 0 |
+| ScrollArea | own | yes | 0 | 0 |
 | SearchField | shared:TextField | yes | 0 | 0 |
 | SegmentedControl | own | no | 0 | 0 |
 | Select | own | yes | 0 | 0 |
+| Separator | own | yes | 0 | 0 |
 | Sheet | own | no | 0 | 0 |
 | Sidebar | own | yes | 0 | 0 |
 | Skeleton | own | yes | 0 | 0 |
@@ -189,3 +195,4 @@ listed here rather than hidden, so a reader can challenge any of them.
 | Tooltip | own | no | 0 | 0 |
 | TransitionGroup | own | yes | 0 | 0 |
 | TreeView | own | no | 0 | 0 |
+| VisuallyHidden | own | yes | 0 | 0 |

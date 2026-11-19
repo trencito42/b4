@@ -167,6 +167,12 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
   },
   {
     id: "g",
+    title: "Layout Primitives",
+    storybookFamilySlug: "family-g-layout-primitives",
+    components: [c("Separator"), c("VisuallyHidden"), c("AspectRatio"), c("Collapsible"), c("ScrollArea")],
+  },
+  {
+    id: "h",
     title: "Effects",
     storybookFamilySlug: "effects",
     components: [e("RefractionSweep")],

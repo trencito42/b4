@@ -249,6 +249,18 @@ export type { FileExplorerProps, FileExplorerNode } from "./components/FileExplo
 export { QueryEditor } from "./components/QueryEditor/QueryEditor.js";
 export type { QueryEditorProps } from "./components/QueryEditor/QueryEditor.js";
 
+// Family G — Layout Primitives
+export { Separator } from "./components/Separator/Separator.js";
+export type { SeparatorProps } from "./components/Separator/Separator.js";
+export { VisuallyHidden } from "./components/VisuallyHidden/VisuallyHidden.js";
+export type { VisuallyHiddenProps } from "./components/VisuallyHidden/VisuallyHidden.js";
+export { AspectRatio } from "./components/AspectRatio/AspectRatio.js";
+export type { AspectRatioProps } from "./components/AspectRatio/AspectRatio.js";
+export { Collapsible } from "./components/Collapsible/Collapsible.js";
+export type { CollapsibleProps } from "./components/Collapsible/Collapsible.js";
+export { ScrollArea } from "./components/ScrollArea/ScrollArea.js";
+export type { ScrollAreaProps } from "./components/ScrollArea/ScrollArea.js";
+
 // Behavioral & interaction foundations
 export {
   useControllableState,

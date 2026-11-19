@@ -1,0 +1,57 @@
+.b4-scroll-area {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+
+.b4-scroll-area__viewport {
+  width: 100%;
+  overflow: scroll;
+  overscroll-behavior: contain;
+}
+
+.b4-scroll-area__content {
+  min-width: 100%;
+}
+
+.b4-scroll-area__scrollbar {
+  display: flex;
+  touch-action: none;
+  user-select: none;
+  padding: 2px;
+  background: transparent;
+  opacity: 0;
+  transition: opacity var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-scroll-area__scrollbar[data-orientation="vertical"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+}
+
+.b4-scroll-area__scrollbar[data-orientation="horizontal"] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  flex-direction: column;
+}
+
+.b4-scroll-area__scrollbar[data-scrolling],
+.b4-scroll-area:hover .b4-scroll-area__scrollbar {
+  opacity: 1;
+}
+
+.b4-scroll-area__thumb {
+  flex: 1;
+  background: var(--b4-border-strong);
+  border-radius: 999px;
+}
+
+.b4-scroll-area__corner {
+  background: transparent;
+}

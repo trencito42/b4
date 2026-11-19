@@ -1,0 +1,15 @@
+.b4-separator {
+  flex-shrink: 0;
+  background: var(--b4-border-subtle);
+  border: none;
+}
+
+.b4-separator--horizontal {
+  width: 100%;
+  height: 1px;
+}
+
+.b4-separator--vertical {
+  width: 1px;
+  height: 100%;
+}

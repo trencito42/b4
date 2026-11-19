@@ -77,6 +77,9 @@
 @import "./components/FileExplorer/FileExplorer.css";
 @import "./components/QueryEditor/QueryEditor.css";
 @import "./components/TextMorph/TextMorph.css";
-@import "./effects/BorderBeam/BorderBeam.css";
+@import "./components/Separator/Separator.css";
+@import "./components/VisuallyHidden/VisuallyHidden.css";
+@import "./components/AspectRatio/AspectRatio.css";
+@import "./components/Collapsible/Collapsible.css";
+@import "./components/ScrollArea/ScrollArea.css";
 @import "./effects/RefractionSweep/RefractionSweep.css";
-@import "./effects/DistortionWave/DistortionWave.css";
