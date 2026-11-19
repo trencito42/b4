@@ -1,0 +1,15 @@
+/*
+ * Deliberate import order: Tailwind first, B4 second. Tailwind v4's
+ * `@import "tailwindcss"` includes a Preflight reset (low-specificity
+ * element selectors like `button { ... }`), and Tailwind's own utility
+ * classes are single-class selectors (specificity 0,1,0) — the same
+ * specificity as B4's `.b4-*` classes. Loading B4 last means that for any
+ * accidental same-specificity collision (there shouldn't be any — B4 uses
+ * its own `b4-` prefix, not Tailwind's utility names), B4's styles win the
+ * cascade rather than silently losing to a Tailwind utility of the same
+ * specificity. Reversing this order is the thing to test if a consumer's
+ * B4 components ever look "almost right" in a Tailwind app.
+ */
+@import "tailwindcss";
+@import "@b4/tokens/css";
+@import "@b4/react/styles.css";
