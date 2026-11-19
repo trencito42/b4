@@ -247,3 +247,48 @@
 .b4-showcase-checkout__card .b4-progress {
   width: 100%;
 }
+
+.b4-showcase-settings__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-8);
+  max-width: 28rem;
+  padding: var(--b4-space-8) 0;
+}
+
+.b4-showcase-settings__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+}
+
+.b4-showcase-settings__field-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--b4-text-primary);
+}
+
+.b4-showcase-settings__bar {
+  position: sticky;
+  bottom: var(--b4-space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--b4-space-6);
+  margin-top: var(--b4-space-8);
+  padding: var(--b4-space-6) var(--b4-space-7);
+  border-radius: var(--b4-surface-radius);
+  border: 1px solid var(--b4-border-subtle);
+  background: var(--b4-surface-2);
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.4);
+}
+
+.b4-showcase-settings__bar-text {
+  font-size: 0.875rem;
+  color: var(--b4-text-secondary);
+}
+
+.b4-showcase-settings__bar-actions {
+  display: flex;
+  gap: var(--b4-space-4);
+}

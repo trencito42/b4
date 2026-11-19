@@ -22,6 +22,7 @@ import { ShowcaseAnalyticsPage } from "./pages/ShowcaseAnalyticsPage.js";
 import { ShowcaseBillingPage } from "./pages/ShowcaseBillingPage.js";
 import { ShowcaseCheckoutPage } from "./pages/ShowcaseCheckoutPage.js";
 import { ShowcaseInfrastructurePage } from "./pages/ShowcaseInfrastructurePage.js";
+import { ShowcaseSettingsPage } from "./pages/ShowcaseSettingsPage.js";
 import {
   applyStudioSettings,
   defaultStudioSettings,
@@ -42,7 +43,8 @@ export type StudioRoute =
   | "showcase-analytics"
   | "showcase-infrastructure"
   | "showcase-billing"
-  | "showcase-checkout";
+  | "showcase-checkout"
+  | "showcase-settings";
 
 export function StudioApp() {
   const [route, setRoute] = useState<StudioRoute>("home");
@@ -86,6 +88,8 @@ export function StudioApp() {
         return <ShowcaseBillingPage previewWidth={settings.previewWidth} />;
       case "showcase-checkout":
         return <ShowcaseCheckoutPage previewWidth={settings.previewWidth} />;
+      case "showcase-settings":
+        return <ShowcaseSettingsPage previewWidth={settings.previewWidth} />;
       default:
         return <HomePage />;
     }
@@ -123,6 +127,7 @@ export function StudioApp() {
                     },
                     { id: "showcase-billing", label: "Billing", onClick: () => setRoute("showcase-billing") },
                     { id: "showcase-checkout", label: "Confirmation", onClick: () => setRoute("showcase-checkout") },
+                    { id: "showcase-settings", label: "Settings", onClick: () => setRoute("showcase-settings") },
                   ],
                 },
               ]}
