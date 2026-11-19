@@ -24,6 +24,11 @@ components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
+Latest craftsmanship improvements:
+- **Button async action choreography**: full lifecycle (`idle` -> `pending` -> `success` / `error`) with `status`, `statusLabels`, `statusIcons`, `onAction`, soft text blur/opacity transitions via `TextTransition`, icon transitions (spinner, checkmark, error), tone shifts, and stable width adaptation.
+- **B4 Studio Motion Lab**: interactive test benches for asynchronous action transformations, selection indicator travel & interruption stress tests, variable-width text transitions, rolling number transitions, and reduced motion inspection.
+- Unit tests expanded to **465 / 465 passed** across 83 suites in `@b4/react`. Studio Vite build clean (549ms). Monorepo typecheck 0 errors.
+
 ### Current task
 
 **None** — resume only for publish, consumer-specific integration, or new

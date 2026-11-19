@@ -1,5 +1,5 @@
 export { Button } from "./components/Button/Button.js";
-export type { ButtonProps, ButtonVariant, ButtonSize } from "./components/Button/Button.js";
+export type { ButtonProps, ButtonVariant, ButtonSize, ButtonStatus } from "./components/Button/Button.js";
 
 export { SegmentedControl } from "./components/SegmentedControl/SegmentedControl.js";
 export type {

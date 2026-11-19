@@ -67,3 +67,39 @@ export const AllVariants: Story = {
     </div>
   ),
 };
+
+export const AsyncStates: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+      <Button status="idle">Idle: Deploy app</Button>
+      <Button status="pending" statusLabels={{ pending: "Deploying…" }}>
+        Deploy app
+      </Button>
+      <Button status="success" statusLabels={{ success: "Deployed" }}>
+        Deploy app
+      </Button>
+      <Button status="error" statusLabels={{ error: "Retry deployment" }}>
+        Deploy app
+      </Button>
+    </div>
+  ),
+};
+
+export const InteractiveAsyncAction: Story = {
+  render: () => (
+    <Button
+      variant="primary"
+      onAction={async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }}
+      statusLabels={{
+        idle: "Deploy to production",
+        pending: "Deploying cluster…",
+        success: "Cluster deployed!",
+        error: "Deployment failed",
+      }}
+    >
+      Deploy to production
+    </Button>
+  ),
+};

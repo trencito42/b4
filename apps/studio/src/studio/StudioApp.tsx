@@ -15,6 +15,7 @@ import {
 import { STUDIO_COMPONENT_COUNT } from "./catalog.js";
 import { CatalogPage } from "./pages/CatalogPage.js";
 import { HomePage } from "./pages/HomePage.js";
+import { MotionLabPage } from "./pages/MotionLabPage.js";
 import { ShowcaseAnalyticsPage } from "./pages/ShowcaseAnalyticsPage.js";
 import { ShowcaseBillingPage } from "./pages/ShowcaseBillingPage.js";
 import { ShowcaseInfrastructurePage } from "./pages/ShowcaseInfrastructurePage.js";
@@ -32,6 +33,7 @@ import "./studio.css";
 export type StudioRoute =
   | "home"
   | "catalog"
+  | "motion-lab"
   | "showcase-analytics"
   | "showcase-infrastructure"
   | "showcase-billing";
@@ -47,12 +49,21 @@ export function StudioApp() {
     saveStudioSettings(settings);
   }, [settings]);
 
-  const activeSidebarId = route === "catalog" ? "catalog" : route.startsWith("showcase") ? route : "home";
+  const activeSidebarId =
+    route === "catalog"
+      ? "catalog"
+      : route === "motion-lab"
+        ? "motion-lab"
+        : route.startsWith("showcase")
+          ? route
+          : "home";
 
   const content = useMemo(() => {
     switch (route) {
       case "catalog":
         return <CatalogPage initialQuery={catalogQuery} />;
+      case "motion-lab":
+        return <MotionLabPage />;
       case "showcase-analytics":
         return <ShowcaseAnalyticsPage previewWidth={settings.previewWidth} />;
       case "showcase-infrastructure":
@@ -79,6 +90,7 @@ export function StudioApp() {
                   items: [
                     { id: "home", label: "Overview", onClick: () => setRoute("home") },
                     { id: "catalog", label: "Components", onClick: () => setRoute("catalog") },
+                    { id: "motion-lab", label: "Motion Lab", onClick: () => setRoute("motion-lab") },
                   ],
                 },
                 {

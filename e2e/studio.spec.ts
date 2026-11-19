@@ -24,6 +24,13 @@ test("B4 Studio Analytics showcase renders", async ({ page }) => {
   await expect(page.getByText("Requests", { exact: true })).toBeVisible();
 });
 
+test("B4 Studio Motion Lab renders and exercises async action", async ({ page }) => {
+  await page.goto(studioOrigin);
+  await page.getByRole("button", { name: "Motion Lab" }).click();
+  await expect(page.getByRole("heading", { name: "Motion Lab" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Deploy to production/i })).toBeVisible();
+});
+
 for (const theme of ["graphite", "porcelain"] as const) {
   test(`B4 Studio home is axe-clean on ${theme}`, async ({ page }) => {
     await page.goto(studioOrigin);
