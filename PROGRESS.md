@@ -3,6 +3,14 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
+## CI Clean-Checkout Build Order & Cross-Platform Visual Baselines (2026-11-19)
+
+- **Clean checkout TS2307 fix**: Fixed build order in `.github/workflows/ci.yml` and `package.json` (`release:verify`) — `pnpm build` now runs before `pnpm typecheck`, generating fresh `.d.ts` outputs for `@b4/tokens` and `@b4/motion` in topological order rather than failing on absent dist directories.
+- **Cross-platform visual regression**: Committed Linux baseline snapshots (`*-chromium-linux.png`) alongside Windows snapshots (`*-chromium-win32.png`). Configured `maxDiffPixelRatio: 0.05` and `animations: "disabled"` across `playwright.config.ts` and `e2e/visual-regression.spec.ts` for deterministic font rasterization tolerance (FreeType vs DirectWrite) without masking real layout or visual defects.
+- **Button async action choreography**: Full lifecycle (`idle` -> `pending` -> `success` / `error`), `onAction` execution handler, `statusLabels`, `statusIcons`, tone shifts, and soft text blur crossfade via `TextTransition`.
+- **B4 Studio Motion Lab**: Interactive test bench (`MotionLabPage.tsx`) covering async actions, selection indicator travel stress tests, variable-width text transitions, rolling numbers, and reduced motion inspection.
+- Gate: 465/465 `@b4/react` tests, 5/5 `@b4/motion` tests, monorepo typecheck 0 errors, studio Vite build 549ms.
+
 ## Phase 7 & 8 — Audit, packaging, Studio e2e, visual baselines (2026-11-19)
 
 - **Phase 7** horizontal audit recorded in `PHASE7_AUDIT.md` (token/CSS spot

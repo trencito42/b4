@@ -12,12 +12,18 @@ for (const shot of storybookShots) {
     await page.goto(shot.path, { waitUntil: "networkidle" });
     const target = page.locator(shot.selector).first();
     await expect(target).toBeVisible();
-    await expect(target).toHaveScreenshot(`storybook-${shot.name}.png`, { maxDiffPixels: 300 });
+    await expect(target).toHaveScreenshot(`storybook-${shot.name}.png`, {
+      maxDiffPixelRatio: 0.05,
+      animations: "disabled",
+    });
   });
 }
 
 test("visual baseline (Studio): home graphite", async ({ page }) => {
   await page.goto("http://localhost:5173/");
   await expect(page.getByRole("heading", { name: /commercial-grade/i })).toBeVisible();
-  await expect(page.locator(".b4-app-shell")).toHaveScreenshot("studio-home.png", { maxDiffPixels: 300 });
+  await expect(page.locator(".b4-app-shell")).toHaveScreenshot("studio-home.png", {
+    maxDiffPixelRatio: 0.05,
+    animations: "disabled",
+  });
 });

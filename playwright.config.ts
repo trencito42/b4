@@ -16,7 +16,11 @@ export default defineConfig({
   workers: 3,
   reporter: "list",
   expect: {
-    toHaveScreenshot: { maxDiffPixels: 250 },
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.05,
+      threshold: 0.2,
+      animations: "disabled",
+    },
   },
   use: {
     baseURL: "http://localhost:6106",

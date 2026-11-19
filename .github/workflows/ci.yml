@@ -18,8 +18,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install
-      - run: pnpm typecheck
       - run: pnpm build
+      - run: pnpm typecheck
       - run: pnpm --filter @b4/react run test
       - run: pnpm --filter @b4/motion run test
       - run: pnpm --filter @b4/studio run build

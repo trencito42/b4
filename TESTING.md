@@ -79,9 +79,9 @@ both without checking.
 
 ```bash
 pnpm install
+pnpm build        # builds workspace packages first so dist/index.d.ts exist on clean checkout
 pnpm typecheck
 pnpm --filter @b4/react run test
-pnpm build
 npx playwright install chromium   # once per machine
 npx playwright test
 ```
