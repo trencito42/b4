@@ -24,6 +24,14 @@ components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
+Latest additions:
+- **First-Party Intelligent Text Morphing Engine (`TextMorph`)**:
+  - Implemented `TextMorph` with Unicode segmentation, distance-affinity bipartite matching, numeric place values, and fluid FLIP layout adaptation.
+  - Backwards-compatible `mode="morph"` support in `TextTransition` and `NumberTransition`.
+  - Added interactive `TextMorphLabPage` to B4 Studio with 6 benchmark cards.
+  - 13 engine unit tests, 6 component unit tests, 4 Playwright e2e tests, all axe-clean.
+  - Full suite: **504/504** vitest tests passing, 0 typecheck errors, Studio & Storybook build clean.
+
 Latest adaptive UX & interaction improvements:
 - **Interaction Primitive Hardening (Priorities 1–4)**:
   - `usePointerSelection`: synchronous ref tracking (`lastValidHitRef`, `didScrubRef`), guaranteed single commit on pointer release, `onClickCapture` click suppression post-scrub preventing Base UI double-commits.

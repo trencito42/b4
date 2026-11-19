@@ -31,6 +31,13 @@ test("B4 Studio Motion Lab renders and exercises async action", async ({ page })
   await expect(page.getByRole("button", { name: /Deploy to production/i })).toBeVisible();
 });
 
+test("B4 Studio Text Morph Lab renders and exercises morphing", async ({ page }) => {
+  await page.goto(studioOrigin);
+  await page.getByRole("button", { name: "Text Morphing Lab" }).click();
+  await expect(page.getByRole("heading", { name: "Text Morphing Lab" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Word Replacement & Reordering" })).toBeVisible();
+});
+
 for (const theme of ["graphite", "porcelain"] as const) {
   test(`B4 Studio home is axe-clean on ${theme}`, async ({ page }) => {
     await page.goto(studioOrigin);

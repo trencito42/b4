@@ -17,6 +17,10 @@ export type {
   TextTransitionDirection,
 } from "./components/TextTransition/TextTransition.js";
 
+export { TextMorph } from "./components/TextMorph/TextMorph.js";
+export type { TextMorphProps } from "./components/TextMorph/TextMorph.js";
+export type { TextMorphMode, MorphToken, DiffResult } from "./components/TextMorph/engine.js";
+
 export { NumberTransition } from "./components/NumberTransition/NumberTransition.js";
 export type { NumberTransitionProps } from "./components/NumberTransition/NumberTransition.js";
 
