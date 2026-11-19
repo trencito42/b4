@@ -14,6 +14,7 @@ import {
 } from "@b4/tokens";
 import { STUDIO_COMPONENT_COUNT, STUDIO_EFFECT_COUNT } from "./catalog.js";
 import { CatalogPage } from "./pages/CatalogPage.js";
+import { DistortionWaveDebugPage } from "./pages/DistortionWaveDebugPage.js";
 import { EffectsLabPage } from "./pages/EffectsLabPage.js";
 import { HomePage } from "./pages/HomePage.js";
 import { MotionLabPage } from "./pages/MotionLabPage.js";
@@ -40,6 +41,7 @@ export type StudioRoute =
   | "motion-lab"
   | "text-morph-lab"
   | "effects-lab"
+  | "distortion-wave-debug"
   | "showcase-analytics"
   | "showcase-infrastructure"
   | "showcase-billing"
@@ -66,7 +68,9 @@ export function StudioApp() {
           ? "text-morph-lab"
           : route === "effects-lab"
             ? "effects-lab"
-            : route.startsWith("showcase")
+            : route === "distortion-wave-debug"
+              ? "distortion-wave-debug"
+              : route.startsWith("showcase")
               ? route
               : "home";
 
@@ -80,6 +84,8 @@ export function StudioApp() {
         return <TextMorphLabPage />;
       case "effects-lab":
         return <EffectsLabPage />;
+      case "distortion-wave-debug":
+        return <DistortionWaveDebugPage />;
       case "showcase-analytics":
         return <ShowcaseAnalyticsPage previewWidth={settings.previewWidth} />;
       case "showcase-infrastructure":
@@ -113,6 +119,11 @@ export function StudioApp() {
                     { id: "motion-lab", label: "Motion Lab", onClick: () => setRoute("motion-lab") },
                     { id: "text-morph-lab", label: "Text Morphing Lab", onClick: () => setRoute("text-morph-lab") },
                     { id: "effects-lab", label: "Effects Lab", onClick: () => setRoute("effects-lab") },
+                    {
+                      id: "distortion-wave-debug",
+                      label: "DistortionWave Debug",
+                      onClick: () => setRoute("distortion-wave-debug"),
+                    },
                   ],
                 },
                 {

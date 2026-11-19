@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Card, NumberTransition, PageHeader, Progress, TextMorph, toastManager } from "@b4/react";
-import { BorderBeam, DistortionWave } from "@b4/react/effects";
+import { BorderBeam, RefractionSweep } from "@b4/react/effects";
 import type { StudioPreviewWidth } from "../settings.js";
 
 type FlowStatus = "review" | "pending" | "done";
@@ -18,7 +18,7 @@ function previewClass(width: StudioPreviewWidth): string {
 /**
  * Studio → Showcases → Confirmation. A mobile-first review-to-success
  * flow that composes all three B4 advanced effects on one real surface:
- * BorderBeam accents the card while the send is pending, DistortionWave
+ * BorderBeam accents the card while the send is pending, RefractionSweep
  * sweeps it on success, and TextMorph/NumberTransition carry the status
  * and amount across each state change. Reverse/reset re-plays the whole
  * flow. No real transfer happens — this is a sample flow built from
@@ -48,11 +48,11 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
     <div className={["b4-studio__preview-frame", previewClass(previewWidth)].filter(Boolean).join(" ")}>
       <PageHeader
         title="Confirmation"
-        description="A review-to-success payment flow — sample data only, built from BorderBeam, DistortionWave, and TextMorph."
+        description="A review-to-success payment flow — sample data only, built from BorderBeam, RefractionSweep, and TextMorph."
       />
       <div className="b4-showcase-checkout" style={{ marginTop: "var(--b4-space-10)" }}>
         <BorderBeam active={status === "pending"} tone="accent" size="sm">
-          <DistortionWave active={status === "done"} amplitude="sm" direction="horizontal" tone="success">
+          <RefractionSweep active={status === "done"} amplitude="sm" direction="horizontal" tone="success">
             <Card variant="raised" padding="lg" className="b4-showcase-checkout__card">
               <div className="b4-showcase-checkout__status">
                 <TextMorph value={statusLabel} mode="words" as="span" className="b4-showcase-checkout__status-text" />
@@ -97,7 +97,7 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
                 </Button>
               )}
             </Card>
-          </DistortionWave>
+          </RefractionSweep>
         </BorderBeam>
       </div>
     </div>

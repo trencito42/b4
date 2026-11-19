@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { Badge, Card, SegmentedControl, Switch } from "@b4/react";
-import { BorderBeam, DistortionWave } from "@b4/react/effects";
+import { BorderBeam, RefractionSweep } from "@b4/react/effects";
 import type { BorderBeamSize, BorderBeamTone } from "@b4/react/effects";
-import type { DistortionWaveAmplitude, DistortionWaveDirection, DistortionWaveTone } from "@b4/react/effects";
+import type { RefractionSweepAmplitude, RefractionSweepDirection, RefractionSweepTone } from "@b4/react/effects";
 import { useReducedMotion } from "@b4/motion";
 
 /**
@@ -23,9 +23,9 @@ export function EffectsLabPage() {
   const [beamDuration, setBeamDuration] = useState(6);
 
   const [waveActive, setWaveActive] = useState(true);
-  const [waveAmplitude, setWaveAmplitude] = useState<DistortionWaveAmplitude>("md");
-  const [waveDirection, setWaveDirection] = useState<DistortionWaveDirection>("horizontal");
-  const [waveTone, setWaveTone] = useState<DistortionWaveTone>("accent");
+  const [waveAmplitude, setWaveAmplitude] = useState<RefractionSweepAmplitude>("md");
+  const [waveDirection, setWaveDirection] = useState<RefractionSweepDirection>("horizontal");
+  const [waveTone, setWaveTone] = useState<RefractionSweepTone>("accent");
   const [waveDuration, setWaveDuration] = useState(6);
 
   const panel = (
@@ -122,11 +122,11 @@ export function EffectsLabPage() {
           </div>
         </Card>
 
-        {/* Lab 2 — DistortionWave */}
+        {/* Lab 2 — RefractionSweep */}
         <Card variant="outlined" padding="lg">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h3 style={{ margin: 0, fontSize: "var(--b4-text-lg)", fontWeight: "var(--b4-weight-semibold)" }}>
-              DistortionWave
+              RefractionSweep
             </h3>
             <Badge tone="neutral">@b4/react/effects</Badge>
           </div>
@@ -139,7 +139,7 @@ export function EffectsLabPage() {
             <Switch checked={waveActive} onCheckedChange={setWaveActive} label="Active" />
             <LabControl label="Amplitude">
               <SegmentedControl
-                aria-label="DistortionWave amplitude"
+                aria-label="RefractionSweep amplitude"
                 size="sm"
                 items={[
                   { value: "sm", label: "sm" },
@@ -147,24 +147,24 @@ export function EffectsLabPage() {
                   { value: "lg", label: "lg" },
                 ]}
                 value={waveAmplitude}
-                onValueChange={(value) => setWaveAmplitude(value as DistortionWaveAmplitude)}
+                onValueChange={(value) => setWaveAmplitude(value as RefractionSweepAmplitude)}
               />
             </LabControl>
             <LabControl label="Direction">
               <SegmentedControl
-                aria-label="DistortionWave direction"
+                aria-label="RefractionSweep direction"
                 size="sm"
                 items={[
                   { value: "horizontal", label: "horizontal" },
                   { value: "vertical", label: "vertical" },
                 ]}
                 value={waveDirection}
-                onValueChange={(value) => setWaveDirection(value as DistortionWaveDirection)}
+                onValueChange={(value) => setWaveDirection(value as RefractionSweepDirection)}
               />
             </LabControl>
             <LabControl label="Tone">
               <SegmentedControl
-                aria-label="DistortionWave tone"
+                aria-label="RefractionSweep tone"
                 size="sm"
                 items={[
                   { value: "accent", label: "accent" },
@@ -174,12 +174,12 @@ export function EffectsLabPage() {
                   { value: "info", label: "info" },
                 ]}
                 value={waveTone}
-                onValueChange={(value) => setWaveTone(value as DistortionWaveTone)}
+                onValueChange={(value) => setWaveTone(value as RefractionSweepTone)}
               />
             </LabControl>
             <LabControl label={`Duration: ${waveDuration}s`}>
               <SegmentedControl
-                aria-label="DistortionWave duration"
+                aria-label="RefractionSweep duration"
                 size="sm"
                 items={[
                   { value: "3", label: "3s" },
@@ -193,7 +193,7 @@ export function EffectsLabPage() {
           </div>
 
           <div style={{ maxWidth: 320 }}>
-            <DistortionWave
+            <RefractionSweep
               active={waveActive}
               amplitude={waveAmplitude}
               direction={waveDirection}
@@ -201,7 +201,7 @@ export function EffectsLabPage() {
               duration={waveDuration}
             >
               <Card>{panel}</Card>
-            </DistortionWave>
+            </RefractionSweep>
           </div>
         </Card>
 
@@ -214,13 +214,13 @@ export function EffectsLabPage() {
             <Badge tone="neutral">Edge + Face</Badge>
           </div>
           <p style={{ color: "var(--b4-text-secondary)", fontSize: "var(--b4-text-sm)", marginBottom: 16 }}>
-            The two effects are independent layers: BorderBeam traces the perimeter, DistortionWave crosses
+            The two effects are independent layers: BorderBeam traces the perimeter, RefractionSweep crosses
             the face. They compose without either one owning the other&rsquo;s geometry.
           </p>
 
           <div style={{ maxWidth: 320 }}>
             <BorderBeam active={beamActive} size={beamSize} tone={beamTone} duration={beamDuration}>
-              <DistortionWave
+              <RefractionSweep
                 active={waveActive}
                 amplitude={waveAmplitude}
                 direction={waveDirection}
@@ -228,7 +228,7 @@ export function EffectsLabPage() {
                 duration={waveDuration}
               >
                 <Card>{panel}</Card>
-              </DistortionWave>
+              </RefractionSweep>
             </BorderBeam>
           </div>
         </Card>

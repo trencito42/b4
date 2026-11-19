@@ -1,14 +1,14 @@
 /**
- * The WebGL2 program driving DistortionWave's chromatic/specular crest.
+ * The WebGL2 program driving RefractionSweep's chromatic/specular crest.
  *
- * Kept separate from DistortionWave.tsx so the shader source, uniform
+ * Kept separate from RefractionSweep.tsx so the shader source, uniform
  * wiring and GL lifecycle (init / resize / context-loss / dispose) read
  * as one unit instead of being interleaved with the React component.
  *
  * This renders the crest procedurally (RGB-channel-split specular core +
  * animated caustic-noise shimmer) — it does not sample a snapshot of the
- * DOM content behind it. The real pixel distortion in DistortionWave
- * comes from the separate `backdrop-filter` band in DistortionWave.css;
+ * DOM content behind it. The real pixel distortion in RefractionSweep
+ * comes from the separate `backdrop-filter` band in RefractionSweep.css;
  * this canvas is the layer riding on top of that band, replacing what
  * used to be a flat CSS gradient "fringe" with an actually GPU-rendered
  * one. See docs/effects/DISTORTION_WAVE.md for what is and is not real
@@ -79,13 +79,13 @@ interface CrestHandle {
 
 function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
   const shader = gl.createShader(type);
-  if (!shader) throw new Error("DistortionWave: could not create shader");
+  if (!shader) throw new Error("RefractionSweep: could not create shader");
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     const info = gl.getShaderInfoLog(shader);
     gl.deleteShader(shader);
-    throw new Error(`DistortionWave: shader compile failed: ${info ?? "unknown error"}`);
+    throw new Error(`RefractionSweep: shader compile failed: ${info ?? "unknown error"}`);
   }
   return shader;
 }
@@ -114,14 +114,14 @@ export function createCrestRenderer(canvas: HTMLCanvasElement): CrestHandle | nu
     const vertexShader = compile(ctx, ctx.VERTEX_SHADER, VERTEX_SRC);
     const fragmentShader = compile(ctx, ctx.FRAGMENT_SHADER, FRAGMENT_SRC);
     const prog = ctx.createProgram();
-    if (!prog) throw new Error("DistortionWave: could not create GL program");
+    if (!prog) throw new Error("RefractionSweep: could not create GL program");
     ctx.attachShader(prog, vertexShader);
     ctx.attachShader(prog, fragmentShader);
     ctx.linkProgram(prog);
     if (!ctx.getProgramParameter(prog, ctx.LINK_STATUS)) {
       const info = ctx.getProgramInfoLog(prog);
       ctx.deleteProgram(prog);
-      throw new Error(`DistortionWave: program link failed: ${info ?? "unknown error"}`);
+      throw new Error(`RefractionSweep: program link failed: ${info ?? "unknown error"}`);
     }
     ctx.deleteShader(vertexShader);
     ctx.deleteShader(fragmentShader);

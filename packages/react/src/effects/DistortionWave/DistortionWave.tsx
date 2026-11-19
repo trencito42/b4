@@ -1,148 +1,381 @@
-import { forwardRef, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useReducedMotion } from "@b4/motion";
-import { DistortionWaveCrest } from "./DistortionWaveCrest.js";
+import { captureElement } from "./internal/DomCapture.js";
+import { computeWaveGeometry } from "./internal/WaveGeometry.js";
+import { createWaveRenderer, type WaveRenderer } from "./internal/WaveRenderer.js";
+import { resolvePalette } from "./internal/WaveShaders.js";
+import { createWaveController, type WaveController } from "./internal/WaveController.js";
+import type { DistortionWaveHandle, DistortionWaveProps, DistortionWaveSource } from "./types.js";
 
-export type DistortionWaveAmplitude = "sm" | "md" | "lg";
-export type DistortionWaveDirection = "horizontal" | "vertical";
-export type DistortionWaveTone = "accent" | "success" | "warning" | "danger" | "info";
+function resolveSourceRect(source: DistortionWaveSource | undefined, containerEl: HTMLElement | null): { x: number; y: number; width: number; height: number } | null {
+  if (!source || !containerEl) return null;
+  const containerRect = containerEl.getBoundingClientRect();
 
-export interface DistortionWaveProps {
-  children: ReactNode;
-  /** Whether the wave is running. Defaults to true. */
-  active?: boolean;
-  /** How hard the wave distorts what it passes over. Defaults to "md". */
-  amplitude?: DistortionWaveAmplitude;
-  /** Axis the wave travels along. Defaults to "horizontal". */
-  direction?: DistortionWaveDirection;
-  /** Tint of the wave's chromatic edge, read from existing B4 tokens — not a custom hex. */
-  tone?: DistortionWaveTone;
-  /** Seconds per full sweep. Defaults to 6. */
-  duration?: number;
-  /** Corner radius the wave is clipped to. Defaults to `--b4-surface-radius` — pass the same radius the wrapped child uses so the clipped wave and the child's own visible edge agree. */
-  radius?: string;
-  className?: string;
+  let el: HTMLElement | null = null;
+  if (source instanceof HTMLElement) {
+    el = source;
+  } else if ("current" in source) {
+    el = source.current;
+  } else if ("width" in source && !("current" in source)) {
+    // Either a DOMRect or the explicit {x,y,width,height} shape — both
+    // match this branch; DOMRect also has x/y getters.
+    const rect = source as DOMRect | { x: number; y: number; width: number; height: number };
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  }
+  if (!el) return null;
+  const rect = el.getBoundingClientRect();
+  return {
+    x: rect.left - containerRect.left,
+    y: rect.top - containerRect.top,
+    width: rect.width,
+    height: rect.height,
+  };
 }
 
 /**
- * Amplitude is the *strength* of the refraction, not its size: the band
- * always covers the same fraction of the surface so the geometry of the
- * sweep (and therefore the alignment between the refraction layer and its
- * chromatic fringe) stays identical across every variant.
- */
-const amplitudeToGeometry: Record<DistortionWaveAmplitude, { blur: string; saturate: string; contrast: string }> = {
-  sm: { blur: "2px", saturate: "1.25", contrast: "1.04" },
-  md: { blur: "4px", saturate: "1.45", contrast: "1.08" },
-  lg: { blur: "7px", saturate: "1.7", contrast: "1.12" },
-};
-
-const toneToVar: Record<DistortionWaveTone, string> = {
-  accent: "var(--b4-accent-text)",
-  success: "var(--b4-success)",
-  warning: "var(--b4-warning)",
-  danger: "var(--b4-danger-text)",
-  info: "var(--b4-info)",
-};
-
-/**
- * A wave of refraction that travels across its child, bending the
- * content underneath it as it passes — the counterpoint to `BorderBeam`,
- * which traces a child's perimeter instead of crossing its face.
+ * B4's dual-React-view transition engine: a real WebGL2 pipeline that
+ * captures both the current and target view as textures, then displaces
+ * the UV coordinates it samples them through along a travelling
+ * wavefront — genuine per-pixel geometric distortion, not a CSS filter.
+ * See docs/effects/DISTORTION_WAVE.md for the full architecture, and
+ * docs/effects/REFRACTION_SWEEP.md for the smaller, CSS-based single-
+ * surface sibling this component is NOT (that one kept the old name).
  *
- * The distortion is real, not painted: the wave layer uses
- * `backdrop-filter` to blur, saturate and re-contrast the pixels
- * *actually rendered behind it* (the child's own text, icons and
- * surfaces), so the content genuinely refracts where the wave passes and
- * resolves again once it has moved on. Riding on top of that band is a
- * real WebGL2-rendered crest (`DistortionWaveCrest`/`crest.ts`) — a GPU
- * shader doing RGB-channel-split chromatic aberration, an animated
- * caustic-noise shimmer and a specular hot core — not a flat CSS
- * gradient standing in for one. See docs/effects/DISTORTION_WAVE.md for
- * exactly what is and is not genuinely sampled/rendered.
- *
- * Purely decorative: `aria-hidden`, `pointer-events: none`, never shifts
- * layout, never captures focus. Pauses itself via `IntersectionObserver`
- * when scrolled off-screen, and under `useReducedMotion()` it holds
- * still as a static tinted sheen — the band stops travelling and the
- * content stops being blurred, because a wave that does not move should
- * not leave text sitting behind frosted glass.
+ * Both `children` (the original view) and `revealedContent` (the target
+ * view) are always mounted, stacked in the same box. Whichever one
+ * doesn't match the current `revealed` prop is `inert` + `aria-hidden` +
+ * non-interactive immediately — real DOM/accessibility state always
+ * matches `revealed` right away, never gated behind the animation. The
+ * WebGL canvas overlay is a purely decorative, `aria-hidden`,
+ * `pointer-events: none` layer on top that plays the visual transition;
+ * `overlay` (e.g. the Confirm button) renders in its own always-on-top,
+ * always-interactive layer that the shader never touches.
  */
-export const DistortionWave = forwardRef<HTMLDivElement, DistortionWaveProps>(function DistortionWave(
+export const DistortionWave = forwardRef<DistortionWaveHandle, DistortionWaveProps>(function DistortionWave(
   {
     children,
-    active = true,
-    amplitude = "md",
-    direction = "horizontal",
-    tone = "accent",
-    duration = 6,
-    radius = "var(--b4-surface-radius)",
+    revealedContent,
+    revealed,
+    overlay,
+    source,
+    focus,
+    type = "vertical",
+    palette = "colorful",
+    scale = 1,
+    cornerRadius = "var(--b4-surface-radius)",
+    duration = 0.9,
+    scrub = false,
+    progress: controlledProgress,
+    capture,
+    live = false,
+    prewarm = false,
+    resolution,
+    reducedMotion: reducedMotionProp,
+    onFinish,
     className,
   },
   forwardedRef,
 ) {
-  const reducedMotion = useReducedMotion();
+  const systemReducedMotion = useReducedMotion();
+  const reducedMotion = reducedMotionProp ?? systemReducedMotion;
+
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
+  const originalHostRef = useRef<HTMLDivElement | null>(null);
+  const revealedHostRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const probeRef = useRef<HTMLDivElement | null>(null);
+
+  const rendererRef = useRef<WaveRenderer | null>(null);
+  const controllerRef = useRef<WaveController | null>(null);
+  const originalCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const revealedCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const activeTransitionRef = useRef(false);
+
+  const [glAvailable, setGlAvailable] = useState(true);
+  const [canvasVisible, setCanvasVisible] = useState(false);
+  const [captureFailed, setCaptureFailed] = useState(false);
+
+  const doCapture = useCallback(
+    async (el: HTMLElement | null): Promise<HTMLCanvasElement | null> => {
+      if (!el) return null;
+      try {
+        if (capture) return await capture(el);
+        const result = await captureElement(el, { resolution });
+        return result.canvas;
+      } catch {
+        setCaptureFailed(true);
+        return null;
+      }
+    },
+    [capture, resolution],
+  );
+
+  const runTransition = useCallback(
+    async (direction: "forward" | "reverse") => {
+      const container = containerRef.current;
+      const canvas = canvasRef.current;
+      if (!container || !canvas) return;
+
+      if (reducedMotion || !glAvailable) {
+        // No GPU wave: the real DOM swap (driven by `revealed` below)
+        // already happened; just report completion immediately.
+        onFinish?.(direction);
+        return;
+      }
+
+      if (!rendererRef.current) {
+        rendererRef.current = createWaveRenderer(canvas);
+        if (!rendererRef.current) {
+          setGlAvailable(false);
+          onFinish?.(direction);
+          return;
+        }
+      }
+      const renderer = rendererRef.current;
+
+      const dpr = Math.min(resolution ?? (window.devicePixelRatio || 1), 2);
+      const rect = container.getBoundingClientRect();
+      renderer.resize(Math.max(1, Math.round(rect.width * dpr)), Math.max(1, Math.round(rect.height * dpr)));
+
+      const [originalCanvas, revealedCanvas] = await Promise.all([
+        doCapture(originalHostRef.current),
+        doCapture(revealedHostRef.current),
+      ]);
+      originalCanvasRef.current = originalCanvas;
+      revealedCanvasRef.current = revealedCanvas;
+      renderer.setOriginalTexture(originalCanvas);
+      renderer.setRevealedTexture(revealedCanvas);
+
+      const probeEl = probeRef.current;
+      const [colorA, colorB] = probeEl ? resolvePalette(palette, probeEl) : [[1, 1, 1] as [number, number, number], [1, 1, 1] as [number, number, number]];
+
+      const sourceRect = resolveSourceRect(source, container) ?? {
+        x: rect.width / 2 - 1,
+        y: rect.height - 1,
+        width: 2,
+        height: 2,
+      };
+      const containerSize = { width: rect.width, height: rect.height };
+
+      activeTransitionRef.current = true;
+      setCanvasVisible(true);
+
+      controllerRef.current?.dispose();
+      controllerRef.current = createWaveController({
+        duration,
+        onTick: (p) => {
+          const geometry = computeWaveGeometry({
+            type,
+            progress: p,
+            sourceRect,
+            containerSize,
+            focus,
+          });
+          renderer.render({
+            geometry,
+            lensWidth: 0.14,
+            amplitude: 0.06 * scale,
+            chromaStrength: 0.8 * scale,
+            blurStrength: scale,
+            colorA,
+            colorB,
+            particleSeed: performance.now(),
+            containerWidth: rect.width,
+            containerHeight: rect.height,
+          });
+        },
+        onFinish: (dir) => {
+          activeTransitionRef.current = false;
+          setCanvasVisible(false);
+          onFinish?.(dir);
+        },
+      });
+
+      if (direction === "forward") controllerRef.current.play();
+      else controllerRef.current.reverse();
+    },
+    [capture, doCapture, duration, focus, glAvailable, onFinish, palette, reducedMotion, resolution, scale, source, type],
+  );
+
+  const prevRevealedRef = useRef(revealed);
+  useEffect(() => {
+    if (prevRevealedRef.current !== revealed) {
+      prevRevealedRef.current = revealed;
+      if (!scrub) {
+        void runTransition(revealed ? "forward" : "reverse");
+      }
+    }
+  }, [revealed, runTransition, scrub]);
+
+  const scrubReadyRef = useRef(false);
+  useEffect(() => {
+    if (!scrub || controlledProgress === undefined || reducedMotion) return;
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
+
+    let cancelled = false;
+
+    async function renderScrubFrame() {
+      if (!container || !canvas) return;
+      if (!rendererRef.current) {
+        rendererRef.current = createWaveRenderer(canvas);
+        if (!rendererRef.current) {
+          setGlAvailable(false);
+          return;
+        }
+      }
+      const renderer = rendererRef.current;
+      if (!scrubReadyRef.current) {
+        const dpr = Math.min(resolution ?? (window.devicePixelRatio || 1), 2);
+        const rect0 = container.getBoundingClientRect();
+        renderer.resize(Math.max(1, Math.round(rect0.width * dpr)), Math.max(1, Math.round(rect0.height * dpr)));
+        const [originalCanvas, revealedCanvas] = await Promise.all([
+          doCapture(originalHostRef.current),
+          doCapture(revealedHostRef.current),
+        ]);
+        if (cancelled) return;
+        renderer.setOriginalTexture(originalCanvas);
+        renderer.setRevealedTexture(revealedCanvas);
+        scrubReadyRef.current = true;
+      }
+
+      const rect = container.getBoundingClientRect();
+      const sourceRect = resolveSourceRect(source, container) ?? { x: rect.width / 2, y: rect.height, width: 2, height: 2 };
+      const geometry = computeWaveGeometry({
+        type,
+        progress: controlledProgress as number,
+        sourceRect,
+        containerSize: { width: rect.width, height: rect.height },
+        focus,
+      });
+      const probeEl = probeRef.current;
+      const [colorA, colorB] = probeEl
+        ? resolvePalette(palette, probeEl)
+        : [[1, 1, 1] as [number, number, number], [1, 1, 1] as [number, number, number]];
+      setCanvasVisible(true);
+      renderer.render({
+        geometry,
+        lensWidth: 0.14,
+        amplitude: 0.06 * scale,
+        chromaStrength: 0.8 * scale,
+        blurStrength: scale,
+        colorA,
+        colorB,
+        particleSeed: performance.now(),
+        containerWidth: rect.width,
+        containerHeight: rect.height,
+      });
+    }
+
+    void renderScrubFrame();
+    return () => {
+      cancelled = true;
+    };
+  }, [controlledProgress, scrub, source, type, focus, scale, palette, doCapture, resolution, reducedMotion]);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(([entry]) => setIsVisible(!!entry?.isIntersecting), {
-      threshold: 0,
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
+    if (prewarm) {
+      void doCapture(originalHostRef.current);
+      void doCapture(revealedHostRef.current);
+    }
+  }, [prewarm, doCapture]);
+
+  useEffect(() => {
+    if (!live || activeTransitionRef.current) return;
+    const target = revealed ? revealedHostRef.current : originalHostRef.current;
+    void doCapture(target);
+  }, [live, revealed, doCapture]);
+
+  useEffect(() => {
+    return () => {
+      controllerRef.current?.dispose();
+      rendererRef.current?.dispose();
+    };
   }, []);
 
-  // "Moving" means: the effect is on, motion is allowed, and the element
-  // is actually on screen. When it is not moving, the band holds a static
-  // position instead of freezing mid-flight at an arbitrary offset.
-  const moving = active && !reducedMotion && isVisible;
-
-  const geometry = amplitudeToGeometry[amplitude];
+  useImperativeHandle(
+    forwardedRef,
+    (): DistortionWaveHandle => ({
+      play: () => void runTransition("forward"),
+      reverse: () => void runTransition("reverse"),
+      reset: () => {
+        controllerRef.current?.dispose();
+        setCanvasVisible(false);
+        activeTransitionRef.current = false;
+      },
+      prepare: async () => {
+        await Promise.all([doCapture(originalHostRef.current), doCapture(revealedHostRef.current)]);
+      },
+    }),
+    [runTransition, doCapture],
+  );
 
   return (
     <div
-      ref={(node: HTMLDivElement | null) => {
-        containerRef.current = node;
-        if (typeof forwardedRef === "function") {
-          forwardedRef(node);
-        } else if (forwardedRef) {
-          (forwardedRef as { current: HTMLDivElement | null }).current = node;
-        }
-      }}
-      className={["b4-distortion-wave", `b4-distortion-wave--${direction}`, className ?? ""].filter(Boolean).join(" ")}
-      style={{ borderRadius: radius }}
+      ref={containerRef}
+      className={["b4-distortion-wave-engine", className ?? ""].filter(Boolean).join(" ")}
+      style={{ position: "relative", borderRadius: cornerRadius, overflow: "hidden" }}
     >
-      {children}
-      {active && (
-        <span
-          aria-hidden="true"
-          className={[
-            "b4-distortion-wave__layer",
-            moving ? "b4-distortion-wave__layer--moving" : "b4-distortion-wave__layer--static",
-          ].join(" ")}
-          style={
-            {
-              "--b4-distortion-wave-blur": geometry.blur,
-              "--b4-distortion-wave-saturate": geometry.saturate,
-              "--b4-distortion-wave-contrast": geometry.contrast,
-              "--b4-distortion-wave-tone": toneToVar[tone],
-              "--b4-distortion-wave-duration": `${duration}s`,
-            } as CSSProperties
-          }
+      <div
+        ref={originalHostRef}
+        aria-hidden={revealed || undefined}
+        inert={revealed || undefined}
+        style={{
+          position: revealed ? "absolute" : "relative",
+          inset: 0,
+          visibility: revealed ? "hidden" : "visible",
+          pointerEvents: revealed ? "none" : "auto",
+        }}
+      >
+        {children}
+      </div>
+      <div
+        ref={revealedHostRef}
+        aria-hidden={!revealed || undefined}
+        inert={!revealed || undefined}
+        style={{
+          position: revealed ? "relative" : "absolute",
+          inset: 0,
+          visibility: revealed ? "visible" : "hidden",
+          pointerEvents: revealed ? "auto" : "none",
+        }}
+      >
+        {revealedContent}
+      </div>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="b4-distortion-wave-engine__canvas"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          opacity: canvasVisible ? 1 : 0,
+          borderRadius: "inherit",
+        }}
+      />
+      {/* Used only to resolve a palette token to an actual RGB via
+          getComputedStyle; never rendered visibly. */}
+      <div ref={probeRef} aria-hidden="true" style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} />
+      {overlay && (
+        <div
+          className="b4-distortion-wave-engine__overlay"
+          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
         >
-          <span className="b4-distortion-wave__band" />
-          <span className="b4-distortion-wave__crest-mask">
-            <DistortionWaveCrest
-              moving={moving}
-              vertical={direction === "vertical"}
-              duration={duration}
-              amplitude={amplitude}
-              toneVar={toneToVar[tone]}
-            />
-          </span>
-        </span>
+          <div style={{ pointerEvents: "auto", position: "relative" }}>{overlay}</div>
+        </div>
       )}
+      {captureFailed && <span style={{ display: "none" }} data-b4-distortion-wave-capture-failed="true" />}
     </div>
   );
 });

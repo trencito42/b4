@@ -1,57 +1,51 @@
-# DistortionWave
+# RefractionSweep
 
-`packages/react/src/effects/DistortionWave/DistortionWave.tsx` · exported
+`packages/react/src/effects/RefractionSweep/RefractionSweep.tsx` · exported
 from `@b4/react/effects`.
 
-## Read this first: scope vs. the original brief
+## Read this first: this is the renamed former "DistortionWave"
 
-The mission brief that requested `DistortionWave` asked for a **view
-transition** effect — swapping one rendered React view for another (e.g. a
-review card into a success/receipt view) via a DOM snapshot pipeline (SVG
-`foreignObject` + Canvas2D, falling back to/augmented by WebGL2), a
-shader-based lens-distortion pass with chromatic aberration and particles,
-and an imperative `revealed`/`revealedContent`/`overlay`/`source`/`capture`
-API with `play()/reverse()/reset()/prepare()`.
+This component was called `DistortionWave` until 2026-11-19. It was
+**renamed to `RefractionSweep`** because the mission brief's actual
+`DistortionWave` ask — a dual-React-view transition effect, built on a
+DOM snapshot pipeline (SVG `foreignObject` + Canvas2D), a real WebGL2
+shader doing per-pixel UV displacement, three wavefront geometries, and
+an imperative `play()/reverse()/reset()/prepare()` API — is a genuinely
+different, much larger component. `packages/react/src/effects/
+DistortionWave/` is that new component; see
+[`DISTORTION_WAVE.md`](./DISTORTION_WAVE.md) for it.
 
-**That effect does not exist in this repository as of 2026-11-19.** What is
-implemented and documented below is a smaller, different effect: a
-single-surface decorative accent, architecturally a sibling of
-`BorderBeam` rather than a view-transition system. It:
+`RefractionSweep` is kept, under its own honest name, because it's a
+real, working, single-surface decorative effect — just not the thing
+"DistortionWave" means now. It:
 
-- wraps **one** child (no `overlay`/`revealedContent`/second view),
-- uses `backdrop-filter` to distort the real pixels already rendered behind
-  it (so the distortion is of real content, not painted), **and**, riding
-  on top of that, a genuine WebGL2 shader (not a CSS trick) rendering
-  chromatic aberration, an animated caustic shimmer and a specular hot
-  core — see "Rendering architecture" below — but
+- wraps **one** child (no second view, no `overlay`/`revealedContent`),
+- uses `backdrop-filter` to distort the real pixels already rendered
+  behind it (so the distortion is of real content, not painted), **and**,
+  riding on top of that, a genuine WebGL2 shader (not a CSS trick)
+  rendering chromatic aberration, an animated caustic shimmer and a
+  specular hot core — see "Rendering architecture" below — but
 - never swaps DOM, never captures a DOM-content snapshot/texture, and has
-  no imperative API.
+  no imperative API. That's `DistortionWave`'s job now, not this
+  component's.
 
-The WebGL layer is real GPU rendering (an actual `<canvas>` + compiled
-GLSL ES 3.00 program via `WebGL2RenderingContext`), added 2026-11-19 after
-the first version of this component used a flat CSS gradient for the
-crest/fringe and was explicitly called out as too basic. It is **not**,
-however, sampling a texture of the DOM content underneath — it renders a
-procedural light effect that rides the same travelling band as the real
-`backdrop-filter` distortion, not a distorted copy of the pixels
-themselves. That distinction is the actual remaining gap vs. the brief's
-WebGL ask (per-pixel lens distortion of captured content) — see "Known
-limitations" below.
-
-This gap is tracked, not hidden. If a future session is asked to build the
-real view-transition `DistortionWave` from the brief, it should treat this
-component as prior art for the "decorative sweep" half of the problem only,
-and build the snapshot/WebGL transition as new, separate work — not try to
-retrofit this component's API.
+The WebGL crest layer is real GPU rendering (an actual `<canvas>` +
+compiled GLSL ES 3.00 program via `WebGL2RenderingContext`), added
+2026-11-19 after the original CSS-only version was explicitly called out
+as too basic. It is **not**, however, sampling a texture of the DOM
+content underneath — it renders a procedural light effect that rides the
+same travelling band as the real `backdrop-filter` distortion, not a
+distorted copy of the pixels themselves. True per-pixel lens distortion
+of captured content is what the new `DistortionWave` does instead.
 
 ## API (as implemented)
 
 ```tsx
-import { DistortionWave } from "@b4/react/effects";
+import { RefractionSweep } from "@b4/react/effects";
 
-<DistortionWave amplitude="md" direction="horizontal" tone="accent" duration={6}>
+<RefractionSweep amplitude="md" direction="horizontal" tone="accent" duration={6}>
   <Card>...</Card>
-</DistortionWave>
+</RefractionSweep>
 ```
 
 | Prop | Type | Default | Notes |
@@ -81,14 +75,14 @@ exist on the current implementation.
 ## Rendering architecture
 
 - Outer wrapper renders `children` plus a sibling `<span aria-hidden>`
-  layer (`b4-distortion-wave__layer`) containing a `__band` (the real
+  layer (`b4-refraction-sweep__layer`) containing a `__band` (the real
   `backdrop-filter` distortion) and a `__crest-mask` box, both driven by
   one CSS keyframe track so their *positions* cannot drift apart.
 - The band uses `backdrop-filter: blur() saturate() contrast()` so it
   distorts whatever is actually rendered behind it (real text/icons/
   surfaces), not a pre-rendered image.
-- The `__crest-mask` box contains a `<canvas class="b4-distortion-wave__crest">`
-  (`DistortionWaveCrest.tsx`), a real WebGL2 context (`crest.ts`) running a
+- The `__crest-mask` box contains a `<canvas class="b4-refraction-sweep__crest">`
+  (`RefractionSweepCrest.tsx`), a real WebGL2 context (`crest.ts`) running a
   compiled GLSL ES 3.00 fragment shader every animation frame via
   `requestAnimationFrame`. The shader computes, per pixel: an RGB-channel-
   split specular core (chromatic aberration — literally three different
@@ -110,7 +104,7 @@ exist on the current implementation.
   Graphite/Porcelain themes without hardcoding an RGB value, and a
   `MutationObserver` on `<html data-b4-theme>` re-samples it on a live
   theme switch.
-- `direction` toggles a CSS class (`b4-distortion-wave--horizontal` /
+- `direction` toggles a CSS class (`b4-refraction-sweep--horizontal` /
   `--vertical`) that changes which axis the keyframe track animates along,
   and is passed into the shader (`uVertical`) so the crest's own internal
   gradient direction matches.
@@ -177,10 +171,10 @@ band keeps working on its own.
 
 ## Tests
 
-- `DistortionWave.test.tsx` — 11 unit tests (includes the WebGL-crest
+- `RefractionSweep.test.tsx` — 11 unit tests (includes the WebGL-crest
   structural checks and a "does not throw when WebGL2 is unavailable"
   regression test for jsdom/unsupported browsers).
-- `e2e/distortion-wave.spec.ts` — 11 Playwright tests, both themes (not
+- `e2e/refraction-sweep.spec.ts` — 11 Playwright tests, both themes (not
   re-run against the WebGL rebuild in this session — Playwright runs in a
   real Chromium with WebGL2 available, so these should still pass, but
   that has not been independently re-verified here; re-run before relying
@@ -188,6 +182,6 @@ band keeps working on its own.
 
 ## Studio
 
-A DistortionWave Lab lives in B4 Studio's Effects Lab page
+A RefractionSweep Lab lives in B4 Studio's Effects Lab page
 (`apps/studio/src/studio/pages/EffectsLabPage.tsx`) with live controls for
 `amplitude`, `direction`, `tone`, `duration`, and `active`.

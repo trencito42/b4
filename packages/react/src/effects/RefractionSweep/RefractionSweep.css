@@ -1,0 +1,173 @@
+/*
+  B4 RefractionSweep — a travelling band of refraction.
+
+  The band does not paint a fake "distorted" copy of the content: it uses
+  `backdrop-filter`, which samples the pixels actually rendered *behind*
+  the element — the child's own text, icons and surfaces — and blurs,
+  saturates and re-contrasts them. So the content genuinely bends while
+  the wave crosses it and resolves again once the wave has moved on.
+
+  Riding on top is a real WebGL2-rendered crest (a <canvas>, driven by
+  RefractionSweepCrest.tsx / crest.ts) — chromatic aberration, a caustic
+  shimmer and a specular hot core, actually rendered by a GPU shader, not
+  a flat CSS gradient standing in for one. The crest's own box (.b4-
+  refraction-sweep__crest-mask) shares the band's exact geometry and the
+  exact same CSS keyframe track, so it can never drift out of alignment
+  with the refraction it rides on — only the shimmer *inside* the canvas
+  animates on its own clock.
+*/
+
+.b4-refraction-sweep {
+  position: relative;
+}
+
+.b4-refraction-sweep__layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ---- the refraction band ---- */
+
+.b4-refraction-sweep__band {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--b4-refraction-sweep-band-size, 40%);
+  height: 100%;
+  backdrop-filter: blur(var(--b4-refraction-sweep-blur)) saturate(var(--b4-refraction-sweep-saturate))
+    contrast(var(--b4-refraction-sweep-contrast));
+  -webkit-backdrop-filter: blur(var(--b4-refraction-sweep-blur)) saturate(var(--b4-refraction-sweep-saturate))
+    contrast(var(--b4-refraction-sweep-contrast));
+  /* Soft edges. The black stops are mask ALPHA values (fully opaque =
+     visible), not theme colors — they carry no color information at all. */
+  /* b4-audit-allow: mask alpha stops, not a theme color */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  will-change: transform;
+}
+
+/* ---- the WebGL-rendered crest riding with the band ---- */
+
+/* This mask box is positioned/sized/animated exactly the way the old flat
+   CSS "fringe" gradient used to be (same width, same travel keyframes,
+   same soft-edge mask) — only its content changed, from a static
+   gradient to a <canvas> that RefractionSweepCrest drives with a real
+   WebGL2 shader. Keeping the outer box's geometry identical is what
+   keeps the crest welded to the backdrop-filter band below it. */
+.b4-refraction-sweep__crest-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--b4-refraction-sweep-band-size, 40%);
+  height: 100%;
+  /* b4-audit-allow: mask alpha stops, not a theme color */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 34%, #000 74%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 34%, #000 74%, transparent 100%);
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  will-change: transform;
+}
+
+.b4-refraction-sweep__crest {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- vertical variant: swap the travel axis and the gradient axis ---- */
+
+.b4-refraction-sweep--vertical .b4-refraction-sweep__band,
+.b4-refraction-sweep--vertical .b4-refraction-sweep__crest-mask {
+  width: 100%;
+  height: var(--b4-refraction-sweep-band-size, 40%);
+}
+
+.b4-refraction-sweep--vertical .b4-refraction-sweep__band,
+.b4-refraction-sweep--vertical .b4-refraction-sweep__crest-mask {
+  /* b4-audit-allow: mask alpha stops, not a theme color */
+  mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+}
+
+/* ---- motion ---- */
+
+/* Both layers run the same animation with the same duration and the same
+   timing function, which is what keeps the crest welded to the band —
+   the WebGL shader inside the crest canvas animates its own shimmer
+   independently (see RefractionSweepCrest.tsx), but the canvas's own box
+   travels on this exact same CSS keyframe track as the band. */
+.b4-refraction-sweep__layer--moving .b4-refraction-sweep__band,
+.b4-refraction-sweep__layer--moving .b4-refraction-sweep__crest-mask {
+  animation-duration: var(--b4-refraction-sweep-duration, 6s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.b4-refraction-sweep--horizontal .b4-refraction-sweep__layer--moving .b4-refraction-sweep__band,
+.b4-refraction-sweep--horizontal .b4-refraction-sweep__layer--moving .b4-refraction-sweep__crest-mask {
+  animation-name: b4-refraction-sweep-sweep-x;
+}
+
+.b4-refraction-sweep--vertical .b4-refraction-sweep__layer--moving .b4-refraction-sweep__band,
+.b4-refraction-sweep--vertical .b4-refraction-sweep__layer--moving .b4-refraction-sweep__crest-mask {
+  animation-name: b4-refraction-sweep-sweep-y;
+}
+
+/* The band is 40% of the surface wide, so it travels from fully off the
+   left edge (-100% of its own width) to fully off the right edge (250% of
+   its own width) — the full surface plus the band itself. */
+@keyframes b4-refraction-sweep-sweep-x {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes b4-refraction-sweep-sweep-y {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(250%);
+  }
+}
+
+/* ---- the still state ---- */
+
+/* Reduced motion (or scrolled out of view): the band stops travelling and
+   holds a centred position. Critically, the refraction is dropped as well:
+   text must never be left sitting behind frosted glass that will not move
+   away, so only a single still frame of the crest shader remains — a calm
+   sheen that still communicates the effect's presence without distorting
+   or animating anything. */
+.b4-refraction-sweep__layer--static .b4-refraction-sweep__band {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  will-change: auto;
+}
+
+.b4-refraction-sweep--horizontal .b4-refraction-sweep__layer--static .b4-refraction-sweep__band,
+.b4-refraction-sweep--horizontal .b4-refraction-sweep__layer--static .b4-refraction-sweep__crest-mask {
+  transform: translateX(30%);
+}
+
+.b4-refraction-sweep--vertical .b4-refraction-sweep__layer--static .b4-refraction-sweep__band,
+.b4-refraction-sweep--vertical .b4-refraction-sweep__layer--static .b4-refraction-sweep__crest-mask {
+  transform: translateY(30%);
+}
+
+.b4-refraction-sweep__layer--static .b4-refraction-sweep__crest-mask {
+  opacity: 0.6;
+  will-change: auto;
+}

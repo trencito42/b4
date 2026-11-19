@@ -7,7 +7,7 @@ const amplitudeToStrength: Record<"sm" | "md" | "lg", number> = {
   lg: 1.6,
 };
 
-export interface DistortionWaveCrestProps {
+export interface RefractionSweepCrestProps {
   moving: boolean;
   vertical: boolean;
   duration: number;
@@ -23,7 +23,7 @@ function parseRgb(computed: string): [number, number, number] {
 }
 
 /**
- * The canvas that hosts DistortionWave's WebGL2-rendered crest. See
+ * The canvas that hosts RefractionSweep's WebGL2-rendered crest. See
  * crest.ts for the shader and GL lifecycle; this component owns the
  * React side: sizing (ResizeObserver), the animation loop (only runs
  * while `moving`), sampling the crest's actual color from the CSS custom
@@ -32,10 +32,10 @@ function parseRgb(computed: string): [number, number, number] {
  *
  * Renders nothing (an empty, fully transparent canvas) when WebGL2 is
  * unavailable or the context is lost — the real optical distortion
- * (DistortionWave's `backdrop-filter` band) still works without this
+ * (RefractionSweep's `backdrop-filter` band) still works without this
  * layer, so losing the crest is a graceful degradation, not a crash.
  */
-export function DistortionWaveCrest({ moving, vertical, duration, amplitude, toneVar }: DistortionWaveCrestProps) {
+export function RefractionSweepCrest({ moving, vertical, duration, amplitude, toneVar }: RefractionSweepCrestProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<ReturnType<typeof createCrestRenderer>>(null);
   const colorRef = useRef<[number, number, number]>([1, 1, 1]);
@@ -45,7 +45,7 @@ export function DistortionWaveCrest({ moving, vertical, duration, amplitude, ton
   // (Re)sample the resolved color whenever the requested tone changes,
   // and once more via a MutationObserver on <html> so a live theme/
   // contrast toggle (e.g. B4 Studio's own theme switcher) updates the
-  // shader's color without needing DistortionWave to remount.
+  // shader's color without needing RefractionSweep to remount.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -138,7 +138,7 @@ export function DistortionWaveCrest({ moving, vertical, duration, amplitude, ton
   return (
     <canvas
       ref={canvasRef}
-      className="b4-distortion-wave__crest"
+      className="b4-refraction-sweep__crest"
       aria-hidden="true"
     />
   );

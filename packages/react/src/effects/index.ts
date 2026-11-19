@@ -7,10 +7,26 @@
 export { BorderBeam } from "./BorderBeam/BorderBeam.js";
 export type { BorderBeamProps, BorderBeamSize, BorderBeamTone } from "./BorderBeam/BorderBeam.js";
 
+export { RefractionSweep } from "./RefractionSweep/RefractionSweep.js";
+export type {
+  RefractionSweepProps,
+  RefractionSweepAmplitude,
+  RefractionSweepDirection,
+  RefractionSweepTone,
+} from "./RefractionSweep/RefractionSweep.js";
+
 export { DistortionWave } from "./DistortionWave/DistortionWave.js";
 export type {
   DistortionWaveProps,
-  DistortionWaveAmplitude,
-  DistortionWaveDirection,
-  DistortionWaveTone,
-} from "./DistortionWave/DistortionWave.js";
+  DistortionWaveType,
+  DistortionWavePalette,
+  DistortionWaveHandle,
+  DistortionWaveSource,
+} from "./DistortionWave/types.js";
+/**
+ * Exposed for debugging, testing, and consumers who want to run the
+ * built-in capture pipeline themselves (e.g. to pre-warm a cache, or to
+ * implement the `capture` override prop by wrapping this). Not part of
+ * the polished public surface — its return shape may still change.
+ */
+export { captureElement } from "./DistortionWave/internal/DomCapture.js";

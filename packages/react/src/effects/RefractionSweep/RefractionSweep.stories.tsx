@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { DistortionWave } from "./DistortionWave";
+import { RefractionSweep } from "./RefractionSweep";
 import { Card } from "../../components/Card/Card";
 
-const meta: Meta<typeof DistortionWave> = {
-  title: "Effects/DistortionWave",
-  component: DistortionWave,
+const meta: Meta<typeof RefractionSweep> = {
+  title: "Effects/RefractionSweep",
+  component: RefractionSweep,
   tags: ["autodocs"],
   argTypes: {
     active: { control: "boolean", description: "Whether the wave is running." },
@@ -35,7 +35,7 @@ const meta: Meta<typeof DistortionWave> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof DistortionWave>;
+type Story = StoryObj<typeof RefractionSweep>;
 
 const sample = (
   <Card>
@@ -49,7 +49,7 @@ const sample = (
 export const Default: Story = {
   render: (args) => (
     <div style={{ width: 280 }}>
-      <DistortionWave {...args}>{sample}</DistortionWave>
+      <RefractionSweep {...args}>{sample}</RefractionSweep>
     </div>
   ),
 };
@@ -61,9 +61,9 @@ export const AllVariants: Story = {
       {(["sm", "md", "lg"] as const).map((amplitude) => (
         <div key={amplitude}>
           <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--b4-text-tertiary)" }}>amplitude: {amplitude}</p>
-          <DistortionWave {...args} amplitude={amplitude}>
+          <RefractionSweep {...args} amplitude={amplitude}>
             {sample}
-          </DistortionWave>
+          </RefractionSweep>
         </div>
       ))}
     </div>
@@ -76,9 +76,9 @@ export const Tones: Story = {
       {(["accent", "success", "warning", "danger", "info"] as const).map((tone) => (
         <div key={tone}>
           <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--b4-text-tertiary)" }}>{tone}</p>
-          <DistortionWave {...args} tone={tone}>
+          <RefractionSweep {...args} tone={tone}>
             {sample}
-          </DistortionWave>
+          </RefractionSweep>
         </div>
       ))}
     </div>
@@ -91,9 +91,9 @@ export const Directions: Story = {
       {(["horizontal", "vertical"] as const).map((direction) => (
         <div key={direction}>
           <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--b4-text-tertiary)" }}>{direction}</p>
-          <DistortionWave {...args} direction={direction}>
+          <RefractionSweep {...args} direction={direction}>
             {sample}
-          </DistortionWave>
+          </RefractionSweep>
         </div>
       ))}
     </div>
@@ -107,9 +107,9 @@ export const Inactive: Story = {
           child completely untouched. Don't: "turn the wave down" by
           lowering the amplitude to nothing — use `active`, so the child is
           never left sitting behind a band of frosted glass. */}
-      <DistortionWave {...args} active={false}>
+      <RefractionSweep {...args} active={false}>
         {sample}
-      </DistortionWave>
+      </RefractionSweep>
     </div>
   ),
 };
