@@ -38,13 +38,11 @@ test("B4 Studio Text Morph Lab renders and exercises morphing", async ({ page })
   await expect(page.getByRole("heading", { name: "Word Replacement & Reordering" })).toBeVisible();
 });
 
-test("B4 Studio Effects Lab renders all three effects and drives them", async ({ page }) => {
+test("B4 Studio Effects Lab renders RefractionSweep and drives it", async ({ page }) => {
   await page.goto(studioOrigin);
   await page.getByRole("button", { name: "Effects Lab" }).click();
   await expect(page.getByRole("heading", { name: "Effects Lab" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "BorderBeam" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "RefractionSweep" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "DistortionWave" })).toBeVisible();
 
   // RefractionSweep's own wave layer must actually be in the DOM and
   // moving — a lab page that renders an empty preview is not a lab.
@@ -59,11 +57,6 @@ test("B4 Studio Effects Lab renders all three effects and drives them", async ({
     .first()
     .evaluate((el) => getComputedStyle(el).transform);
   expect(transform1).not.toBe(transform2);
-
-  // DistortionWave is the real WebGL2 engine: driving it must actually
-  // flip the live DOM state, not just animate a decorative overlay.
-  await page.getByRole("button", { name: "Confirm", exact: true }).click();
-  await expect(page.getByText("Payment complete")).toBeVisible();
 });
 
 for (const theme of ["graphite", "porcelain"] as const) {

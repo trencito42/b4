@@ -17,6 +17,9 @@ reference. See `PROGRESS.md` and `HANDOFF.md`.
   modifier axes (density/radius/accent/contrast/motion).
 - `@b4/motion` — motion tokens and shared Motion-for-React utilities.
 - `@b4/react` — the component library.
+- `@b4/react/effects` — opt-in first-party visual effects (`RefractionSweep`),
+  kept on their own export subpath so a consumer that never uses them pays
+  no bundle cost.
 - `@b4/studio` (`apps/studio`) — Storybook-based interactive docs/showcase.
 
 `@b4/*` is a local placeholder scope, not a published/reserved npm
@@ -40,7 +43,9 @@ Windows Firewall blocks), then open the printed `http://192.168.x.x:5173` and
 
 See `TESTING.md` for the full verification sequence (typecheck, unit
 tests, Playwright + axe) and `ARCHITECTURE.md` for the version/tooling
-rationale.
+rationale. `pnpm audit:craftsmanship` runs the mechanical craftsmanship
+invariants over every component, story file and catalog link, and writes
+`CRAFTMANSHIP_AUDIT.md`; it is part of `pnpm release:verify` and CI.
 
 ## Docs map
 
@@ -57,6 +62,7 @@ rationale.
 | `TESTING.md` | How to actually verify a component. |
 | `RELEASE_CHECKLIST.md` | Packaging proofs + what's needed before npm publish. |
 | `PHASE7_AUDIT.md` | Phase 7 horizontal quality audit record. |
+| `CRAFTMANSHIP_AUDIT.md` | Latest output of the systematic craftsmanship audit (`pnpm audit:craftsmanship`) — regenerated on every run, and a CI gate. |
 | `CHANGELOG.md` | Real repo milestones. |
 | `HANDOFF.md` | Next actions and non-obvious gotchas; read on every resume. |
 | `AGENTS.md` | How a coding agent should work in this repo. |

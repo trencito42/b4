@@ -10,9 +10,9 @@ non-zero on any BLOCKER, so it can gate CI.
 | Metric | Count |
 |---|---|
 | Components audited | 84 |
-| Effects audited | 3 |
-| Stories files audited | 87 |
-| Studio catalog entries | 87 |
+| Effects audited | 1 |
+| Stories files audited | 85 |
+| Studio catalog entries | 85 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
 | Components with zero findings | 62 |
@@ -83,7 +83,7 @@ scroll to a `Badge` or a `StatusBadge` currently cannot.
 
 Not forwarding a ref: Accordion, AlertDialog, AnimatedIndicator, AppShell, ColorPicker, CommandPalette, ContextMenu, DataGrid, DataTable, DatePicker, Dialog, Drawer, DropdownMenu, Field, FileExplorer, FileUpload, HoverCard, InputGroup, MorphingSurface, NavigationMenu, NotificationPanel, Popover, RadioGroup, ResizablePanels, SegmentedControl, Sheet, SplitButton, Tabs, TimePicker, Toast, Tooltip, TreeView
 
-## Declared colour exemptions (11)
+## Declared colour exemptions (10)
 
 Every exemption is a written justification living next to the code it excuses. They are
 listed here rather than hidden, so a reader can challenge any of them.
@@ -97,7 +97,6 @@ listed here rather than hidden, so a reader can challenge any of them.
 | ColorPicker.css | 115 | the hue spectrum is the picker's own data, not a theme color |
 | ColorPicker.css | 132 | the thumb's ring must stay visible against any picked colour |
 | ColorPicker.css | 140 | the thumb's ring must stay visible against any picked colour |
-| effects/BorderBeam.css | 93 | mask alpha stops, not a theme color |
 | effects/RefractionSweep.css | 46 | mask alpha stops, not a theme color |
 | effects/RefractionSweep.css | 70 | mask alpha stops, not a theme color |
 | effects/RefractionSweep.css | 96 | mask alpha stops, not a theme color |

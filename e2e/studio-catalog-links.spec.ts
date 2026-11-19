@@ -48,8 +48,7 @@ test("the Studio catalog lists every component and every effect", async ({ page 
   await page.getByRole("button", { name: "Components" }).click();
   await expect(page.getByRole("heading", { name: "Components" })).toBeVisible();
 
-  // The two effects ship from their own export subpath and must still be
-  // discoverable from the catalog.
-  await expect(page.getByRole("link", { name: "BorderBeam Effect", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "DistortionWave Effect", exact: true })).toBeVisible();
+  // The one remaining effect ships from its own export subpath and must
+  // still be discoverable from the catalog.
+  await expect(page.getByRole("link", { name: "RefractionSweep Effect", exact: true })).toBeVisible();
 });

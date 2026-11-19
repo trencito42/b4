@@ -1,6 +1,44 @@
 # HANDOFF — read this first on any resume
 
-## DistortionWave: the real bug behind "I don't see the effect" (2026-11-19, read this first)
+## Mission priority changed: `BorderBeam`/`DistortionWave` removed, focus is now system-wide coherence (2026-11-19, read this first)
+
+The project owner explicitly changed priorities after the `DistortionWave`
+fix below: **stop developing decorative advanced effects.** Both
+`BorderBeam` and `DistortionWave` (the real WebGL2 dual-view engine that
+section below describes fixing) were deleted completely — the DistortionWave
+section immediately below is now **history**, not current status; the
+effect it describes fixing no longer exists in this repository. See
+`REQUIREMENTS_TRACEABILITY.md` §0.5 and `CHANGELOG.md` for the full
+removal record. Do not resurrect either effect, under these names or new
+ones, without the user asking again.
+
+The new mission (per the same brief) is a large, multi-session effort:
+make all 84 components feel like one coherently designed system —
+real visual QA in a browser across both themes and six viewports, forms
+craftsmanship, closing genuine missing-primitive gaps, three realistic
+application showcases, and a proper Studio review environment. This is
+**not completable in one session.** What's actually done so far (this
+session, Batch 1 of the brief's own 8-batch plan): the effects removal
+above, full local verification (typecheck/build/521 unit tests/Storybook
+build/Studio build/consumer+SSR+treeshake smoke/craftsmanship audit all
+clean), and 3 pre-existing e2e failures identified as unrelated
+(`Calendar` porcelain axe — a navigation-timing flake; `NumberField`
+step-accept and `PasswordField` visibility-toggle — both read as real
+functional bugs in `e2e/field-motion.spec.ts`, not flakes, not caused by
+this session's changes, not yet root-caused). Batches 2–8 (standard
+component gaps, forms craftsmanship, navigation/overlays/layout, data/
+feedback polish, cross-family visual QA, three application pages, final
+verification) are **not started**. The CI Storybook-build failure the
+brief named could not be root-caused from this session — GitHub Actions
+logs require sign-in this session doesn't have; every step in the
+canonical pipeline (`pnpm build`/`typecheck`/`test`/`build-storybook`/
+`build` (Studio)/`consumer-smoke`/`ssr-smoke`/`treeshake-check`/
+`audit:craftsmanship`) reproduces clean locally, so either the CI
+failure is environment-specific (Linux-only) or this commit already
+fixes whatever it was — the next CI run on this commit is the real
+answer, not a local reproduction.
+
+## DistortionWave: the real bug behind "I don't see the effect" (2026-11-19 — superseded by removal above; kept as history)
 
 The user reported the WebGL `DistortionWave` engine (built earlier the same
 day, commit `fd3a1ca`) was "cam gata" (supposedly done) but produced no

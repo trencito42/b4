@@ -5,6 +5,28 @@ a per-npm-release history.
 
 ## Unreleased
 
+### `BorderBeam` and `DistortionWave` removed (2026-11-19)
+
+Explicit mission-brief decision: stop developing decorative advanced
+effects, focus all effort on one coherent, exceptionally polished
+component system instead. Both effects were deleted completely —
+implementation, stories, unit tests, Playwright specs, CSS, exports,
+Studio demos/nav (including the "DistortionWave Debug" page), consumer
+fixture usage (`examples/storefront`), and their per-effect docs. Every
+remaining `docs/effects/*.md` file that discussed them now carries an
+explicit "removed" note instead of describing deleted code as current.
+`RefractionSweep` (the small, CSS-only effect `@b4/react/effects` still
+exports) was not named for removal and was kept — the brief named these
+two effects specifically. This is a deliberate scope decision, not an
+unfinished task; see `REQUIREMENTS_TRACEABILITY.md` §0.5.
+
+Verified: typecheck clean (all workspaces), `@b4/react` unit suite
+521/521, Storybook build clean, Studio build clean, consumer/SSR/
+treeshake smoke checks clean, craftsmanship audit 0 blockers/0 warnings,
+full Playwright suite 406/409 (3 pre-existing failures in `Calendar`/
+`NumberField`/`PasswordField`, unrelated to this change and not touched
+here — see `HANDOFF.md`).
+
 ### DistortionWave: fixed the WebGL engine being invisible everywhere (2026-11-19)
 
 - Found and fixed the real cause of "the effect is done but I don't see

@@ -2,20 +2,23 @@
 
 Follow the repository's general `TESTING.md` checklist for any change to
 these components. This page records what exists specifically for the
-three effects, not a separate test philosophy.
+two remaining effects, not a separate test philosophy.
 
 ## Current coverage (as of 2026-11-19)
 
 | Effect | Unit tests | E2E tests | Notes |
 |---|---|---|---|
-| `BorderBeam` | 7 (`BorderBeam.test.tsx`) | `e2e/border-beam.spec.ts`, both themes | |
-| `DistortionWave` | 9 (`DistortionWave.test.tsx`) | `e2e/distortion-wave.spec.ts`, 11 tests, both themes | |
-| `TextMorph` | 13 engine (`engine.test.ts`) + 6 component (`TextMorph.test.tsx`) | 4 Playwright tests | Engine tests cover segmentation/diffing independent of React. |
+| `RefractionSweep` | 9 (`RefractionSweep.test.tsx`) | `e2e/refraction-sweep.spec.ts`, 11 tests, both themes | |
+| `TextMorph` | engine (`engine.test.ts`) + component (`TextMorph.test.tsx`) | Playwright tests | Engine tests cover segmentation/diffing independent of React. |
 
 Run the monorepo's standard gate (`pnpm typecheck`, `pnpm --filter @b4/react
 run test`, `npx playwright test`) per `TESTING.md` before marking any
-change to these three VERIFIED — a passing build or a visually "looks
+change to either of these VERIFIED — a passing build or a visually "looks
 right" screenshot is not sufficient per `AGENTS.md`.
+
+`BorderBeam` and `DistortionWave` (and their `e2e/border-beam.spec.ts`/
+`e2e/distortion-wave.spec.ts`) were removed (2026-11-19) along with the
+effects themselves — see `docs/effects/README.md`.
 
 ## What to add before trusting a future change here
 

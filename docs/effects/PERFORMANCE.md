@@ -1,20 +1,19 @@
 # Advanced effects — performance
 
-## `BorderBeam` / `DistortionWave`
+## `RefractionSweep`
 
 - Pure CSS animation (no JS per-frame cost). Browser compositor handles the
-  `@keyframes` rotation/sweep off the main thread where the animated
-  properties allow it.
-- Each active instance registers one `IntersectionObserver`; the observer
+  `@keyframes` sweep off the main thread where the animated properties
+  allow it.
+- Registers one `IntersectionObserver` per active instance; the observer
   callback toggles a CSS class, it does not re-render React state on every
   intersection change beyond the boolean flip needed.
 - Pauses (stops the CSS animation class) when scrolled off-screen, so an
   off-screen instance costs nothing beyond the idle observer.
-- `DistortionWave`'s `backdrop-filter` is the more expensive of the two —
-  filtering real pixels behind the band is inherently costlier than
-  `BorderBeam`'s gradient ring. No measured budget/frame-time numbers exist
-  yet for this repository; this is a known gap, not a verified "fast"
-  claim.
+- Its `backdrop-filter` is inherently costlier than a plain gradient —
+  filtering real pixels behind the band has a real per-frame cost. No
+  measured budget/frame-time numbers exist yet for this repository; this
+  is a known gap, not a verified "fast" claim.
 
 ## `TextMorph`
 
@@ -34,8 +33,11 @@
 
 ## Open work
 
-- No Lighthouse/performance-trace numbers are recorded for any of the
-  three effects in this repository. "Composition" scenarios (multiple
-  effects active at once, see [COMPOSITION.md](./COMPOSITION.md)) have not
-  been profiled either. Record real numbers here once measured — do not
+- No Lighthouse/performance-trace numbers are recorded for either effect
+  in this repository. Record real numbers here once measured — do not
   fill this section with estimated or assumed figures.
+
+## `BorderBeam` and `DistortionWave` were removed (2026-11-19)
+
+Both previously documented here. Removed by explicit mission-brief
+decision — see `docs/effects/README.md`.

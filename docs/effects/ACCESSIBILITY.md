@@ -1,21 +1,21 @@
 # Advanced effects — accessibility
 
-## `BorderBeam` / `DistortionWave`
+## `RefractionSweep`
 
-Both are purely decorative overlays:
+A purely decorative overlay:
 
 - `aria-hidden="true"` on the effect layer — never announced.
 - `pointer-events: none` — never intercepts clicks, taps, or hit-testing.
-- Respect `prefers-reduced-motion` via `@b4/motion`'s `useReducedMotion()`:
-  - `BorderBeam` stops rotating but keeps a static glow (color can still
-    carry meaning).
-  - `DistortionWave` stops sweeping *and* drops the `backdrop-filter` blur
-    (so no content is left permanently obscured behind frosted glass).
-- Neither effect is ever a substitute for a real accessible status. If a
-  component uses `BorderBeam` to indicate "processing" or `DistortionWave`
-  to draw attention to a change, the actual state must also be conveyed via
-  text, `aria-live`, `StatusBadge`, etc. — these effects add nothing to the
-  accessibility tree on their own.
+- Respects `prefers-reduced-motion` via `@b4/motion`'s `useReducedMotion()`:
+  it stops sweeping *and* drops the `backdrop-filter` blur (so no content
+  is left permanently obscured behind frosted glass).
+- Never a substitute for a real accessible status. If a component uses
+  `RefractionSweep` to draw attention to a change, the actual state must
+  also be conveyed via text, `aria-live`, `StatusBadge`, etc. — the effect
+  adds nothing to the accessibility tree on its own.
+
+`BorderBeam` and `DistortionWave` were removed (2026-11-19) — see
+`docs/effects/README.md`.
 
 ## `TextMorph`
 
@@ -37,8 +37,8 @@ Both are purely decorative overlays:
 
 ## Verification status
 
-- Both effects: covered by axe scans in their Playwright e2e specs
-  (`e2e/border-beam.spec.ts`, `e2e/distortion-wave.spec.ts`), both themes.
+- `RefractionSweep`: covered by axe scans in `e2e/refraction-sweep.spec.ts`,
+  both themes.
 - `TextMorph`: covered by its own e2e spec; no explicit axe assertion list
   has been independently re-confirmed for this document — see
   `e2e/` and `TextMorph.test.tsx` directly for the current, authoritative

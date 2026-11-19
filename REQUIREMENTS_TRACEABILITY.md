@@ -17,6 +17,27 @@ existing claim; where it defers to `COMPONENT_INVENTORY.md`/
 `QUALITY_MATRIX.md`, that is marked CLAIMED, not DONE, per `AGENTS.md`'s
 rule against restating unverified claims as fact.
 
+## §0.5 — `BorderBeam` and `DistortionWave` removed (2026-11-19, explicit decision)
+
+**Record this decision, do not resurrect either effect as an unfinished
+task.** The project owner explicitly changed priorities: stop developing
+decorative advanced effects, and focus all effort on one coherent,
+exceptionally polished component system. Both effects were deleted
+completely — implementation, stories, unit tests, Playwright specs, CSS,
+exports/types, Studio demos and controls, and their dedicated docs
+(`docs/effects/BORDER_BEAM.md`). Everywhere `docs/effects/` still
+discusses them (`ARCHITECTURE.md`, `ACCESSIBILITY.md`, `PERFORMANCE.md`,
+`TESTING.md`, `COMPOSITION.md`) now carries an explicit "removed" note
+rather than pretending they're current.
+
+§8 and §9 below describe the pre-removal state (BorderBeam's redesign,
+DistortionWave's WebGL rebuild and the tainted-canvas bug fix that
+followed it) as **history**, not current status — both sections are now
+closed by removal, not by completion. `RefractionSweep` (the small,
+CSS-only effect that `DistortionWave` was renamed to partway through its
+WebGL rebuild) was kept; it is not named in the removal brief and is
+materially simpler than either deleted effect.
+
 ## §0 — Current project status
 
 DONE (informational). Last inspected HEAD stated in the brief
@@ -117,14 +138,24 @@ configurable).
 
 ## §8 — Finish BorderBeam
 
-**DONE.** `docs/effects/BORDER_BEAM.md` (this session, `038ce2d`)
+**SUPERSEDED BY REMOVAL (2026-11-19) — see §0.5.** History below, not
+current status.
+
+**DONE** (at the time). `docs/effects/BORDER_BEAM.md` (this session, `038ce2d`,
+now deleted along with the effect)
 documents the actual CSS mask-XOR ring implementation, its geometry
 presets, reduced-motion/off-screen behavior, and a Studio Effects Lab
 (`apps/studio/src/studio/pages/EffectsLabPage.tsx`).
 
 ## §9 — Build genuine first-party DistortionWave
 
-**PARTIAL — this is the most significant gap found in this repository.**
+**SUPERSEDED BY REMOVAL (2026-11-19) — see §0.5.** The real WebGL2
+engine described below was eventually built (including fixing a
+tainted-canvas bug that made it invisible), then the whole effect was
+deleted per an explicit later mission-brief decision. History below, not
+current status.
+
+**PARTIAL (at the time)** — this was the most significant gap found in this repository.
 A `DistortionWave` exists (`packages/react/src/effects/DistortionWave/`,
 committed `54ce6a2`) but it is **not** the effect the brief specifies. The
 brief asks for a view-transition system: two real React views, DOM
