@@ -1,7 +1,7 @@
 .b4-toast__viewport {
   position: fixed;
-  bottom: var(--b4-space-6);
-  right: var(--b4-space-6);
+  bottom: max(var(--b4-space-6), env(safe-area-inset-bottom));
+  right: max(var(--b4-space-6), env(safe-area-inset-right));
   z-index: var(--b4-z-overlay);
   width: min(380px, calc(100vw - var(--b4-space-6) * 2));
   pointer-events: none;

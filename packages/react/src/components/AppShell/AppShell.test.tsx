@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { AppShell } from "./AppShell";
@@ -39,5 +39,27 @@ describe("AppShell", () => {
       </AppShell>,
     );
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("supports adaptive mobileNavOpen and dismisses via backdrop click or Escape", () => {
+    const onMobileNavOpenChange = vi.fn();
+    const { container, rerender } = render(
+      <AppShell
+        sidebar={<span>Sidebar</span>}
+        mobileNavOpen={true}
+        onMobileNavOpenChange={onMobileNavOpenChange}
+      >
+        Content
+      </AppShell>,
+    );
+
+    const sidebar = container.querySelector(".b4-app-shell__sidebar") as HTMLElement;
+    expect(sidebar).toHaveAttribute("data-open", "true");
+
+    const backdrop = container.querySelector(".b4-app-shell__backdrop") as HTMLElement;
+    expect(backdrop).toBeInTheDocument();
+
+    backdrop.click();
+    expect(onMobileNavOpenChange).toHaveBeenCalledWith(false);
   });
 });

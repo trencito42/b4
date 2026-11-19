@@ -75,3 +75,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+@media (pointer: coarse) {
+  .b4-sidebar__item {
+    min-height: var(--b4-hit-target-min);
+    font-size: var(--b4-text-sm);
+  }
+}

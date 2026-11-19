@@ -1,7 +1,8 @@
 # AGENTS.md — for coding agents working in B4
 
-Read `PROGRESS.md` and `HANDOFF.md` first. This file is about *how* to work
-in this repo, not what's done.
+Read `PROGRESS.md`, `HANDOFF.md`, and `ADAPTIVE_UX_SPEC.md` first. This file is about *how* to work
+in this repo, not what's done. B4 adheres to iOS-inspired interaction ergonomics and continuity
+while maintaining its distinctive Graphite and Porcelain aesthetic.
 
 ## The one rule that matters most: reuse, don't recreate
 

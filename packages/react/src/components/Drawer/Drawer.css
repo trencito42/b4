@@ -22,12 +22,15 @@
   position: fixed;
   top: 0;
   right: 0;
-  height: 100%;
+  height: 100dvh;
   width: min(420px, 100%);
   display: flex;
   flex-direction: column;
   gap: var(--b4-space-3);
   padding: var(--b4-space-6);
+  padding-top: max(var(--b4-space-6), env(safe-area-inset-top));
+  padding-bottom: max(var(--b4-space-6), env(safe-area-inset-bottom));
+  padding-right: max(var(--b4-space-6), env(safe-area-inset-right));
   background: var(--b4-surface-overlay);
   border-left: 1px solid var(--b4-border-subtle);
   box-shadow: var(--b4-shadow-overlay);

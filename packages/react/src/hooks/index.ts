@@ -15,6 +15,12 @@ export type {
   UsePointerSelectionResult,
 } from "./usePointerSelection.js";
 
+export { usePressFeedback } from "./usePressFeedback.js";
+export type {
+  UsePressFeedbackOptions,
+  UsePressFeedbackResult,
+} from "./usePressFeedback.js";
+
 export { useSwipeNavigation } from "./useSwipeNavigation.js";
 export type {
   SwipeNavigationItem,

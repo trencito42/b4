@@ -3,6 +3,21 @@
 **Mission brief (phases 0–8): complete in-repo, 2026-11-19.** npm publish is
 the only deliberate out-of-repo gate (`RELEASE_CHECKLIST.md`).
 
+## Adaptive UX Direction: iOS-Inspired Touch Ergonomics & B4 Visual Identity (2026-11-19)
+
+- **Persistent Specification**:
+  - Authored `ADAPTIVE_UX_SPEC.md` covering 44px coarse touch target rules, dynamic viewports (`100dvh`), safe areas (`env(safe-area-inset-*)`), gesture intent detection (8px touch-slop), preview vs committed state, adaptive overlay presentations, and spring motion choreography.
+  - Cross-referenced from `AGENTS.md`, `GUI.md`, `ART_DIRECTION.md`, and `HANDOFF.md`.
+- **Reusable Primitives**:
+  - Added `usePressFeedback` (`packages/react/src/hooks/usePressFeedback.ts`): provides immediate tactile scale response (`scale(0.96)`) using `springs.snap`, cancels immediately on pointer departure or gesture interruption, and respects reduced motion.
+- **Adaptive Navigation & Overlays**:
+  - `AppShell`: transformed into a fully adaptive responsive layout. On desktop (`>= 769px`), keeps full-height static sidebar; on mobile (`<= 768px`), automatically adapts sidebar into an off-canvas slide-over drawer with backdrop blur, safe-area top/bottom padding, and Escape/click-outside dismissal.
+  - `Sidebar`: added `@media (pointer: coarse)` rule ensuring all items meet `--b4-hit-target-min` (44px) touch target standard.
+  - `Sheet` & `Drawer`: upgraded to dynamic viewport units (`85dvh` / `100dvh`) and safe area insets (`env(safe-area-inset-bottom/top)`).
+  - `Toast`: added safe area viewport anchoring (`max(var(--b4-space-6), env(safe-area-inset-bottom))`).
+  - `CommandPalette` & `Dialog`: mobile viewport constraints preventing off-screen overflow on phones.
+- Gate: 479/479 `@b4/react` unit tests (87 suites), monorepo typecheck 0 errors, all 5 visual baselines passing.
+
 ## Interaction Foundations & Gesture Language (2026-11-19)
 
 - **Behavioral Foundation Hooks**:

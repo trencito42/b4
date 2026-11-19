@@ -24,7 +24,14 @@ components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 Phases **0–8** DONE per `PROGRESS.md` phase table. All inventory rows
 **VERIFIED** in `COMPONENT_INVENTORY.md` / `QUALITY_MATRIX.md`.
 
-Latest interaction & craftsmanship improvements:
+Latest adaptive UX & interaction improvements:
+- **Adaptive UX Direction (`ADAPTIVE_UX_SPEC.md`)**:
+  - Authored the permanent canonical specification for iOS-inspired touch ergonomics, gesture continuity, dynamic viewports (`100dvh`), safe areas (`env(safe-area-inset-*)`), coarse pointer 44px touch targets, and preview-vs-commit semantics. Cross-referenced in `AGENTS.md`, `GUI.md`, `ART_DIRECTION.md`.
+- **Adaptive Primitives & Layout**:
+  - Added `usePressFeedback` (`packages/react/src/hooks/usePressFeedback.ts`) for immediate tactile scale feedback (`scale(0.96)`) using `springs.snap`, gesture cancellation, and reduced motion safety.
+  - `AppShell`: adaptive mobile layout with off-canvas slide-over drawer on screens `<= 768px`, backdrop blur, safe-area padding, and full content preservation.
+  - `Sidebar`: 44px min-height coarse pointer touch targets.
+  - `Sheet` / `Drawer` / `Toast` / `CommandPalette` / `Dialog`: dynamic viewports (`100dvh`), safe area insets, and mobile viewport constraints.
 - **Behavioral & Gesture Foundations**:
   - Added `useControllableState` (`packages/react/src/hooks/useControllableState.ts`) for canonical controlled/uncontrolled state synchronization.
   - Added `useGestureIntent` (`packages/react/src/hooks/useGestureIntent.ts`) for axis locking and touch-slop thresholding (8px), preventing gesture conflict with native vertical page scrolling.
@@ -52,7 +59,7 @@ scope.
 
 ### Files to inspect on resume
 
-`PROGRESS.md`, `COMPONENT_INVENTORY.md`, `RELEASE_CHECKLIST.md`,
+`ADAPTIVE_UX_SPEC.md`, `PROGRESS.md`, `COMPONENT_INVENTORY.md`, `RELEASE_CHECKLIST.md`,
 `apps/studio/src/studio/StudioApp.tsx`, `playwright.config.ts`.
 
 ### Verification (evidence 2026-11-19)

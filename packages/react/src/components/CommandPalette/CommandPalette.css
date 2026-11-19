@@ -90,3 +90,16 @@
   font-size: var(--b4-text-xs);
   color: var(--b4-text-tertiary);
 }
+
+@media (max-width: 640px) {
+  .b4-command-palette__popup {
+    inset: var(--b4-space-3);
+    top: max(var(--b4-space-6), env(safe-area-inset-top));
+    width: calc(100vw - var(--b4-space-6));
+    max-height: 80dvh;
+  }
+
+  .b4-command-palette__item {
+    min-height: var(--b4-hit-target-min);
+  }
+}

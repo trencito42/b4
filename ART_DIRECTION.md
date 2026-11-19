@@ -28,6 +28,7 @@ reinterpreting the mission brief.
 - Density, radius, contrast, and motion are global via `data-b4-*` on a
   root element (`applyB4ThemeSettings` from `@b4/tokens`).
 - Do not hardcode pixel colors or radii in components.
+- Adaptive UX & ergonomics follow `ADAPTIVE_UX_SPEC.md` (44px coarse touch targets, dynamic viewport units, gesture continuity).
 
 ## Reference
 

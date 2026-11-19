@@ -1,8 +1,8 @@
 # GUI.md — visual/interaction conventions for coding agents
 
-Companion to `AGENTS.md` (structure/process) and `DESIGN_PRINCIPLES.md`
-(the why). This file is the quick-reference for *what to actually build*
-when adding UI.
+Companion to `AGENTS.md` (structure/process), `DESIGN_PRINCIPLES.md`
+(the why), and `ADAPTIVE_UX_SPEC.md` (touch ergonomics, gesture intent, safe areas).
+This file is the quick-reference for *what to actually build* when adding UI.
 
 ## Picking a variant/size vocabulary
 

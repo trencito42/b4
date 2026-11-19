@@ -250,6 +250,7 @@ export {
   useControllableState,
   useGestureIntent,
   usePointerSelection,
+  usePressFeedback,
   useSwipeNavigation,
 } from "./hooks/index.js";
 export type {
@@ -260,6 +261,8 @@ export type {
   PointerSelectionItem,
   UsePointerSelectionOptions,
   UsePointerSelectionResult,
+  UsePressFeedbackOptions,
+  UsePressFeedbackResult,
   SwipeNavigationItem,
   UseSwipeNavigationOptions,
   UseSwipeNavigationResult,
