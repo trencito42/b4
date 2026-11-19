@@ -233,3 +233,5 @@ export { InspectorPanel } from "./components/InspectorPanel/InspectorPanel.js";
 export type { InspectorPanelProps, InspectorSection, InspectorProperty } from "./components/InspectorPanel/InspectorPanel.js";
 export { ResizablePanels } from "./components/ResizablePanels/ResizablePanels.js";
 export type { ResizablePanelsProps } from "./components/ResizablePanels/ResizablePanels.js";
+export { ResourceMeter } from "./components/ResourceMeter/ResourceMeter.js";
+export type { ResourceMeterProps, ResourceMeterTone } from "./components/ResourceMeter/ResourceMeter.js";

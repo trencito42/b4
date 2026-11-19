@@ -1,0 +1,49 @@
+.b4-resource-meter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--b4-space-3);
+  font-family: var(--b4-font-sans);
+}
+
+.b4-resource-meter__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--b4-space-5);
+}
+
+.b4-resource-meter__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--b4-text-primary);
+}
+
+.b4-resource-meter__value {
+  font-size: 0.75rem;
+  color: var(--b4-text-tertiary);
+}
+
+.b4-resource-meter__track {
+  height: 6px;
+  border-radius: var(--b4-radius-full);
+  background-color: var(--b4-surface-3);
+  overflow: hidden;
+}
+
+.b4-resource-meter__fill {
+  height: 100%;
+  border-radius: var(--b4-radius-full);
+  transition: width var(--b4-duration-base) var(--b4-ease-standard);
+}
+
+.b4-resource-meter__fill--neutral {
+  background-color: var(--b4-accent-500);
+}
+
+.b4-resource-meter__fill--warning {
+  background-color: var(--b4-warning);
+}
+
+.b4-resource-meter__fill--danger {
+  background-color: var(--b4-danger-text);
+}

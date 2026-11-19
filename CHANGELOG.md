@@ -5,6 +5,19 @@ a per-npm-release history.
 
 ## Unreleased
 
+### ResourceMeter added — Family F, 8/10 (2026-11-19)
+
+- Added `ResourceMeter`: current resource level (storage/CPU/quota),
+  ARIA `meter` role on a custom-styled element, not native `<meter>`.
+  Tone auto-computes from percentage, overridable.
+- Caught a token-guessing mistake before shipping:
+  `--b4-duration-moderate` doesn't exist — fixed to the real
+  `--b4-duration-base` (which also correctly zeroes under reduced
+  motion).
+- Full gate: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+  (450/450), `pnpm build`, Storybook build, `npx playwright test`
+  (351/351, run twice). **VERIFIED**.
+
 ### ResizablePanels added — Family F, 7/10 (2026-11-19)
 
 - Added `ResizablePanels`: a real two-pane split layout, built from

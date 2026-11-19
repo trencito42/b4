@@ -1,5 +1,18 @@
 # B4 — Progress
 
+## ResourceMeter — Family F's 8th component (2026-11-19)
+
+Current resource level (storage/CPU/quota), distinct from Progress
+(in-progress operation, not a static level). ARIA `meter` role on a
+custom-styled element, not native `<meter>` (cross-browser styling too
+inconsistent). Tone auto-computes from percentage, overridable. Caught
+a real token-guessing mistake before shipping:
+`--b4-duration-moderate` doesn't exist — fixed to the real
+`--b4-duration-base`, which also means it correctly zeroes under
+reduced motion. Full gate: typecheck, @b4/react tests 450/450, build,
+Storybook build, playwright 351/351 (run twice). **VERIFIED**. Family
+F now: 8/10.
+
 ## ResizablePanels — Family F's 7th component (2026-11-19)
 
 Real two-pane split layout, no Base UI primitive — built from scratch

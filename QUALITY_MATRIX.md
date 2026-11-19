@@ -1545,6 +1545,32 @@ Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
 (443/443), `pnpm build`, Storybook build, `npx playwright test`
 (348/348, run twice for stability).
 
+## ResourceMeter — Family F's 8th component (2026-11-19)
+
+**VERIFIED**. A current resource level (storage used, CPU, quota) —
+distinct from `Progress` (Family D), which represents an in-progress
+*operation*, not a static level. Uses the ARIA `meter` role on a
+custom-styled element (`aria-valuenow`/`min`/`max`/`valuetext`), not
+the native `<meter>` element, whose cross-browser styling is too
+inconsistent to theme reliably across B4's density/contrast axes —
+same reasoning `Progress`/`CircularProgress` already applied for
+`role="progressbar"` over a native `<progress>`. Tone (neutral/
+warning/danger) auto-computes from percentage (≥90% danger, ≥75%
+warning) with an explicit `tone` prop available to override it.
+
+Caught and fixed a real token-guessing mistake before it shipped: the
+fill's `transition` first referenced `--b4-duration-moderate` (a name
+that sounded plausible but doesn't exist) with an inline fallback —
+grepped the real token names in `packages/tokens/src/base.css` and
+fixed it to the actual `--b4-duration-base`, which also means it
+correctly collapses to `0ms` under `data-b4-motion="reduced"` for
+free, something the fallback-value version would have silently
+missed.
+
+Verified: `pnpm typecheck`, `pnpm --filter @b4/react run test`
+(450/450), `pnpm build`, Storybook build, `npx playwright test`
+(351/351, run twice for stability).
+
 ## Known gaps on the Phase 1 motion primitives
 
 - `useAsyncStatus` (in `@b4/motion`, not a rendered component) has unit

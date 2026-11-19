@@ -537,6 +537,37 @@ Base UI's `Progress.Track`/`Indicator` are visual-agnostic — reused
 props rather than relying on Base UI's own linear-bar width styling.
 No new gotchas.
 
+## ResourceMeter — Family F's 8th component (2026-11-19)
+
+**VERIFIED**. A current resource level (storage used, CPU, quota) —
+distinct from `Progress` (Family D), which represents an in-progress
+*operation*, not a static level. Uses the ARIA `meter` role on a
+custom-styled element (`aria-valuenow`/`min`/`max`/`valuetext`), not
+the native `<meter>` element — its cross-browser styling is too
+inconsistent to theme reliably across B4's density/contrast axes, the
+same reasoning `Progress`/`CircularProgress` already applied for
+`role="progressbar"` over native `<progress>`. Tone auto-computes from
+percentage (≥90% danger, ≥75% warning, else neutral) with an explicit
+`tone` prop to override it.
+
+**Caught a real token-guessing mistake before it ever shipped**: the
+fill's CSS `transition` first referenced `var(--b4-duration-moderate,
+240ms)` — a name that sounded entirely plausible (it reads like it
+should exist alongside `--b4-duration-fast`/`--b4-duration-slow`) but
+doesn't; the inline fallback value silently masked that it was
+missing, since the rule still "worked" visually. Caught by grepping
+the real token names in `packages/tokens/src/base.css` before trusting
+the guess, per the project's standing rule — fixed to the actual
+`--b4-duration-base`. This also means the transition now genuinely
+collapses to `0ms` under `data-b4-motion="reduced"` the way every
+other animated component here does; the fallback-value version would
+have silently kept animating at `240ms` regardless of the reduced-
+motion setting; and been invisible to any test, since nothing asserts
+transition duration directly.
+
+Full gate: typecheck, @b4/react tests 450/450, build, Storybook build,
+playwright 351/351 (run twice). Family F now: 8/10.
+
 ## ResizablePanels — Family F's 7th component (2026-11-19)
 
 **VERIFIED**. No Base UI primitive for this — built from scratch on
@@ -1041,15 +1072,17 @@ defect — fixed by asserting `el.style.height` directly instead. Full
 gate: typecheck, @b4/react tests 334/334, build, Storybook build,
 playwright 272/272 (run twice). Family D now: 3/15.
 
-## Next action: continue Family F — ResourceMeter next (simpler,
-self-contained); then FileExplorer and QueryEditor last (the two that
-need real, non-mockup functionality).
+## Next action: FileExplorer next, then QueryEditor last — the two
+remaining Family F components, both explicitly flagged as needing
+real, non-mockup functionality. QueryEditor in particular (real
+syntax-aware editing, not a styled `<textarea>`) is probably the
+single hardest component left in the whole inventory.
 
 Family D is now complete (15/15 VERIFIED). Families A, B, C, D, E are
-all fully VERIFIED. Family F is now at 7/10 (AppShell, Sidebar,
-PageHeader, Toolbar, FilterBar, InspectorPanel, ResizablePanels
-VERIFIED), and it's explicitly the most "layout composition of other
-components" family — a natural last family, since it's
+all fully VERIFIED. Family F is now at 8/10 (AppShell, Sidebar,
+PageHeader, Toolbar, FilterBar, InspectorPanel, ResizablePanels,
+ResourceMeter VERIFIED), and it's explicitly the most "layout
+composition of other components" family — a natural last family, since it's
 most likely to want things from Families A-D already in place
 (`FileExplorer` wants `TreeView`, already VERIFIED; `QueryEditor` must
 have real syntax-aware editing per the mission brief, not a styled
