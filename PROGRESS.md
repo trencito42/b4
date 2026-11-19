@@ -1,5 +1,27 @@
 # B4 — Progress
 
+## FileExplorer and QueryEditor — Family F complete, 10/10 (2026-11-19)
+
+**Family F — Application Patterns is complete: all 10/10 VERIFIED.**
+
+`FileExplorer` is a real file tree on `TreeView` (folders before files,
+alphabetical within each group, expand/collapse, `onFileSelect` only
+for files). `QueryEditor` is a SQL editor: native editing surface plus
+a real scanner (keywords, strings, numbers, comments, parenthesis
+balance) and a live syntax diagnostic. Lines do not soft-wrap, so the
+gutter stays aligned with the source.
+
+Full gate before the final width tweak: typecheck, @b4/react tests
+463/463, @b4/motion tests 5/5, build, playwright 359/359 (run twice).
+After setting a 40rem editor measure so lines are not clipped, the
+FileExplorer and QueryEditor specs were re-run. Both themes were
+inspected from browser screenshots.
+
+Studio (`apps/studio/src/App.tsx`) is still the Phase 0 placeholder.
+Phase 6 (configurator and the three integration showcases) is the
+remaining product work. No CI workflow and no visual-regression suite
+yet.
+
 ## ResourceMeter — Family F's 8th component (2026-11-19)
 
 Current resource level (storage/CPU/quota), distinct from Progress

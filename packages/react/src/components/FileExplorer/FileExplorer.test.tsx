@@ -30,7 +30,7 @@ describe("FileExplorer", () => {
       { id: "afolder", name: "afolder", type: "folder" },
     ];
     render(<FileExplorer data={mixed} aria-label="Files" />);
-    const items = screen.getAllByRole("treeitem").map((el) => el.textContent);
+    const items = screen.getAllByRole("treeitem").map((el) => el.textContent?.replace(/\s+/g, "") ?? "");
     expect(items).toEqual(["afolder", "zfolder", "a.txt", "b.txt"]);
   });
 
@@ -47,14 +47,24 @@ describe("FileExplorer", () => {
 
   it("calls onFileSelect only for file nodes, not folders", async () => {
     const onFileSelect = vi.fn();
+    const onSelectedIdChange = vi.fn();
     const user = userEvent.setup();
-    render(<FileExplorer data={data} aria-label="Project files" onFileSelect={onFileSelect} />);
+    render(
+      <FileExplorer
+        data={data}
+        aria-label="Project files"
+        onFileSelect={onFileSelect}
+        onSelectedIdChange={onSelectedIdChange}
+      />,
+    );
 
     await user.click(screen.getByText("src"));
     expect(onFileSelect).not.toHaveBeenCalled();
+    expect(onSelectedIdChange).toHaveBeenCalledWith("src");
 
     await user.click(screen.getByText("README.md"));
     expect(onFileSelect).toHaveBeenCalledWith(data[1]);
+    expect(onSelectedIdChange).toHaveBeenCalledWith("readme");
   });
 
   it("has no axe violations", async () => {

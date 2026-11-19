@@ -1,5 +1,29 @@
 # HANDOFF — read this first on any resume
 
+## Current state (2026-11-19) — Family F is complete
+
+Branch `main`. Component inventory families A–F are all VERIFIED
+(FileExplorer and QueryEditor closed Family F). Do not rebuild them.
+
+**Next task: Phase 6 — B4 Studio.** `apps/studio/src/App.tsx` is still
+the Phase 0 placeholder. Build the real Studio shell (navigation,
+search, theme/density/radius/contrast/motion controls, code samples)
+and the three integration showcases (analytics, infrastructure,
+billing) from public B4 components. Also still open, and not blockers
+for Studio: no CI workflow, no visual-regression suite.
+
+Latest gate for the Family F close: `@b4/react` 463/463, `@b4/motion`
+5/5, typecheck, `pnpm build`, playwright 359/359 twice. After that,
+QueryEditor was given `width: 40rem; max-width: 100%` and
+`white-space: pre` so the gutter stays aligned and lines are not
+clipped. Re-run `e2e/query-editor.spec.ts` if you touch that CSS.
+
+`pnpm` is not on this machine's PATH. Use `npm exec --yes pnpm@12.21.0`
+or `node_modules\.bin`. Playwright's `webServer` command calls `pnpm`
+and fails until a Storybook server is already on port 6106
+(`apps/studio/node_modules/.bin/storybook.cmd dev -p 6106 --ci`);
+`reuseExistingServer` then skips the command.
+
 ## THE BLOCKING GATE BELOW IS CLOSED (2026-11-17, later same day — read this first)
 
 Everything from here down to "Things the next session needs to know" was

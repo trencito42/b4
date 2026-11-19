@@ -1,5 +1,32 @@
 ﻿# B4 — Quality Matrix
 
+## FileExplorer — Family F's 9th component (2026-11-19)
+
+**VERIFIED**. Real tree navigation on `TreeView`, not a static outline.
+Folders sort before files; each group is alphabetical. `onFileSelect`
+fires for files only; `onSelectedIdChange` still fires for folders.
+Keyboard expand covered in unit tests and in `e2e/file-explorer.spec.ts`.
+Axe-clean on Graphite and Porcelain. Both themes inspected from
+screenshots.
+
+## QueryEditor — Family F's 10th component (2026-11-19)
+
+**VERIFIED. Family F is complete: 10/10.** A SQL editor, not a monospace
+textarea. `tokenizeQuery` scans keywords, strings (including `''`
+escapes), numbers, line and block comments, and parenthesis balance.
+The first diagnostic is rendered as `role="alert"` and `aria-invalid`.
+The visible token layer sits over a native textarea so caret, selection,
+and undo stay real. `white-space: pre` keeps line numbers aligned with
+source lines; the control is 40rem wide up to the parent width so a
+normal query is not clipped. Axe-clean on both themes, including the
+error story. Graphite and Porcelain screenshots inspected after the
+width fix.
+
+Full gate for this pair, before the width tweak: typecheck, @b4/react
+463/463, @b4/motion 5/5, package build, playwright 359/359 twice.
+`e2e/file-explorer.spec.ts` and `e2e/query-editor.spec.ts` cover the
+new behavior.
+
 ## Full CLI automated regression gate closed (2026-11-17, this session)
 
 Every prior checkpoint below (Slider, Select, Combobox, the Family B motion

@@ -5,6 +5,17 @@ a per-npm-release history.
 
 ## Unreleased
 
+### FileExplorer and QueryEditor added — Family F complete, 10/10 (2026-11-19)
+
+- Added `FileExplorer`: a real file/folder tree on `TreeView`, folders
+  sorted before files, `onFileSelect` only for files.
+- Added `QueryEditor`: SQL tokenization and diagnostics (unclosed
+  string, unclosed block comment, unbalanced parentheses) painted over
+  a native editing surface. Not a styled `Textarea`.
+- Full gate: typecheck, @b4/react tests 463/463, motion 5/5, build,
+  playwright 359/359 (run twice), then a layout pass so the editor
+  keeps a 40rem measure and does not clip source lines.
+
 ### ResourceMeter added — Family F, 8/10 (2026-11-19)
 
 - Added `ResourceMeter`: current resource level (storage/CPU/quota),

@@ -118,11 +118,12 @@ DataGrid must be a real virtualized/sortable/filterable grid, not a styled
 | InspectorPanel | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | ResizablePanels | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 | ResourceMeter | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
-| FileExplorer | PLANNED |
-| QueryEditor | PLANNED |
+| FileExplorer | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
+| QueryEditor | **VERIFIED** (full CLI regression gate closed 2026-11-19, see QUALITY_MATRIX.md) |
 
-FileExplorer and QueryEditor must have real functionality (actual tree
-navigation / actual syntax-aware editing), not static mockups.
+FileExplorer is a real tree (`TreeView`) with folder-first sorting and
+file-only open. QueryEditor tokenizes and validates a SQL subset; it is
+not a styled textarea.
 
 ## Scope changes log
 

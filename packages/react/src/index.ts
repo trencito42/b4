@@ -237,3 +237,5 @@ export { ResourceMeter } from "./components/ResourceMeter/ResourceMeter.js";
 export type { ResourceMeterProps, ResourceMeterTone } from "./components/ResourceMeter/ResourceMeter.js";
 export { FileExplorer } from "./components/FileExplorer/FileExplorer.js";
 export type { FileExplorerProps, FileExplorerNode } from "./components/FileExplorer/FileExplorer.js";
+export { QueryEditor } from "./components/QueryEditor/QueryEditor.js";
+export type { QueryEditorProps } from "./components/QueryEditor/QueryEditor.js";

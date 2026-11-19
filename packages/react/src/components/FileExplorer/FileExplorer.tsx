@@ -15,6 +15,8 @@ export interface FileExplorerProps {
   defaultExpandedIds?: readonly string[];
   selectedId?: string | null;
   defaultSelectedId?: string | null;
+  /** Fires for every selection, including folders. */
+  onSelectedIdChange?: (id: string | null) => void;
   /** Fires only for file nodes — selecting a folder navigates/highlights it but doesn't "open" anything, same distinction a real file browser makes. */
   onFileSelect?: (node: FileExplorerNode) => void;
   className?: string;
@@ -74,7 +76,7 @@ function findNode(nodes: FileExplorerNode[], id: string): FileExplorerNode | und
  * alphabetically (the universal file-browser convention), and
  * `onFileSelect` fires only for file nodes, not folders.
  */
-export function FileExplorer({ data, onFileSelect, className, ...rest }: FileExplorerProps) {
+export function FileExplorer({ data, onFileSelect, onSelectedIdChange, className, ...rest }: FileExplorerProps) {
   const treeData = useMemo(() => toTreeNodes(data), [data]);
 
   return (
@@ -82,6 +84,7 @@ export function FileExplorer({ data, onFileSelect, className, ...rest }: FileExp
       data={treeData}
       className={["b4-file-explorer", className ?? ""].filter(Boolean).join(" ")}
       onSelectedIdChange={(id) => {
+        onSelectedIdChange?.(id);
         if (!id || !onFileSelect) return;
         const node = findNode(data, id);
         if (node?.type === "file") onFileSelect(node);
