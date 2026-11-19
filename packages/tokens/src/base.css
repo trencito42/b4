@@ -46,7 +46,7 @@
 
   /* ---- typography ---- */
   --b4-font-sans:
-    "B4 Sans", "Inter Variable", Inter, -apple-system, "Segoe UI", system-ui,
+    "Graphik", "B4 Sans", -apple-system, "Segoe UI", system-ui,
     sans-serif;
   --b4-font-mono:
     "B4 Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
