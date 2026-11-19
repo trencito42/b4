@@ -48,12 +48,12 @@ test("DatePicker navigates months with the header buttons", async ({ page }) => 
 test("DatePicker supports keyboard navigation and Enter to select", async ({ page }) => {
   await page.goto("/iframe.html?id=family-b-forms-inputs-datepicker--with-default-value");
 
-  await page.getByRole("button", { name: /Nov 18, 2026/ }).click();
+  await page.getByRole("button", { name: /Nov 18, 2026/ }).press("Enter");
   const grid = page.getByRole("grid");
   await expect(grid).toBeVisible();
 
   const start = grid.locator(`[data-date="${new Date(2026, 10, 18).toDateString()}"]`);
-  await start.focus();
+  await expect(start).toBeFocused();
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("Enter");

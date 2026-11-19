@@ -1,4 +1,4 @@
-import { forwardRef, useState, type ReactNode } from "react";
+import { forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Input } from "@base-ui/react/input";
 import { Field } from "../Field/Field.js";
 import { FieldControl } from "../../internal/FieldControl.js";
@@ -71,6 +71,15 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
     ref,
   ) {
     const [visible, setVisible] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const selection = useRef<[number, number, HTMLInputElement["selectionDirection"]] | null>(null);
+    useImperativeHandle(ref, () => inputRef.current!, []);
+    useLayoutEffect(() => {
+      const input = inputRef.current;
+      const range = selection.current;
+      selection.current = null;
+      if (input && range) input.setSelectionRange(range[0], range[1], range[2] ?? undefined);
+    }, [visible]);
     const hasError = Boolean(error);
 
     return (
@@ -93,7 +102,7 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             .join(" ")}
         >
           <Input
-            ref={ref}
+            ref={inputRef}
             type={visible ? "text" : "password"}
             disabled={disabled}
             required={required}
@@ -112,7 +121,16 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             size="sm"
             disabled={disabled}
             className="b4-field-action"
-            onClick={() => setVisible((v) => !v)}
+            onMouseDown={(event) => {
+              if (document.activeElement === inputRef.current) event.preventDefault();
+            }}
+            onClick={() => {
+              const input = inputRef.current;
+              if (input?.selectionStart != null && input.selectionEnd != null) {
+                selection.current = [input.selectionStart, input.selectionEnd, input.selectionDirection];
+              }
+              setVisible((v) => !v);
+            }}
             aria-label={visible ? "Hide password" : "Show password"}
             aria-pressed={visible}
             icon={

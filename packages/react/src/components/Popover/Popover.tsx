@@ -9,6 +9,8 @@ export interface PopoverProps {
   /** The trigger element. Cloned with the props Base UI's `Popover.Trigger` needs. */
   trigger: ReactElement;
   side?: "top" | "bottom" | "left" | "right";
+  /** Override the first focused element when the popover opens. */
+  initialFocus?: BasePopover.Popup.Props["initialFocus"];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -20,7 +22,15 @@ export interface PopoverProps {
  * on hover/focus; use `Popover` for anything with its own interactive
  * content or that should stay open until dismissed.
  */
-export function Popover({ title, children, trigger, side = "bottom", open: controlledOpen, onOpenChange }: PopoverProps) {
+export function Popover({
+  title,
+  children,
+  trigger,
+  side = "bottom",
+  initialFocus,
+  open: controlledOpen,
+  onOpenChange,
+}: PopoverProps) {
   const reducedMotion = useReducedMotion();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const open = controlledOpen ?? uncontrolledOpen;
@@ -51,6 +61,7 @@ export function Popover({ title, children, trigger, side = "bottom", open: contr
         >
           <BasePopover.Popup
             className="b4-popover__popup"
+            initialFocus={initialFocus}
             render={
               <OptionPopupSurface
                 open={open}

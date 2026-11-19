@@ -44,10 +44,12 @@
   block-size: max(100%, var(--b4-hit-target-min));
   transform: translate(-50%, -50%);
 }
-.b4-checkbox:hover:not([data-disabled])
-  .b4-checkbox__box:not([data-checked]):not([data-indeterminate]) {
-  background-color: var(--b4-control-bg-hover);
-  border-color: var(--b4-control-fg);
+@media (hover: hover) and (pointer: fine) {
+  .b4-checkbox:hover:not([data-disabled])
+    .b4-checkbox__box:not([data-checked]):not([data-indeterminate]) {
+    background-color: var(--b4-control-bg-hover);
+    border-color: var(--b4-control-fg);
+  }
 }
 
 .b4-checkbox__box:focus-visible {
@@ -59,6 +61,10 @@
 .b4-checkbox__box[data-indeterminate] {
   background-color: var(--b4-control-bg-selected);
   border-color: var(--b4-control-bg-selected);
+}
+
+.b4-checkbox:active:not([data-disabled]) .b4-checkbox__box {
+  border-color: var(--b4-control-fg);
 }
 
 .b4-checkbox__indicator {

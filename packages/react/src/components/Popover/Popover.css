@@ -16,6 +16,14 @@
   outline: none;
 }
 
+/* Keep calendar and color controls reachable when a picker flips or has
+   limited space between its trigger and the viewport edge. */
+.b4-popover__popup:has(.b4-date-picker__calendar, .b4-color-picker__panel) {
+  max-block-size: var(--available-height, 100dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
 .b4-popover__title {
   margin: 0 0 var(--b4-space-4);
   font-size: var(--b4-text-base);

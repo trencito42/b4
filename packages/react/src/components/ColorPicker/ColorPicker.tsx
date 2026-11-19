@@ -3,6 +3,7 @@ import { Slider as BaseSlider } from "@base-ui/react/slider";
 import { Field } from "../Field/Field.js";
 import { Popover } from "../Popover/Popover.js";
 import { TextField } from "../TextField/TextField.js";
+import { PickerTrigger } from "../../internal/PickerTrigger.js";
 
 export interface ColorPickerProps {
   label: string;
@@ -31,7 +32,7 @@ function hsvToRgb({ h, s, v }: Hsv): [number, number, number] {
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = val - c;
   const [r1, g1, b1] =
-    h < 60
+    h < 60 || h === 360
       ? [c, x, 0]
       : h < 120
         ? [x, c, 0]
@@ -114,47 +115,55 @@ export function ColorPicker({
 }: ColorPickerProps) {
   const [uncontrolledHex, setUncontrolledHex] = useState(defaultValue ?? "#3366cc");
   const hex = value ?? uncontrolledHex;
-  const hsv = hexToHsv(hex) ?? { h: 220, s: 60, v: 80 };
-  const [hexInput, setHexInput] = useState(hex);
+  const [lastEdit, setLastEdit] = useState<{ hex: string; hsv: Hsv }>();
+  const [draft, setDraft] = useState<{ source: string; text: string }>();
+  const [preview, setPreview] = useState<Hsv>();
   const [open, setOpen] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
+  const pointer = useRef<number | null>(null);
+  const selected = lastEdit?.hex === hex ? lastEdit.hsv : hexToHsv(hex);
+  const hsv = preview ?? selected ?? { h: 220, s: 60, v: 80 };
+  const hexInput = draft?.source === hex ? draft.text : hex;
 
   function commit(next: Hsv) {
     const nextHex = hsvToHex(next);
-    setUncontrolledHex(nextHex);
-    setHexInput(nextHex);
-    onValueChange?.(nextHex);
+    setLastEdit({ hex: nextHex, hsv: next });
+    setDraft(undefined);
+    if (value === undefined) setUncontrolledHex(nextHex);
+    if (nextHex !== hex) onValueChange?.(nextHex);
   }
 
   function commitHexText(text: string) {
-    setHexInput(text);
-    const rgb = hexToRgb(text);
-    if (!rgb) return;
-    const nextHex = rgbToHex(...rgb);
-    setUncontrolledHex(nextHex);
-    onValueChange?.(nextHex);
+    const next = hexToHsv(text);
+    if (next) {
+      commit(next.s === 0 ? { ...next, h: hsv.h } : next);
+    } else {
+      setDraft({ source: hex, text });
+    }
   }
 
-  function setFromPointer(clientX: number, clientY: number) {
+  function colorAt(clientX: number, clientY: number) {
     const rect = areaRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    if (!rect?.width || !rect.height) return;
     const s = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
     const v = clamp(100 - ((clientY - rect.top) / rect.height) * 100, 0, 100);
-    commit({ h: hsv.h, s, v });
+    return { h: hsv.h, s, v };
   }
 
   function handleAreaPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    if (disabled) return;
+    if (disabled || event.button !== 0 || pointer.current !== null) return;
+    pointer.current = event.pointerId;
     event.currentTarget.setPointerCapture(event.pointerId);
-    setFromPointer(event.clientX, event.clientY);
+    setPreview(colorAt(event.clientX, event.clientY));
   }
 
-  function handleAreaPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
-    if (disabled || event.buttons !== 1) return;
-    setFromPointer(event.clientX, event.clientY);
+  function cancelPreview() {
+    pointer.current = null;
+    setPreview(undefined);
   }
 
   function handleAreaKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (disabled || pointer.current !== null) return;
     const STEP = event.shiftKey ? 10 : 2;
     const deltas: Record<string, [number, number]> = {
       ArrowLeft: [-STEP, 0],
@@ -185,12 +194,21 @@ export function ColorPicker({
       <Popover
         title={label}
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next) {
+            cancelPreview();
+            setDraft(undefined);
+          }
+        }}
         trigger={
-          <button type="button" disabled={disabled} className="b4-color-picker__trigger">
-            <span className="b4-color-picker__swatch" style={{ backgroundColor: hex }} aria-hidden="true" />
-            <span className="b4-color-picker__trigger-text">{hex}</span>
-          </button>
+          <PickerTrigger
+            disabled={disabled}
+            className="b4-color-picker__trigger"
+            startIcon={<span className="b4-color-picker__swatch" style={{ backgroundColor: hex }} aria-hidden="true" />}
+          >
+            {hex}
+          </PickerTrigger>
         }
       >
         <div className="b4-color-picker__panel">
@@ -199,7 +217,20 @@ export function ColorPicker({
             className="b4-color-picker__area"
             style={{ backgroundColor: pureHueHex }}
             onPointerDown={handleAreaPointerDown}
-            onPointerMove={handleAreaPointerMove}
+            onPointerMove={(event) => {
+              if (!disabled && pointer.current === event.pointerId) {
+                setPreview(colorAt(event.clientX, event.clientY));
+              }
+            }}
+            onPointerUp={(event) => {
+              if (pointer.current !== event.pointerId) return;
+              const next = colorAt(event.clientX, event.clientY);
+              cancelPreview();
+              if (next && !disabled) commit(next);
+            }}
+            onLostPointerCapture={(event) => {
+              if (pointer.current === event.pointerId) cancelPreview();
+            }}
           >
             <div className="b4-color-picker__area-white" />
             <div className="b4-color-picker__area-black" />
@@ -207,9 +238,10 @@ export function ColorPicker({
               role="slider"
               tabIndex={disabled ? -1 : 0}
               aria-label="Saturation and brightness"
+              aria-valuenow={Math.round(hsv.s)}
               aria-valuetext={`Saturation ${Math.round(hsv.s)}%, brightness ${Math.round(hsv.v)}%`}
               className="b4-color-picker__area-thumb"
-              style={{ left: `${hsv.s}%`, top: `${100 - hsv.v}%`, backgroundColor: hex }}
+              style={{ left: `${hsv.s}%`, top: `${100 - hsv.v}%`, backgroundColor: preview ? hsvToHex(preview) : hex }}
               onKeyDown={handleAreaKeyDown}
             />
           </div>

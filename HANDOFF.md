@@ -1,5 +1,21 @@
 # HANDOFF — read this first on any resume
 
+## Batch 3 forms review (2026-11-20)
+
+The forms review records the baseline defects, the fixes, and the inspected
+Storybook evidence for both themes at 390, 768, and 1440 px. The forms
+checks passed. Two fresh full runs reproduced the existing TextMorph
+contrast failure on a fading token, so the whole-suite gate remains open.
+[Forms audit](FORMS_CRAFTSMANSHIP.md) [Quality matrix](QUALITY_MATRIX.md)
+
+Use the Forms Review story when comparing the family in future work. It
+renders single and range values with the same `Slider` implementation.
+
+The historical NumberField and PasswordField animation tests passed in the
+fresh baseline suite. New regressions cover fractional
+stepping with hold and release, selection retention while revealing a
+password, and the DatePicker grid receiving keyboard focus on open.
+
 ## Mission priority changed: `BorderBeam`/`DistortionWave` removed, focus is now system-wide coherence (2026-11-19, read this first)
 
 The project owner explicitly changed priorities after the `DistortionWave`
@@ -58,11 +74,10 @@ tests, Storybook/Studio build clean, craftsmanship audit 0/0,
 `e2e/layout-primitives.spec.ts` 17/17, full suite 423/424 (same one
 pre-existing TextMorph contrast failure, still untouched/unrelated).
 
-Batches 3–8 (forms craftsmanship, navigation/overlays/layout polish,
-data/feedback polish, cross-family visual QA, three application
-showcases, final verification) are **still not started.** The `Calendar`/
-`NumberField`/`PasswordField` e2e failures noted above are still
-unexplained — they belong to batch 3/4's scope, not fixed here.
+At the Batch 2 checkpoint, batches 3–8 were unstarted. The current forms
+status appears at the top of this handoff. Navigation, overlays, layout,
+data and feedback polish, cross-family QA, application showcases, and final
+verification belong to later batches.
 
 ## DistortionWave: the real bug behind "I don't see the effect" (2026-11-19 — superseded by removal above; kept as history)
 

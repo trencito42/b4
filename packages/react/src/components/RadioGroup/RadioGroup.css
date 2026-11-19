@@ -20,8 +20,13 @@
     background-color var(--b4-duration-fast) var(--b4-ease-standard),
     color var(--b4-duration-fast) var(--b4-ease-standard);
 }
-.b4-radio-group__item:hover:not([data-disabled]):not(.b4-radio-group__item--selected) {
-  background: var(--b4-control-bg-hover);
+@media (hover: hover) and (pointer: fine) {
+  .b4-radio-group__item:hover:not([data-disabled]):not(.b4-radio-group__item--selected) {
+    background: var(--b4-control-bg-hover);
+  }
+}
+.b4-radio-group__item:active:not([data-disabled]):not(.b4-radio-group__item--selected) {
+  background: var(--b4-control-bg-active);
 }
 .b4-radio-group__item--selected {
   color: var(--b4-control-fg-selected);
@@ -78,6 +83,7 @@
   color: var(--b4-text-secondary);
   font-size: var(--b4-text-xs);
   line-height: var(--b4-leading-normal);
+  overflow-wrap: anywhere;
 }
 .b4-radio-group__item--selected .b4-radio-group__description {
   color: inherit;

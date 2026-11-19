@@ -41,8 +41,13 @@
   block-size: max(100%, var(--b4-hit-target-min));
   transform: translate(-50%, -50%);
 }
-.b4-switch:hover:not([data-disabled]) .b4-switch__track:not([data-checked]) {
-  background-color: var(--b4-control-bg-hover);
+@media (hover: hover) and (pointer: fine) {
+  .b4-switch:hover:not([data-disabled]) .b4-switch__track:not([data-checked]) {
+    background-color: var(--b4-control-bg-hover);
+  }
+}
+.b4-switch:active:not([data-disabled]) .b4-switch__track:not([data-checked]) {
+  background-color: var(--b4-control-bg-active);
 }
 
 .b4-switch__track:focus-visible {

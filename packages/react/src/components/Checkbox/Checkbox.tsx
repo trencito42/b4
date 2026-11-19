@@ -63,6 +63,7 @@ export const Checkbox = forwardRef<
         required={required}
         name={name}
         id={id}
+        nativeButton
         className="b4-checkbox__box"
         render={(props, state) => (
           <motion.button

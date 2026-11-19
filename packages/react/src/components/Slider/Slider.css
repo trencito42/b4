@@ -73,7 +73,7 @@
   background: var(--b4-text-primary);
   box-shadow: var(--b4-shadow-raised);
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
 }
 .b4-slider__thumb::before {
   content: "";

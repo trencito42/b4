@@ -25,8 +25,10 @@
 .b4-select--lg {
   min-block-size: var(--b4-control-height-lg);
 }
-.b4-select:hover:not(:disabled):not([data-readonly]) {
-  background: var(--b4-control-bg-hover);
+@media (hover: hover) and (pointer: fine) {
+  .b4-select:hover:not(:disabled):not([data-readonly]) {
+    background: var(--b4-control-bg-hover);
+  }
 }
 .b4-select[data-popup-open] {
   background: var(--b4-control-bg-active);
@@ -38,7 +40,8 @@
   outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
   outline-offset: var(--b4-focus-ring-offset);
 }
-.b4-select[aria-invalid="true"] {
+.b4-select[aria-invalid="true"],
+.b4-select[data-invalid] {
   box-shadow: inset var(--b4-space-0) var(--b4-space-0) var(--b4-space-0)
     var(--b4-focus-ring-width) var(--b4-danger);
 }
@@ -138,4 +141,11 @@
 }
 .b4-select__item[data-disabled] .b4-select__description {
   color: var(--b4-text-disabled);
+}
+
+@media (pointer: coarse) {
+  .b4-select,
+  .b4-select__item {
+    min-block-size: var(--b4-hit-target-min);
+  }
 }

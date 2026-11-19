@@ -1,13 +1,16 @@
-.b4-date-picker__trigger {
-  min-width: 180px;
-  justify-content: flex-start;
+.b4-popover__popup:has(.b4-date-picker__calendar) {
+  max-inline-size: var(--available-width, 100vw);
 }
 
 .b4-date-picker__calendar {
+  --b4-date-picker-day-size: var(--b4-control-height);
   display: flex;
   flex-direction: column;
   gap: var(--b4-space-3);
-  width: 280px;
+  inline-size: min(
+    calc(7 * var(--b4-date-picker-day-size)),
+    calc(var(--available-width, 100vw) - 2 * var(--b4-space-7))
+  );
   font-family: var(--b4-font-sans);
 }
 
@@ -39,7 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
+  min-block-size: var(--b4-control-height-sm);
   font-size: var(--b4-text-xs);
   font-weight: var(--b4-weight-medium);
   color: var(--b4-text-tertiary);
@@ -54,7 +57,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 32px;
+  min-inline-size: var(--b4-space-0);
+  padding: var(--b4-space-0);
+  min-block-size: var(--b4-control-height-sm);
   border: none;
   border-radius: var(--b4-radius-md);
   background: transparent;
@@ -63,13 +68,15 @@
   cursor: pointer;
 }
 
-.b4-date-picker__day:hover {
-  background: var(--b4-control-bg-hover);
+@media (hover: hover) and (pointer: fine) {
+  .b4-date-picker__day:hover:not([aria-disabled]):not(.b4-date-picker__day--selected) {
+    background: var(--b4-control-bg-hover);
+  }
 }
 
 .b4-date-picker__day:focus-visible {
-  outline: 2px solid var(--b4-focus-ring-color);
-  outline-offset: 1px;
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: calc(-1 * var(--b4-focus-ring-width));
 }
 
 .b4-date-picker__day--outside {
@@ -77,8 +84,8 @@
 }
 
 .b4-date-picker__day--selected {
-  background: var(--b4-accent);
-  color: var(--b4-text-on-accent);
+  background: var(--b4-control-bg-selected);
+  color: var(--b4-control-fg-selected);
 }
 
 .b4-date-picker__day--disabled {
@@ -86,10 +93,19 @@
   cursor: not-allowed;
 }
 
-.b4-date-picker__day--disabled:hover {
-  background: transparent;
+.b4-date-picker__day[aria-current="date"]:not(.b4-date-picker__day--selected) {
+  box-shadow: inset 0 0 0 var(--b4-size-pixel) var(--b4-border-strong);
 }
 
-.b4-date-picker__day[aria-current="date"]:not(.b4-date-picker__day--selected) {
-  box-shadow: inset 0 0 0 1px var(--b4-border-strong);
+@media (pointer: coarse) {
+  .b4-date-picker__calendar {
+    --b4-date-picker-day-size: var(--b4-hit-target-min);
+  }
+  .b4-date-picker__day,
+  .b4-date-picker__header button {
+    min-block-size: var(--b4-hit-target-min);
+  }
+  .b4-date-picker__header button {
+    min-inline-size: var(--b4-hit-target-min);
+  }
 }

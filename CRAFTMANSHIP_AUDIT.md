@@ -11,11 +11,11 @@ non-zero on any BLOCKER, so it can gate CI.
 |---|---|
 | Components audited | 89 |
 | Effects audited | 1 |
-| Stories files audited | 90 |
+| Stories files audited | 91 |
 | Studio catalog entries | 90 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
-| Components with zero findings | 65 |
+| Components with zero findings | 64 |
 | Components not forwarding a ref | 33 |
 | Blipmade references in code | 0 |
 
@@ -42,7 +42,7 @@ non-zero on any BLOCKER, so it can gate CI.
 
 None.
 
-## Notes (24)
+## Notes (25)
 
 Informational — these are compliant, but recorded so a reader can see what the
 audit considered rather than assuming it did not look.
@@ -57,6 +57,7 @@ audit considered rather than assuming it did not look.
 | Collapsible | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Combobox | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Drawer | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
+| FileUpload | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | IconButton | motion | animates with a hand-written duration (0.7s) but overrides it under prefers-reduced-motion |
 | Link | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Progress | motion | animates with a hand-written duration (1.4s) but overrides it under prefers-reduced-motion |
@@ -92,13 +93,13 @@ listed here rather than hidden, so a reader can challenge any of them.
 
 | File | Line | Reason |
 |---|---|---|
-| ColorPicker.css | 71 | the saturation axis is the picker's own data, not a theme color |
-| ColorPicker.css | 78 | the value axis is the picker's own data, not a theme color |
-| ColorPicker.css | 87 | the thumb's ring must stay visible against any picked colour |
-| ColorPicker.css | 96 | the thumb's ring must stay visible against any picked colour |
-| ColorPicker.css | 115 | the hue spectrum is the picker's own data, not a theme color |
-| ColorPicker.css | 132 | the thumb's ring must stay visible against any picked colour |
-| ColorPicker.css | 140 | the thumb's ring must stay visible against any picked colour |
+| ColorPicker.css | 60 | the saturation axis is the picker's own data, not a theme color |
+| ColorPicker.css | 67 | the value axis is the picker's own data, not a theme color |
+| ColorPicker.css | 76 | the thumb's ring must stay visible against any picked colour |
+| ColorPicker.css | 85 | the thumb's ring must stay visible against any picked colour |
+| ColorPicker.css | 104 | the hue spectrum is the picker's own data, not a theme color |
+| ColorPicker.css | 121 | the thumb's ring must stay visible against any picked colour |
+| ColorPicker.css | 129 | the thumb's ring must stay visible against any picked colour |
 | effects/RefractionSweep.css | 46 | mask alpha stops, not a theme color |
 | effects/RefractionSweep.css | 70 | mask alpha stops, not a theme color |
 | effects/RefractionSweep.css | 96 | mask alpha stops, not a theme color |

@@ -1,5 +1,27 @@
 ﻿# B4 — Quality Matrix
 
+## Batch 3 — Forms craftsmanship (2026-11-20)
+
+**Forms checks passed. Whole-suite gate remains in TESTING.**
+
+The review records findings and evidence for all 18 entries in scope.
+`RangeSlider` uses the same implementation as
+`Slider`. Review covered both themes at 390, 768, and 1440 px in the Forms
+Review story. Browser evidence includes coarse-pointer target sizes and
+popup bounds, touch drag geometry, controlled selection through a change of
+input method, and keyboard focus moving through the edit and picker flows.
+Touch checks used Chromium device emulation. [Forms audit](FORMS_CRAFTSMANSHIP.md)
+
+- `pnpm release:verify` passed. This includes typecheck, 547 React unit
+  tests, 5 motion unit tests, the package, Studio and Storybook builds,
+  consumer, SSR and tree-shaking smokes, and the mechanical audit.
+- `node scripts/craftsmanship-audit.mjs` counted 89 components and 91
+  story files, with zero blockers and zero warnings.
+- Three fresh full Playwright runs on the shared checkout returned 442/442,
+  441/442, and 441/442. Every forms check passed in all three. The last run
+  used two workers. Both failures reproduced the historical `TextMorph`
+  word-replacement axe contrast finding on an exiting token while it faded.
+
 ## Systematic craftsmanship audit — and the real defects it found (2026-11-19 evening)
 
 **VERIFIED, and a permanent gate.** `scripts/craftsmanship-audit.mjs` sweeps

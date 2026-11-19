@@ -1,7 +1,19 @@
 .b4-time-picker__row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--b4-space-3);
+}
+
+.b4-time-picker__segments {
+  display: flex;
+  align-items: center;
   gap: var(--b4-space-2);
+  max-inline-size: 100%;
+}
+
+.b4-time-picker__segments > * {
+  min-inline-size: var(--b4-space-0);
 }
 
 /* .b4-time-picker__segment composes with the shared .b4-text-field__control
@@ -13,7 +25,9 @@
 }
 
 .b4-time-picker__input {
-  width: 2.5ch;
+  inline-size: 2.5ch;
+  min-inline-size: var(--b4-space-0);
+  padding: var(--b4-space-0);
   border: none;
   background: transparent;
   color: var(--b4-text-primary);
@@ -21,6 +35,10 @@
   font-variant-numeric: tabular-nums;
   text-align: center;
   outline: none;
+}
+
+.b4-time-picker__input:disabled {
+  color: var(--b4-text-disabled);
 }
 
 .b4-time-picker__separator {

@@ -1,6 +1,7 @@
 /* The popup and option rows reuse Select.css, just as the text-entry family
    reuses TextField.css. Keep the option-surface recipe in one place. */
 .b4-combobox {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--b4-control-gap);
@@ -17,8 +18,14 @@
 .b4-combobox--lg {
   min-block-size: var(--b4-control-height-lg);
 }
-.b4-combobox:hover:not([data-disabled]) {
-  background: var(--b4-control-bg-hover);
+@media (hover: hover) and (pointer: fine) {
+  .b4-combobox:hover:not([data-disabled]):not([data-readonly]) {
+    background: var(--b4-control-bg-hover);
+  }
+}
+.b4-combobox[data-popup-open],
+.b4-combobox:has(input:focus-visible) {
+  background: var(--b4-control-bg-active);
 }
 .b4-combobox:has(input:focus-visible) {
   outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
@@ -38,7 +45,7 @@
   font: inherit;
   font-family: var(--b4-font-sans);
   font-size: var(--b4-text-base);
-  padding-block: var(--b4-space-4);
+  padding: var(--b4-space-4) var(--b4-space-0);
 }
 .b4-combobox__input::placeholder {
   color: var(--b4-text-tertiary);
@@ -64,11 +71,12 @@
   padding: var(--b4-space-7);
 }
 
-.b4-combobox__action svg {
-  inline-size: var(--b4-space-7);
-  block-size: var(--b4-space-7);
-}
 @media (pointer: coarse) {
+  .b4-combobox {
+    gap: var(--b4-space-1);
+    min-block-size: var(--b4-hit-target-min);
+    padding-inline-end: var(--b4-space-2);
+  }
   .b4-combobox__action {
     min-inline-size: var(--b4-hit-target-min);
     min-block-size: var(--b4-hit-target-min);

@@ -14,7 +14,7 @@ const ANCHOR = new Date(2026, 10, 18); // Nov 18, 2026 (Wednesday)
 describe("DatePicker", () => {
   it("shows the placeholder until a date is selected", () => {
     render(<DatePicker label="Appointment date" />);
-    expect(screen.getByRole("button", { name: "Select a date" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Appointment date Select a date" })).toBeInTheDocument();
   });
 
   it("opens the calendar grid when the trigger is clicked", async () => {

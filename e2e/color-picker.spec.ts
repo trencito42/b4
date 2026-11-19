@@ -7,7 +7,7 @@ const themes = ["graphite", "porcelain"] as const;
 for (const theme of themes) {
   test(`ColorPicker is axe-clean when open on ${theme}`, async ({ page }) => {
     await page.goto(`/iframe.html?id=family-b-forms-inputs-colorpicker--default&globals=b4Theme:${theme}`);
-    await page.getByRole("button", { name: "#3366cc" }).click();
+    await page.getByRole("button", { name: "Brand color #3366cc" }).click();
     await expect(page.getByRole("slider", { name: "Hue" })).toBeVisible();
     await page.waitForTimeout(300);
 
@@ -20,7 +20,7 @@ test("ColorPicker opens the panel with the area, hue slider, and hex field", asy
   await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
   await expect(page.getByRole("slider", { name: "Hue" })).toHaveCount(0);
-  await page.getByRole("button", { name: "#3366cc" }).click();
+  await page.getByRole("button", { name: "Brand color #3366cc" }).click();
   await expect(page.getByRole("slider", { name: "Saturation and brightness" })).toBeVisible();
   await expect(page.getByRole("slider", { name: "Hue" })).toBeVisible();
   await expect(page.getByRole("textbox", { name: "Hex color" })).toHaveValue("#3366cc");
@@ -29,34 +29,38 @@ test("ColorPicker opens the panel with the area, hue slider, and hex field", asy
 test("ColorPicker updates the swatch and trigger when a hex value is typed", async ({ page }) => {
   await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
-  await page.getByRole("button", { name: "#3366cc" }).click();
+  await page.getByRole("button", { name: "Brand color #3366cc" }).click();
   const hexInput = page.getByRole("textbox", { name: "Hex color" });
   await hexInput.fill("#ff0000");
 
-  await expect(page.getByRole("button", { name: "#ff0000" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Brand color #ff0000" })).toBeVisible();
 });
 
 test("ColorPicker supports a real pointer drag on the saturation/brightness area", async ({ page }) => {
   await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
-  await page.getByRole("button", { name: "#3366cc" }).click();
+  await page.getByRole("button", { name: "Brand color #3366cc" }).click();
   const area = page.getByRole("slider", { name: "Saturation and brightness" }).locator("..");
+  await expect(page.getByRole("dialog")).toHaveCSS("transform", "none");
   const box = (await area.boundingBox())!;
 
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
   await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.1, { steps: 5 });
+  await expect(page.getByRole("button", { name: "Brand color #3366cc" })).toBeVisible();
+  await expect(page.getByRole("slider", { name: "Saturation and brightness" })).toHaveAttribute("aria-valuenow", /^(89|90|91)$/);
   await page.mouse.up();
 
   const slider = page.getByRole("slider", { name: "Saturation and brightness" });
   const valueText = await slider.getAttribute("aria-valuetext");
   expect(valueText).toMatch(/Saturation 8\d%|Saturation 9\d%/);
+  await expect(page.getByRole("button", { name: "Brand color #3366cc" })).toHaveCount(0);
 });
 
 test("ColorPicker supports a real pointer drag on the hue slider", async ({ page }) => {
   await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
-  await page.getByRole("button", { name: "#3366cc" }).click();
+  await page.getByRole("button", { name: "Brand color #3366cc" }).click();
   const hueTrack = page.locator(".b4-color-picker__hue-track");
   const box = (await hueTrack.boundingBox())!;
 
@@ -70,7 +74,7 @@ test("ColorPicker supports a real pointer drag on the hue slider", async ({ page
 test("ColorPicker nudges saturation/brightness with arrow keys", async ({ page }) => {
   await page.goto("/iframe.html?id=family-b-forms-inputs-colorpicker--default");
 
-  await page.getByRole("button", { name: "#3366cc" }).click();
+  await page.getByRole("button", { name: "Brand color #3366cc" }).click();
   const area = page.getByRole("slider", { name: "Saturation and brightness" });
   await area.focus();
   const before = await area.getAttribute("aria-valuetext");

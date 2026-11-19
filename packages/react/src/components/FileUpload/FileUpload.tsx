@@ -29,12 +29,12 @@ function formatBytes(bytes: number) {
 
 /** Best-effort match against the native `accept` syntax (MIME type, `type/*`, or `.ext`). Browsers already filter the native picker by this; this is for files arriving via drop, which bypasses that filter. */
 function matchesAccept(file: File, accept: string) {
-  const patterns = accept.split(",").map((p) => p.trim()).filter(Boolean);
+  const patterns = accept.toLowerCase().split(",").map((p) => p.trim()).filter(Boolean);
   if (patterns.length === 0) return true;
   return patterns.some((pattern) => {
-    if (pattern.startsWith(".")) return file.name.toLowerCase().endsWith(pattern.toLowerCase());
-    if (pattern.endsWith("/*")) return file.type.startsWith(pattern.slice(0, -1));
-    return file.type === pattern;
+    if (pattern.startsWith(".")) return file.name.toLowerCase().endsWith(pattern);
+    if (pattern.endsWith("/*")) return file.type.toLowerCase().startsWith(pattern.slice(0, -1));
+    return file.type.toLowerCase() === pattern;
   });
 }
 
@@ -76,7 +76,7 @@ export function FileUpload({
   className,
 }: FileUploadProps) {
   const [uncontrolledFiles, setUncontrolledFiles] = useState<File[]>(() => [...(defaultValue ?? [])]);
-  const files = value ? [...value] : uncontrolledFiles;
+  const files = value ?? uncontrolledFiles;
   const [rejections, setRejections] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +91,7 @@ export function FileUpload({
         rejected.push(`${file.name}: not an accepted file type`);
         continue;
       }
-      if (maxSizeBytes && file.size > maxSizeBytes) {
+      if (maxSizeBytes !== undefined && file.size > maxSizeBytes) {
         rejected.push(`${file.name}: exceeds ${formatBytes(maxSizeBytes)}`);
         continue;
       }
@@ -99,21 +99,31 @@ export function FileUpload({
     }
 
     let next = multiple ? [...files, ...accepted] : accepted.slice(0, 1);
-    if (maxFiles && next.length > maxFiles) {
-      const overflow = next.length - maxFiles;
-      rejected.push(`${overflow} file${overflow === 1 ? "" : "s"} skipped: limit is ${maxFiles}`);
-      next = next.slice(0, maxFiles);
+    if (maxFiles !== undefined && Number.isFinite(maxFiles)) {
+      const limit = Math.max(0, Math.floor(maxFiles));
+      // A limit change applies to incoming files and never removes files
+      // already supplied by the caller.
+      const capacity = multiple ? Math.max(0, limit - files.length) : limit;
+      const overflow = Math.max(0, (multiple ? accepted.length : next.length) - capacity);
+      if (overflow) {
+        rejected.push(`${overflow} file${overflow === 1 ? "" : "s"} skipped: limit is ${limit}`);
+        next = next.slice(0, multiple ? files.length + capacity : capacity);
+      }
     }
 
     setRejections(rejected);
-    setUncontrolledFiles(next);
+    if (multiple ? next.length > files.length : next.length > 0) {
+      if (value === undefined) setUncontrolledFiles(next);
+    } else {
+      next = [...files];
+    }
     onValueChange?.(next);
     if (inputRef.current) inputRef.current.value = "";
   }
 
   function removeFile(index: number) {
     const next = files.filter((_, i) => i !== index);
-    setUncontrolledFiles(next);
+    if (value === undefined) setUncontrolledFiles(next);
     onValueChange?.(next);
   }
 
@@ -160,8 +170,8 @@ export function FileUpload({
 
       {rejections.length > 0 && (
         <ul className="b4-file-upload__rejections" role="alert">
-          {rejections.map((message) => (
-            <li key={message}>{message}</li>
+          {rejections.map((message, index) => (
+            <li key={`${index}-${message}`}>{message}</li>
           ))}
         </ul>
       )}

@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { Field } from "../Field/Field.js";
 import { Popover } from "../Popover/Popover.js";
-import { Button } from "../Button/Button.js";
 import { IconButton } from "../IconButton/IconButton.js";
+import { PickerTrigger } from "../../internal/PickerTrigger.js";
 import {
   WEEKDAY_LABELS,
   monthYearFormatter,
@@ -70,11 +70,12 @@ export function DatePicker({
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(value ?? new Date()));
   const [focusedDate, setFocusedDate] = useState(() => value ?? new Date());
   const gridRef = useRef<HTMLDivElement>(null);
+  const focusDay = useRef(false);
   const gridId = useId();
 
   function commit(date: Date) {
     if (isOutOfRange(date, minDate, maxDate)) return;
-    setUncontrolledValue(date);
+    if (controlledValue === undefined) setUncontrolledValue(date);
     onValueChange?.(date);
     setOpen(false);
   }
@@ -90,15 +91,23 @@ export function DatePicker({
   // guesswork (which both races React's own scheduling and breaks jsdom
   // tests — see the same lesson recorded for TreeView).
   useEffect(() => {
-    if (!open) return;
+    if (!open || !focusDay.current) return;
+    focusDay.current = false;
     gridRef.current?.querySelector<HTMLElement>(`[data-date="${focusedDate.toDateString()}"]`)?.focus();
   }, [focusedDate, open]);
 
   function moveFocus(next: Date) {
+    focusDay.current = true;
     setFocusedDate(next);
     if (next.getMonth() !== visibleMonth.getMonth() || next.getFullYear() !== visibleMonth.getFullYear()) {
       setVisibleMonth(startOfMonth(next));
     }
+  }
+
+  function changeVisibleMonth(offset: number) {
+    const month = addMonths(visibleMonth, offset);
+    setVisibleMonth(month);
+    setFocusedDate(month);
   }
 
   function handleGridKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -145,19 +154,25 @@ export function DatePicker({
     <Field label={label} hideLabel={hideLabel} hint={hint} error={error} disabled={disabled} required={required} className={className}>
       <Popover
         open={open}
+        initialFocus={(interaction) => {
+          if (interaction === "touch") return true;
+          return gridRef.current?.querySelector<HTMLElement>('button[tabindex="0"]') ?? true;
+        }}
         onOpenChange={(next) => {
           setOpen(next);
           if (next) {
-            const anchor = value ?? new Date();
+            let anchor = value ?? new Date();
+            if (minDate && isOutOfRange(anchor, minDate)) anchor = minDate;
+            if (maxDate && isOutOfRange(anchor, undefined, maxDate)) anchor = maxDate;
             setFocusedDate(anchor);
             setVisibleMonth(startOfMonth(anchor));
           }
         }}
         title={label}
         trigger={
-          <Button variant="secondary" disabled={disabled} className="b4-date-picker__trigger">
+          <PickerTrigger disabled={disabled} placeholder={!value}>
             {value ? dateFormatter.format(value) : placeholder}
-          </Button>
+          </PickerTrigger>
         }
       >
         <div className="b4-date-picker__calendar">
@@ -166,7 +181,7 @@ export function DatePicker({
               variant="ghost"
               size="sm"
               aria-label="Previous month"
-              onClick={() => setVisibleMonth((m) => addMonths(m, -1))}
+              onClick={() => changeVisibleMonth(-1)}
               icon={<ChevronIcon direction="left" />}
             />
             <span id={gridId} className="b4-date-picker__month-label" aria-live="polite">
@@ -176,7 +191,7 @@ export function DatePicker({
               variant="ghost"
               size="sm"
               aria-label="Next month"
-              onClick={() => setVisibleMonth((m) => addMonths(m, 1))}
+              onClick={() => changeVisibleMonth(1)}
               icon={<ChevronIcon direction="right" />}
             />
           </div>
@@ -206,6 +221,7 @@ export function DatePicker({
                       <button
                         type="button"
                         data-date={date.toDateString()}
+                        aria-label={dateFormatter.format(date)}
                         tabIndex={isFocusTarget ? 0 : -1}
                         aria-disabled={outOfRange || undefined}
                         aria-current={sameDay(date, new Date()) ? "date" : undefined}

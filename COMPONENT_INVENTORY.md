@@ -23,6 +23,12 @@ are not silently dropped; if scope changes, it changes here with a reason.
 
 ## Family B — Forms & Inputs
 
+The November 20 Batch 3 review covers the 18 entries specified for forms
+craftsmanship, with `RangeSlider` exercised through `Slider` array values.
+The forms checks passed and the whole-suite gate remains in TESTING.
+[Forms audit](FORMS_CRAFTSMANSHIP.md)
+[Quality matrix](QUALITY_MATRIX.md#batch-3--forms-craftsmanship-2026-11-20)
+
 | Component | Status |
 |---|---|
 | Checkbox | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |

@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } fro
 import { Input } from "@base-ui/react/input";
 import { Field } from "../Field/Field.js";
 import { FieldControl } from "../../internal/FieldControl.js";
+import { IconButton } from "../IconButton/IconButton.js";
 
 export interface SearchFieldProps {
   label: ReactNode;
@@ -98,18 +99,19 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
             className="b4-text-field__input"
           />
           {currentValue && (
-            <button
+            <IconButton
               type="button"
+              variant="ghost"
+              size="sm"
               disabled={disabled}
-              className="b4-text-field__action-button"
+              className="b4-field-action"
+              icon={ClearIcon}
               onClick={() => {
                 handleChange("");
                 inputRef.current?.focus();
               }}
               aria-label="Clear search"
-            >
-              {ClearIcon}
-            </button>
+            />
           )}
         </FieldControl>
       </Field>
