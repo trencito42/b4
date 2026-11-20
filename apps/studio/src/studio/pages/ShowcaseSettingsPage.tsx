@@ -16,6 +16,7 @@ import {
   Slider,
   Switch,
   Tabs,
+  TagsInput,
   TextField,
   Textarea,
   TimePicker,
@@ -35,6 +36,7 @@ interface SettingsState {
   sidebarWidth: number;
   sessionTimeout: number;
   trustedDevices: string[];
+  allowedDomains: string[];
   quietHoursStart: TimeValue;
   passwordExpiry: Date | null;
   twoFactor: boolean;
@@ -54,6 +56,7 @@ const initialState: SettingsState = {
   sidebarWidth: 280,
   sessionTimeout: 30,
   trustedDevices: ["work-laptop"],
+  allowedDomains: ["example.com", "b4.studio"],
   quietHoursStart: { hours: 22, minutes: 0 },
   passwordExpiry: null,
   twoFactor: true,
@@ -245,6 +248,16 @@ export function ShowcaseSettingsPage({ previewWidth }: { previewWidth: StudioPre
                     ]}
                     value={draft.trustedDevices}
                     onValueChange={(trustedDevices) => update("trustedDevices", trustedDevices)}
+                  />
+                  <TagsInput
+                    label="Allowed sign-in domains"
+                    hint="Press Enter or type a comma. Paste a list to add several at once."
+                    placeholder="example.com"
+                    lowercase
+                    maxTags={8}
+                    validate={(domain) => /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain)}
+                    value={draft.allowedDomains}
+                    onValueChange={(allowedDomains) => update("allowedDomains", allowedDomains)}
                   />
                   <NumberField
                     label="Session timeout (minutes)"

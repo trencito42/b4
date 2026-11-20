@@ -9,9 +9,9 @@ non-zero on any BLOCKER, so it can gate CI.
 
 | Metric | Count |
 |---|---|
-| Components audited | 91 |
-| Stories files audited | 93 |
-| Studio catalog entries | 91 |
+| Components audited | 92 |
+| Stories files audited | 94 |
+| Studio catalog entries | 92 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
 | Components with zero findings | 64 |
@@ -41,7 +41,7 @@ non-zero on any BLOCKER, so it can gate CI.
 
 None.
 
-## Notes (27)
+## Notes (28)
 
 Informational — these are compliant, but recorded so a reader can see what the
 audit considered rather than assuming it did not look.
@@ -70,6 +70,7 @@ audit considered rather than assuming it did not look.
 | Spinner | motion | animates with a hand-written duration (0.7s) but overrides it under prefers-reduced-motion |
 | Switch | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Tabs | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
+| TagsInput | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | TextField | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Toast | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | ToggleButton | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
@@ -78,7 +79,7 @@ audit considered rather than assuming it did not look.
 
 ## Systemic observation — ref forwarding
 
-33 of 91 components do not forward a ref to their root
+33 of 92 components do not forward a ref to their root
 element (`AGENTS.md`'s checklist asks for `forwardRef`). Most of the remainder are
 compound components whose individual parts are Base UI primitives that forward their
 own refs, or components that deliberately reuse another component's markup. This is
@@ -183,6 +184,7 @@ listed here rather than hidden, so a reader can challenge any of them.
 | Stepper | own | yes | 0 | 0 |
 | Switch | own | yes | 0 | 0 |
 | Tabs | own | no | 0 | 0 |
+| TagsInput | own | yes | 0 | 0 |
 | Textarea | shared:TextField | yes | 0 | 0 |
 | TextField | own | yes | 0 | 0 |
 | TextMorph | own | yes | 0 | 0 |

@@ -1,8 +1,22 @@
 # HANDOFF — read this first on any resume
 
+## Next action: DateRangePicker (2026-11-20)
+
+Phase 2's component gaps are closed except **DateRangePicker**, which is
+the next thing to build (reuse `DatePicker`'s calendar engine and
+`internal/monthGrid.ts` — do not write a second one). After that the
+remaining brief scope is charts (LineChart/AreaChart/BarChart/DonutChart,
+evaluating a mature library rather than writing an engine), `Carousel`,
+then system-wide polish and the three application showcases.
+
+`ToggleGroup`, `InputOTP` and `TagsInput` are **done and verified** — do
+not rebuild them. Phase 1 (RefractionSweep removal) is fully complete;
+the only remaining mentions of it in the tree are two deliberate
+historical comments explaining the removal.
+
 ## Current state: zero decorative effects, one entry point (2026-11-20)
 
-B4 ships **91 components from one entry point** (`@b4/react`) and **no
+B4 ships **92 components from one entry point** (`@b4/react`) and **no
 decorative effects**. `RefractionSweep` — the last one, and the component
 originally named `DistortionWave` — was deleted today along with the
 entire `@b4/react/effects` subpath, the Studio Effects Lab, the catalog's
@@ -19,10 +33,13 @@ it. Studio's Confirmation showcase was rewritten accordingly — receipt
 rows and a success `InlineAlert` now enter via `TransitionGroup` only
 once the simulated payment resolves.
 
-Verified at this checkpoint: `@b4/react` + Studio typecheck clean,
+Verified at the removal checkpoint: `@b4/react` + Studio typecheck clean,
 package build clean without the effects entry, unit suite **537/537**
 (548 minus the 11 deleted RefractionSweep tests), craftsmanship audit
-**91 components, 0 blockers, 0 warnings**.
+**0 blockers, 0 warnings** across the 91 then-shipping components.
+After `ToggleGroup`,
+`InputOTP` and `TagsInput` landed: unit suite **584/584**, audit
+**92 components, 0 blockers, 0 warnings**.
 
 **Known debt, not introduced here:** `npm run lint` reports 28
 `no-explicit-any` errors + 6 warnings, all pre-existing in test files
@@ -191,7 +208,7 @@ without explicit user authorization and a confirmed package scope.
 
 ### Project identity
 
-B4 — commercial-grade React design system, Graphite + Porcelain, 91 public
+B4 — commercial-grade React design system, Graphite + Porcelain, 92 public
 components (`@b4/react`), tokens/motion packages, Storybook + B4 Studio.
 `RangeSlider` is documented as sharing `Slider`'s implementation rather
 than being a component of its own, so it's not counted separately. The

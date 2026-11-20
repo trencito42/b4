@@ -5,6 +5,41 @@ a per-npm-release history.
 
 ## Unreleased
 
+### `TagsInput` (2026-11-20)
+
+Free-form tag entry, closing the last Critical gap in the standard
+component list. Composes the shared `Field`/`FieldControl` surface rather
+than introducing a second styling foundation, so it sits at the same
+height, radius and focus treatment as `TextField`.
+
+Enter and comma commit; a multi-value paste splits into one state change
+while a single-token paste stays editable in the draft; Backspace on an
+empty draft removes the last tag; chips are a roving-focus list
+(ArrowLeft/ArrowRight, Backspace/Delete). Duplicate prevention,
+`lowercase` normalization, `maxTags`, `maxLength`, and a custom
+`validate` are enforced on paste as well as typing. Enter is ignored
+while an IME composition is active, so selecting a Japanese/Chinese/
+Korean candidate never commits a half-typed word. A pending draft is
+committed on blur instead of being dropped, and `name` emits one hidden
+input per tag so the field works in a plain `<form>`.
+
+Two defects were found by looking at it in a real browser rather than
+by reading the code:
+
+- The field inherited `--b4-control-radius` (a 999px pill), which on a
+  wrapped multi-row control bent into a stadium whose curved ends
+  crowded the chips — the same geometry defect found on `InputOTP`'s
+  slots. Fixed by following `Textarea`'s documented precedent (multi-row
+  content is a surface, so `--b4-surface-radius`), with an e2e guard
+  asserting `radius < height / 2`.
+- Every chip painted with `--b4-control-bg-selected`, which is near-black
+  in Porcelain, so a field holding six tags dominated the form. Switched
+  to `Badge`'s quiet neutral treatment, one step off the field's own
+  background, with per-theme axe contrast checks scoped to the control.
+
+Also wired into the Studio Settings showcase as "Allowed sign-in
+domains", with live validation and dirty-state tracking.
+
 ### `RefractionSweep` and the whole effects entry point removed (2026-11-20)
 
 The follow-up to the 2026-11-19 removal below, and the end of the same

@@ -42,6 +42,7 @@ browser passes and the release checks.
 | SearchField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | NumberField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | InputOTP | **VERIFIED** (2026-11-20) — verification-code entry on Base UI `OTPField`; real paste/autofill/numeric-keyboard support, not hand-rolled per-slot inputs |
+| TagsInput | **VERIFIED** (2026-11-20) — free-form tag entry on the shared `Field`/`FieldControl` surface; Enter/comma commit, multi-value paste, roving chip focus, IME-safe |
 | InputGroup | **VERIFIED** |
 | Select | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | Combobox | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |

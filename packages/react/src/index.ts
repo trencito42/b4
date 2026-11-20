@@ -74,6 +74,8 @@ export type { NumberFieldProps } from "./components/NumberField/NumberField.js";
 
 export { InputOTP } from "./components/InputOTP/InputOTP.js";
 export type { InputOTPProps, InputOTPSize, InputOTPValidationType } from "./components/InputOTP/InputOTP.js";
+export { TagsInput } from "./components/TagsInput/TagsInput.js";
+export type { TagsInputProps, TagsInputSize } from "./components/TagsInput/TagsInput.js";
 
 export { Slider } from "./components/Slider/Slider.js";
 export type { SliderProps } from "./components/Slider/Slider.js";

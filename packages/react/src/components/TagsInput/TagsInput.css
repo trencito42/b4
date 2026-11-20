@@ -1,0 +1,116 @@
+/* Composes .b4-text-field__control for height, radius, background and
+   focus treatment — these rules only add what a multi-chip control needs
+   on top of that shared surface. */
+.b4-tags-input__control {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: var(--b4-control-height);
+  padding-block: var(--b4-space-2);
+  align-items: center;
+  row-gap: var(--b4-space-2);
+  cursor: text;
+  /* Same reasoning as .b4-text-field__control--textarea: once content can
+     wrap to several rows this is a surface, not an elongated capsule.
+     Verified in the browser — the control-radius pill (999px) on a
+     four-row box bends into a stadium whose curved ends crowd the chips,
+     the same geometry defect found on InputOTP's slots. */
+  border-radius: var(--b4-surface-radius);
+}
+
+.b4-tags-input__control--sm {
+  min-height: var(--b4-control-height-sm);
+}
+
+.b4-tags-input__control--lg {
+  min-height: var(--b4-control-height-lg);
+}
+
+.b4-tags-input__control[data-readonly] {
+  cursor: default;
+}
+
+.b4-tags-input__list {
+  display: contents;
+  margin: var(--b4-space-0);
+  padding: var(--b4-space-0);
+  list-style: none;
+}
+
+.b4-tags-input__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--b4-space-2);
+  max-inline-size: 100%;
+  padding-inline: var(--b4-space-3);
+  padding-block: var(--b4-space-1);
+  border-radius: var(--b4-radius-sm);
+  /* A tag is a quiet token, not a selected control: --b4-control-bg-selected
+     paints every chip near-black (Porcelain) / near-white, which dominates
+     a field holding six of them. This follows Badge's neutral treatment
+     instead — one step up from the field's own --b4-control-bg so the chip
+     still reads as a distinct surface in both themes. */
+  background-color: var(--b4-control-bg-active);
+  color: var(--b4-text-secondary);
+  font-size: var(--b4-text-sm);
+  line-height: var(--b4-leading-normal);
+}
+
+.b4-tags-input__tag-label {
+  min-inline-size: var(--b4-space-0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.b4-tags-input__tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Matches .b4-text-field__icon's 16px so the glyph reads at the same
+     weight as every other icon in the forms family — at space-5 (10px)
+     it was both visually thin and an uncomfortably small target. */
+  inline-size: var(--b4-space-7);
+  block-size: var(--b4-space-7);
+  flex-shrink: 0;
+  padding: var(--b4-space-0);
+  border: none;
+  border-radius: var(--b4-radius-xs);
+  background: transparent;
+  color: currentColor;
+  opacity: 0.65;
+  cursor: pointer;
+  transition: opacity var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-tags-input__tag-remove:hover {
+  opacity: 1;
+}
+
+.b4-tags-input__tag-remove:focus-visible {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-space-1);
+  opacity: 1;
+}
+
+.b4-tags-input__tag-remove > svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* The draft shares .b4-text-field__input, but must not stretch the whole
+   row before any tag exists — it flexes into whatever space is left. */
+.b4-tags-input__input {
+  flex: 1 1 var(--b4-tags-input-draft-min, 6ch);
+  min-inline-size: var(--b4-tags-input-draft-min, 6ch);
+}
+
+@media (pointer: coarse) {
+  /* A 16px glyph is fine to look at but not to hit with a thumb; grow the
+     touch area without growing the chip by letting the button bleed into
+     the chip's own padding. */
+  .b4-tags-input__tag-remove {
+    inline-size: var(--b4-space-8);
+    block-size: var(--b4-space-8);
+    margin-inline-end: calc(-1 * var(--b4-space-1));
+  }
+}
