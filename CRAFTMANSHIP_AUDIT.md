@@ -9,9 +9,9 @@ non-zero on any BLOCKER, so it can gate CI.
 
 | Metric | Count |
 |---|---|
-| Components audited | 90 |
-| Stories files audited | 92 |
-| Studio catalog entries | 90 |
+| Components audited | 91 |
+| Stories files audited | 93 |
+| Studio catalog entries | 91 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
 | Components with zero findings | 64 |
@@ -41,7 +41,7 @@ non-zero on any BLOCKER, so it can gate CI.
 
 None.
 
-## Notes (26)
+## Notes (27)
 
 Informational — these are compliant, but recorded so a reader can see what the
 audit considered rather than assuming it did not look.
@@ -58,6 +58,7 @@ audit considered rather than assuming it did not look.
 | Drawer | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | FileUpload | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | IconButton | motion | animates with a hand-written duration (0.7s) but overrides it under prefers-reduced-motion |
+| InputOTP | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Link | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Progress | motion | animates with a hand-written duration (1.4s) but overrides it under prefers-reduced-motion |
 | RadioGroup | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
@@ -77,7 +78,7 @@ audit considered rather than assuming it did not look.
 
 ## Systemic observation — ref forwarding
 
-33 of 90 components do not forward a ref to their root
+33 of 91 components do not forward a ref to their root
 element (`AGENTS.md`'s checklist asks for `forwardRef`). Most of the remainder are
 compound components whose individual parts are Base UI primitives that forward their
 own refs, or components that deliberately reuse another component's markup. This is
@@ -145,6 +146,7 @@ listed here rather than hidden, so a reader can challenge any of them.
 | IconButton | own | yes | 0 | 0 |
 | InlineAlert | own | yes | 0 | 0 |
 | InputGroup | shared:TextField | no | 0 | 0 |
+| InputOTP | own | yes | 0 | 0 |
 | InspectorPanel | own | yes | 0 | 0 |
 | InteractiveCard | own | yes | 0 | 0 |
 | KeyboardShortcut | own | yes | 0 | 0 |

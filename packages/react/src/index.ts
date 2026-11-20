@@ -72,6 +72,9 @@ export type { SearchFieldProps } from "./components/SearchField/SearchField.js";
 export { NumberField } from "./components/NumberField/NumberField.js";
 export type { NumberFieldProps } from "./components/NumberField/NumberField.js";
 
+export { InputOTP } from "./components/InputOTP/InputOTP.js";
+export type { InputOTPProps, InputOTPSize, InputOTPValidationType } from "./components/InputOTP/InputOTP.js";
+
 export { Slider } from "./components/Slider/Slider.js";
 export type { SliderProps } from "./components/Slider/Slider.js";
 

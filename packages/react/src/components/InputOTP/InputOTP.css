@@ -1,0 +1,115 @@
+/*
+  InputOTP — verification-code entry.
+
+  The slots are the whole visual identity here: equal, precisely sized
+  boxes that read as one control rather than N loose inputs. They use the
+  exact surface vocabulary every other Family B input uses
+  (`--b4-control-bg` + a transparent `--b4-stroke-width-control` border,
+  `--b4-control-bg-hover`/`--b4-control-bg-active`, `--b4-danger` for
+  invalid — see TextField.css), so a code field sits in a form next to a
+  TextField without looking like a different system.
+*/
+
+.b4-input-otp {
+  display: flex;
+  align-items: center;
+  gap: var(--b4-space-4);
+}
+
+.b4-input-otp__slot {
+  box-sizing: border-box;
+  /* Square-ish by construction: width is derived from the shared control
+     height rather than set independently, so slots stay proportional
+     across every density without a second set of magic numbers. */
+  width: calc(var(--b4-control-height) * 0.82);
+  height: var(--b4-control-height);
+  padding: 0;
+  text-align: center;
+  font-family: var(--b4-font-sans);
+  font-size: var(--b4-text-lg);
+  font-weight: var(--b4-weight-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--b4-text-primary);
+  background-color: var(--b4-control-bg);
+  border: var(--b4-stroke-width-control) solid transparent;
+  /* Clamped, not `var(--b4-control-radius)` straight. The default and
+     "round" radius modes set that token to `--b4-radius-full` (999px),
+     which is right for a wide pill-shaped control but turns a near-square
+     code slot into an ellipse — verified in the browser, it looked like a
+     row of dark ovals. A slot is a *box*; clamping keeps it one at every
+     point on the radius axis, while "tight" mode (already `--b4-radius-md`)
+     is unaffected. */
+  border-radius: min(var(--b4-control-radius), var(--b4-radius-md));
+  caret-color: var(--b4-accent-500);
+  transition:
+    background-color var(--b4-duration-fast) var(--b4-ease-standard),
+    border-color var(--b4-duration-fast) var(--b4-ease-standard);
+}
+
+.b4-input-otp--sm .b4-input-otp__slot {
+  width: calc(var(--b4-control-height-sm) * 0.82);
+  height: var(--b4-control-height-sm);
+  font-size: var(--b4-text-base);
+}
+
+.b4-input-otp--lg .b4-input-otp__slot {
+  width: calc(var(--b4-control-height-lg) * 0.82);
+  height: var(--b4-control-height-lg);
+  font-size: var(--b4-text-xl);
+}
+
+/* Purely visual grouping ("123 456"); the value stays one contiguous
+   string and paste still fills across the gap. */
+.b4-input-otp__slot[data-group-end] {
+  margin-inline-end: var(--b4-space-7);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .b4-input-otp__slot:hover:not([data-disabled]):not(:focus) {
+    background-color: var(--b4-control-bg-hover);
+  }
+}
+
+/* A filled slot carries slightly more presence than an empty one, so
+   progress through the code is readable at a glance. */
+.b4-input-otp__slot[data-filled] {
+  background-color: var(--b4-control-bg-active);
+}
+
+.b4-input-otp__slot:focus {
+  outline: var(--b4-focus-ring-width) solid var(--b4-focus-ring-color);
+  outline-offset: var(--b4-focus-ring-offset);
+  background-color: var(--b4-control-bg-active);
+}
+
+.b4-input-otp[data-invalid] .b4-input-otp__slot {
+  border-color: var(--b4-danger);
+}
+
+.b4-input-otp__slot[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.b4-input-otp__slot[data-readonly] {
+  cursor: default;
+}
+
+/* Narrow phones: six slots plus gaps overflow a 320px viewport, so let
+   them shrink rather than forcing a horizontal scroll on the one screen
+   where a code field matters most. */
+@media (max-width: 24rem) {
+  .b4-input-otp {
+    gap: var(--b4-space-3);
+  }
+
+  .b4-input-otp__slot {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 0;
+  }
+
+  .b4-input-otp__slot[data-group-end] {
+    margin-inline-end: var(--b4-space-5);
+  }
+}

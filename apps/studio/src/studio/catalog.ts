@@ -65,6 +65,7 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
       c("PasswordField"),
       c("SearchField"),
       c("NumberField"),
+      c("InputOTP"),
       c("InputGroup"),
       c("Select"),
       c("Combobox"),

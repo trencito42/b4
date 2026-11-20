@@ -41,6 +41,7 @@ browser passes and the release checks.
 | PasswordField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | SearchField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | NumberField | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
+| InputOTP | **VERIFIED** (2026-11-20) — verification-code entry on Base UI `OTPField`; real paste/autofill/numeric-keyboard support, not hand-rolled per-slot inputs |
 | InputGroup | **VERIFIED** |
 | Select | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | Combobox | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
