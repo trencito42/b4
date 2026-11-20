@@ -84,9 +84,10 @@ matches what actually changed rather than a full crossfade.
 - **Stable layout**: the container's own width/height is animated to the
   new content's measured size rather than reflowing instantly, so
   surrounding layout doesn't jump when morphed text changes length.
-- **Numeric place-value morphing**: digits are segmented so the "tens"
-  place animates independently of the "ones" place, etc., rather than the
-  whole number re-rendering as one token.
+- **Numeric place-value morphing**: each digit retains its place value.
+  When a digit changes, the outgoing glyph fades upward and its replacement
+  enters from below. Unchanged digits stay at full opacity and can move if
+  the number's layout changes.
 
 ## Integration
 
@@ -130,9 +131,10 @@ matches what actually changed rather than a full crossfade.
   check for the character story.
 
 The line stability and word crossing checks reproduced the defects in the
-previous Storybook build. After the fix, the release gate and the full
-Playwright suite passed (453 tests). Reduced motion was checked at 390 px in
-Graphite and Porcelain.
+previous Storybook build. The layout fix passed the release gate and the full
+Playwright suite (453 tests). Reduced motion was checked at 390 px in Graphite
+and Porcelain. The numeric story checks intermediate opacity and movement for
+the changed digit while the other glyphs stay visible.
 
 ## Studio
 

@@ -68,6 +68,7 @@ interface Frame {
   locale?: string;
   tokens: MorphToken[];
   previous?: Geometry;
+  replacedDigits?: ReadonlySet<string>;
 }
 
 interface ExitingItem extends TokenPosition {
@@ -152,13 +153,26 @@ export const TextMorph = forwardRef<HTMLElement, TextMorphProps>(function TextMo
         ? measure(sizerRef.current, tokenEls.current, true)
         : undefined;
     const diff = diffTokens(frame.tokens, tokenizeText(value, mode, locale));
-    setExits(
-      diff.exitingTokens.flatMap((token) => {
-        const position = previous?.positions.get(token.id);
-        return position && token.type !== "whitespace" ? [{ token, ...position }] : [];
-      }),
+    // A digit matched by place value keeps its slot even when its glyph changes.
+    const replacements = [...diff.matches.values()].filter(
+      ({ oldToken, newToken }) => oldToken.text !== newToken.text,
     );
-    setFrame({ value, mode, locale, tokens: diff.newTokens, previous });
+    setExits(
+      [...diff.exitingTokens, ...replacements.map(({ oldToken }) => oldToken)].flatMap(
+        (token) => {
+          const position = previous?.positions.get(token.id);
+          return position && token.type !== "whitespace" ? [{ token, ...position }] : [];
+        },
+      ),
+    );
+    setFrame({
+      value,
+      mode,
+      locale,
+      tokens: diff.newTokens,
+      previous,
+      replacedDigits: new Set(replacements.map(({ newToken }) => newToken.id)),
+    });
   }, [value, mode, locale, frame, reducedMotion]);
 
   useIsomorphicLayoutEffect(() => {
@@ -241,24 +255,26 @@ export const TextMorph = forwardRef<HTMLElement, TextMorphProps>(function TextMo
       if (!element || !target || token.type === "whitespace") continue;
 
       const from = previous.positions.get(token.id);
-      if (!from) {
+      const replaced = frame.replacedDigits?.has(token.id);
+      if (!from || replaced) {
+        const offset = replaced ? 0.45 : 0.15;
         fades.push({
           draw(progress) {
             element.style.opacity = String(progress);
-            element.style.transform = "translateY(" + 0.15 * (1 - progress) + "em)";
+            element.style.translate = "0 " + offset * (1 - progress) + "em";
           },
           clear() {
             element.style.opacity = "";
-            element.style.transform = "";
+            element.style.translate = "";
           },
         });
-        continue;
       }
+      if (!from) continue;
 
       const dx = from.left - target.left;
       const dy = from.top - target.top;
       const moved = Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5;
-      if (from.opacity < 1) {
+      if (!replaced && from.opacity < 1) {
         fades.push({
           draw(progress) {
             element.style.opacity = String(mix(from.opacity, 1, progress));
@@ -299,18 +315,20 @@ export const TextMorph = forwardRef<HTMLElement, TextMorphProps>(function TextMo
     }
 
     // Removing the outgoing layer must not restart or stop the active FLIP.
-    const outgoing = Array.from(exitEls.current.values());
-    for (const element of outgoing) {
+    const outgoing = Array.from(exitEls.current.entries());
+    for (const [id, element] of outgoing) {
       const opacity = Number(element.style.opacity);
+      const offset = frame.replacedDigits?.has(id) ? 0.45 : 0.15;
       fades.push({
         draw(progress) {
           element.style.opacity = String(opacity * (1 - progress));
-          element.style.transform = "translateY(" + -0.15 * progress + "em)";
+          element.style.transform = "translateY(" + -offset * progress + "em)";
         },
       });
     }
     play(travel, springs[spring]);
-    play(fades, { duration: durations.fast, ease: easings.standard }, () => {
+    const fadeDuration = frame.replacedDigits?.size ? durations.base : durations.fast;
+    play(fades, { duration: fadeDuration, ease: easings.standard }, () => {
       if (outgoing.length) setExits([]);
     });
 

@@ -162,14 +162,49 @@ test.describe("TextMorph Component", () => {
 
   test("Numeric counters handle place values and rapid updates", async ({ page }) => {
     await page.goto(
-      "/iframe.html?id=family-e-feedback-motion-textmorph--numeric-counters",
+      "/iframe.html?id=family-e-feedback-motion-textmorph--numeric-counters&globals=b4Motion:full",
     );
 
     const srOnly = page.locator(".b4-text-morph__sr-only");
     await expect(srOnly).toHaveText("$98,204");
 
     const plusOne = page.getByRole("button", { name: "+ 1", exact: true });
-    await plusOne.click();
+    const frames = await plusOne.evaluate(async (button) => {
+      button.click();
+      const samples = [];
+      const until = performance.now() + 350;
+      while (performance.now() < until) {
+        await new Promise(requestAnimationFrame);
+        const digits = [
+          ...document.querySelectorAll<HTMLElement>(".b4-text-morph__token"),
+        ];
+        if (digits.map(({ textContent }) => textContent).join("") !== "$99,204") continue;
+        const outgoing = document.querySelector(".b4-text-morph__exiting-token");
+        if (outgoing?.textContent !== "8") continue;
+        const incoming = getComputedStyle(digits[2]!);
+        const steady = digits.every(
+          (digit, i) => i === 2 || getComputedStyle(digit).opacity === "1",
+        );
+        samples.push({
+          opacity: Number(incoming.opacity),
+          outgoingOpacity: Number(getComputedStyle(outgoing).opacity),
+          moved: Number.parseFloat(incoming.translate.split(" ")[1] ?? "0") > 0,
+          steady,
+        });
+      }
+      return samples;
+    });
+    expect(
+      frames.some(
+        ({ opacity, outgoingOpacity, moved }) =>
+          opacity > 0 &&
+          opacity < 1 &&
+          outgoingOpacity > 0 &&
+          outgoingOpacity < 1 &&
+          moved,
+      ),
+    ).toBe(true);
+    expect(frames.every(({ steady }) => steady)).toBe(true);
     await expect(srOnly).toHaveText("$99,204");
 
     const plusTen = page.getByRole("button", { name: "+ 10", exact: true });
