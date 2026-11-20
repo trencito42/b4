@@ -163,10 +163,13 @@ test("B4 Studio Effects Lab renders RefractionSweep and drives it", async ({ pag
 
 for (const theme of ["graphite", "porcelain"] as const) {
   test(`B4 Studio home is axe-clean on ${theme}`, async ({ page }) => {
+    // Audit the theme colors after switching, without sampling interpolated colors.
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(studioOrigin);
     await page
       .getByRole("button", { name: theme === "graphite" ? "Graphite" : "Porcelain" })
       .click();
+    await expect(page.locator("html")).toHaveAttribute("data-b4-theme", theme);
     await expect(page.getByRole("heading", { name: /commercial-grade/i })).toBeVisible();
     const results = await new AxeBuilder({ page }).disableRules(isolatedRules).analyze();
     expect(results.violations).toEqual([]);
