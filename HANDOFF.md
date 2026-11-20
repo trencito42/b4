@@ -1,5 +1,42 @@
 # HANDOFF — read this first on any resume
 
+## Current state: zero decorative effects, one entry point (2026-11-20)
+
+B4 ships **89 components from one entry point** (`@b4/react`) and **no
+decorative effects**. `RefractionSweep` — the last one, and the component
+originally named `DistortionWave` — was deleted today along with the
+entire `@b4/react/effects` subpath, the Studio Effects Lab, the catalog's
+"Effects" family, and `docs/effects/`. `BorderBeam` and `DistortionWave`
+went on 2026-11-19. All of this is **deliberate scope, not unfinished
+work**: do not re-add any of them under these or new names unless the
+owner asks again. See `CHANGELOG.md` (2026-11-20 entry) for exactly what
+was deleted.
+
+Functional motion stays, as ordinary components: `TextMorph`,
+`TextTransition`, `NumberTransition`, `AnimatedIndicator`,
+`TransitionGroup`, `MorphingSurface`. They carry state; effects decorated
+it. Studio's Confirmation showcase was rewritten accordingly — receipt
+rows and a success `InlineAlert` now enter via `TransitionGroup` only
+once the simulated payment resolves.
+
+Verified at this checkpoint: `@b4/react` + Studio typecheck clean,
+package build clean without the effects entry, unit suite **537/537**
+(548 minus the 11 deleted RefractionSweep tests), craftsmanship audit
+**89 components, 0 blockers, 0 warnings**.
+
+**Known debt, not introduced here:** `npm run lint` reports 28
+`no-explicit-any` errors + 6 warnings, all pre-existing in test files
+(`usePointerSelection.test.ts`, `usePressFeedback.test.ts`,
+`useGestureIntent.test.ts`, `use-async-status.test.ts`,
+`TextMorph.test.tsx`/`engine.ts`) and two unused imports in
+`StudioApp.tsx`. CI does not currently run lint (see
+`.github/workflows`), which is why these survived. Not fixed in this
+checkpoint to keep the effects removal reviewable on its own.
+
+**Next:** the current brief's Phase 2 — the missing standard components,
+in priority order: `DateRangePicker`, `TagsInput`, `ToggleGroup`,
+`InputOTP`, then charts and `Carousel`.
+
 ## Local continuation (2026-11-20)
 
 Studio has a live Visual review page, an interactive Infrastructure

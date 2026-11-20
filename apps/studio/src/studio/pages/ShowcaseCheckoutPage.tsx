@@ -1,6 +1,15 @@
 import { useState } from "react";
-import { Button, Card, NumberTransition, PageHeader, Progress, TextMorph, toastManager } from "@b4/react";
-import { RefractionSweep } from "@b4/react/effects";
+import {
+  Button,
+  Card,
+  InlineAlert,
+  NumberTransition,
+  PageHeader,
+  Progress,
+  TextMorph,
+  TransitionGroup,
+  toastManager,
+} from "@b4/react";
 import type { StudioPreviewWidth } from "../settings.js";
 
 type FlowStatus = "review" | "pending" | "done";
@@ -17,19 +26,25 @@ function previewClass(width: StudioPreviewWidth): string {
 
 /**
  * Studio → Showcases → Confirmation. A mobile-first review-to-success
- * flow that composes B4's effect and motion primitives on one real
- * surface: RefractionSweep sweeps the card on success, and
- * TextMorph/NumberTransition carry the status and amount across each
- * state change. Reverse/reset re-plays the whole flow. No real transfer
- * happens — this is a sample flow built from public B4 components, not a
- * payment integration.
+ * flow built from ordinary B4 components, where every visual change
+ * carries state rather than decorating it: `TextMorph` morphs the status
+ * word, `NumberTransition` carries the amount, `Progress` reports the
+ * in-flight send, and `TransitionGroup` reveals the receipt rows that
+ * only exist once the payment has actually completed.
+ *
+ * It previously wrapped the card in a decorative `RefractionSweep`;
+ * that effect (and the whole `@b4/react/effects` entry point) was
+ * removed 2026-11-20 — see CHANGELOG.md. Reset re-plays the flow. No
+ * real transfer happens: this is sample state, not a payment integration.
  */
 export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPreviewWidth }) {
   const [status, setStatus] = useState<FlowStatus>("review");
+  const [reference, setReference] = useState<string | null>(null);
 
   async function handleConfirm() {
     setStatus("pending");
     await new Promise((resolve) => setTimeout(resolve, 1400));
+    setReference(`B4-${Math.floor(100000 + Math.random() * 900000)}`);
     setStatus("done");
     toastManager.add({
       title: "Payment sent",
@@ -40,6 +55,7 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
 
   function handleReset() {
     setStatus("review");
+    setReference(null);
   }
 
   const statusLabel = status === "review" ? "Review" : status === "pending" ? "Sending…" : "Sent";
@@ -48,10 +64,9 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
     <div className={["b4-studio__preview-frame", previewClass(previewWidth)].filter(Boolean).join(" ")}>
       <PageHeader
         title="Confirmation"
-        description="A review-to-success payment flow — sample data only, built from RefractionSweep and TextMorph."
+        description="A review-to-success payment flow — sample data only, built from ordinary B4 components and real state transitions."
       />
       <div className="b4-showcase-checkout" style={{ marginTop: "var(--b4-space-10)" }}>
-        <RefractionSweep active={status === "done"} amplitude="sm" direction="horizontal" tone="success">
           <Card variant="raised" padding="lg" className="b4-showcase-checkout__card">
               <div className="b4-showcase-checkout__status">
                 <TextMorph value={statusLabel} mode="words" as="span" className="b4-showcase-checkout__status-text" />
@@ -85,6 +100,23 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
                 <Progress label="Sending payment" hideLabel value={null} />
               )}
 
+              {/* The receipt only exists once the payment has actually
+                  completed, so it enters rather than being revealed by a
+                  decorative sweep over content that was already there. */}
+              <TransitionGroup preset="slide-fade" gap="sm" stagger={0.05}>
+                {status === "done" && reference
+                  ? [
+                      <div key="reference" className="b4-showcase-checkout__row">
+                        <span>Reference</span>
+                        <strong>{reference}</strong>
+                      </div>,
+                      <InlineAlert key="receipt" tone="success" title="Payment sent">
+                        {RECIPIENT} will see this within a few seconds.
+                      </InlineAlert>,
+                    ]
+                  : null}
+              </TransitionGroup>
+
               {status === "review" && (
                 <Button variant="primary" size="lg" onAction={handleConfirm}>
                   Confirm
@@ -96,7 +128,6 @@ export function ShowcaseCheckoutPage({ previewWidth }: { previewWidth: StudioPre
                 </Button>
               )}
             </Card>
-        </RefractionSweep>
       </div>
     </div>
   );

@@ -5,6 +5,45 @@ a per-npm-release history.
 
 ## Unreleased
 
+### `RefractionSweep` and the whole effects entry point removed (2026-11-20)
+
+The follow-up to the 2026-11-19 removal below, and the end of the same
+decision: B4 ships **no decorative effects at all**, and no
+`@b4/react/effects` subpath. `RefractionSweep` — the last remaining
+effect, and the component that was originally named `DistortionWave` —
+was deleted completely: implementation (`RefractionSweep.tsx`, its WebGL
+crest renderer/shaders in `crest.ts`/`RefractionSweepCrest.tsx`), CSS,
+stories, unit tests, `e2e/refraction-sweep.spec.ts`, the Studio Effects
+Lab page and its nav entry, the Studio catalog's whole "Effects" family
+(and the `kind: "effect"` concept behind it), its `docs/effects/` docs,
+and the `./effects` export from `packages/react/package.json` plus its
+tsup build entry. `packages/react/src/effects/` no longer exists.
+
+Functional motion was explicitly **kept**, as ordinary `@b4/react`
+components: `TextMorph`, `TextTransition`, `NumberTransition`,
+`AnimatedIndicator`, `TransitionGroup`, `MorphingSurface`, and every
+component's own microinteractions. The distinction the brief draws, and
+that this repo now follows: those communicate state; the removed effects
+decorated it.
+
+Studio's Confirmation showcase, which was the one real consumer, was
+rewritten rather than deleted — the decorative sweep is replaced by
+receipt rows and a success `InlineAlert` that enter via `TransitionGroup`
+only once the simulated payment resolves, so the visual change now
+reports real state. `e2e/studio.spec.ts` lost its Effects Lab test and
+gained one that drives that flow end to end (review → sending → sent),
+plus an assertion that no Effects Lab remains.
+
+Also fixed while stabilizing: ESLint was scanning the stray nested `b4/`
+clone (git-ignored since `0536a44`, but ESLint keeps its own ignore
+list), so every lint finding in the real tree was reported twice — 69
+problems were really 34.
+
+Verified: `@b4/react` typecheck clean, Studio typecheck clean, package
+build clean without the effects entry, unit suite 537/537 (548 minus the
+11 deleted `RefractionSweep` tests), craftsmanship audit 89 components /
+0 blockers / 0 warnings.
+
 ### Five missing layout primitives added (2026-11-19)
 
 Mission-brief batch 2 (component-gap audit): `Separator`, `VisuallyHidden`,

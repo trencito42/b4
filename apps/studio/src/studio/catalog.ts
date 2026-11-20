@@ -3,8 +3,6 @@ export interface StudioComponent {
   status: "VERIFIED";
   /** Storybook story path segment after the family slug. */
   storySlug: string;
-  /** Effects ship from their own export subpath and are labelled separately in the catalog. */
-  kind?: "component" | "effect";
 }
 
 export interface StudioFamily {
@@ -31,11 +29,6 @@ function slug(name: string): string {
 
 function c(name: string): StudioComponent {
   return { name, status: "VERIFIED", storySlug: slug(name) };
-}
-
-/** An effect — exported from `@b4/react/effects`, not the core entry point. */
-function e(name: string): StudioComponent {
-  return { name, status: "VERIFIED", storySlug: slug(name), kind: "effect" };
 }
 
 export const STUDIO_FAMILIES: StudioFamily[] = [
@@ -171,22 +164,10 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
     storybookFamilySlug: "family-g-layout-primitives",
     components: [c("Separator"), c("VisuallyHidden"), c("AspectRatio"), c("Collapsible"), c("ScrollArea")],
   },
-  {
-    id: "h",
-    title: "Effects",
-    storybookFamilySlug: "effects",
-    components: [e("RefractionSweep")],
-  },
 ];
 
 export const STUDIO_COMPONENT_COUNT = STUDIO_FAMILIES.reduce(
-  (sum, family) => sum + family.components.filter((component) => component.kind !== "effect").length,
-  0,
-);
-
-/** Effects are public API too, but they ship from `@b4/react/effects` — counted apart. */
-export const STUDIO_EFFECT_COUNT = STUDIO_FAMILIES.reduce(
-  (sum, family) => sum + family.components.filter((component) => component.kind === "effect").length,
+  (sum, family) => sum + family.components.length,
   0,
 );
 

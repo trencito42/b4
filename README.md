@@ -16,10 +16,11 @@ reference. See `PROGRESS.md` and `HANDOFF.md`.
 - `@b4/tokens` — design tokens (CSS custom properties), two themes, five
   modifier axes (density/radius/accent/contrast/motion).
 - `@b4/motion` — motion tokens and shared Motion-for-React utilities.
-- `@b4/react` — the component library.
-- `@b4/react/effects` — opt-in first-party visual effects (`RefractionSweep`),
-  kept on their own export subpath so a consumer that never uses them pays
-  no bundle cost.
+- `@b4/react` — the component library. One entry point: B4 ships no
+  decorative-effects subpath. Functional motion (`TextMorph`,
+  `TextTransition`, `NumberTransition`, `AnimatedIndicator`,
+  `TransitionGroup`, `MorphingSurface`) are ordinary components here,
+  because they carry state rather than decorate it.
 - `@b4/studio` (`apps/studio`) — Storybook-based interactive docs/showcase.
 
 `@b4/*` is a local placeholder scope, not a published/reserved npm

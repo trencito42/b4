@@ -27,7 +27,6 @@ const fixtures = [
 /** The only package entry points a consumer fixture is allowed to import. */
 const ALLOWED_PACKAGE_IMPORTS = new Set([
   "@b4/react",
-  "@b4/react/effects",
   "@b4/react/styles.css",
   "@b4/tokens/css",
 ]);
@@ -62,7 +61,9 @@ function collectSourceFiles(dir) {
 }
 
 /**
- * A fixture may import `@b4/react` and `@b4/react/effects` — nothing else.
+ * A fixture may import `@b4/react`, `@b4/react/styles.css` and
+ * `@b4/tokens/css` — nothing else. (There is no `@b4/react/effects`
+ * subpath any more; it was removed with the last effect on 2026-11-20.)
  * A deep path such as `@b4/react/dist/...` or a relative hop into
  * `packages/react/src` bypasses the public API surface and is a defect.
  */

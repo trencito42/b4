@@ -140,25 +140,28 @@ test("B4 Studio Text Morph Lab renders and exercises morphing", async ({ page })
   ).toBeVisible();
 });
 
-test("B4 Studio Effects Lab renders RefractionSweep and drives it", async ({ page }) => {
+// B4 ships no decorative effects and no Effects Lab: BorderBeam and
+// DistortionWave were removed 2026-11-19, RefractionSweep 2026-11-20,
+// by explicit mission-brief decision. The test that drove the lab was
+// removed with it. The Confirmation showcase below covers what replaced
+// it — functional state transitions built from ordinary components.
+test("B4 Studio no longer exposes an Effects Lab", async ({ page }) => {
   await page.goto(studioOrigin);
-  await page.getByRole("button", { name: "Effects Lab" }).click();
-  await expect(page.getByRole("heading", { name: "Effects Lab" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "RefractionSweep" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Effects Lab" })).toHaveCount(0);
+});
 
-  // RefractionSweep's own wave layer must actually be in the DOM and
-  // moving — a lab page that renders an empty preview is not a lab.
-  await expect(page.locator(".b4-refraction-sweep__band").first()).toBeVisible();
-  const transform1 = await page
-    .locator(".b4-refraction-sweep__band")
-    .first()
-    .evaluate((el) => getComputedStyle(el).transform);
-  await page.waitForTimeout(700);
-  const transform2 = await page
-    .locator(".b4-refraction-sweep__band")
-    .first()
-    .evaluate((el) => getComputedStyle(el).transform);
-  expect(transform1).not.toBe(transform2);
+test("B4 Studio Confirmation showcase runs review -> sending -> sent", async ({ page }) => {
+  await page.goto(studioOrigin);
+  await page.getByRole("button", { name: "Confirmation" }).click();
+  await expect(page.getByRole("heading", { name: "Confirmation" })).toBeVisible();
+
+  await expect(page.getByText("Review", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Confirm" }).click();
+
+  // The receipt rows only exist once the simulated send resolves — they
+  // are real state, not a decorative reveal over content already there.
+  await expect(page.getByText("Reference", { exact: true })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole("button", { name: "Send another" })).toBeVisible();
 });
 
 for (const theme of ["graphite", "porcelain"] as const) {

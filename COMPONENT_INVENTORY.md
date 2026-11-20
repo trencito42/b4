@@ -154,21 +154,23 @@ spacing-token `gap` is exactly that; wrapping it in a component would add
 a name to learn without adding real behavior over existing CSS +
 `--b4-space-*` tokens.
 
-## Effects — first-party, `packages/react/src/effects` (`@b4/react/effects`)
+## Effects — removed, by decision
 
-Advanced, opt-in visual effects kept in their own export subpath rather
-than the main `@b4/react` entry, so a consumer that never uses them pays
-no bundle cost.
+B4 ships **no decorative effects** and no `@b4/react/effects` entry
+point. `BorderBeam` and `DistortionWave` were removed 2026-11-19;
+`RefractionSweep` and the entry point itself 2026-11-20. The decision is
+deliberate: B4's priority is one coherent, exceptionally polished
+component system, not a decorative-effects engine. See `CHANGELOG.md`
+for the removal record.
 
-| Effect | Status |
-|---|---|
-| BorderBeam | **VERIFIED** (see QUALITY_MATRIX.md) — animated border glow via CSS mask-XOR, soft-blurred per explicit user visual feedback, not a hard-edged ring |
-| RefractionSweep | **VERIFIED** (see QUALITY_MATRIX.md) — a travelling band of refraction that bends the content beneath it via `backdrop-filter`, with a chromatic fringe and specular crest riding the same keyframe track; reduced-motion safe. This is the component that used to be *named* `DistortionWave`; it kept its real implementation and got the honest name once the actual DistortionWave (below) was built |
-| DistortionWave | **VERIFIED** (see QUALITY_MATRIX.md) — a real dual-React-view WebGL2 transition: both views are captured to canvas, uploaded as GPU textures, and a fragment shader displaces the UV coordinates it samples them through along a travelling wavefront (vertical/horizontal/center geometries) |
+This is **not** an unfinished task. Do not re-add them.
 
-The effect count is separate from the component count: the three effects
-ship from `@b4/react/effects`, not the core `@b4/react` entry point, so a
-consumer that never uses them pays no bundle cost.
+Functional motion components are a different thing and were explicitly
+kept, as ordinary components in `@b4/react`: `TextMorph`,
+`TextTransition`, `NumberTransition`, `AnimatedIndicator`,
+`TransitionGroup`, `MorphingSurface`, plus each component's own
+microinteractions. They communicate state; the removed effects decorated
+it.
 
 ## Scope changes log
 

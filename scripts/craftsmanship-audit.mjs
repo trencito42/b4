@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /**
  * B4 craftsmanship audit — a systematic, re-runnable sweep over every
- * component in `packages/react/src/components`, the effects entry point,
- * and the Studio catalog. It does not judge taste; it checks the
+ * component in `packages/react/src/components` and the Studio catalog. It does not judge taste; it checks the
  * mechanical invariants that `AGENTS.md` and `TESTING.md` actually
  * require, so a regression cannot pass unnoticed between sessions:
  *
@@ -36,7 +35,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const REACT_SRC = join(ROOT, "packages/react/src");
 const COMPONENTS_DIR = join(REACT_SRC, "components");
-const EFFECTS_DIR = join(REACT_SRC, "effects");
 const TOKENS_DIR = join(ROOT, "packages/tokens/src");
 const E2E_DIR = join(ROOT, "e2e");
 const STUDIO_DIR = join(ROOT, "apps/studio/src/studio");
@@ -505,45 +503,15 @@ for (const dirName of readdirSync(COMPONENTS_DIR)) {
 
 /* -------------------------------------------------------------- effects */
 
-const effects = [];
-for (const dirName of readdirSync(EFFECTS_DIR)) {
-  const dir = join(EFFECTS_DIR, dirName);
-  if (!statSync(dir).isDirectory()) continue;
-  const tsx = read(join(dir, `${dirName}.tsx`));
-  const css = read(join(dir, `${dirName}.css`));
-  const stories = read(join(dir, `${dirName}.stories.tsx`));
-  const tests = read(join(dir, `${dirName}.test.tsx`));
-  const findings = [];
-  if (!tsx) findings.push({ severity: "BLOCKER", category: "files", label: `missing ${dirName}.tsx` });
-  if (!css) findings.push({ severity: "BLOCKER", category: "files", label: `missing ${dirName}.css` });
-  if (!stories) findings.push({ severity: "BLOCKER", category: "files", label: `missing ${dirName}.stories.tsx` });
-  if (!tests) findings.push({ severity: "BLOCKER", category: "files", label: `missing ${dirName}.test.tsx` });
-  if (css && !stylesCss.includes(`./effects/${dirName}/${dirName}.css`)) {
-    findings.push({ severity: "BLOCKER", category: "css", label: `${dirName}.css is not imported by src/styles.css` });
-  }
-  for (const c of findColorLiterals(css ?? "", `effects/${dirName}.css`)) {
-    findings.push({ severity: "BLOCKER", category: "color", label: `hardcoded ${c.kind} color "${c.value}" in ${dirName}.css:${c.line}` });
-  }
-  for (const t of findUnresolvedTokens(css ?? "", tsx)) {
-    findings.push({ severity: "BLOCKER", category: "token", label: `var(${t.name}) in ${dirName}.css:${t.line} resolves to nothing` });
-  }
-  if (stories) {
-    if (!/tags:\s*\[\s*["']autodocs["']\s*\]/.test(stories)) {
-      findings.push({ severity: "BLOCKER", category: "stories", label: `stories are not tagged autodocs` });
-    }
-    if (!/export const Default\b/.test(stories)) {
-      findings.push({ severity: "BLOCKER", category: "stories", label: `stories publish no canonical "Default" story` });
-    }
-  }
-  if (tests && !/toHaveNoViolations/.test(tests)) {
-    findings.push({ severity: "BLOCKER", category: "tests", label: `tests never assert axe has no violations` });
-  }
-  const effectsIndex = read(join(EFFECTS_DIR, "index.ts")) ?? "";
-  if (!new RegExp(`\\b${dirName}\\b`).test(effectsIndex)) {
-    findings.push({ severity: "BLOCKER", category: "export", label: `${dirName} is not exported from effects/index.ts` });
-  }
-  effects.push({ name: dirName, findings });
-}
+// B4 ships no decorative effects. BorderBeam and DistortionWave were
+// removed 2026-11-19, RefractionSweep 2026-11-20, along with the whole
+// `@b4/react/effects` entry point — by explicit mission-brief decision,
+// not as unfinished work. This audit therefore scans components only.
+// Functional motion components (TextMorph, TextTransition,
+// NumberTransition, AnimatedIndicator, TransitionGroup, MorphingSurface)
+// live in `components/` and are audited there, like any other component.
+// If an `effects/` directory ever reappears, it is a regression: see
+// HANDOFF.md and CHANGELOG.md before re-adding a scanner here.
 
 /* ------------------------------------------- documented share enforcement */
 
@@ -607,15 +575,6 @@ for (const c of components) {
       severity: "BLOCKER",
       category: "catalog",
       label: `${c.name} is not listed in the Studio catalog`,
-    });
-  }
-}
-for (const e of effects) {
-  if (!catalogNames.has(e.name)) {
-    catalogFindings.push({
-      severity: "BLOCKER",
-      category: "catalog",
-      label: `effect ${e.name} is not listed in the Studio catalog`,
     });
   }
 }
@@ -683,7 +642,6 @@ for (const entry of readdirSync(ROOT, { withFileTypes: true })) {
 
 const all = [
   ...components.flatMap((c) => c.findings.map((f) => ({ ...f, subject: c.name }))),
-  ...effects.flatMap((c) => c.findings.map((f) => ({ ...f, subject: `effects/${c.name}` }))),
   ...shareFindings.map((f) => ({ ...f, subject: "COMPONENT_INVENTORY.md" })),
   ...catalogFindings.map((f) => ({ ...f, subject: "studio/catalog.ts" })),
   ...inventoryFindings.map((f) => ({ ...f, subject: "COMPONENT_INVENTORY.md" })),
@@ -698,8 +656,8 @@ const lines = [];
 lines.push(`# B4 — Craftsmanship Audit`);
 lines.push("");
 lines.push(`Generated by \`scripts/craftsmanship-audit.mjs\` — a systematic, re-runnable sweep`);
-lines.push(`over every component in \`packages/react/src/components\`, the effects entry point,`);
-lines.push(`and the Studio catalog. Re-run it with \`npm run audit:craftsmanship\`; it exits`);
+lines.push(`over every component in \`packages/react/src/components\` and the Studio catalog.`);
+lines.push(`Re-run it with \`npm run audit:craftsmanship\`; it exits`);
 lines.push(`non-zero on any BLOCKER, so it can gate CI.`);
 lines.push("");
 lines.push(`## Summary`);
@@ -707,7 +665,6 @@ lines.push("");
 lines.push(`| Metric | Count |`);
 lines.push(`|---|---|`);
 lines.push(`| Components audited | ${components.length} |`);
-lines.push(`| Effects audited | ${effects.length} |`);
 lines.push(`| Stories files audited | ${STORIES.length} |`);
 lines.push(`| Studio catalog entries | ${catalogEntryCount} |`);
 lines.push(`| BLOCKER findings | ${blockers.length} |`);
@@ -811,7 +768,7 @@ lines.push("");
 
 writeFileSync(join(ROOT, "CRAFTMANSHIP_AUDIT.md"), lines.join("\n"), "utf8");
 
-console.log(`Craftsmanship audit: ${components.length} components, ${effects.length} effects, ${STORIES.length} stories`);
+console.log(`Craftsmanship audit: ${components.length} components, ${STORIES.length} stories`);
 console.log(`  BLOCKERS: ${blockers.length}`);
 console.log(`  WARNINGS: ${warns.length}`);
 console.log(`  Clean components: ${clean.length}`);

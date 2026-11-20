@@ -60,9 +60,7 @@ function CatalogGrid({ family }: { family: StudioFamily }) {
           rel="noreferrer"
         >
           <span>{component.name}</span>
-          <Badge tone={component.kind === "effect" ? "accent" : "success"}>
-            {component.kind === "effect" ? "Effect" : "Verified"}
-          </Badge>
+          <Badge tone="success">Verified</Badge>
         </a>
       ))}
     </div>

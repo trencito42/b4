@@ -43,12 +43,14 @@ test("every Studio catalog link resolves to a real Storybook story", async ({ pa
   expect(broken, `dead Storybook links:\n${broken.join("\n")}`).toEqual([]);
 });
 
-test("the Studio catalog lists every component and every effect", async ({ page }) => {
+test("the Studio catalog lists components only — no effects entry remains", async ({ page }) => {
   await page.goto(studioOrigin);
   await page.getByRole("button", { name: "Components" }).click();
   await expect(page.getByRole("heading", { name: "Components" })).toBeVisible();
 
-  // The one remaining effect ships from its own export subpath and must
-  // still be discoverable from the catalog.
-  await expect(page.getByRole("link", { name: "RefractionSweep Effect", exact: true })).toBeVisible();
+  // B4 ships no decorative effects: the `@b4/react/effects` entry point
+  // and its catalog family were removed 2026-11-20. Every catalog entry
+  // is now a core component from `@b4/react`.
+  await expect(page.getByRole("link", { name: /Effect$/ })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Button Verified", exact: true })).toBeVisible();
 });

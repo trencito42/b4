@@ -25,10 +25,10 @@ record the November 19 branch state and decisions.
 | Scope | Current evidence |
 | --- | --- |
 | §3, §11 and packaging | Frozen workspace install, `pnpm release:verify`, and production builds of Ops Console and Storefront through the public exports. CI runs both fixture builds. |
-| §4 and §13 component review | Studio Visual review compares live stories in both themes. The Chromium matrix covers 89 public components, RefractionSweep, and two comparison stories at 320, 390, 768, 1024, 1440, and 1920 px. The second pass produced 1,104 captures with zero render failures and zero document overflow. |
+| §4 and §13 component review | Studio Visual review compares live stories in both themes. The Chromium matrix covers the 89 public components and two comparison stories at 320, 390, 768, 1024, 1440, and 1920 px. The second pass produced 1,104 captures with zero render failures and zero document overflow. That pass predates the 2026-11-20 effects removal and also covered `RefractionSweep`, which no longer exists. |
 | §6 adaptive UX | AppShell focus containment, closure on navigation, focus restoration, and mobile Drawer geometry have browser assertions. DataTable provides a keyboard-reachable scroll container and retains selections on other pages. |
 | §7 and §15 motion and accessibility | The TextMorph browser test advances through the real animation and audits contrast after the outgoing decorative token has been removed. The forms and motion interaction specs exercise interruptions and reduced motion. |
-| §8–10 effects | The decision below governs scope. The checkout flow uses RefractionSweep and TextMorph. |
+| §8–10 effects | Closed by removal, not completion. B4 ships no decorative effects and no `@b4/react/effects` entry point as of 2026-11-20. The checkout flow now uses `TextMorph`, `NumberTransition`, `Progress` and `TransitionGroup` — functional motion only. |
 | §12 showcases | Infrastructure supports search, region filtering, sorting, node details and a confirmed simulated restart. Settings supports validation, save and discard. Confirmation supports review, pending, success and reset. Chromium captured all three at six widths in both themes, along with eight focused interaction screenshots. |
 | §14–15 evidence | Test commands and their observed results are recorded in the quality matrix. Browser evidence uses Chromium, including emulated touch. The default matrix and selected interactions do not enumerate every combination of modifiers. |
 
@@ -52,8 +52,12 @@ DistortionWave's WebGL rebuild and the tainted-canvas bug fix that
 followed it) as **history**, not current status — both sections are now
 closed by removal, not by completion. `RefractionSweep` (the small,
 CSS-only effect that `DistortionWave` was renamed to partway through its
-WebGL rebuild) was kept; it is not named in the removal brief and is
-materially simpler than either deleted effect.
+WebGL rebuild) survived that first removal, but was itself removed on
+2026-11-20 together with the entire `@b4/react/effects` entry point. B4
+now ships no decorative effects at all. Functional motion components
+(`TextMorph`, `TextTransition`, `NumberTransition`, `AnimatedIndicator`,
+`TransitionGroup`, `MorphingSurface`) were deliberately kept as ordinary
+`@b4/react` components.
 
 ## §0 — Current project status
 

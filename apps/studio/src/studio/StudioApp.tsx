@@ -12,9 +12,8 @@ import {
   type B4RadiusMode,
   type B4Theme,
 } from "@b4/tokens";
-import { STUDIO_COMPONENT_COUNT, STUDIO_EFFECT_COUNT } from "./catalog.js";
+import { STUDIO_COMPONENT_COUNT } from "./catalog.js";
 import { CatalogPage } from "./pages/CatalogPage.js";
-import { EffectsLabPage } from "./pages/EffectsLabPage.js";
 import { HomePage } from "./pages/HomePage.js";
 import { MotionLabPage } from "./pages/MotionLabPage.js";
 import { TextMorphLabPage } from "./pages/TextMorphLabPage.js";
@@ -40,7 +39,6 @@ export type StudioRoute =
   | "catalog"
   | "motion-lab"
   | "text-morph-lab"
-  | "effects-lab"
   | "visual-review"
   | "showcase-analytics"
   | "showcase-infrastructure"
@@ -66,10 +64,8 @@ export function StudioApp() {
         ? "motion-lab"
         : route === "text-morph-lab"
           ? "text-morph-lab"
-          : route === "effects-lab"
-            ? "effects-lab"
-            : route === "visual-review"
-              ? route
+          : route === "visual-review"
+            ? route
             : route.startsWith("showcase")
               ? route
               : "home";
@@ -82,8 +78,6 @@ export function StudioApp() {
         return <MotionLabPage />;
       case "text-morph-lab":
         return <TextMorphLabPage />;
-      case "effects-lab":
-        return <EffectsLabPage />;
       case "visual-review":
         return <VisualReviewPage settings={settings} />;
       case "showcase-analytics":
@@ -118,7 +112,6 @@ export function StudioApp() {
                     { id: "catalog", label: "Components", onClick: () => setRoute("catalog") },
                     { id: "motion-lab", label: "Motion Lab", onClick: () => setRoute("motion-lab") },
                     { id: "text-morph-lab", label: "Text Morphing Lab", onClick: () => setRoute("text-morph-lab") },
-                    { id: "effects-lab", label: "Effects Lab", onClick: () => setRoute("effects-lab") },
                     { id: "visual-review", label: "Visual review", onClick: () => setRoute("visual-review") },
                   ],
                 },
@@ -176,7 +169,7 @@ export function StudioApp() {
           <div className="b4-studio__content">{content}</div>
         </AppShell>
         <p className="b4-studio__muted" style={{ textAlign: "center", padding: "var(--b4-space-8)" }}>
-          {STUDIO_COMPONENT_COUNT} verified public components · {STUDIO_EFFECT_COUNT} effects ·{" "}
+          {STUDIO_COMPONENT_COUNT} verified public components ·{" "}
         <Link href={storybookHomeUrl()} external tone="neutral">
           Open Storybook
         </Link>
