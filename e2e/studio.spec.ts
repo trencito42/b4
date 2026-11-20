@@ -119,7 +119,10 @@ test("checkout moves through review and submission, then resets", async ({ page 
   await page.getByRole("button", { name: "Confirmation" }).click();
   await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(page.getByRole("progressbar", { name: "Sending payment" })).toBeVisible();
-  await expect(page.getByText("Payment sent", { exact: true })).toBeVisible();
+  // "Payment sent" is both the toast title and the receipt InlineAlert's
+  // title — two real, intentional elements. Assert the receipt, which is
+  // the part of the page that has to persist after the toast expires.
+  await expect(page.getByRole("alert").filter({ hasText: "Payment sent" })).toBeVisible();
   await page.getByRole("button", { name: "Send another" }).click();
   await expect(page.getByRole("button", { name: "Confirm", exact: true })).toBeVisible();
 });
@@ -155,8 +158,16 @@ test("B4 Studio Confirmation showcase runs review -> sending -> sent", async ({ 
   await page.getByRole("button", { name: "Confirmation" }).click();
   await expect(page.getByRole("heading", { name: "Confirmation" })).toBeVisible();
 
-  await expect(page.getByText("Review", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Confirm" }).click();
+  // TextMorph deliberately renders its value twice — a visually-hidden
+  // span holding the accessible string, plus aria-hidden per-word tokens
+  // for the animation — so a bare getByText matches two nodes. The page
+  // also has a second TextMorph for the amount, so scoping to the
+  // sr-only class alone is still ambiguous. Assert the accessible name,
+  // which is exactly what a screen reader announces for this status.
+  await expect(page.getByLabel("Review", { exact: true })).toBeVisible();
+  // `exact` matters: the sidebar's "Confirmation" nav button also
+  // substring-matches "Confirm".
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
 
   // The receipt rows only exist once the simulated send resolves — they
   // are real state, not a decorative reveal over content already there.
