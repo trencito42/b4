@@ -34,6 +34,14 @@ export type {
 export { ToggleButton } from "./components/ToggleButton/ToggleButton.js";
 export type { ToggleButtonProps, ToggleButtonSize } from "./components/ToggleButton/ToggleButton.js";
 
+export { ToggleGroup } from "./components/ToggleGroup/ToggleGroup.js";
+export type {
+  ToggleGroupProps,
+  ToggleGroupItem,
+  ToggleGroupSize,
+  ToggleGroupOrientation,
+} from "./components/ToggleGroup/ToggleGroup.js";
+
 export { Badge } from "./components/Badge/Badge.js";
 export type { BadgeProps, BadgeTone } from "./components/Badge/Badge.js";
 

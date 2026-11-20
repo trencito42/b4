@@ -9,9 +9,9 @@ non-zero on any BLOCKER, so it can gate CI.
 
 | Metric | Count |
 |---|---|
-| Components audited | 89 |
-| Stories files audited | 91 |
-| Studio catalog entries | 89 |
+| Components audited | 90 |
+| Stories files audited | 92 |
+| Studio catalog entries | 90 |
 | BLOCKER findings | 0 |
 | WARN findings | 0 |
 | Components with zero findings | 64 |
@@ -41,7 +41,7 @@ non-zero on any BLOCKER, so it can gate CI.
 
 None.
 
-## Notes (25)
+## Notes (26)
 
 Informational — these are compliant, but recorded so a reader can see what the
 audit considered rather than assuming it did not look.
@@ -72,11 +72,12 @@ audit considered rather than assuming it did not look.
 | TextField | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | Toast | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | ToggleButton | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
+| ToggleGroup | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 | TreeView | motion | animates using tokenised durations only — reduced-motion safe by the token contract |
 
 ## Systemic observation — ref forwarding
 
-33 of 89 components do not forward a ref to their root
+33 of 90 components do not forward a ref to their root
 element (`AGENTS.md`'s checklist asks for `forwardRef`). Most of the remainder are
 compound components whose individual parts are Base UI primitives that forward their
 own refs, or components that deliberately reuse another component's markup. This is
@@ -188,6 +189,7 @@ listed here rather than hidden, so a reader can challenge any of them.
 | TimePicker | own | no | 0 | 0 |
 | Toast | own | no | 0 | 0 |
 | ToggleButton | own | yes | 0 | 0 |
+| ToggleGroup | own | yes | 0 | 0 |
 | Toolbar | own | yes | 0 | 0 |
 | Tooltip | own | no | 0 | 0 |
 | TransitionGroup | own | yes | 0 | 0 |

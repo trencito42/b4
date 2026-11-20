@@ -13,6 +13,7 @@ are not silently dropped; if scope changes, it changes here with a reason.
 | ButtonGroup | **VERIFIED** |
 | SplitButton | **VERIFIED** |
 | ToggleButton | **VERIFIED** |
+| ToggleGroup | **VERIFIED** (2026-11-20) — grouped on/off buttons, single or `multiple`; distinct from SegmentedControl, see scope log |
 | SegmentedControl | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
 | Link | **VERIFIED** |
 | Badge | **VERIFIED** (full CLI regression gate closed 2026-11-17, see QUALITY_MATRIX.md) |
@@ -173,6 +174,21 @@ microinteractions. They communicate state; the removed effects decorated
 it.
 
 ## Scope changes log
+
+- **`ToggleGroup` added (2026-11-20) as a genuinely separate control from
+  `SegmentedControl`, not a duplicate.** The two are easy to confuse, so
+  the split is deliberate and enforced by their visuals:
+  `SegmentedControl` is mutually-exclusive selection — exactly one segment
+  is always chosen — drawn as a padded track with a travelling capsule
+  indicator ("which view am I in"). `ToggleGroup` is a set of on/off
+  **buttons** that happen to be adjacent: zero pressed items is a normal
+  state, and `multiple` allows several at once ("which of these am I
+  turning on"). It therefore borrows `ButtonGroup`'s grouped geometry
+  (pill outer, flush square inner edges, hairline separators) and
+  `ToggleButton`'s exact pressed/hover/disabled treatment, rather than
+  SegmentedControl's capsule. Built on Base UI's own `ToggleGroup`, so it
+  adds no second keyboard-navigation manager — roving focus, looping,
+  orientation and single/multiple semantics all come from the primitive.
 
 - **Field + FormField merged into one component, `Field`.** The mission
   brief listed them as two separate Family B entries, but once built,

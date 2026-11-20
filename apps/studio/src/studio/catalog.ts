@@ -42,6 +42,7 @@ export const STUDIO_FAMILIES: StudioFamily[] = [
       c("ButtonGroup"),
       c("SplitButton"),
       c("ToggleButton"),
+      c("ToggleGroup"),
       c("SegmentedControl"),
       c("Link"),
       c("Badge"),
