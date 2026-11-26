@@ -81,7 +81,16 @@
 }
 .b4-select__popup {
   box-sizing: border-box;
-  inline-size: var(--anchor-width);
+  /* The popup must never be NARROWER than the trigger (min, not a fixed
+     inline-size) — a fixed width here forced every item's label onto as
+     many lines as it took to fit, since the trigger is sized to its
+     *selected* value (often short, e.g. "Short text"), not to the widest
+     item in the list (e.g. "Dynamic zone"). Letting the popup grow past
+     the anchor's width up to the available viewport width is what lets
+     long labels like that lay out on one line instead of wrapping
+     word-by-word. */
+  min-inline-size: var(--anchor-width);
+  width: max-content;
   max-inline-size: var(--available-width);
   max-block-size: min(var(--available-height), var(--b4-popup-max-height));
   overflow: auto;
